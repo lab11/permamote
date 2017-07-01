@@ -1,0 +1,3 @@
+[submodule "simulator/influx-query"]
+	path = simulator/influx-query
+	url = git@github.com:lab11/influx-query.git
