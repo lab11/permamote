@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="5" unitdist="mil" unit="mil" style="lines" multiple="1" display="yes" altdistance="10" altunitdist="mil" altunit="mil"/>
+<grid distance="10" unitdist="mil" unit="mil" style="lines" multiple="1" display="yes" altdistance="10" altunitdist="mil" altunit="mil"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -156,9 +156,10 @@
 </layers>
 <board>
 <plain>
-<wire x1="0" y1="0" x2="160" y2="0" width="0" layer="20"/>
-<wire x1="160" y1="0" x2="160" y2="100" width="0" layer="20"/>
-<wire x1="160" y1="100" x2="0" y2="100" width="0" layer="20"/>
+<wire x1="0" y1="0" x2="50.8" y2="0" width="0" layer="20"/>
+<wire x1="50.8" y1="0" x2="50.8" y2="63.5" width="0" layer="20"/>
+<wire x1="50.8" y1="63.5" x2="0" y2="63.5" width="0" layer="20"/>
+<wire x1="0" y1="0" x2="0" y2="63.5" width="0" layer="20"/>
 </plain>
 <libraries>
 <library name="chips">
@@ -475,58 +476,82 @@ design rules under a new name.
 </pass>
 </autorouter>
 <elements>
-<element name="U1" library="chips" package="UDFN-6-MAXIM" value="MAX17222" x="35.56" y="38.1" rot="R180">
-<attribute name="DIGIKEY" value="MAX17222ELT+TCT-ND" x="35.56" y="38.1" size="1.778" layer="27" font="vector" ratio="12" rot="R180" display="off"/>
-<attribute name="MANUFACTURER" value="MAXIM INTEGRATED" x="35.56" y="38.1" size="1.778" layer="27" font="vector" ratio="12" rot="R180" display="off"/>
-<attribute name="MANUFACTURER_PN" value="MAX17222ELT+T" x="35.56" y="38.1" size="1.778" layer="27" font="vector" ratio="12" rot="R180" display="off"/>
+<element name="U1" library="chips" package="UDFN-6-MAXIM" value="MAX17222" x="26.289" y="49.53" rot="R180">
+<attribute name="DIGIKEY" value="MAX17222ELT+TCT-ND" x="26.289" y="49.53" size="1.778" layer="27" font="vector" ratio="12" rot="R180" display="off"/>
+<attribute name="MANUFACTURER" value="MAXIM INTEGRATED" x="26.289" y="49.53" size="1.778" layer="27" font="vector" ratio="12" rot="R180" display="off"/>
+<attribute name="MANUFACTURER_PN" value="MAX17222ELT+T" x="26.289" y="49.53" size="1.778" layer="27" font="vector" ratio="12" rot="R180" display="off"/>
 </element>
-<element name="U2" library="chips" package="UDFN-6-MAXIM" value="MAX17222" x="35.56" y="20.32" rot="R180">
-<attribute name="DIGIKEY" value="MAX17222ELT+TCT-ND" x="35.56" y="20.32" size="1.778" layer="27" font="vector" ratio="12" rot="R180" display="off"/>
-<attribute name="MANUFACTURER" value="MAXIM INTEGRATED" x="35.56" y="20.32" size="1.778" layer="27" font="vector" ratio="12" rot="R180" display="off"/>
-<attribute name="MANUFACTURER_PN" value="MAX17222ELT+T" x="35.56" y="20.32" size="1.778" layer="27" font="vector" ratio="12" rot="R180" display="off"/>
+<element name="U2" library="chips" package="UDFN-6-MAXIM" value="MAX17222" x="26.924" y="16.002" rot="R180">
+<attribute name="DIGIKEY" value="MAX17222ELT+TCT-ND" x="26.924" y="16.002" size="1.778" layer="27" font="vector" ratio="12" rot="R180" display="off"/>
+<attribute name="MANUFACTURER" value="MAXIM INTEGRATED" x="26.924" y="16.002" size="1.778" layer="27" font="vector" ratio="12" rot="R180" display="off"/>
+<attribute name="MANUFACTURER_PN" value="MAX17222ELT+T" x="26.924" y="16.002" size="1.778" layer="27" font="vector" ratio="12" rot="R180" display="off"/>
 </element>
-<element name="C1" library="passives" package="0603_CAP" value="10uF" x="31.623" y="35.052" rot="R270"/>
-<element name="C2" library="passives" package="0603_CAP" value="10uF" x="39.116" y="35.052" rot="R270"/>
-<element name="C3" library="passives" package="0603_CAP" value="10uF" x="32.512" y="17.526" rot="R270"/>
-<element name="C4" library="passives" package="0603_CAP" value="10uF" x="38.354" y="17.526" rot="R270"/>
-<element name="R1" library="passives" package="0603-RES" value="80.6k" x="35.56" y="35.052" rot="R90"/>
-<element name="R2" library="passives" package="0603-RES" value="80.6k" x="35.56" y="17.526" rot="R90"/>
-<element name="L1" library="passives" package="IHL-2525CZ" value="1uH" x="35.814" y="43.815"/>
-<element name="L2" library="passives" package="DFE322512C" value="1uH" x="35.56" y="24.638" smashed="yes" rot="R180">
-<attribute name="NAME" x="34.798" y="26.146" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
-<attribute name="VALUE" x="35.56" y="26.448" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center"/>
+<element name="C1" library="passives" package="0603_CAP" value="10uF" x="23.114" y="46.482" rot="R270"/>
+<element name="C2" library="passives" package="0603_CAP" value="10uF" x="29.083" y="46.482" rot="R270"/>
+<element name="C3" library="passives" package="0603_CAP" value="10uF" x="23.876" y="13.208" rot="R270"/>
+<element name="C4" library="passives" package="0603_CAP" value="10uF" x="29.718" y="13.208" rot="R270"/>
+<element name="R1" library="passives" package="0603-RES" value="80.6k" x="26.289" y="46.482" rot="R90"/>
+<element name="R2" library="passives" package="0603-RES" value="80.6k" x="26.924" y="13.208" rot="R90"/>
+<element name="L1" library="passives" package="IHL-2525CZ" value="1uH" x="26.543" y="55.245"/>
+<element name="L2" library="passives" package="DFE322512C" value="1uH" x="26.924" y="20.32" smashed="yes" rot="R180">
+<attribute name="NAME" x="26.162" y="21.828" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
+<attribute name="VALUE" x="26.924" y="22.13" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="S1" library="switches" package="CL-SB-12A" value="CL-SB-12X" x="22.86" y="33.02" smashed="yes" rot="R90">
-<attribute name="DIGIKEY" value="563-1314-1-ND" x="22.86" y="33.02" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
-<attribute name="NAME" x="22.86" y="38.02" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="center-left"/>
+<element name="S1" library="switches" package="CL-SB-12A" value="CL-SB-12X" x="17.653" y="44.323" smashed="yes" rot="R90">
+<attribute name="DIGIKEY" value="563-1314-1-ND" x="17.653" y="44.323" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
+<attribute name="NAME" x="17.653" y="49.323" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="center-left"/>
 </element>
-<element name="S2" library="switches" package="CL-SB-12A" value="CL-SB-12X" x="26.924" y="15.24" smashed="yes" rot="R90">
-<attribute name="DIGIKEY" value="563-1314-1-ND" x="26.924" y="15.24" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
-<attribute name="NAME" x="26.924" y="20.24" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="center-left"/>
+<element name="S2" library="switches" package="CL-SB-12A" value="CL-SB-12X" x="18.288" y="10.922" smashed="yes" rot="R90">
+<attribute name="DIGIKEY" value="563-1314-1-ND" x="18.288" y="10.922" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
+<attribute name="NAME" x="18.288" y="15.922" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="center-left"/>
 </element>
-<element name="JP1" library="SparkFun-Connectors" package="SCREWTERMINAL-3.5MM-2" value="" x="54.864" y="37.338" rot="R90"/>
-<element name="JP2" library="SparkFun-Connectors" package="SCREWTERMINAL-3.5MM-2" value="" x="54.61" y="19.812" rot="R90"/>
-<element name="TP1" library="headers" package="TESTPOINT_0.112IN" value="TEST_POINT_0.112IN" x="53.34" y="10.16">
-<attribute name="NEWARK" value="40F6015" x="53.34" y="10.16" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
+<element name="JP1" library="SparkFun-Connectors" package="SCREWTERMINAL-3.5MM-2" value="" x="47.244" y="37.592" rot="R90"/>
+<element name="JP2" library="SparkFun-Connectors" package="SCREWTERMINAL-3.5MM-2" value="" x="47.244" y="3.302" rot="R90"/>
+<element name="TP1" library="headers" package="TESTPOINT_0.112IN" value="TEST_POINT_0.112IN" x="47.244" y="18.034">
+<attribute name="NEWARK" value="40F6015" x="47.244" y="18.034" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
 </element>
-<element name="TP2" library="headers" package="TESTPOINT_0.112IN" value="TEST_POINT_0.112IN" x="60.96" y="10.16">
-<attribute name="NEWARK" value="40F6015" x="60.96" y="10.16" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
+<element name="TP2" library="headers" package="TESTPOINT_0.112IN" value="TEST_POINT_0.112IN" x="47.244" y="52.578">
+<attribute name="NEWARK" value="40F6015" x="47.244" y="52.578" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
 </element>
-<element name="TP3" library="headers" package="TESTPOINT_0.040IN" value="TEST_POINT_0.040IN" x="10.16" y="10.16" smashed="yes">
-<attribute name="DIGIKEY" value="5001K-ND" x="10.16" y="10.16" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
-<attribute name="NAME" x="10.16" y="11.684" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
+<element name="TP3" library="headers" package="TESTPOINT_0.040IN" value="TEST_POINT_0.040IN" x="47.244" y="58.674" smashed="yes">
+<attribute name="DIGIKEY" value="5001K-ND" x="47.244" y="58.674" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
+<attribute name="NAME" x="47.244" y="60.198" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="TP4" library="headers" package="TESTPOINT_0.040IN" value="TEST_POINT_0.040IN" x="10.16" y="20.32" smashed="yes">
-<attribute name="DIGIKEY" value="5001K-ND" x="10.16" y="20.32" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
-<attribute name="NAME" x="10.16" y="21.844" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
+<element name="TP4" library="headers" package="TESTPOINT_0.040IN" value="TEST_POINT_0.040IN" x="47.244" y="23.622" smashed="yes">
+<attribute name="DIGIKEY" value="5001K-ND" x="47.244" y="23.622" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
+<attribute name="NAME" x="47.244" y="25.146" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="TP5" library="headers" package="TESTPOINT_0.040IN" value="TEST_POINT_0.040IN" x="10.16" y="15.24" smashed="yes">
-<attribute name="DIGIKEY" value="5001K-ND" x="10.16" y="15.24" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
-<attribute name="NAME" x="10.16" y="16.764" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
+<element name="TP5" library="headers" package="TESTPOINT_0.040IN" value="TEST_POINT_0.040IN" x="3.556" y="44.196" smashed="yes">
+<attribute name="DIGIKEY" value="5001K-ND" x="3.556" y="44.196" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
+<attribute name="NAME" x="3.556" y="45.72" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="TP6" library="headers" package="TESTPOINT_0.040IN" value="TEST_POINT_0.040IN" x="10.16" y="25.4" smashed="yes">
-<attribute name="DIGIKEY" value="5001K-ND" x="10.16" y="25.4" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
-<attribute name="NAME" x="10.16" y="26.924" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
+<element name="TP6" library="headers" package="TESTPOINT_0.040IN" value="TEST_POINT_0.040IN" x="3.556" y="23.114" smashed="yes">
+<attribute name="DIGIKEY" value="5001K-ND" x="3.556" y="23.114" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
+<attribute name="NAME" x="3.556" y="24.638" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
+</element>
+<element name="TP7" library="headers" package="TESTPOINT_0.040IN" value="TEST_POINT_0.040IN" x="3.556" y="18.542">
+<attribute name="DIGIKEY" value="5001K-ND" x="3.556" y="18.542" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
+</element>
+<element name="TP8" library="headers" package="TESTPOINT_0.040IN" value="TEST_POINT_0.040IN" x="3.556" y="52.324">
+<attribute name="DIGIKEY" value="5001K-ND" x="3.556" y="52.324" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
+</element>
+<element name="TP9" library="headers" package="TESTPOINT_0.040IN" value="TEST_POINT_0.040IN" x="3.556" y="11.684">
+<attribute name="DIGIKEY" value="5001K-ND" x="3.556" y="11.684" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
+</element>
+<element name="TP10" library="headers" package="TESTPOINT_0.040IN" value="TEST_POINT_0.040IN" x="3.556" y="56.896">
+<attribute name="DIGIKEY" value="5001K-ND" x="3.556" y="56.896" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
+</element>
+<element name="TP11" library="headers" package="TESTPOINT_0.112IN" value="TEST_POINT_0.112IN" x="3.556" y="38.1">
+<attribute name="NEWARK" value="40F6015" x="3.556" y="38.1" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
+</element>
+<element name="TP12" library="headers" package="TESTPOINT_0.112IN" value="TEST_POINT_0.112IN" x="3.556" y="5.588">
+<attribute name="NEWARK" value="40F6015" x="3.556" y="5.588" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
+</element>
+<element name="TP13" library="headers" package="TESTPOINT_0.040IN" value="TEST_POINT_0.040IN" x="47.244" y="46.482">
+<attribute name="DIGIKEY" value="5001K-ND" x="47.244" y="46.482" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
+</element>
+<element name="TP14" library="headers" package="TESTPOINT_0.040IN" value="TEST_POINT_0.040IN" x="47.244" y="12.192">
+<attribute name="DIGIKEY" value="5001K-ND" x="47.244" y="12.192" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
 </element>
 </elements>
 <signals>
@@ -536,10 +561,25 @@ design rules under a new name.
 <contactref element="U1" pad="5"/>
 <contactref element="L1" pad="P$1"/>
 <contactref element="TP5" pad="TESTPOINT"/>
-<wire x1="34.645" y1="38.1" x2="32.893" y2="43.815" width="0" layer="19" extent="1-1"/>
-<wire x1="31.623" y1="35.702" x2="34.645" y2="38.1" width="0" layer="19" extent="1-1"/>
-<wire x1="24.26" y1="35.52" x2="31.623" y2="35.702" width="0" layer="19" extent="1-1"/>
-<wire x1="10.16" y1="15.24" x2="24.26" y2="35.52" width="0" layer="19" extent="1-1"/>
+<contactref element="TP10" pad="TESTPOINT"/>
+<polygon width="0.2032" layer="1" isolate="0.2032" thermals="no">
+<vertex x="25.654" y="49.276"/>
+<vertex x="24.384" y="49.276"/>
+<vertex x="24.384" y="46.99"/>
+<vertex x="22.098" y="46.99"/>
+<vertex x="22.098" y="57.15"/>
+<vertex x="24.384" y="57.15"/>
+<vertex x="24.384" y="49.784"/>
+<vertex x="25.654" y="49.784"/>
+</polygon>
+<wire x1="19.053" y1="46.823" x2="19.362" y2="47.132" width="0.2032" layer="1"/>
+<wire x1="19.362" y1="47.132" x2="23.114" y2="47.132" width="0.2032" layer="1"/>
+<wire x1="8.89" y1="56.896" x2="3.556" y2="56.896" width="2.032" layer="1"/>
+<wire x1="8.89" y1="56.896" x2="21.082" y2="56.896" width="2.032" layer="1"/>
+<wire x1="21.082" y1="56.896" x2="23.368" y2="54.61" width="2.032" layer="1"/>
+<wire x1="23.368" y1="54.61" x2="23.368" y2="54.102" width="2.032" layer="1"/>
+<wire x1="3.556" y1="44.196" x2="8.89" y2="49.53" width="2.032" layer="1"/>
+<wire x1="8.89" y1="49.53" x2="8.89" y2="56.896" width="2.032" layer="1"/>
 </signal>
 <signal name="GND">
 <contactref element="C1" pad="2"/>
@@ -552,49 +592,77 @@ design rules under a new name.
 <contactref element="R2" pad="1"/>
 <contactref element="U2" pad="3"/>
 <contactref element="C4" pad="2"/>
-<contactref element="JP2" pad="2"/>
-<contactref element="JP1" pad="2"/>
 <contactref element="TP1" pad="1"/>
 <contactref element="TP2" pad="1"/>
 <polygon width="0.254" layer="16" isolate="0.3048" rank="2">
-<vertex x="7.62" y="7.62"/>
-<vertex x="7.62" y="55.88"/>
-<vertex x="66.04" y="55.88"/>
-<vertex x="66.04" y="7.62"/>
+<vertex x="-0.254" y="-0.127"/>
+<vertex x="-0.254" y="63.627"/>
+<vertex x="51.181" y="63.627"/>
+<vertex x="51.054" y="-0.127"/>
 </polygon>
 <polygon width="0.254" layer="1" isolate="0.3048" rank="2">
-<vertex x="7.62" y="15.24"/>
-<vertex x="7.62" y="55.88"/>
-<vertex x="66.04" y="55.88"/>
-<vertex x="66.04" y="7.62"/>
-<vertex x="7.62" y="7.62"/>
+<vertex x="-0.254" y="-0.127"/>
+<vertex x="0" y="63.5"/>
+<vertex x="51.308" y="63.373"/>
+<vertex x="51.054" y="-0.127"/>
 </polygon>
-<via x="34.798" y="22.352" extent="1-16" drill="0.762"/>
-<via x="36.322" y="22.352" extent="1-16" drill="0.762"/>
+<via x="26.162" y="18.034" extent="1-16" drill="0.762"/>
+<via x="27.686" y="18.034" extent="1-16" drill="0.762"/>
+<contactref element="JP2" pad="1"/>
+<contactref element="JP1" pad="1"/>
+<contactref element="TP7" pad="TESTPOINT"/>
+<contactref element="TP8" pad="TESTPOINT"/>
+<contactref element="TP11" pad="1"/>
+<contactref element="TP12" pad="1"/>
+<via x="25.4" y="51.562" extent="1-16" drill="0.762"/>
+<via x="27.178" y="51.562" extent="1-16" drill="0.762"/>
 </signal>
 <signal name="N$2">
 <contactref element="S1" pad="2"/>
 <contactref element="U1" pad="6"/>
-<wire x1="21.46" y1="33.02" x2="34.645" y2="37.45" width="0" layer="19" extent="1-1"/>
+<wire x1="16.253" y1="44.323" x2="16.38" y2="44.45" width="0.2032" layer="1"/>
+<wire x1="16.38" y1="44.45" x2="23.622" y2="44.45" width="0.2032" layer="1"/>
+<wire x1="23.622" y1="44.45" x2="25.374" y2="46.202" width="0.2032" layer="1"/>
+<wire x1="25.374" y1="46.202" x2="25.374" y2="48.88" width="0.2032" layer="1"/>
 </signal>
 <signal name="SW1">
 <contactref element="L1" pad="P$2"/>
 <contactref element="U1" pad="2"/>
 <contactref element="TP3" pad="TESTPOINT"/>
-<wire x1="36.475" y1="38.1" x2="38.735" y2="43.815" width="0" layer="19" extent="1-1"/>
-<wire x1="10.16" y1="10.16" x2="36.475" y2="38.1" width="0" layer="19" extent="1-1"/>
+<polygon width="0.2032" layer="1" isolate="0.2032" thermals="no">
+<vertex x="26.924" y="49.276"/>
+<vertex x="30.734" y="49.276"/>
+<vertex x="30.734" y="57.15"/>
+<vertex x="28.194" y="57.15"/>
+<vertex x="28.194" y="49.784"/>
+<vertex x="26.924" y="49.784"/>
+</polygon>
+<wire x1="29.464" y1="55.245" x2="32.893" y2="58.674" width="0.762" layer="1"/>
+<wire x1="32.893" y1="58.674" x2="47.244" y2="58.674" width="0.762" layer="1"/>
 </signal>
 <signal name="VOUT1">
 <contactref element="U1" pad="1"/>
 <contactref element="C2" pad="1"/>
-<contactref element="JP1" pad="1"/>
-<wire x1="39.116" y1="35.702" x2="54.864" y2="37.338" width="0" layer="19" extent="1-1"/>
-<wire x1="36.475" y1="37.45" x2="39.116" y2="35.702" width="0" layer="19" extent="1-1"/>
+<contactref element="JP1" pad="2"/>
+<polygon width="0.2032" layer="1" isolate="0.2032" thermals="no">
+<vertex x="26.924" y="48.006"/>
+<vertex x="26.924" y="48.895"/>
+<vertex x="33.274" y="48.895"/>
+<vertex x="33.274" y="46.99"/>
+<vertex x="27.432" y="46.99"/>
+<vertex x="27.432" y="48.006"/>
+</polygon>
+<contactref element="TP13" pad="TESTPOINT"/>
+<wire x1="47.244" y1="41.092" x2="47.244" y2="46.482" width="2.032" layer="1"/>
+<wire x1="47.244" y1="46.482" x2="45.72" y2="48.006" width="2.032" layer="1"/>
+<wire x1="45.72" y1="48.006" x2="32.512" y2="48.006" width="2.032" layer="1"/>
 </signal>
 <signal name="N$5">
 <contactref element="U1" pad="4"/>
 <contactref element="R1" pad="2"/>
-<wire x1="35.56" y1="35.702" x2="34.645" y2="38.75" width="0" layer="19" extent="1-1"/>
+<wire x1="26.289" y1="47.132" x2="26.289" y2="49.911" width="0.2032" layer="1"/>
+<wire x1="26.02" y1="50.18" x2="25.374" y2="50.18" width="0.2032" layer="1"/>
+<wire x1="26.289" y1="49.911" x2="26.02" y2="50.18" width="0.2032" layer="1"/>
 </signal>
 <signal name="IN2">
 <contactref element="C3" pad="1"/>
@@ -603,67 +671,79 @@ design rules under a new name.
 <contactref element="L2" pad="P$1"/>
 <contactref element="TP6" pad="TESTPOINT"/>
 <polygon width="0.2032" layer="1" isolate="0.3048" thermals="no">
-<vertex x="35.052" y="20.066"/>
-<vertex x="33.782" y="20.066"/>
-<vertex x="33.782" y="17.78"/>
-<vertex x="31.75" y="17.78"/>
-<vertex x="31.75" y="25.908"/>
-<vertex x="34.671" y="25.908"/>
-<vertex x="34.671" y="23.495"/>
-<vertex x="33.782" y="23.495"/>
-<vertex x="33.782" y="20.574"/>
-<vertex x="35.052" y="20.574"/>
+<vertex x="26.416" y="15.748"/>
+<vertex x="25.146" y="15.748"/>
+<vertex x="25.146" y="13.462"/>
+<vertex x="23.114" y="13.462"/>
+<vertex x="23.114" y="21.59"/>
+<vertex x="26.035" y="21.59"/>
+<vertex x="26.035" y="19.177"/>
+<vertex x="25.146" y="19.177"/>
+<vertex x="25.146" y="16.256"/>
+<vertex x="26.416" y="16.256"/>
 </polygon>
-<wire x1="28.324" y1="17.74" x2="31.583" y2="17.74" width="0.2032" layer="1"/>
-<wire x1="31.583" y1="17.74" x2="32.004" y2="18.161" width="0.2032" layer="1"/>
-<wire x1="32.004" y1="18.161" x2="32.497" y2="18.161" width="0.2032" layer="1"/>
-<wire x1="32.497" y1="18.161" x2="32.512" y2="18.176" width="0.2032" layer="1"/>
-<wire x1="28.324" y1="17.74" x2="10.16" y2="25.4" width="0" layer="19" extent="1-1"/>
+<wire x1="19.688" y1="13.422" x2="22.947" y2="13.422" width="0.2032" layer="1"/>
+<wire x1="22.947" y1="13.422" x2="23.368" y2="13.843" width="0.2032" layer="1"/>
+<wire x1="23.368" y1="13.843" x2="23.861" y2="13.843" width="0.2032" layer="1"/>
+<wire x1="23.861" y1="13.843" x2="23.876" y2="13.858" width="0.2032" layer="1"/>
+<contactref element="TP9" pad="TESTPOINT"/>
+<wire x1="8.382" y1="23.114" x2="14.986" y2="23.114" width="2.032" layer="1"/>
+<wire x1="8.382" y1="23.114" x2="3.556" y2="23.114" width="2.032" layer="1"/>
+<wire x1="19.304" y1="23.114" x2="22.098" y2="23.114" width="2.032" layer="1"/>
+<wire x1="22.098" y1="23.114" x2="24.13" y2="21.082" width="2.032" layer="1"/>
+<wire x1="24.13" y1="21.082" x2="24.13" y2="20.32" width="2.032" layer="1"/>
+<wire x1="14.986" y1="23.114" x2="19.304" y2="23.114" width="2.032" layer="1"/>
+<wire x1="3.556" y1="11.684" x2="8.382" y2="16.51" width="2.032" layer="1"/>
+<wire x1="8.382" y1="16.51" x2="8.382" y2="23.114" width="2.032" layer="1"/>
 </signal>
 <signal name="N$7">
 <contactref element="S2" pad="2"/>
 <contactref element="U2" pad="6"/>
-<wire x1="32.893" y1="15.24" x2="34.29" y2="16.637" width="0.2032" layer="1"/>
-<wire x1="34.29" y1="16.637" x2="34.29" y2="19.315" width="0.2032" layer="1"/>
-<wire x1="34.29" y1="19.315" x2="34.645" y2="19.67" width="0.2032" layer="1"/>
-<wire x1="25.524" y1="15.24" x2="32.893" y2="15.24" width="0.2032" layer="1"/>
+<wire x1="24.257" y1="10.922" x2="25.654" y2="12.319" width="0.2032" layer="1"/>
+<wire x1="25.654" y1="12.319" x2="25.654" y2="14.997" width="0.2032" layer="1"/>
+<wire x1="25.654" y1="14.997" x2="26.009" y2="15.352" width="0.2032" layer="1"/>
+<wire x1="16.888" y1="10.922" x2="24.257" y2="10.922" width="0.2032" layer="1"/>
 </signal>
 <signal name="SW2">
 <contactref element="L2" pad="P$2"/>
 <contactref element="U2" pad="2"/>
 <contactref element="TP4" pad="TESTPOINT"/>
 <polygon width="0.2032" layer="1" isolate="0.2032" thermals="no">
-<vertex x="36.068" y="20.066"/>
-<vertex x="36.068" y="20.574"/>
-<vertex x="37.338" y="20.574"/>
-<vertex x="37.338" y="23.495"/>
-<vertex x="36.576" y="23.495"/>
-<vertex x="36.576" y="25.908"/>
-<vertex x="38.1" y="25.908"/>
-<vertex x="38.1" y="20.066"/>
+<vertex x="27.432" y="15.748"/>
+<vertex x="27.432" y="16.256"/>
+<vertex x="28.702" y="16.256"/>
+<vertex x="28.702" y="19.177"/>
+<vertex x="27.94" y="19.177"/>
+<vertex x="27.94" y="21.59"/>
+<vertex x="29.464" y="21.59"/>
+<vertex x="29.464" y="15.748"/>
 </polygon>
-<wire x1="36.475" y1="20.32" x2="10.16" y2="20.32" width="0" layer="19" extent="1-1"/>
+<wire x1="28.149" y1="20.32" x2="31.451" y2="23.622" width="0.762" layer="1"/>
+<wire x1="31.451" y1="23.622" x2="47.244" y2="23.622" width="0.762" layer="1"/>
 </signal>
 <signal name="N$12">
 <contactref element="R2" pad="2"/>
 <contactref element="U2" pad="4"/>
-<wire x1="35.56" y1="18.176" x2="35.56" y2="20.828" width="0.254" layer="1"/>
-<wire x1="35.56" y1="20.828" x2="35.418" y2="20.97" width="0.254" layer="1"/>
-<wire x1="35.418" y1="20.97" x2="34.645" y2="20.97" width="0.254" layer="1"/>
+<wire x1="26.924" y1="13.858" x2="26.924" y2="16.51" width="0.254" layer="1"/>
+<wire x1="26.924" y1="16.51" x2="26.782" y2="16.652" width="0.254" layer="1"/>
+<wire x1="26.782" y1="16.652" x2="26.009" y2="16.652" width="0.254" layer="1"/>
 </signal>
 <signal name="VOUT2">
 <contactref element="U2" pad="1"/>
 <contactref element="C4" pad="1"/>
-<contactref element="JP2" pad="1"/>
 <polygon width="0.2032" layer="1" isolate="0.2032" thermals="no">
-<vertex x="36.068" y="19.685"/>
-<vertex x="36.068" y="19.05"/>
-<vertex x="36.576" y="19.05"/>
-<vertex x="36.576" y="17.78"/>
-<vertex x="41.402" y="17.78"/>
-<vertex x="41.402" y="19.685"/>
+<vertex x="27.432" y="15.367"/>
+<vertex x="27.432" y="14.732"/>
+<vertex x="27.94" y="14.732"/>
+<vertex x="27.94" y="13.462"/>
+<vertex x="32.766" y="13.462"/>
+<vertex x="32.766" y="15.367"/>
 </polygon>
-<wire x1="38.354" y1="18.176" x2="54.61" y2="19.812" width="0" layer="19" extent="1-1"/>
+<contactref element="JP2" pad="2"/>
+<contactref element="TP14" pad="TESTPOINT"/>
+<wire x1="47.244" y1="6.802" x2="47.244" y2="12.192" width="2.032" layer="1"/>
+<wire x1="47.244" y1="12.192" x2="44.958" y2="14.478" width="2.032" layer="1"/>
+<wire x1="44.958" y1="14.478" x2="32.258" y2="14.478" width="2.032" layer="1"/>
 </signal>
 </signals>
 </board>
