@@ -29,16 +29,18 @@ influxdb_config.read_string(config_str)
 config = influxdb_config['global']
 
 # configurations
-begin_time =    '08-01-2016 00:00:00 US/Eastern'
-end_time =      '10-01-2016 00:00:00 US/Eastern'
+begin_time =    '01-01-2016 00:00:00 US/Pacific'
+end_time =      '07-01-2017 00:00:00 US/Pacific'
 
 tag_list = {
-        'location': ['4908', '3941', '3725', '4901'],
+        #'location': ['4908', '3941', '3725', '3901', '4649', '4941'],
         'device_class': ['BLEES'],
-        'device_id': ['c098e530000c', 'c098e530003a', 'c098e5300069', 'c098e5300065', 'c098e530007d'],
+        'device_id': [  'c098e530000c', 'c098e530003a', 'c098e530004f',
+                        'c098e5300069', 'c098e5300065', 'c098e530007d',
+                        'c098e5300080'],
         }
-group_list = ['location', 'device_class', 'device_id', 'time(1m) fill(0)']
-select_operation = 'MEAN("value")'
+group_list = ['location', 'device_class', 'device_id']
+select_operation = 'value'
 measurement_list = 'light_lux'
 out_filename = 'raw_data/light'
 generate_csv(config, select_operation, measurement_list, tag_list, group_list, begin_time, end_time, out_filename)
@@ -50,8 +52,8 @@ tag_list = {
                      ],
         'device_class': ['Blink'],
         }
-group_list = ['location', 'device_class', 'device_id', "time(1m) fill(0)"]
-select_operation = 'MODE(value)'
+group_list = ['location', 'device_class', 'device_id']
+select_operation = 'value'
 measurement_list = 'motion_last_minute'
 out_filename = 'raw_data/motion'
 generate_csv(config, select_operation, measurement_list, tag_list, group_list, begin_time, end_time, out_filename)
