@@ -3004,6 +3004,8 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <part name="TP12" library="headers" deviceset="TEST_POINT_0.112IN" device=""/>
 <part name="TP13" library="headers" deviceset="TEST_POINT_0.040IN" device=""/>
 <part name="TP14" library="headers" deviceset="TEST_POINT_0.040IN" device=""/>
+<part name="R3" library="passives" deviceset="RESISTOR" device="0603_RES" value="33M"/>
+<part name="R4" library="passives" deviceset="RESISTOR" device="0603_RES" value="33M"/>
 </parts>
 <sheets>
 <sheet>
@@ -3046,6 +3048,8 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <instance part="TP12" gate="G$1" x="149.86" y="48.26" rot="R90"/>
 <instance part="TP13" gate="G$1" x="154.94" y="160.02" rot="R270"/>
 <instance part="TP14" gate="G$1" x="152.4" y="93.98" rot="R270"/>
+<instance part="R3" gate="G$1" x="101.6" y="152.4" rot="R180"/>
+<instance part="R4" gate="G$1" x="101.6" y="83.82" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -3155,13 +3159,6 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <junction x="149.86" y="50.8"/>
 </segment>
 </net>
-<net name="N$2" class="0">
-<segment>
-<pinref part="S1" gate="G$1" pin="2"/>
-<pinref part="U1" gate="G$1" pin="EN"/>
-<wire x1="96.52" y1="152.4" x2="109.22" y2="152.4" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="SW1" class="0">
 <segment>
 <pinref part="L1" gate="G$1" pin="2"/>
@@ -3230,13 +3227,6 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <junction x="68.58" y="91.44"/>
 </segment>
 </net>
-<net name="N$7" class="0">
-<segment>
-<pinref part="S2" gate="G$1" pin="2"/>
-<pinref part="U2" gate="G$1" pin="EN"/>
-<wire x1="96.52" y1="83.82" x2="109.22" y2="83.82" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="SW2" class="0">
 <segment>
 <pinref part="L2" gate="G$1" pin="2"/>
@@ -3276,6 +3266,34 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <wire x1="160.02" y1="71.12" x2="165.1" y2="71.12" width="0.1524" layer="91"/>
 <pinref part="TP14" gate="G$1" pin="TESTPOINT"/>
 <junction x="152.4" y="91.44"/>
+</segment>
+</net>
+<net name="N$1" class="0">
+<segment>
+<pinref part="S1" gate="G$1" pin="2"/>
+<pinref part="R3" gate="G$1" pin="2"/>
+<wire x1="96.52" y1="152.4" x2="99.06" y2="152.4" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$2" class="0">
+<segment>
+<pinref part="R3" gate="G$1" pin="1"/>
+<pinref part="U1" gate="G$1" pin="EN"/>
+<wire x1="106.68" y1="152.4" x2="109.22" y2="152.4" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$3" class="0">
+<segment>
+<pinref part="S2" gate="G$1" pin="2"/>
+<pinref part="R4" gate="G$1" pin="2"/>
+<wire x1="96.52" y1="83.82" x2="99.06" y2="83.82" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$4" class="0">
+<segment>
+<pinref part="R4" gate="G$1" pin="1"/>
+<pinref part="U2" gate="G$1" pin="EN"/>
+<wire x1="106.68" y1="83.82" x2="109.22" y2="83.82" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
