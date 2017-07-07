@@ -2233,78 +2233,56 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <library name="switches">
 <description>&lt;b&gt;LAB11&lt;/b&gt; - Switches.</description>
 <packages>
-<package name="CL-SB-12A">
-<smd name="1" x="-2.5" y="-1.4" dx="1.2" dy="1.6" layer="1"/>
-<smd name="2" x="0" y="1.4" dx="1.2" dy="1.6" layer="1"/>
-<smd name="3" x="2.5" y="-1.4" dx="1.2" dy="1.6" layer="1"/>
-<hole x="-3.4" y="0" drill="0.9"/>
-<hole x="3.4" y="0" drill="0.9"/>
-<wire x1="-4.25" y1="1.75" x2="4.25" y2="1.75" width="0.127" layer="21"/>
-<wire x1="4.25" y1="1.75" x2="4.25" y2="-1.75" width="0.127" layer="21"/>
-<wire x1="4.25" y1="-1.75" x2="-4.25" y2="-1.75" width="0.127" layer="21"/>
-<wire x1="-4.25" y1="-1.75" x2="-4.25" y2="1.75" width="0.127" layer="21"/>
-<text x="5" y="0" size="1.016" layer="25" font="vector" ratio="12" align="center-left">&gt;NAME</text>
-<text x="5" y="-2.5" size="1.016" layer="27" font="vector" ratio="12" align="center-left">&gt;VALUE</text>
-<text x="-1.5" y="2.5" size="1.27" layer="51" font="vector" ratio="12" align="bottom-center">A</text>
-<text x="1.5" y="2.5" size="1.27" layer="51" font="vector" ratio="12" align="bottom-center">B</text>
-</package>
-<package name="CL-SB-12B">
-<smd name="1" x="-2.5" y="-2.1" dx="1.2" dy="1.6" layer="1"/>
-<smd name="2" x="0" y="2.1" dx="1.2" dy="1.6" layer="1"/>
-<smd name="3" x="2.5" y="-2.1" dx="1.2" dy="1.6" layer="1"/>
-<hole x="-3.4" y="0" drill="0.9"/>
-<hole x="3.4" y="0" drill="0.9"/>
-<wire x1="-4.25" y1="1.75" x2="4.25" y2="1.75" width="0.127" layer="21"/>
-<wire x1="4.25" y1="1.75" x2="4.25" y2="-1.75" width="0.127" layer="21"/>
-<wire x1="4.25" y1="-1.75" x2="-4.25" y2="-1.75" width="0.127" layer="21"/>
-<wire x1="-4.25" y1="-1.75" x2="-4.25" y2="1.75" width="0.127" layer="21"/>
-<text x="5" y="0" size="1.016" layer="25" font="vector" ratio="12" align="center-left">&gt;NAME</text>
-<text x="5" y="-2.5" size="1.016" layer="27" font="vector" ratio="12" align="center-left">&gt;VALUE</text>
-<text x="-1.5" y="2.5" size="1.27" layer="51" font="vector" ratio="12" align="bottom-center">A</text>
-<text x="1.5" y="2.5" size="1.27" layer="51" font="vector" ratio="12" align="bottom-center">B</text>
+<package name="TE_SSA12/SPDT">
+<description>SPDT</description>
+<wire x1="-4.3942" y1="1.7018" x2="4.3942" y2="1.7018" width="0.127" layer="21"/>
+<wire x1="4.3942" y1="1.7018" x2="4.3942" y2="-1.7018" width="0.127" layer="21"/>
+<wire x1="4.3942" y1="-1.7018" x2="-4.3942" y2="-1.7018" width="0.127" layer="21"/>
+<wire x1="-4.3942" y1="-1.7018" x2="-4.3942" y2="1.7018" width="0.127" layer="21"/>
+<wire x1="-2.54" y1="0" x2="-2.54" y2="1.27" width="0.4064" layer="51"/>
+<wire x1="-2.54" y1="1.27" x2="0" y2="1.27" width="0.4064" layer="51"/>
+<wire x1="0" y1="1.27" x2="0" y2="0" width="0.4064" layer="51"/>
+<pad name="1" x="-2.4892" y="0" drill="1.0922" diameter="1.9304"/>
+<pad name="2" x="2.4892" y="0" drill="1.0922" diameter="1.9304"/>
+<pad name="IN" x="0" y="0" drill="1.0922" diameter="1.9304"/>
+<text x="-3.81" y="0" size="1.016" layer="21" font="vector" ratio="12" align="center">1</text>
+<text x="4.064" y="0" size="1.016" layer="21" font="vector" ratio="12" align="center">2</text>
+<text x="0" y="2.54" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
+<text x="0" y="-3.175" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center">&gt;VALUE</text>
 </package>
 </packages>
 <symbols>
-<symbol name="SPDT">
+<symbol name="SPDT-1">
 <circle x="0" y="0" radius="0.762" width="0.254" layer="94"/>
 <circle x="5.08" y="2.54" radius="0.762" width="0.254" layer="94"/>
 <circle x="5.08" y="-2.54" radius="0.762" width="0.254" layer="94"/>
 <wire x1="0" y1="0" x2="4.572" y2="4.064" width="0.254" layer="94"/>
-<pin name="2" x="-2.54" y="0" visible="off" length="short"/>
-<pin name="1" x="7.62" y="2.54" visible="off" length="short" rot="R180"/>
-<pin name="3" x="7.62" y="-2.54" visible="off" length="short" rot="R180"/>
+<pin name="A" x="7.62" y="2.54" visible="off" length="short" rot="R180"/>
+<pin name="B" x="7.62" y="-2.54" visible="off" length="short" rot="R180"/>
+<pin name="IN" x="-2.54" y="0" visible="off" length="short"/>
 <text x="6.604" y="2.794" size="1.016" layer="94" align="bottom-center">A</text>
 <text x="6.604" y="-2.286" size="1.016" layer="94" align="bottom-center">B</text>
-<text x="-2.54" y="5.08" size="1.27" layer="95">&gt;NAME</text>
+<text x="-2.54" y="-7.62" size="1.27" layer="95">&gt;NAME</text>
+<text x="-2.54" y="-10.16" size="1.27" layer="96">&gt;VALUE</text>
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="CL-SB-12X" prefix="S">
-<description>SWITCH SLIDE SPDT 0.2A JLEAD</description>
+<deviceset name="TE_SSA12/SPDT" prefix="S">
+<description>SWITCH SLIDE SPDT 2POS SSA SER</description>
 <gates>
-<gate name="G$1" symbol="SPDT" x="0" y="0"/>
+<gate name="G$1" symbol="SPDT-1" x="0" y="0"/>
 </gates>
 <devices>
-<device name="" package="CL-SB-12A">
+<device name="" package="TE_SSA12/SPDT">
 <connects>
-<connect gate="G$1" pin="1" pad="1"/>
-<connect gate="G$1" pin="2" pad="2"/>
-<connect gate="G$1" pin="3" pad="3"/>
+<connect gate="G$1" pin="A" pad="1"/>
+<connect gate="G$1" pin="B" pad="2"/>
+<connect gate="G$1" pin="IN" pad="IN"/>
 </connects>
 <technologies>
 <technology name="">
-<attribute name="DIGIKEY" value="563-1314-1-ND"/>
+<attribute name="DIGIKEY" value="450-1602-ND" constant="no"/>
 </technology>
-</technologies>
-</device>
-<device name="12B" package="CL-SB-12B">
-<connects>
-<connect gate="G$1" pin="1" pad="1"/>
-<connect gate="G$1" pin="2" pad="2"/>
-<connect gate="G$1" pin="3" pad="3"/>
-</connects>
-<technologies>
-<technology name=""/>
 </technologies>
 </device>
 </devices>
@@ -2984,8 +2962,6 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <part name="GND4" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="L1" library="passives" deviceset="INDUCTOR" device="IHL2525CZ" value="1uH"/>
 <part name="L2" library="passives" deviceset="INDUCTOR" device="DFE322512C" value="1uH"/>
-<part name="S1" library="switches" deviceset="CL-SB-12X" device=""/>
-<part name="S2" library="switches" deviceset="CL-SB-12X" device=""/>
 <part name="GND5" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND6" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="JP1" library="SparkFun-Connectors" deviceset="M02" device="3.5MM"/>
@@ -3006,6 +2982,8 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <part name="TP14" library="headers" deviceset="TEST_POINT_0.040IN" device=""/>
 <part name="R3" library="passives" deviceset="RESISTOR" device="0603_RES" value="33M"/>
 <part name="R4" library="passives" deviceset="RESISTOR" device="0603_RES" value="33M"/>
+<part name="S3" library="switches" deviceset="TE_SSA12/SPDT" device=""/>
+<part name="S4" library="switches" deviceset="TE_SSA12/SPDT" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -3028,8 +3006,6 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <instance part="GND4" gate="1" x="132.08" y="45.72"/>
 <instance part="L1" gate="G$1" x="109.22" y="165.1" rot="R90"/>
 <instance part="L2" gate="G$1" x="111.76" y="96.52" rot="R90"/>
-<instance part="S1" gate="G$1" x="93.98" y="152.4" rot="R180"/>
-<instance part="S2" gate="G$1" x="93.98" y="83.82" rot="R180"/>
 <instance part="GND5" gate="1" x="73.66" y="132.08"/>
 <instance part="GND6" gate="1" x="73.66" y="63.5"/>
 <instance part="JP1" gate="G$1" x="172.72" y="137.16" rot="MR0"/>
@@ -3050,6 +3026,8 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <instance part="TP14" gate="G$1" x="152.4" y="93.98" rot="R270"/>
 <instance part="R3" gate="G$1" x="101.6" y="152.4" rot="R180"/>
 <instance part="R4" gate="G$1" x="101.6" y="83.82" rot="R180"/>
+<instance part="S3" gate="G$1" x="93.98" y="152.4" rot="R180"/>
+<instance part="S4" gate="G$1" x="93.98" y="83.82" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -3065,7 +3043,6 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <wire x1="63.5" y1="157.48" x2="55.88" y2="157.48" width="0.1524" layer="91"/>
 <wire x1="73.66" y1="149.86" x2="73.66" y2="157.48" width="0.1524" layer="91"/>
 <junction x="73.66" y="157.48"/>
-<pinref part="S1" gate="G$1" pin="3"/>
 <wire x1="86.36" y1="154.94" x2="86.36" y2="157.48" width="0.1524" layer="91"/>
 <junction x="86.36" y="157.48"/>
 <pinref part="U1" gate="G$1" pin="IN"/>
@@ -3078,6 +3055,7 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <junction x="63.5" y="157.48"/>
 <pinref part="TP10" gate="G$1" pin="TESTPOINT"/>
 <junction x="68.58" y="157.48"/>
+<pinref part="S3" gate="G$1" pin="B"/>
 </segment>
 </net>
 <net name="GND" class="0">
@@ -3085,11 +3063,11 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <pinref part="GND5" gate="1" pin="GND"/>
 <pinref part="C1" gate="G$1" pin="2"/>
 <wire x1="73.66" y1="134.62" x2="73.66" y2="139.7" width="0.1524" layer="91"/>
-<pinref part="S1" gate="G$1" pin="1"/>
 <wire x1="73.66" y1="139.7" x2="73.66" y2="142.24" width="0.1524" layer="91"/>
 <wire x1="86.36" y1="149.86" x2="86.36" y2="139.7" width="0.1524" layer="91"/>
 <wire x1="86.36" y1="139.7" x2="73.66" y2="139.7" width="0.1524" layer="91"/>
 <junction x="73.66" y="139.7"/>
+<pinref part="S3" gate="G$1" pin="A"/>
 </segment>
 <segment>
 <pinref part="R1" gate="G$1" pin="1"/>
@@ -3120,7 +3098,6 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <junction x="149.86" y="119.38"/>
 </segment>
 <segment>
-<pinref part="S2" gate="G$1" pin="1"/>
 <wire x1="86.36" y1="81.28" x2="83.82" y2="81.28" width="0.1524" layer="91"/>
 <wire x1="83.82" y1="81.28" x2="83.82" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="83.82" y1="68.58" x2="73.66" y2="68.58" width="0.1524" layer="91"/>
@@ -3129,6 +3106,7 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <pinref part="C3" gate="G$1" pin="2"/>
 <wire x1="73.66" y1="68.58" x2="73.66" y2="73.66" width="0.1524" layer="91"/>
 <junction x="73.66" y="68.58"/>
+<pinref part="S4" gate="G$1" pin="A"/>
 </segment>
 <segment>
 <pinref part="R2" gate="G$1" pin="1"/>
@@ -3207,7 +3185,6 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <pinref part="U2" gate="G$1" pin="IN"/>
 <wire x1="116.84" y1="83.82" x2="116.84" y2="91.44" width="0.1524" layer="91"/>
 <wire x1="116.84" y1="91.44" x2="104.14" y2="91.44" width="0.1524" layer="91"/>
-<pinref part="S2" gate="G$1" pin="3"/>
 <wire x1="104.14" y1="91.44" x2="83.82" y2="91.44" width="0.1524" layer="91"/>
 <wire x1="83.82" y1="91.44" x2="73.66" y2="91.44" width="0.1524" layer="91"/>
 <wire x1="86.36" y1="86.36" x2="83.82" y2="86.36" width="0.1524" layer="91"/>
@@ -3225,6 +3202,7 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 <junction x="63.5" y="91.44"/>
 <pinref part="TP9" gate="G$1" pin="TESTPOINT"/>
 <junction x="68.58" y="91.44"/>
+<pinref part="S4" gate="G$1" pin="B"/>
 </segment>
 </net>
 <net name="SW2" class="0">
@@ -3270,9 +3248,9 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 </net>
 <net name="N$1" class="0">
 <segment>
-<pinref part="S1" gate="G$1" pin="2"/>
 <pinref part="R3" gate="G$1" pin="2"/>
 <wire x1="96.52" y1="152.4" x2="99.06" y2="152.4" width="0.1524" layer="91"/>
+<pinref part="S3" gate="G$1" pin="IN"/>
 </segment>
 </net>
 <net name="N$2" class="0">
@@ -3284,9 +3262,9 @@ Standard 2-pin 0.1" header. Use with straight break away headers (SKU : PRT-0011
 </net>
 <net name="N$3" class="0">
 <segment>
-<pinref part="S2" gate="G$1" pin="2"/>
 <pinref part="R4" gate="G$1" pin="2"/>
 <wire x1="96.52" y1="83.82" x2="99.06" y2="83.82" width="0.1524" layer="91"/>
+<pinref part="S4" gate="G$1" pin="IN"/>
 </segment>
 </net>
 <net name="N$4" class="0">
