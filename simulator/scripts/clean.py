@@ -4,6 +4,8 @@ import os
 import sys
 import numpy as np
 from multiprocessing import Pool
+from datetime import datetime
+import arrow
 
 data_dir = 'raw_data/'
 out_dir = 'clean_data/'
@@ -37,30 +39,26 @@ def clean_and_save(times, data, fname):
     time_spans = np.split(times, ind)
     data_spans = np.split(data, ind)
 
-    clean_time_spans = []
-    clean_data_spans = []
     for light_data, time_span in zip(data_spans, time_spans):
         # Fill in or average duplicates in uncleaned data
         # if multiple data points represent the same minute, average them
         # if a minute's data point is missing, use the previous minutes value
-        # if we aren't looking at a day or more of data, skip it
-        if time_span[-1] - time_span[0] < np.timedelta64(3, 'D'): continue
+        # if we aren't looking at several days or more of data, skip it
+        if time_span[-1] - time_span[0] < np.timedelta64(4, 'D'): continue
         minutes = np.arange(time_span[0], time_span[-1], dtype='datetime64[m]')
-        clean_data = np.ndarray(minutes.shape)
+        clean_data = np.ndarray((minutes.shape[0], 2))
         for i, minute in enumerate(minutes):
+            clean_data[i, 0] = arrow.get(minute.astype(datetime)).timestamp
             match = light_data[time_span == minute]
             if match.shape[0] > 1:
-                clean_data[i] = np.mean(match)
+                clean_data[i,1] = np.mean(match)
             elif match.shape[0] == 1:
-                clean_data[i] = match[0]
+                clean_data[i,1] = match[0]
             else:
-                clean_data[i] = clean_data[i-1]
-        clean_time_spans.append(time_spans)
-        clean_data_spans.append(clean_data)
+                clean_data[i,1] = clean_data[i-1, 1]
 
         # create output directory if necessary
-        np.save(out_dir+fname.split('.')[0] + str(minutes[0].astype('datetime64[D]')) + '_times', time_span)
-        np.save(out_dir+fname.split('.')[0] + str(minutes[0].astype('datetime64[D]')) + '_clean', clean_data)
+        np.save(out_dir+fname.split('.')[0] + '_' +str(minutes[0].astype('datetime64[D]')) + '_clean', clean_data)
         print(fname)
         print('saved time span between ' + str(minutes[0]) + ' and ' + str(minutes[-1]) + '\n\tor ' + str((minutes[-1] - minutes[0]).astype('timedelta64[D]')))
         return 0
