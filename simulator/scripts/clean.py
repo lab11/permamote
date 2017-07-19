@@ -13,8 +13,13 @@ out_dir = os.path.dirname(out_dir) + '/'
 if out_dir:
     os.makedirs(out_dir, exist_ok=True)
 
+def decode_to_bool(bytes_to_decode):
+    if bytes_to_decode == b'True': return True
+    else: return False
+
 def process_motion(fname):
-    data =  np.loadtxt(data_dir + fname, dtype = 'bool', delimiter=',', usecols=1, converters = {1:bool})
+    print(fname)
+    data =  np.loadtxt(data_dir + fname, dtype = 'bool', delimiter=',', usecols=1, converters = {1:decode_to_bool})
     times = np.loadtxt(data_dir + fname, dtype = 'datetime64', delimiter=',', usecols=0, converters = {0:np.datetime64})
     times = (times + np.timedelta64(30, 's')).astype('datetime64[m]')
     return clean_and_save(times, data, fname)
@@ -39,7 +44,7 @@ def clean_and_save(times, data, fname):
     time_spans = np.split(times, ind)
     data_spans = np.split(data, ind)
 
-    for light_data, time_span in zip(data_spans, time_spans):
+    for data_span, time_span in zip(data_spans, time_spans):
         # Fill in or average duplicates in uncleaned data
         # if multiple data points represent the same minute, average them
         # if a minute's data point is missing, use the previous minutes value
@@ -49,9 +54,13 @@ def clean_and_save(times, data, fname):
         clean_data = np.ndarray((minutes.shape[0], 2))
         for i, minute in enumerate(minutes):
             clean_data[i, 0] = arrow.get(minute.astype(datetime)).timestamp
-            match = light_data[time_span == minute]
+            match = data_span[time_span == minute]
             if match.shape[0] > 1:
-                clean_data[i,1] = np.mean(match)
+                avg = np.mean(match)
+                if type(match[0]) is np.bool_:
+                    clean_data[i,1] = np.mean(match) > .5
+                else:
+                    clean_data[i,1] = np.mean(match)
             elif match.shape[0] == 1:
                 clean_data[i,1] = match[0]
             else:
