@@ -56,7 +56,6 @@ def clean_and_save(times, data, fname):
             clean_data[i, 0] = arrow.get(minute.astype(datetime)).timestamp
             match = data_span[time_span == minute]
             if match.shape[0] > 1:
-                avg = np.mean(match)
                 if type(match[0]) is np.bool_:
                     clean_data[i,1] = np.mean(match) > .5
                 else:
