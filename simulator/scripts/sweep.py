@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 import argparse
-import config
+from config import default_config
 import numpy as np
 from simulate import simulate
 
@@ -17,7 +17,8 @@ lights = np.load(args.lightfile)
 motions = np.load(args.pirfile)
 
 # load default config
-design_config = config.design_config
+config = default_config
+design_config = default_config.design_config
 primary_config = config.primary_config
 if 'secondary' in design_config:
     secondary_config = config.secondary_configs[design_config['secondary']]
