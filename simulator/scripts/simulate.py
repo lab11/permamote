@@ -6,9 +6,7 @@ from scipy import stats
 import arrow
 from itertools import cycle
 from datetime import datetime
-import config
 import matplotlib.pyplot as plt
-import progressbar
 
 def lux_to_irradiance(lux):
     # irradiance in uW/cm^2 estimation from lux using values reported on page
@@ -27,9 +25,7 @@ def lux_to_irradiance(lux):
 def get_midnights(times):
     return np.unique(times.astype('datetime64[s]').astype('datetime64[D]'))[1:].astype('datetime64[m]')
 
-def simulate(config, lights, motions, numdays):
-    bar = progressbar.ProgressBar(max_value = numdays)
-
+def simulate(config, lights, motions):
     # load configs
     design_config = config.design_config
     primary_config = config.primary_config
@@ -61,10 +57,8 @@ def simulate(config, lights, motions, numdays):
         secondary_energy = secondary_energy_max = secondary_capacity*1E-3*secondary_config['nominal_voltage_V']*3600
         secondary_energy_up = design_config['secondary_max_percent'] * secondary_energy_max
         secondary_energy_min = design_config['secondary_min_percent'] * secondary_capacity * 1E-3*secondary_config['nominal_voltage_V']*3600
-        secondary_leakage_current = secondary_config['leakage_percent_month']/100 * secondary_config['capacity_mAh'] /720/1000
+        secondary_leakage_current = secondary_config['capacity_mAh'] / 1E3 / secondary_config['leakage_constant']
         secondary_leakage_energy = secondary_config['nominal_voltage_V'] * secondary_leakage_current * 60
-
-    leakage_energy = primary_leakage_energy + secondary_leakage_energy
 
     # Find first shared midnight on same day of week
     # reduce each data set to midnights
@@ -125,8 +119,8 @@ def simulate(config, lights, motions, numdays):
     secondary_soc = []
     primary_soc = []
     minutes = []
-    currents = []
-    solar_currents = []
+    solar_powers = []
+    out_powers = []
     # counter until transmit
     time_to_transmit = design_config['active_frequency_minutes']
     # last motion seen
@@ -134,47 +128,51 @@ def simulate(config, lights, motions, numdays):
     # wait for secondary to charge
     charge_hysteresis = False;
     for minute, (light, motion) in enumerate(cycle(zip_list)):
-        # update progress and stop if reached max days
-        if minute%(24*60*10) == 0:
-            bar.update(minute/(24*60))
-        if minute >= 24*60*numdays:
-            print()
-            break;
+        if minute >= 24*60*40*365:
+            return -1
 
         # energy from solar panel:
         incoming_energy = light * 1E-6 * solar_config['area_cm2'] \
                 * solar_config['efficiency'] * design_config['frontend_efficiency'] * 60
-        solar_currents.append(incoming_energy/60)
+        solar_powers.append(incoming_energy/60)
+
         # subtract active transmission and wakeup events
         outgoing_energy = sleep_energy
         time_to_transmit -= 1
         if time_to_transmit == 0:
             time_to_transmit = design_config['active_frequency_minutes']
             outgoing_energy += active_energy
-        if motion and not last_motion:
+        if not last_motion:
             outgoing_energy += active_energy
-        currents.append(outgoing_energy/60)
+        outgoing_energy = outgoing_energy / design_config['boost_efficiency']
+        out_powers.append(outgoing_energy/60)
 
         # if not waiting for secondary to recharge, use secondary energy
         if not charge_hysteresis:
             secondary_energy += incoming_energy - outgoing_energy
         # otherwise charge secondary and use primary
         else:
-            secondary_energy += secondary_config['charge_discharge_eff'] * incoming_energy
+            secondary_energy += incoming_energy
             primary_energy -= outgoing_energy
 
         # reset secondary to max or 0
         if secondary_energy > secondary_energy_max:
             secondary_energy = secondary_energy_max
+        # if secondary empty
         if secondary_energy < 0:
             primary_energy + secondary_energy
             secondary_energy = 0
             charge_hysteresis = True
+        # if charged enough
         if secondary_energy > secondary_energy_up:
             charge_hysteresis = False
+        # if secondary low, just charge
         if secondary_energy < secondary_energy_min:
             charge_hysteresis = True
-
+        # if primary is dead, break simulation
+        if primary_energy <= 0:
+            break;
+        # subtract leakage
         primary_energy -= primary_leakage_energy
         secondary_energy -= secondary_leakage_energy
 
@@ -182,11 +180,20 @@ def simulate(config, lights, motions, numdays):
         primary_soc.append(primary_energy)
         minutes.append(minute)
 
+    print('\nAverages:')
+    print('  light ' + str(np.mean(lights)) + ' uW/cm^2')
+    print('  solar ' + str(np.mean(solar_powers)) + ' W')
+    print('  secondary: ' + str(secondary_leakage_energy/60) + ' W')
+    print('  primary: ' + str(primary_leakage_energy/60) + ' W')
+    print('  out ' + str(np.mean(out_powers)) + ' W')
+    print('  total ' + str(np.mean(solar_powers) - primary_leakage_energy/60 - secondary_leakage_energy/60 - np.mean(out_powers)) + ' W')
+
     #plt.plot([x/(60*24) for x in minutes], [x*1E3/2.4/3600 for x in secondary_soc])
     #plt.show()
     #plt.plot([x/(60*24) for x in minutes], [x*1E3/2.4/3600 for x in primary_soc])
     #plt.show()
-    lifetime_estimate = stats.linregress(minutes, primary_soc)
-    lifetime_years = (lifetime_estimate.intercept/(-lifetime_estimate.slope))/(60*24*365)
-    print('lifetime: ' + str(lifetime_years))
+    #lifetime_estimate = stats.linregress(minutes, primary_soc)
+    #lifetime_years = (lifetime_estimate.intercept/(-lifetime_estimate.slope))/(60*24*365)
+    #print('lifetime: ' + str(lifetime_years))
+    lifetime_years = minute/60/24/365
     return lifetime_years
