@@ -1,11 +1,13 @@
 #! /usr/bin/env python3
 
 import argparse
+from copy import deepcopy
 from config import sim_config
 from config import sweep_vars
 import numpy as np
 from simulate import simulate
 import matplotlib.pyplot as plt
+
 
 # Input files for simulation
 parser = argparse.ArgumentParser(description='Energy Harvesting Simulation.')
@@ -17,11 +19,12 @@ args = parser.parse_args()
 lights = np.load(args.lightfile)
 motions = np.load(args.pirfile)
 
-# load default config
-sweep_config = sim_config
+sim_config_default = sim_config()
 
 sweep_lifetimes = []
 for sweep_var in sweep_vars:
+    # load default config
+    sweep_config = deepcopy(sim_config_default)
     sweep_lifetime = []
     for config in sweep_config.config_list:
         if config['name'] == sweep_var[0][0] and sweep_var[0][1] in config:
@@ -44,4 +47,7 @@ for sweep_var in sweep_vars:
 
 for parameter_sweep in sweep_lifetimes:
     plt.plot(parameter_sweep[1][:,0], parameter_sweep[1][:,1])
+    plt.title(' '.join(parameter_sweep[0].split('_')[:-1]))
+    plt.ylabel('lifetime (years)')
+    plt.xlabel(' '.join(parameter_sweep[0].split('_')[1:]))
     plt.show()

@@ -37,11 +37,14 @@ def simulate(config, lights, motions):
     solar_config = config.solar_config
 
     # initialize energy for sleep and active
-    sleep_energy = design_config['sleep_current_A'] * design_config['operating_voltage_V'] * 60 / design_config['boost_efficiency']
-    active_energy = design_config['active_current_A'] *\
-            design_config['operating_voltage_V'] *\
-            design_config['payload_size_bytes'] * 8 /\
-            (design_config['radio_bandwidth_kbps'] * 1E3) / design_config['boost_efficiency']
+    sleep_energy = design_config['sleep_current_A'] * \
+            design_config['operating_voltage_V'] * \
+            (60 - design_config['active_period_s']) / \
+            design_config['boost_efficiency']
+    active_energy = design_config['active_current_A'] * \
+            design_config['operating_voltage_V'] * \
+            design_config['active_period_s'] / \
+            design_config['boost_efficiency'] \
 
     # initialize energy for primary and secondary
     primary_capacity= primary_config['capacity_mAh']
