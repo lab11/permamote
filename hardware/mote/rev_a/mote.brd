@@ -359,20 +359,6 @@
 <circle x="-0.5" y="1.4" radius="0.05" width="0.05" layer="21"/>
 <text x="-0.3" y="1.35" size="0.25" layer="25">&gt;NAME</text>
 </package>
-<package name="SOT-23">
-<wire x1="-1.4224" y1="0.381" x2="1.4732" y2="0.381" width="0.1524" layer="21"/>
-<wire x1="1.4732" y1="0.381" x2="1.4732" y2="-0.381" width="0.1524" layer="21"/>
-<wire x1="1.4732" y1="-0.381" x2="-1.4224" y2="-0.381" width="0.1524" layer="21"/>
-<wire x1="-1.4224" y1="-0.381" x2="-1.4224" y2="0.381" width="0.1524" layer="21"/>
-<smd name="1" x="0.9906" y="1.016" dx="0.7874" dy="0.889" layer="1"/>
-<smd name="2" x="-0.9398" y="1.016" dx="0.7874" dy="0.889" layer="1"/>
-<smd name="3" x="0.0254" y="-1.016" dx="0.7874" dy="0.889" layer="1"/>
-<text x="0" y="-2.54" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center">&gt;VALUE</text>
-<text x="0" y="1.524" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
-<rectangle x1="0.7874" y1="0.4318" x2="1.1684" y2="0.9398" layer="51"/>
-<rectangle x1="-1.143" y1="0.4318" x2="-0.762" y2="0.9398" layer="51"/>
-<rectangle x1="-0.1778" y1="-0.9398" x2="0.2032" y2="-0.4318" layer="51"/>
-</package>
 <package name="QFN-16-3MM">
 <smd name="16" x="-0.75" y="1.4" dx="0.25" dy="0.7" layer="1"/>
 <smd name="15" x="-0.25" y="1.4" dx="0.25" dy="0.7" layer="1"/>
@@ -944,11 +930,6 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <attribute name="DIGIKEY" value="311-20JRCT-ND
 " x="0.762" y="-40.513" size="1.778" layer="27" display="off"/>
 </element>
-<element name="U4" library="chips" package="SOT-23" value="TPS3839G25DBZ" x="-5.334" y="-39.37">
-<attribute name="DIGIKEY" value="296-42522-1-ND" x="-5.334" y="-39.37" size="1.778" layer="27" display="off"/>
-<attribute name="MANUFACTURER" value="TEXAS INSTRUMENTS" x="-5.334" y="-39.37" size="1.778" layer="27" display="off"/>
-<attribute name="MPN" value="TPS3839G25DBZR" x="-5.334" y="-39.37" size="1.778" layer="27" display="off"/>
-</element>
 <element name="Q2" library="fets" package="DSBGA" value="CSD75207W15" x="-9.906" y="-45.212">
 <attribute name="DIGIKEY" value="296-40008-1-ND" x="-9.906" y="-45.212" size="1.778" layer="27" display="off"/>
 <attribute name="MANUFACTURER" value="TEXAS INSTRUMENTS" x="-9.906" y="-45.212" size="1.778" layer="27" display="off"/>
@@ -1184,7 +1165,6 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <via x="31.369" y="21.717" extent="1-16" drill="0.762"/>
 <via x="33.147" y="21.717" extent="1-16" drill="0.762"/>
 <via x="26.797" y="15.621" extent="1-16" drill="0.762"/>
-<contactref element="U4" pad="1"/>
 <contactref element="Q4" pad="C2"/>
 <contactref element="Q4" pad="B2"/>
 <contactref element="R3" pad="1"/>
@@ -1245,9 +1225,8 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <wire x1="-70.525" y1="-89.4" x2="-76.2" y2="-88.9" width="0" layer="19" extent="1-1"/>
 <wire x1="-9.402" y1="-53.332" x2="-70.525" y2="-89.4" width="0" layer="19" extent="1-1"/>
 <wire x1="-9.402" y1="-52.832" x2="-9.402" y2="-53.332" width="0" layer="19" extent="1-1"/>
-<wire x1="-4.3434" y1="-38.354" x2="-9.402" y2="-52.832" width="0" layer="19" extent="1-1"/>
-<wire x1="0.32893125" y1="-40.513" x2="-4.3434" y2="-38.354" width="0" layer="19" extent="1-1"/>
-<wire x1="-0.77" y1="-29.472" x2="-4.3434" y2="-38.354" width="0" layer="19" extent="1-1"/>
+<wire x1="0.32893125" y1="-40.513" x2="-9.402" y2="-52.832" width="0" layer="19" extent="1-1"/>
+<wire x1="-0.77" y1="-29.472" x2="0.32893125" y2="-40.513" width="0" layer="19" extent="1-1"/>
 <wire x1="-0.77" y1="-28.972" x2="-0.77" y2="-29.472" width="0" layer="19" extent="1-1"/>
 <wire x1="15.43" y1="-22.86" x2="-0.77" y2="-28.972" width="0" layer="19" extent="1-1"/>
 <wire x1="12.406" y1="-7.747" x2="15.43" y2="-22.86" width="0" layer="19" extent="1-1"/>
@@ -1452,8 +1431,7 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <wire x1="0.32893125" y1="-32.893" x2="-1.262" y2="-37.092" width="0" layer="19" extent="1-1"/>
 <wire x1="-0.77" y1="-29.972" x2="0.32893125" y2="-32.893" width="0" layer="19" extent="1-1"/>
 </signal>
-<signal name="N$15">
-<contactref element="U4" pad="2"/>
+<signal name="SRC_SW">
 <contactref element="Q5" pad="A1"/>
 <contactref element="Q4" pad="A2"/>
 <contactref element="TP3" pad="TESTPOINT"/>
@@ -1462,8 +1440,7 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <wire x1="-75.36306875" y1="-93.98" x2="-76.78" y2="-99.06" width="0" layer="19" extent="1-1"/>
 <wire x1="-10.406" y1="-56.142" x2="-75.36306875" y2="-93.98" width="0" layer="19" extent="1-1"/>
 <wire x1="-9.402" y1="-52.332" x2="-10.406" y2="-56.142" width="0" layer="19" extent="1-1"/>
-<wire x1="-6.2738" y1="-38.354" x2="-9.402" y2="-52.332" width="0" layer="19" extent="1-1"/>
-<wire x1="-56.261" y1="61.722" x2="-6.2738" y2="-38.354" width="0" layer="19" extent="1-1"/>
+<wire x1="-56.261" y1="61.722" x2="-9.402" y2="-52.332" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$17">
 <contactref element="R3" pad="2"/>
@@ -1512,7 +1489,6 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <contactref element="Q1" pad="C1"/>
 <contactref element="Q1" pad="C2"/>
 <contactref element="Q1" pad="C3"/>
-<contactref element="U4" pad="3"/>
 <contactref element="TP1" pad="TESTPOINT"/>
 <contactref element="Q5" pad="A2"/>
 <contactref element="Q5" pad="A3"/>
@@ -1526,8 +1502,7 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <wire x1="-9.406" y1="-45.212" x2="-9.406" y2="-56.142" width="0" layer="19" extent="1-1"/>
 <wire x1="-9.406" y1="-44.712" x2="-9.406" y2="-45.212" width="0" layer="19" extent="1-1"/>
 <wire x1="-9.906" y1="-44.712" x2="-9.406" y2="-44.712" width="0" layer="19" extent="1-1"/>
-<wire x1="-5.3086" y1="-40.386" x2="-9.406" y2="-44.712" width="0" layer="19" extent="1-1"/>
-<wire x1="-1.262" y1="-38.092" x2="-5.3086" y2="-40.386" width="0" layer="19" extent="1-1"/>
+<wire x1="-1.262" y1="-38.092" x2="-9.406" y2="-44.712" width="0" layer="19" extent="1-1"/>
 <wire x1="-0.762" y1="-38.092" x2="-1.262" y2="-38.092" width="0" layer="19" extent="1-1"/>
 <wire x1="-0.262" y1="-38.092" x2="-0.762" y2="-38.092" width="0" layer="19" extent="1-1"/>
 <wire x1="1.19506875" y1="-32.893" x2="-0.262" y2="-38.092" width="0" layer="19" extent="1-1"/>
