@@ -3293,6 +3293,10 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <wire x1="53.34" y1="83.82" x2="53.34" y2="121.92" width="0.254" layer="94" style="shortdash"/>
 <wire x1="53.34" y1="121.92" x2="104.14" y2="121.92" width="0.254" layer="94" style="shortdash"/>
 <wire x1="53.34" y1="121.92" x2="0" y2="121.92" width="0.254" layer="94" style="shortdash"/>
+<text x="142.24" y="177.8" size="2.54" layer="95" align="bottom-center">Light</text>
+<wire x1="81.28" y1="175.26" x2="81.28" y2="182.88" width="0.254" layer="94" style="shortdash"/>
+<wire x1="81.28" y1="182.88" x2="195.58" y2="182.88" width="0.254" layer="94" style="shortdash"/>
+<wire x1="195.58" y1="182.88" x2="195.58" y2="175.26" width="0.254" layer="94" style="shortdash"/>
 </plain>
 <instances>
 <instance part="FRAME3" gate="G$1" x="0" y="0"/>
