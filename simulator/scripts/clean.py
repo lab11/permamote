@@ -3,76 +3,77 @@
 import os
 import sys
 import numpy as np
+from multiprocessing import Pool
+from datetime import datetime
 import arrow
-
-active_current = 10E-3
-sleep_current = 5E-6
-
-solar_panel_eff = .19 #%
-solar_panel_area = 14 #cm^2
-
-mins_in_day = 60*24
-
-def lux2irradiance(lux):
-    # irradiance estimation from lux using values reported on page 202 in:
-    # http://www.bradcampbell.com/wp-content/uploads/2012/05/yerva-ipsn12-energy_harvesting_leaves.pdf
-    lux[lux < 75] = lux[lux < 75]*18.6/50
-    lux[np.logical_and(lux >= 75, lux < 200)] = lux[np.logical_and(lux >= 75, lux < 200)]*29.1/100
-    lux[lux > 200] = lux[lux > 200]*74.9/320
 
 data_dir = 'raw_data/'
 out_dir = 'clean_data/'
+out_dir = os.path.dirname(out_dir) + '/'
+if out_dir:
+    os.makedirs(out_dir, exist_ok=True)
 
-light_files = (data_dir + x for x in os.listdir(data_dir) if 'light' in x)
-motion_files= (data_dir + x for x in os.listdir(data_dir) if 'motion' in x)
+def decode_to_bool(bytes_to_decode):
+    if bytes_to_decode == b'True': return True
+    else: return False
 
-fname_to_days = {}
-fname_to_data = {}
-for fname in light_files:
+def process_motion(fname):
     print(fname)
-    data = np.loadtxt(fname, delimiter=',', usecols=1)
-    times = np.loadtxt(fname, dtype = 'datetime64', delimiter=',', usecols=0, converters = {0:np.datetime64})
+    data =  np.loadtxt(data_dir + fname, dtype = 'bool', delimiter=',', usecols=1, converters = {1:decode_to_bool})
+    times = np.loadtxt(data_dir + fname, dtype = 'datetime64', delimiter=',', usecols=0, converters = {0:np.datetime64})
     times = (times + np.timedelta64(30, 's')).astype('datetime64[m]')
+    return clean_and_save(times, data, fname)
 
+
+def process_light(fname):
+    data = np.loadtxt(data_dir+fname, delimiter=',', usecols=1)
+    times = np.loadtxt(data_dir+fname, dtype = 'datetime64', delimiter=',', usecols=0, converters = {0:np.datetime64})
+    times = (times + np.timedelta64(30, 's')).astype('datetime64[m]')
+    return clean_and_save(times, data, fname)
+
+
+def clean_and_save(times, data, fname):
     # split data into multiple spans if data represents multiple different
     # periods seperated by at least a day of no data
     ind = []
     previous_time = times[0]
     for i, time in enumerate(times):
-        if time - previous_time >= np.timedelta64(30, 'm'):
+        if time - previous_time >= np.timedelta64(1, 'D'):
             ind.append(i)
         previous_time = time
-    spans = np.split(times, ind)
-    datas = np.split(data, ind)
+    time_spans = np.split(times, ind)
+    data_spans = np.split(data, ind)
 
-    for i, (light_data, time_span) in enumerate(zip(datas, spans)):
+    for data_span, time_span in zip(data_spans, time_spans):
         # Fill in or average duplicates in uncleaned data
         # if multiple data points represent the same minute, average them
         # if a minute's data point is missing, use the previous minutes value
-        # if we aren't looking at a day or more of data, skip it
-        if time_span[-1] - time_span[0] < np.timedelta64(1, 'D'): continue
+        # if we aren't looking at several days or more of data, skip it
+        if time_span[-1] - time_span[0] < np.timedelta64(4, 'D'): continue
         minutes = np.arange(time_span[0], time_span[-1], dtype='datetime64[m]')
-        cleaned = np.ndarray(minutes.shape)
+        clean_data = np.ndarray((minutes.shape[0], 2))
         for i, minute in enumerate(minutes):
-            match = light_data[time_span == minute]
+            clean_data[i, 0] = arrow.get(minute.astype(datetime)).timestamp
+            match = data_span[time_span == minute]
             if match.shape[0] > 1:
-                cleaned[i] = np.mean(match)
+                if type(match[0]) is np.bool_:
+                    clean_data[i,1] = np.mean(match) > .5
+                else:
+                    clean_data[i,1] = np.mean(match)
             elif match.shape[0] == 1:
-                cleaned[i] = match[0]
+                clean_data[i,1] = match[0]
             else:
-                cleaned[i] = cleaned[i-1]
-        print(time_span)
-        print(cleaned)
+                clean_data[i,1] = clean_data[i-1, 1]
+
         # create output directory if necessary
-        out_dir = os.path.dirname(out_dir)
-        if out_dir:
-            os.makedirs(out_dir, exist_ok=True)
-        np.save(fname.split('.')[0] + '_times_' + str(i), time_span)
-        np.save(fname.split('.')[0] + '_clean_' + str(i), cleaned)
+        np.save(out_dir+fname.split('.')[0] + '_' +str(minutes[0].astype('datetime64[D]')) + '_clean', clean_data)
+        print(fname)
+        print('saved time span between ' + str(minutes[0]) + ' and ' + str(minutes[-1]) + '\n\tor ' + str((minutes[-1] - minutes[0]).astype('timedelta64[D]')))
+        return 0
 
-for fname in motion_files:
-    print(fname)
-    motions = np.loadtxt(fname, dtype = 'bool', delimiter=',', usecols=1, converters = {1:bool})
-    times = np.loadtxt(fname, dtype = 'datetime64', delimiter=',', usecols=0, converters = {0:np.datetime64})
-    times = (times + np.timedelta64(30, 's')).astype('datetime64[m]')
+light_files = (x for x in os.listdir(data_dir) if 'light' in x)
+motion_files= (x for x in os.listdir(data_dir) if 'motion' in x)
 
+pool = Pool(4)
+pool.map(process_light, light_files)
+pool.map(process_motion, motion_files)
