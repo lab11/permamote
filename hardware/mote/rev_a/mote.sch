@@ -2606,7 +2606,7 @@ Basic 0.1" spaced jumper. Use with breakaway headers.</description>
 </part>
 <part name="R21" library="passives" deviceset="RESISTOR" device="0402_RES" value="18MΩ"/>
 <part name="R22" library="passives" deviceset="RESISTOR" device="0402_RES" value="4.7MΩ"/>
-<part name="L2" library="passives" deviceset="INDUCTOR" device="IHL2525CZ">
+<part name="L2" library="passives" deviceset="INDUCTOR" device="IHL2525CZ" value="22uH">
 <attribute name="DIGIKEY" value="541-2562-1-ND"/>
 </part>
 <part name="GND22" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
@@ -3735,28 +3735,27 @@ Basic 0.1" spaced jumper. Use with breakaway headers.</description>
 <wire x1="0" y1="109.22" x2="88.9" y2="109.22" width="0.254" layer="94" style="shortdash"/>
 <wire x1="88.9" y1="109.22" x2="88.9" y2="175.26" width="0.254" layer="94" style="shortdash"/>
 <text x="5.08" y="170.18" size="2.54" layer="95">Accelerometer</text>
-<text x="60.96" y="104.14" size="2.54" layer="95" align="bottom-center">Temperature</text>
+<text x="63.5" y="104.14" size="2.54" layer="95" align="bottom-center">Temperature</text>
 <text x="68.58" y="96.52" size="2.54" layer="95">Humidity</text>
 <text x="2.54" y="96.52" size="2.54" layer="95">Pressure</text>
 <text x="152.4" y="170.18" size="2.54" layer="95">Ambient Light</text>
 <text x="91.44" y="170.18" size="2.54" layer="95">Light Color</text>
 <wire x1="88.9" y1="175.26" x2="0" y2="175.26" width="0.254" layer="94" style="shortdash"/>
-<wire x1="88.9" y1="175.26" x2="144.78" y2="175.26" width="0.254" layer="94" style="shortdash"/>
-<wire x1="144.78" y1="175.26" x2="205.74" y2="175.26" width="0.254" layer="94" style="shortdash"/>
+<wire x1="88.9" y1="175.26" x2="147.32" y2="175.26" width="0.254" layer="94" style="shortdash"/>
+<wire x1="147.32" y1="175.26" x2="205.74" y2="175.26" width="0.254" layer="94" style="shortdash"/>
 <wire x1="205.74" y1="175.26" x2="205.74" y2="109.22" width="0.254" layer="94" style="shortdash"/>
-<wire x1="205.74" y1="109.22" x2="144.78" y2="109.22" width="0.254" layer="94" style="shortdash"/>
-<wire x1="144.78" y1="109.22" x2="132.08" y2="109.22" width="0.254" layer="94" style="shortdash"/>
+<wire x1="205.74" y1="109.22" x2="147.32" y2="109.22" width="0.254" layer="94" style="shortdash"/>
+<wire x1="147.32" y1="109.22" x2="129.54" y2="109.22" width="0.254" layer="94" style="shortdash"/>
 <wire x1="129.54" y1="109.22" x2="88.9" y2="109.22" width="0.254" layer="94" style="shortdash"/>
-<wire x1="144.78" y1="175.26" x2="144.78" y2="109.22" width="0.254" layer="94" style="shortdash"/>
-<wire x1="0" y1="45.72" x2="66.04" y2="45.72" width="0.254" layer="94" style="shortdash"/>
-<wire x1="66.04" y1="45.72" x2="129.54" y2="45.72" width="0.254" layer="94" style="shortdash"/>
+<wire x1="147.32" y1="175.26" x2="147.32" y2="109.22" width="0.254" layer="94" style="shortdash"/>
+<wire x1="0" y1="45.72" x2="63.5" y2="45.72" width="0.254" layer="94" style="shortdash"/>
+<wire x1="63.5" y1="45.72" x2="129.54" y2="45.72" width="0.254" layer="94" style="shortdash"/>
 <wire x1="129.54" y1="45.72" x2="129.54" y2="101.6" width="0.254" layer="94" style="shortdash"/>
 <wire x1="129.54" y1="101.6" x2="129.54" y2="109.22" width="0.254" layer="94" style="shortdash"/>
-<wire x1="129.54" y1="109.22" x2="132.08" y2="109.22" width="0.254" layer="94" style="shortdash"/>
-<wire x1="66.04" y1="45.72" x2="66.04" y2="101.6" width="0.254" layer="94" style="shortdash"/>
-<wire x1="66.04" y1="101.6" x2="129.54" y2="101.6" width="0.254" layer="94" style="shortdash"/>
-<wire x1="66.04" y1="101.6" x2="0" y2="101.6" width="0.254" layer="94" style="shortdash"/>
-<text x="144.78" y="177.8" size="2.54" layer="95" align="bottom-center">Light</text>
+<wire x1="63.5" y1="45.72" x2="63.5" y2="101.6" width="0.254" layer="94" style="shortdash"/>
+<wire x1="63.5" y1="101.6" x2="129.54" y2="101.6" width="0.254" layer="94" style="shortdash"/>
+<wire x1="63.5" y1="101.6" x2="0" y2="101.6" width="0.254" layer="94" style="shortdash"/>
+<text x="147.32" y="177.8" size="2.54" layer="95" align="bottom-center">Light</text>
 <wire x1="88.9" y1="175.26" x2="88.9" y2="182.88" width="0.254" layer="94" style="shortdash"/>
 <wire x1="88.9" y1="182.88" x2="205.74" y2="182.88" width="0.254" layer="94" style="shortdash"/>
 <wire x1="205.74" y1="182.88" x2="205.74" y2="175.26" width="0.254" layer="94" style="shortdash"/>

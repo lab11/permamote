@@ -1212,7 +1212,7 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 </element>
 <element name="R21" library="passives" package="0402_RES" value="18MΩ" x="-114.3" y="-535.94"/>
 <element name="R22" library="passives" package="0402_RES" value="4.7MΩ" x="-114.3" y="-539.75"/>
-<element name="L2" library="passives" package="IHL-2525CZ" value="" x="-121.92" y="-534.67">
+<element name="L2" library="passives" package="IHL-2525CZ" value="22uH" x="-121.92" y="-534.67">
 <attribute name="DIGIKEY" value="541-2562-1-ND" x="-121.92" y="-534.67" size="1.778" layer="27" display="off"/>
 </element>
 <element name="C28" library="passives" package="0603_CAP" value="10uF" x="-123.19" y="-548.64">
