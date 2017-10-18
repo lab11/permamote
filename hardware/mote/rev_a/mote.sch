@@ -2903,7 +2903,7 @@ Basic 0.1" spaced jumper. Use with breakaway headers.</description>
 <part name="R20" library="passives" deviceset="RESISTOR" device="0402_RES" value="150kΩ"/>
 <part name="GND21" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="C26" library="passives" deviceset="CAPACITOR" device="0603_CAP" value="10nF">
-<attribute name="DIGIKEY" value="490-3896-2-ND"/>
+<attribute name="DIGIKEY" value="490-4516-1-ND"/>
 </part>
 <part name="R21" library="passives" deviceset="RESISTOR" device="0402_RES" value="18MΩ"/>
 <part name="R22" library="passives" deviceset="RESISTOR" device="0402_RES" value="4.7MΩ"/>
@@ -3030,6 +3030,9 @@ Basic 0.1" spaced jumper. Use with breakaway headers.</description>
 <wire x1="0" y1="55.88" x2="99.06" y2="55.88" width="0.254" layer="94" style="shortdash"/>
 <wire x1="99.06" y1="55.88" x2="99.06" y2="0" width="0.254" layer="94" style="shortdash"/>
 <text x="2.54" y="50.8" size="2.54" layer="97">RTC</text>
+<text x="66.04" y="81.28" size="1.27" layer="98">AD12 is in the way of the
+actual Reset pin, AC13,
+so we just route over it.</text>
 </plain>
 <instances>
 <instance part="FRAME1" gate="G$1" x="0" y="0"/>
@@ -3369,13 +3372,6 @@ Basic 0.1" spaced jumper. Use with breakaway headers.</description>
 <junction x="134.62" y="180.34"/>
 </segment>
 </net>
-<net name="CLKOUT" class="0">
-<segment>
-<pinref part="U9" gate="G$1" pin="CLKOUT/!IRQ3"/>
-<wire x1="83.82" y1="27.94" x2="86.36" y2="27.94" width="0.1524" layer="91"/>
-<label x="86.36" y="27.94" size="1.27" layer="95" xref="yes"/>
-</segment>
-</net>
 <net name="SCL" class="0">
 <segment>
 <pinref part="R7" gate="G$1" pin="1"/>
@@ -3493,12 +3489,22 @@ Basic 0.1" spaced jumper. Use with breakaway headers.</description>
 <wire x1="83.82" y1="33.02" x2="86.36" y2="33.02" width="0.1524" layer="91"/>
 <label x="86.36" y="33.02" size="1.27" layer="95" xref="yes"/>
 </segment>
+<segment>
+<pinref part="U1" gate="G$1" pin="P0.14"/>
+<wire x1="99.06" y1="91.44" x2="93.98" y2="91.44" width="0.1524" layer="91"/>
+<label x="93.98" y="91.44" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
 </net>
 <net name="!RTC_IRQ2" class="0">
 <segment>
 <pinref part="U9" gate="G$1" pin="!IRQ2"/>
 <wire x1="83.82" y1="30.48" x2="86.36" y2="30.48" width="0.1524" layer="91"/>
 <label x="86.36" y="30.48" size="1.27" layer="95" xref="yes"/>
+</segment>
+<segment>
+<pinref part="U1" gate="G$1" pin="P0.20"/>
+<wire x1="99.06" y1="78.74" x2="93.98" y2="78.74" width="0.1524" layer="91"/>
+<label x="93.98" y="78.74" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="WDI" class="0">
@@ -3557,9 +3563,9 @@ Basic 0.1" spaced jumper. Use with breakaway headers.</description>
 <label x="48.26" y="15.24" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="U1" gate="G$1" pin="P0.13"/>
-<wire x1="99.06" y1="93.98" x2="93.98" y2="93.98" width="0.1524" layer="91"/>
-<label x="93.98" y="93.98" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="U1" gate="G$1" pin="P0.15"/>
+<wire x1="99.06" y1="88.9" x2="93.98" y2="88.9" width="0.1524" layer="91"/>
+<label x="93.98" y="88.9" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="!ACC_EN" class="0">
@@ -3567,13 +3573,6 @@ Basic 0.1" spaced jumper. Use with breakaway headers.</description>
 <pinref part="U1" gate="G$1" pin="P1.15"/>
 <wire x1="144.78" y1="91.44" x2="147.32" y2="91.44" width="0.1524" layer="91"/>
 <label x="147.32" y="91.44" size="1.27" layer="95" xref="yes"/>
-</segment>
-</net>
-<net name="!CLR_EN" class="0">
-<segment>
-<pinref part="U1" gate="G$1" pin="P0.20"/>
-<wire x1="99.06" y1="78.74" x2="93.98" y2="78.74" width="0.1524" layer="91"/>
-<label x="93.98" y="78.74" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="!LT_EN" class="0">
@@ -3734,6 +3733,11 @@ Basic 0.1" spaced jumper. Use with breakaway headers.</description>
 <junction x="198.12" y="142.24"/>
 <label x="195.58" y="142.24" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
+<segment>
+<pinref part="U1" gate="G$1" pin="P1.11"/>
+<wire x1="144.78" y1="101.6" x2="147.32" y2="101.6" width="0.1524" layer="91"/>
+<label x="147.32" y="101.6" size="1.27" layer="95" xref="yes"/>
+</segment>
 </net>
 <net name="N$41" class="0">
 <segment>
@@ -3780,19 +3784,38 @@ Basic 0.1" spaced jumper. Use with breakaway headers.</description>
 <junction x="198.12" y="68.58"/>
 </segment>
 </net>
-<net name="ACC_CS" class="0">
-<segment>
-<pinref part="U1" gate="G$1" pin="P0.15"/>
-<wire x1="99.06" y1="88.9" x2="93.98" y2="88.9" width="0.1524" layer="91"/>
-<label x="93.98" y="88.9" size="1.27" layer="95" rot="R180" xref="yes"/>
-</segment>
-</net>
 <net name="VSEC" class="0">
 <segment>
 <pinref part="U1" gate="G$1" pin="P0.02/AIN0"/>
 <wire x1="144.78" y1="152.4" x2="152.4" y2="152.4" width="0.1524" layer="91"/>
 <wire x1="152.4" y1="152.4" x2="152.4" y2="154.94" width="0.1524" layer="91"/>
 <pinref part="P+3" gate="G$1" pin="VSEC"/>
+</segment>
+</net>
+<net name="ACC_CS" class="0">
+<segment>
+<pinref part="U1" gate="G$1" pin="P0.13"/>
+<wire x1="99.06" y1="93.98" x2="93.98" y2="93.98" width="0.1524" layer="91"/>
+<label x="93.98" y="93.98" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="!CLR_EN" class="0">
+<segment>
+<pinref part="U1" gate="G$1" pin="P0.11"/>
+<wire x1="99.06" y1="99.06" x2="93.98" y2="99.06" width="0.1524" layer="91"/>
+<label x="93.98" y="99.06" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="!RTC_IRQ3" class="0">
+<segment>
+<pinref part="U1" gate="G$1" pin="P1.07"/>
+<wire x1="144.78" y1="111.76" x2="147.32" y2="111.76" width="0.1524" layer="91"/>
+<label x="147.32" y="111.76" size="1.27" layer="95" xref="yes"/>
+</segment>
+<segment>
+<pinref part="U9" gate="G$1" pin="CLKOUT/!IRQ3"/>
+<wire x1="83.82" y1="27.94" x2="86.36" y2="27.94" width="0.1524" layer="91"/>
+<label x="86.36" y="27.94" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 </nets>
@@ -5253,6 +5276,10 @@ Basic 0.1" spaced jumper. Use with breakaway headers.</description>
 </schematic>
 </drawing>
 <compatibility>
+<note version="6.3" minversion="6.2.2" severity="warning">
+Since Version 6.2.2 text objects can contain more than one line,
+which will not be processed correctly with this version.
+</note>
 <note version="8.2" severity="warning">
 Since Version 8.2, EAGLE supports online libraries. The ids
 of those online libraries will not be understood (or retained)
