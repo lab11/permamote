@@ -3534,6 +3534,11 @@ so we just route over it.</text>
 <wire x1="160.02" y1="139.7" x2="160.02" y2="154.94" width="0.1524" layer="91"/>
 </segment>
 <segment>
+<pinref part="JP6" gate="A" pin="2"/>
+<wire x1="20.32" y1="45.72" x2="25.4" y2="45.72" width="0.1524" layer="91"/>
+<pinref part="TP23" gate="G$1" pin="TESTPOINT"/>
+<wire x1="25.4" y1="45.72" x2="38.1" y2="45.72" width="0.1524" layer="91"/>
+<junction x="25.4" y="45.72"/>
 <pinref part="P+13" gate="VCC" pin="VBAT"/>
 <wire x1="38.1" y1="48.26" x2="38.1" y2="45.72" width="0.1524" layer="91"/>
 </segment>
@@ -3609,15 +3614,6 @@ so we just route over it.</text>
 <wire x1="12.7" y1="45.72" x2="7.62" y2="45.72" width="0.1524" layer="91"/>
 <wire x1="7.62" y1="45.72" x2="7.62" y2="43.18" width="0.1524" layer="91"/>
 <junction x="7.62" y="43.18"/>
-</segment>
-</net>
-<net name="N$43" class="0">
-<segment>
-<pinref part="JP6" gate="A" pin="2"/>
-<wire x1="20.32" y1="45.72" x2="25.4" y2="45.72" width="0.1524" layer="91"/>
-<pinref part="TP23" gate="G$1" pin="TESTPOINT"/>
-<wire x1="25.4" y1="45.72" x2="38.1" y2="45.72" width="0.1524" layer="91"/>
-<junction x="25.4" y="45.72"/>
 </segment>
 </net>
 <net name="N$39" class="0">
