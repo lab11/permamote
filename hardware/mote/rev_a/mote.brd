@@ -9,7 +9,7 @@
 <grid distance="9.84251969" unitdist="mil" unit="mil" style="lines" multiple="1" display="yes" altdistance="1" altunitdist="mil" altunit="mil"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
-<layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
+<layer number="2" name="Route2" color="1" fill="3" visible="no" active="yes"/>
 <layer number="3" name="Route3" color="4" fill="3" visible="no" active="no"/>
 <layer number="4" name="Route4" color="1" fill="4" visible="no" active="no"/>
 <layer number="5" name="Route5" color="4" fill="4" visible="no" active="no"/>
@@ -22,7 +22,7 @@
 <layer number="12" name="Route12" color="1" fill="5" visible="no" active="no"/>
 <layer number="13" name="Route13" color="4" fill="5" visible="no" active="no"/>
 <layer number="14" name="Route14" color="1" fill="6" visible="no" active="no"/>
-<layer number="15" name="Route15" color="4" fill="6" visible="no" active="no"/>
+<layer number="15" name="Route15" color="4" fill="6" visible="no" active="yes"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
@@ -858,14 +858,11 @@ We've spent an enormous amount of time creating and checking these footprints an
 <class number="0" name="default" width="0" drill="0">
 </class>
 </classes>
-<designrules name="quickturn_co_kr_1oz">
-<description language="en">&lt;b&gt;EAGLE Design Rules for *2* Layer Designs (DS)&lt;/b&gt;
+<designrules name="quickturn_co_kr_1oz_4lyr">
+<description language="en">&lt;b&gt;EAGLE Design Rules for *4* Layer Designs (DS)&lt;/b&gt;
 &lt;p&gt;
-This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requirements for our double sided products. For questions, comments, suggestions, please contact Sunstone Customer Support: &lt;p&gt;&lt;b&gt;Email:&lt;/b&gt;  mailto:support@sunstone.com&lt;br&gt;&lt;b&gt;Phone:&lt;/b&gt; 800-228-8198.&lt;p&gt; v1.1Mod10/16/07~Layers-core reversal.Distance C/D.Restring%.Supply G%.&lt;p&gt; v1.2 Mod12/06/07~Distance C/D to 20mils.&lt;p&gt;v1.3Mod12/12/07~Supply/Annulus Value to 12.5mils&lt;p&gt;1/15/08 SSC-EAGLE-2Lyr_v1.0.0.3~For Release&lt;p&gt;10/3/08 Description Edit.&lt;p&gt;
-
-&lt;p&gt;
-&lt;i&gt;Attention: Upon running the design check and making modifications, please remember to save any changes before closing the application and sending in your board file to Sunstone Circuits for conversion.&lt;i&gt;</description>
-<param name="layerSetup" value="(1*16)"/>
+Quickturn PCB 4 Layer .DRU</description>
+<param name="layerSetup" value="(1+2*15+16)"/>
 <param name="mtCopper" value="0.0178mm 0.0356mm 0.0356mm 0.0356mm 0.0356mm 0.0356mm 0.0356mm 0.0356mm 0.0356mm 0.0356mm 0.0356mm 0.0356mm 0.0356mm 0.0356mm 0.0356mm 0.0178mm"/>
 <param name="mtIsolate" value="59mil 0.1499mm 0.2007mm 0.1499mm 0.2007mm 0.1499mm 0.2007mm 0.1499mm 0.2007mm 0.1499mm 0.2007mm 0.1499mm 0.2007mm 0.1499mm 0.2007mm"/>
 <param name="mdWireWire" value="6mil"/>
@@ -882,9 +879,9 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <param name="mdCopperDimension" value="12mil"/>
 <param name="mdDrill" value="12mil"/>
 <param name="mdSmdStop" value="0mil"/>
-<param name="msWidth" value="4mil"/>
-<param name="msDrill" value="0.200659375mm"/>
-<param name="msMicroVia" value="9.9898mm"/>
+<param name="msWidth" value="6mil"/>
+<param name="msDrill" value="8mil"/>
+<param name="msMicroVia" value="4mil"/>
 <param name="msBlindViaRatio" value="0.5"/>
 <param name="rvPadTop" value="0.25"/>
 <param name="rvPadInner" value="0.25"/>
@@ -1673,11 +1670,11 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <attribute name="MPN" value="ANT3216A063R2400A" x="3.552" y="98.54" size="1.016" layer="27" font="vector" ratio="12" rot="R180" display="off"/>
 <attribute name="NAME" x="5.052" y="97.29" size="1.016" layer="21" font="vector" ratio="12" rot="R180"/>
 </element>
-<element name="A1" library="chips" package="ANT3216A063R2400A" value="ANT3216A063R2400A" x="-22.606" y="-10.922" smashed="yes">
-<attribute name="DIGIKEY" value="311-1542-1-ND" x="-28.194" y="-4.826" size="1.016" layer="27" font="vector" ratio="12" display="off"/>
-<attribute name="MANUFACTURER" value="YAGEO" x="-28.194" y="-4.826" size="1.016" layer="27" font="vector" ratio="12" display="off"/>
-<attribute name="MPN" value="ANT3216A063R2400A" x="-28.194" y="-4.826" size="1.016" layer="27" font="vector" ratio="12" display="off"/>
-<attribute name="NAME" x="-24.106" y="-9.672" size="1.016" layer="21" font="vector" ratio="12"/>
+<element name="A1" library="chips" package="ANT3216A063R2400A" value="ANT3216A063R2400A" x="-3.106" y="60.328" smashed="yes">
+<attribute name="DIGIKEY" value="311-1542-1-ND" x="-8.694" y="66.424" size="1.016" layer="27" font="vector" ratio="12" display="off"/>
+<attribute name="MANUFACTURER" value="YAGEO" x="-8.694" y="66.424" size="1.016" layer="27" font="vector" ratio="12" display="off"/>
+<attribute name="MPN" value="ANT3216A063R2400A" x="-8.694" y="66.424" size="1.016" layer="27" font="vector" ratio="12" display="off"/>
+<attribute name="NAME" x="-4.606" y="61.578" size="1.016" layer="21" font="vector" ratio="12"/>
 </element>
 </elements>
 <signals>
@@ -1965,9 +1962,9 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <wire x1="8.144" y1="88.265" x2="8.017" y2="88.265" width="0" layer="19" extent="1-1"/>
 <wire x1="5.592" y1="42.049" x2="5.092" y2="42.049" width="0" layer="19" extent="1-1"/>
 <wire x1="18.923" y1="40.767" x2="16.51" y2="43.99406875" width="0" layer="19" extent="1-1"/>
-<wire x1="-11.43" y1="76.454" x2="4.588" y2="80.97393125" width="0" layer="19" extent="1-1"/>
-<wire x1="-9.906" y1="69.342" x2="-11.43" y2="76.454" width="0" layer="19" extent="1-1"/>
-<wire x1="-21.281" y1="-10.922" x2="8.908" y2="8.146" width="0" layer="19" extent="1-1"/>
+<wire x1="-1.781" y1="60.328" x2="4.5692" y2="59.07913125" width="0" layer="19" extent="1-1"/>
+<wire x1="-9.906" y1="69.342" x2="-1.781" y2="60.328" width="0" layer="19" extent="1-1"/>
+<wire x1="-11.43" y1="76.454" x2="-9.906" y2="69.342" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$8">
 <contactref element="U1" pad="B24"/>
@@ -3011,7 +3008,7 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <wire x1="4.57046875" y1="60.198" x2="4.5692" y2="59.94526875" width="0.762" layer="1"/>
 <wire x1="4.57046875" y1="60.198" x2="2.423" y2="60.198" width="1.27" layer="1"/>
 <contactref element="A1" pad="S1"/>
-<wire x1="-23.931" y1="-10.922" x2="2.423" y2="60.198" width="0" layer="19" extent="1-1"/>
+<wire x1="-4.431" y1="60.328" x2="2.423" y2="60.198" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="AVDD1">
 <contactref element="C43" pad="1"/>
@@ -3186,8 +3183,6 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <signal name="!CLR_EN">
 <contactref element="U1" pad="T2"/>
 <via x="10.1506" y="83.6803" extent="1-16" drill="0.2032"/>
-<wire x1="9.652" y1="83.737" x2="10.0939" y2="83.737" width="0.1016" layer="1"/>
-<wire x1="10.0939" y1="83.737" x2="10.1506" y2="83.6803" width="0.1016" layer="1"/>
 <contactref element="R10" pad="1"/>
 <contactref element="Q7" pad="A1"/>
 <wire x1="10.1506" y1="83.6803" x2="10.684" y2="83.1469" width="0.1524" layer="16"/>
@@ -3199,6 +3194,8 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <contactref element="U12" pad="26"/>
 <wire x1="15.248" y1="19.804" x2="15.248" y2="21.77706875" width="0.2032" layer="1"/>
 <wire x1="15.248" y1="21.77706875" x2="15.31493125" y2="21.844" width="0.2032" layer="1"/>
+<wire x1="9.652" y1="83.737" x2="10.0939" y2="83.737" width="0.1016" layer="1"/>
+<wire x1="10.0939" y1="83.737" x2="10.1506" y2="83.6803" width="0.1016" layer="1"/>
 <wire x1="7.4152" y1="62.398" x2="10.938" y2="82.042" width="0" layer="19" extent="1-1"/>
 <wire x1="15.31493125" y1="21.844" x2="7.4152" y2="62.398" width="0" layer="19" extent="1-1"/>
 </signal>
