@@ -183,7 +183,7 @@
 <wire x1="17.145" y1="33.782" x2="17.145" y2="44.196" width="0.254" layer="21"/>
 <text x="8.382" y="43.942" size="1.016" layer="21" font="vector" ratio="12" align="top-left">RTC</text>
 <text x="3.048" y="73.914" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center">NRF52840</text>
-<text x="3.048" y="58.801" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center">NRF51822</text>
+<text x="3.048" y="58.547" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center">NRF51822</text>
 <wire x1="0" y1="43.688" x2="0" y2="38.608" width="0.2032" layer="25"/>
 <wire x1="5.842" y1="38.608" x2="5.842" y2="43.688" width="0.2032" layer="25"/>
 <wire x1="5.842" y1="43.688" x2="5.842" y2="48.768" width="0.2032" layer="25"/>
@@ -1749,10 +1749,10 @@ Quickturn PCB 4 Layer .DRU</description>
 <signal name="N$4">
 <contactref element="U1" pad="D23"/>
 <contactref element="C11" pad="1"/>
-<wire x1="10.077" y1="70.152" x2="9.7056" y2="69.7806" width="0.1524" layer="1"/>
-<wire x1="9.7056" y1="69.7806" x2="9.42018125" y2="69.7806" width="0.1524" layer="1"/>
-<wire x1="8.50458125" y1="68.865" x2="7.97106875" y2="68.865" width="0.1524" layer="1"/>
-<wire x1="9.42018125" y1="69.7806" x2="8.50458125" y2="68.865" width="0.1524" layer="1"/>
+<wire x1="9.7056" y1="69.7806" x2="10.077" y2="70.152" width="0.1524" layer="1"/>
+<wire x1="7.97106875" y1="68.865" x2="8.50458125" y2="68.865" width="0.1524" layer="1"/>
+<wire x1="8.50458125" y1="68.865" x2="9.42018125" y2="69.7806" width="0.1524" layer="1"/>
+<wire x1="9.42018125" y1="69.7806" x2="9.7056" y2="69.7806" width="0.1524" layer="1"/>
 </signal>
 <signal name="N$5">
 <contactref element="U1" pad="H23"/>
@@ -2990,11 +2990,12 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="14.097" y1="64.008" x2="17.018" y2="64.008" width="0.1524" layer="16"/>
 <wire x1="17.018" y1="64.008" x2="27.051" y2="53.975" width="0.1524" layer="16"/>
 <wire x1="11.94" y1="65.276" x2="11.94" y2="68.22958125" width="0.1524" layer="1"/>
-<wire x1="12.577" y1="68.86658125" x2="12.577" y2="68.902" width="0.1524" layer="1"/>
-<wire x1="11.94" y1="68.22958125" x2="12.577" y2="68.86658125" width="0.1524" layer="1"/>
+<wire x1="12.577" y1="68.902" x2="12.577" y2="68.86658125" width="0.1524" layer="1"/>
 <wire x1="11.049" y1="64.385" x2="11.94" y2="65.276" width="0.1524" layer="1"/>
 <wire x1="22.65806875" y1="35.687" x2="27.051" y2="40.07993125" width="0.254" layer="1"/>
 <wire x1="27.051" y1="40.07993125" x2="27.051" y2="53.975" width="0.254" layer="1"/>
+<wire x1="12.577" y1="68.86658125" x2="12.577" y2="68.902" width="0.1524" layer="1"/>
+<wire x1="11.94" y1="68.22958125" x2="12.577" y2="68.86658125" width="0.1524" layer="1"/>
 </signal>
 <signal name="N$33">
 <contactref element="R10" pad="2"/>
@@ -4052,11 +4053,9 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="10.2472" y1="59.407" x2="10.2472" y2="60.54386875" width="0.1524" layer="1"/>
 <wire x1="10.2472" y1="60.54386875" x2="10.14856875" y2="60.579" width="0.1524" layer="1"/>
 <wire x1="24.65705" y1="82.17315625" x2="24.65705" y2="80.89484375" width="0.1016" layer="1"/>
-<wire x1="24.65705" y1="80.89484375" x2="23.749" y2="80.01" width="0.1016" layer="1"/>
-<wire x1="23.749" y1="80.01" x2="22.352" y2="80.01" width="0.1016" layer="1"/>
 <wire x1="23.749" y1="83.439" x2="23.749" y2="83.08120625" width="0.1016" layer="1"/>
 <wire x1="23.749" y1="83.08120625" x2="24.65705" y2="82.17315625" width="0.1016" layer="1"/>
-<wire x1="22.352" y1="80.01" x2="21.082" y2="81.28" width="0.1016" layer="1"/>
+<wire x1="21.082" y1="81.28" x2="22.479" y2="79.883" width="0.1016" layer="1"/>
 <via x="21.082" y="81.28" extent="1-16" drill="0.2032"/>
 <wire x1="21.082" y1="81.28" x2="20.066" y2="82.296" width="0.1016" layer="16"/>
 <via x="20.066" y="82.296" extent="1-16" drill="0.2032"/>
@@ -4078,6 +4077,8 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="8.763" y1="62.484" x2="11.684" y2="65.405" width="0.1524" layer="15"/>
 <wire x1="11.684" y1="65.405" x2="11.684" y2="73.914" width="0.1524" layer="15"/>
 <wire x1="11.684" y1="73.914" x2="11.176" y2="74.422" width="0.1524" layer="15"/>
+<wire x1="23.64520625" y1="79.883" x2="24.65705" y2="80.89484375" width="0.1016" layer="1"/>
+<wire x1="22.479" y1="79.883" x2="23.64520625" y2="79.883" width="0.1016" layer="1"/>
 </signal>
 <signal name="N$28">
 <via x="7.493" y="46.736" extent="1-16" drill="0.2032"/>
@@ -4095,6 +4096,62 @@ Quickturn PCB 4 Layer .DRU</description>
 <approved hash="5 1 93b43a3b92884503"/>
 <approved hash="5 1 e0b6493b92884501"/>
 <approved hash="5 1 ff4b4d1996985ed6"/>
+<approved hash="5	1	43fb98bd0f4434f5"/>
+<approved hash="5	1	cd66d1432dc22afe"/>
+<approved hash="19	1	04e2fc94fc69041f"/>
+<approved hash="19	1	0660fe16fd750503"/>
+<approved hash="19	1	0731ff47fc450433"/>
+<approved hash="19	1	a1611f171c76a200"/>
+<approved hash="19	1	a0301e461d46a330"/>
+<approved hash="19	1	a3e31d951d6aa31c"/>
+<approved hash="19	1	57627d147e755403"/>
+<approved hash="19	1	56337c457f455533"/>
+<approved hash="19	1	55e07f967f69551f"/>
+<approved hash="5	1	1b3406179fd99fe3"/>
+<approved hash="5	1	def4d5d7e783e6a0"/>
+<approved hash="19	1	16a2595458e51713"/>
+<approved hash="19	1	6e7321855d861270"/>
+<approved hash="5	1	768673b90b211705"/>
+<approved hash="5	1	0b1fb7c8e7995d4a"/>
+<approved hash="5	1	b051b05ec4acc7af"/>
+<approved hash="5	1	e2ac59389a7b5813"/>
+<approved hash="5	1	73aac838987b5a15"/>
+<approved hash="5	1	04a8bf389a7b5817"/>
+<approved hash="5	1	8dd7ccc690349429"/>
+<approved hash="5	1	9441904e8cbccdbf"/>
+<approved hash="5	1	367370b0999dc338"/>
+<approved hash="19	1	ab59ddafd183a775"/>
+<approved hash="19	1	a731d1c7d0cba63d"/>
+<approved hash="19	1	29f83d8e3bad2fdb"/>
+<approved hash="19	1	ad3239443845ac33"/>
+<approved hash="19	1	da5a0c2c000fd679"/>
+<approved hash="19	1	5061061701775701"/>
+<approved hash="19	1	52f8048e02af54d9"/>
+<approved hash="19	1	d63200440147d731"/>
+<approved hash="19	1	035955af598c0f7a"/>
+<approved hash="19	1	89625f9458f48e02"/>
+<approved hash="19	1	8bfb5d0d5b2c8dda"/>
+<approved hash="19	1	0f3159c758c40e32"/>
+<approved hash="19	1	a15a352c390dad7b"/>
+<approved hash="19	1	2162d794d0fb260d"/>
+<approved hash="19	1	23fbd50dd32325d5"/>
+<approved hash="19	1	2b613f1738752c03"/>
+<approved hash="19	1	3e54fe22fd693d1f"/>
+<approved hash="19	1	3b58fb2efb4d3b3b"/>
+<approved hash="19	1	cb5edf28df4acb3c"/>
+<approved hash="19	1	d1a2c5d4d96ecd18"/>
+<approved hash="19	1	ce56da20db22cf54"/>
+<approved hash="19	1	ce52da24d96ecd18"/>
+<approved hash="19	1	062af25cf1170561"/>
+<approved hash="19	1	062ef258f35b072d"/>
+<approved hash="19	1	0326f750f7330345"/>
+<approved hash="19	1	19daedacf1170561"/>
+<approved hash="19	1	49a4e1d2fd6d551b"/>
+<approved hash="19	1	5650fe26ff215757"/>
+<approved hash="19	1	21a4e1d2fd693d1f"/>
+<approved hash="19	1	3e50fe26ff253f53"/>
+<approved hash="19	1	5358fb2efb49533f"/>
+<approved hash="19	1	5654fe22fd6d551b"/>
 </errors>
 </board>
 </drawing>
