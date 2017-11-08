@@ -31,9 +31,11 @@
 
 // Pressure sensor
 #define MS5637_EN   20
+#define MS5637_ADDR 0xEC
 
 //Humidity Sensor
 #define SI7021_EN   15
+#define SI7021_ADDR 0x40
 
 // Accelerometer
 #define L12D_CS     14
@@ -56,8 +58,8 @@
 #define SWTICH      4
 
 //BATTERIES
-#define VSOL        3 
-#define VPRIMARY    2 
-#define VSECONDARY  1 
+#define VSOL        3
+#define VPRIMARY    2
+#define VSECONDARY  1
 
 #endif
