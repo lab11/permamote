@@ -31,7 +31,7 @@
 
 // Pressure sensor
 #define MS5637_EN   20
-#define MS5637_ADDR 0xEC
+#define MS5637_ADDR 0x76
 
 //Humidity Sensor
 #define SI7021_EN   15
@@ -41,7 +41,6 @@
 #define L12D_CS     14
 #define L12D_INT1   6
 #define L12D_INT2   7
-#define L12D_EN     22
 
 //PIR
 #define PIR_EN      19
@@ -55,7 +54,7 @@
 #define RTC_WDI     21
 
 //ICOUNT
-#define SWTICH      4
+#define SWITCH      4
 
 //BATTERIES
 #define VSOL        3
