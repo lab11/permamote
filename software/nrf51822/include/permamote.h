@@ -31,11 +31,9 @@
 
 // Pressure sensor
 #define MS5637_EN   20
-#define MS5637_ADDR 0x76
 
 //Humidity Sensor
 #define SI7021_EN   15
-#define SI7021_ADDR 0x40
 
 // Accelerometer
 #define L12D_CS     14

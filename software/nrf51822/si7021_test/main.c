@@ -94,7 +94,7 @@ int main(void) {
 
   // init uart
   uart_init();
-  printf("\nPRESSURE AND TEMPERATURE TEST\n");
+  printf("\nHUMIDITY AND TEMPERATURE TEST\n");
 
   // Init twi
   twi_init();
@@ -106,20 +106,20 @@ int main(void) {
   nrf_gpio_cfg_output(SI7021_EN);
   nrf_gpio_pin_set(MAX44009_EN);
   nrf_gpio_pin_set(ISL29125_EN);
-  nrf_gpio_pin_clear(MS5637_EN);
-  nrf_gpio_pin_set(SI7021_EN);
+  nrf_gpio_pin_set(MS5637_EN);
+  nrf_gpio_pin_clear(SI7021_EN);
 
-  ms5637_init(&twi_instance);
-  ms5637_start();
+  si7021_init(&twi_instance);
+  si7021_config(si7021_MODE0);
 
   // Advertise because why not
   simple_adv_only_name();
 
   while (1) {
-    float temp = ms5637_get_temperature(osr_8192);
+    float temp, hum;
+    si7021_read_temp_and_RH(&temp, &hum);
     printf("temperature: %f\n", temp);
-    float press = ms5637_get_pressure(osr_8192);
-    printf("pressure: %f\n\n", press);
+    printf("humidity: %f\n\n", hum);
     nrf_delay_ms(5000);
   }
 }
