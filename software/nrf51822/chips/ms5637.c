@@ -92,6 +92,7 @@ void ms5637_start(void) {
   c6 = 0xFFFF & (data[0] << 8 | data[1]);
 
   nrf_drv_twi_disable(twi_instance);
+
   //printf("c1: %d\n", c1);
   //printf("c2: %d\n", c2);
   //printf("c3: %d\n", c3);
@@ -117,7 +118,7 @@ float ms5637_get_temperature(OSR osr) {
   // Temperature calculation based on datasheet
   // It isn't clear how the osr resolution affects these calculations
   int32_t dT = raw - c5 * 256;
-  int32_t temperature = 2000 + dT * c6 / 8388608;
+  int32_t temperature = 2000 + (int64_t)dT * (int64_t)c6 / 8388608;
   return temperature / 100.0;
 }
 
@@ -134,11 +135,9 @@ float ms5637_get_pressure(OSR osr) {
   ms5637_reg_read(0x00, data, 3);
   nrf_drv_twi_disable(twi_instance);
   uint32_t raw = 0xffffff & (data[0] << 16 | data[1] << 8 | data[2]);
-  //printf("raw temp: %ld\n", raw);
   // Temperature calculation based on datasheet
   // It isn't clear how the osr resolution affects these calculations
   int32_t dT = raw - c5 * 256;
-  int32_t temperature = 2000 + dT * c6 / 8388608;
 
   // Start Pressure Conversion
   data[0] = (uint8_t) ms5637_osr_to_posr(osr);
@@ -150,11 +149,10 @@ float ms5637_get_pressure(OSR osr) {
   ms5637_reg_read(0x00, data, 3);
   nrf_drv_twi_disable(twi_instance);
   raw = 0xffffff & (data[0] << 16 | data[1] << 8 | data[2]);
-  //printf("raw pressure: %ld\n", raw);
 
   // Pressure calculation based on datasheet
-  int32_t offset = c2 * 131072 + c4 * dT / 64;
-  int32_t sens = c1 * 65536 + c3 * dT / 128;
+  int64_t offset = (int64_t)c2 * 131072 + (int64_t)c4 * (int64_t)dT / 64;
+  int64_t sens = (int64_t)c1 * 65536 + (int64_t)c3 * (int64_t)dT / 128;
   int32_t pressure = (raw * sens / 2097152 - offset )/ 32768;
   return pressure / 100.0;
 }
