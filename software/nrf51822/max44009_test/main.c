@@ -20,7 +20,7 @@
 #include "simple_ble.h"
 #include "simple_adv.h"
 #include "permamote.h"
-#include "si7021.h"
+#include "max44009.h"
 
 #define MAX_TEST_DATA_BYTES  (15U)
 #define UART_TX_BUF_SIZE     256
@@ -91,7 +91,7 @@ int main(void) {
 
   // init uart
   uart_init();
-  printf("\nHUMIDITY AND TEMPERATURE TEST\n");
+  printf("\nLUX TEST\n");
 
   // Init twi
   twi_init();
@@ -101,22 +101,27 @@ int main(void) {
   nrf_gpio_cfg_output(ISL29125_EN);
   nrf_gpio_cfg_output(MS5637_EN);
   nrf_gpio_cfg_output(SI7021_EN);
-  nrf_gpio_pin_set(MAX44009_EN);
+  nrf_gpio_pin_clear(MAX44009_EN);
   nrf_gpio_pin_set(ISL29125_EN);
   nrf_gpio_pin_set(MS5637_EN);
-  nrf_gpio_pin_clear(SI7021_EN);
+  nrf_gpio_pin_set(SI7021_EN);
 
-  si7021_init(&twi_instance);
-  si7021_config(si7021_MODE0);
+  const max44009_config_t config = {
+    .continuous = 0,
+    .manual = 0,
+    .cdr = 0,
+    .int_time = 3,
+  };
+
+  max44009_init(&twi_instance);
+  max44009_config(config);
 
   // Advertise because why not
   simple_adv_only_name();
 
   while (1) {
-    float temp, hum;
-    si7021_read_temp_and_RH(&temp, &hum);
-    printf("temperature: %f\n", temp);
-    printf("humidity: %f\n\n", hum);
+    float lux = max44009_read_lux();
+    printf("lux: %f\n", lux);
     nrf_delay_ms(5000);
   }
 }

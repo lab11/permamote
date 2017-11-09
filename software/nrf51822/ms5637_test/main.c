@@ -20,7 +20,7 @@
 #include "simple_ble.h"
 #include "simple_adv.h"
 #include "permamote.h"
-#include "si7021.h"
+#include "ms5637.h"
 
 #define MAX_TEST_DATA_BYTES  (15U)
 #define UART_TX_BUF_SIZE     256
@@ -86,9 +86,6 @@ void uart_init(void) {
 }
 
 int main(void) {
-  volatile uint32_t err_code;
-  uint8_t data[3];
-
   // Setup BLE
   simple_ble_init(&ble_config);
 
