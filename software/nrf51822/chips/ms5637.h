@@ -8,7 +8,7 @@
 
 #define MS5637_ADDR 0x76
 
-typedef enum OSR_enum{
+typedef enum {
   osr_8192,
   osr_4096,
   osr_2048,
