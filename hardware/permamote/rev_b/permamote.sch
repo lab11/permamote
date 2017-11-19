@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="8.4.1">
+<eagle version="8.4.2">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.05" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="14" fill="1" visible="no" active="no"/>
@@ -724,8 +724,8 @@ To use, set global attributes TITLE, AUTHOR and REV in your schematic.</descript
 <wire x1="27.94" y1="2.54" x2="0" y2="2.54" width="0.254" layer="94"/>
 <pin name="SCL/SPC" x="-2.54" y="12.7" length="short"/>
 <pin name="CS" x="-2.54" y="10.16" length="short"/>
-<pin name="MOSI/SA0" x="-2.54" y="7.62" length="short"/>
-<pin name="MISO/SDA" x="-2.54" y="5.08" length="short"/>
+<pin name="MISO/SA0" x="-2.54" y="7.62" length="short"/>
+<pin name="MOSI/SDA" x="-2.54" y="5.08" length="short"/>
 <pin name="GND" x="17.78" y="0" length="short" rot="R90"/>
 <pin name="VCC" x="-2.54" y="20.32" length="short"/>
 <pin name="INT1" x="30.48" y="15.24" length="short" rot="R180"/>
@@ -1086,8 +1086,8 @@ To use, set global attributes TITLE, AUTHOR and REV in your schematic.</descript
 <connect gate="G$1" pin="GND" pad="5 6 7 8"/>
 <connect gate="G$1" pin="INT1" pad="12"/>
 <connect gate="G$1" pin="INT2" pad="11"/>
-<connect gate="G$1" pin="MISO/SDA" pad="4"/>
-<connect gate="G$1" pin="MOSI/SA0" pad="3"/>
+<connect gate="G$1" pin="MISO/SA0" pad="3"/>
+<connect gate="G$1" pin="MOSI/SDA" pad="4"/>
 <connect gate="G$1" pin="SCL/SPC" pad="1"/>
 <connect gate="G$1" pin="VCC" pad="9"/>
 <connect gate="G$1" pin="VDD_IO" pad="10"/>
@@ -6708,10 +6708,8 @@ Either populate the NRF52840
 <net name="N$32" class="0">
 <segment>
 <pinref part="U2" gate="G$1" pin="VRDIV"/>
-<wire x1="116.84" y1="101.6" x2="116.84" y2="99.06" width="0.1524" layer="91"/>
-<wire x1="137.16" y1="99.06" x2="116.84" y2="99.06" width="0.1524" layer="91"/>
-<wire x1="137.16" y1="99.06" x2="137.16" y2="88.9" width="0.1524" layer="91"/>
-<wire x1="137.16" y1="88.9" x2="144.78" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="88.9" x2="116.84" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="88.9" x2="144.78" y2="88.9" width="0.1524" layer="91"/>
 <pinref part="SJ1" gate="G$1" pin="2"/>
 <wire x1="144.78" y1="88.9" x2="144.78" y2="86.36" width="0.1524" layer="91"/>
 </segment>
@@ -7131,20 +7129,6 @@ Either populate the NRF52840
 <label x="17.78" y="111.76" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="MOSI" class="0">
-<segment>
-<pinref part="U5" gate="G$1" pin="MOSI/SA0"/>
-<wire x1="20.32" y1="109.22" x2="17.78" y2="109.22" width="0.1524" layer="91"/>
-<label x="17.78" y="109.22" size="1.27" layer="95" rot="R180" xref="yes"/>
-</segment>
-</net>
-<net name="MISO" class="0">
-<segment>
-<pinref part="U5" gate="G$1" pin="MISO/SDA"/>
-<wire x1="20.32" y1="106.68" x2="17.78" y2="106.68" width="0.1524" layer="91"/>
-<label x="17.78" y="106.68" size="1.27" layer="95" rot="R180" xref="yes"/>
-</segment>
-</net>
 <net name="ACC_INT1" class="0">
 <segment>
 <pinref part="U5" gate="G$1" pin="INT1"/>
@@ -7505,6 +7489,20 @@ Either populate the NRF52840
 <pinref part="Q4" gate=".1" pin="D"/>
 <pinref part="U4" gate="G$1" pin="SCL"/>
 <wire x1="127" y1="121.92" x2="134.62" y2="121.92" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="MISO" class="0">
+<segment>
+<pinref part="U5" gate="G$1" pin="MISO/SA0"/>
+<wire x1="20.32" y1="109.22" x2="17.78" y2="109.22" width="0.1524" layer="91"/>
+<label x="17.78" y="109.22" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="MOSI" class="0">
+<segment>
+<pinref part="U5" gate="G$1" pin="MOSI/SDA"/>
+<wire x1="20.32" y1="106.68" x2="17.78" y2="106.68" width="0.1524" layer="91"/>
+<label x="17.78" y="106.68" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 </nets>
