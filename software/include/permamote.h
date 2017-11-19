@@ -39,9 +39,9 @@
 #define SI7021_EN   NRF_GPIO_PIN_MAP(0,12)
 
 // Accelerometer
-#define L12D_CS     NRF_GPIO_PIN_MAP(0,13)
-#define L12D_INT1   NRF_GPIO_PIN_MAP(1,6)
-#define L12D_INT2   NRF_GPIO_PIN_MAP(0,9)
+#define LI2D_CS     NRF_GPIO_PIN_MAP(0,13)
+#define LI2D_INT1   NRF_GPIO_PIN_MAP(1,6)
+#define LI2D_INT2   NRF_GPIO_PIN_MAP(0,9)
 
 //PIR
 #define PIR_EN      NRF_GPIO_PIN_MAP(1,10)
@@ -89,9 +89,9 @@
 #define SI7021_EN   15
 
 // Accelerometer
-#define L12D_CS     14
-#define L12D_INT1   6
-#define L12D_INT2   7
+#define LI2D_CS     14
+#define LI2D_INT1   6
+#define LI2D_INT2   7
 
 //PIR
 #define PIR_EN      19
