@@ -13,7 +13,7 @@
 //#define ADDRESS_FLASH_LOCATION 0x0003fff8
 
 // DEFINES FOR NRF52840
-#ifdef NRF52840_XXAA
+#ifdef NRF52840
 
 // I2C through headers
 #define I2C_SCL     NRF_GPIO_PIN_MAP(0,8)
