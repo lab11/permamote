@@ -29,8 +29,8 @@ RAM_KB = 32
 SOFTDEVICE_MODEL = s130
 SDK_VERSION = 12
 
-LIBRARY_PATHS += ./ ../include/ ../chips/
-SOURCE_PATHS += ./ ../chips/
+LIBRARY_PATHS += ./ ../../include/ ../../chips/
+SOURCE_PATHS += ./ ../../chips/
 
 NRF_BASE_PATH ?= ../../nrf5x-base
 include $(NRF_BASE_PATH)/make/Makefile

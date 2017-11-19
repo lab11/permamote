@@ -22,15 +22,15 @@ APPLICATION_SRCS += led.c
 APPLICATION_SRCS += simple_ble.c
 APPLICATION_SRCS += simple_adv.c
 
-APPLICATION_SRCS += si7021.c
+APPLICATION_SRCS += ms5637.c
 
 NRF_IC = nrf51822
 RAM_KB = 32
 SOFTDEVICE_MODEL = s130
 SDK_VERSION = 12
 
-LIBRARY_PATHS += ./ ../include/ ../chips/
-SOURCE_PATHS += ./ ../chips/
+LIBRARY_PATHS += ./ ../../include/ ../../chips/
+SOURCE_PATHS += ./ ../../chips/
 
 NRF_BASE_PATH ?= ../../nrf5x-base
 include $(NRF_BASE_PATH)/make/Makefile
