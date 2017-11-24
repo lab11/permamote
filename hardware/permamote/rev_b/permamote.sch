@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="8.4.0">
+<eagle version="8.4.3">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -481,7 +481,7 @@ To use, set global attributes TITLE, AUTHOR and REV in your schematic.</descript
 <smd name="18" x="-1.74" y="0" dx="0.28" dy="0.85" layer="1" roundness="100" rot="R270"/>
 <smd name="19" x="-1.74" y="-0.5" dx="0.28" dy="0.85" layer="1" roundness="100" rot="R270"/>
 <smd name="20" x="-1.74" y="-1" dx="0.28" dy="0.85" layer="1" roundness="100" rot="R270"/>
-<circle x="-2.5" y="-2.5" radius="0.3" width="0" layer="21"/>
+<circle x="-2.032" y="-2.032" radius="0.3" width="0" layer="21"/>
 <smd name="PAD" x="0" y="0" dx="2.05" dy="2.05" layer="1" cream="no"/>
 <rectangle x1="-0.4" y1="0.6" x2="0.4" y2="1" layer="31"/>
 <rectangle x1="0.6" y1="-0.4" x2="1" y2="0.4" layer="31"/>
@@ -1867,26 +1867,32 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <circle x="-17.77" y="0" radius="1.59" width="0.127" layer="21"/>
 <circle x="17.77" y="0" radius="1.59" width="0.127" layer="21"/>
 </package>
-<package name="BAT-HLD-20XX-THRU">
-<description>Through Hole 20mil holder</description>
-<smd name="GND" x="0" y="0" dx="17.8" dy="17.8" layer="1" roundness="100"/>
-<pad name="+1" x="-10.4" y="1.5" drill="1" diameter="2"/>
-<pad name="+2" x="-10.4" y="-1.5" drill="1" diameter="2"/>
-<pad name="+4" x="10.4" y="-1.5" drill="1" diameter="2"/>
-<pad name="+3" x="10.4" y="1.5" drill="1" diameter="2"/>
-<wire x1="-10.5" y1="4.6" x2="-10.5" y2="-4.6" width="0.127" layer="21"/>
-<wire x1="-10.5" y1="-4.6" x2="-7" y2="-8.1" width="0.127" layer="21"/>
-<wire x1="-7" y1="-8.1" x2="7" y2="-8.1" width="0.127" layer="21"/>
-<wire x1="7" y1="-8.1" x2="10.5" y2="-4.6" width="0.127" layer="21"/>
-<wire x1="10.5" y1="-4.6" x2="10.5" y2="4.6" width="0.127" layer="21"/>
-<wire x1="10.5" y1="4.6" x2="7.6" y2="7.5" width="0.127" layer="21"/>
-<wire x1="7.6" y1="7.5" x2="-7.6" y2="7.5" width="0.127" layer="21"/>
-<wire x1="-7.6" y1="7.5" x2="-10.5" y2="4.6" width="0.127" layer="21"/>
+<package name="BAT-HLD-002-THM">
+<pad name="POS1" x="-10.4" y="1.5" drill="1" diameter="1.8"/>
+<pad name="POS2" x="-10.4" y="-1.6" drill="1" diameter="1.8"/>
+<pad name="POS3" x="10.4" y="1.5" drill="1" diameter="1.8"/>
+<pad name="POS4" x="10.4" y="-1.6" drill="1" diameter="1.8"/>
+<smd name="GND" x="0" y="0" dx="6.35" dy="6.35" layer="1" roundness="100"/>
+<wire x1="-10.5" y1="-4.5" x2="-10.5" y2="4.5" width="0.127" layer="21"/>
+<wire x1="-6.5" y1="7.5" x2="6.5" y2="7.5" width="0.127" layer="21"/>
+<wire x1="10.5" y1="-4.5" x2="10.5" y2="4.5" width="0.127" layer="21"/>
+<wire x1="-10.5" y1="4.5" x2="-6.5" y2="7.5" width="0.127" layer="21"/>
+<wire x1="10.5" y1="4.5" x2="6.5" y2="7.5" width="0.127" layer="21"/>
 <circle x="0" y="0" radius="10" width="0.127" layer="21"/>
-<text x="-5" y="8" size="1.27" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
+<text x="0" y="10.5" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
 </package>
 </packages>
 <symbols>
+<symbol name="BATTERY">
+<pin name="+" x="5.08" y="2.54" visible="pin" length="short" rot="R180"/>
+<pin name="-" x="5.08" y="-2.54" visible="pin" length="short" rot="R180"/>
+<wire x1="-2.54" y1="5.08" x2="-2.54" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="-5.08" x2="2.54" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="2.54" y1="-5.08" x2="2.54" y2="5.08" width="0.254" layer="94"/>
+<wire x1="2.54" y1="5.08" x2="-2.54" y2="5.08" width="0.254" layer="94"/>
+<text x="-2.54" y="5.588" size="1.778" layer="95" ratio="12">&gt;NAME</text>
+<text x="-2.54" y="-7.62" size="1.778" layer="96" ratio="12">&gt;VALUE</text>
+</symbol>
 <symbol name="BAT-CELL">
 <wire x1="-7.62" y1="2.54" x2="7.62" y2="2.54" width="0.254" layer="94"/>
 <wire x1="-5.08" y1="0" x2="5.08" y2="0" width="0.254" layer="94"/>
@@ -1962,22 +1968,21 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 </device>
 </devices>
 </deviceset>
-<deviceset name="BAT-HLD-20XX-THRU" prefix="BT">
-<description>A through hole 2032 Battery Holder</description>
+<deviceset name="BAT-HLD-002-THM" prefix="BAT">
+<description>RETAINER BATT CR2016 PC PINS</description>
 <gates>
-<gate name="G$1" symbol="BAT-CELL" x="0" y="0"/>
+<gate name="G$1" symbol="BATTERY" x="0" y="0"/>
 </gates>
 <devices>
-<device name="" package="BAT-HLD-20XX-THRU">
+<device name="" package="BAT-HLD-002-THM">
 <connects>
-<connect gate="G$1" pin="+" pad="+1 +2 +3 +4"/>
+<connect gate="G$1" pin="+" pad="POS1 POS2 POS3 POS4"/>
 <connect gate="G$1" pin="-" pad="GND"/>
 </connects>
 <technologies>
 <technology name="">
-<attribute name="DIGIKEY" value="BAT-HLD-001-THM-ND" constant="no"/>
-<attribute name="MANUFACTURER" value="Linx Technologies" constant="no"/>
-<attribute name="MPN" value="BAT-HLD-001-THM" constant="no"/>
+<attribute name="DIGIKEY" value="BAT-HLD-002-THM-ND" constant="no"/>
+<attribute name="MOUSER" value="712-BAT-HLD-002-THM" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -4689,9 +4694,6 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <part name="L7" library="passives" deviceset="INDUCTOR" device="74437324220" value="22uH">
 <attribute name="DIGIKEY" value="732-3340-1-ND"/>
 </part>
-<part name="C40" library="passives" deviceset="CAPACITOR" device="0603_CAP" value="4.7uF">
-<attribute name="DIGIKEY" value="490-3896-1-ND"/>
-</part>
 <part name="GND24" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND25" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND26" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
@@ -4773,8 +4775,8 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <part name="R13" library="passives" deviceset="RESISTOR" device="0402_RES" value="4.22M">
 <attribute name="DIGIKEY" value="YAG3306CT-ND"/>
 </part>
-<part name="BT2" library="batteries" deviceset="BAT-HLD-20XX-THRU" device=""/>
-<part name="BT3" library="batteries" deviceset="BAT-HLD-20XX-THRU" device=""/>
+<part name="BT2" library="batteries" deviceset="BAT-HLD-002-THM" device=""/>
+<part name="BT3" library="batteries" deviceset="BAT-HLD-002-THM" device=""/>
 <part name="R14" library="passives" deviceset="RESISTOR" device="0402_RES" value="7.32M">
 <attribute name="DIGIKEY" value="YAG3306CT-ND"/>
 </part>
@@ -4801,6 +4803,16 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <part name="J5" library="connector" deviceset="MICRO_USB_B_HIROSE_ZX62R-B-5P" device=""/>
 <part name="P+16" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="P+18" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
+<part name="GND4" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
+<part name="C7" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.7uF">
+<attribute name="DIGIKEY" value="445-5947-1-ND"/>
+</part>
+<part name="C8" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.7uF">
+<attribute name="DIGIKEY" value="445-5947-1-ND"/>
+</part>
+<part name="C3" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.01uF">
+<attribute name="DIGIKEY" value="490-4516-1-ND"/>
+</part>
 </parts>
 <sheets>
 <sheet>
@@ -5618,9 +5630,6 @@ Either populate the NRF52840
 <instance part="L7" gate="G$1" x="91.44" y="149.86" rot="R270">
 <attribute name="DIGIKEY" x="91.44" y="149.86" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
 </instance>
-<instance part="C40" gate="G$1" x="66.04" y="139.7">
-<attribute name="DIGIKEY" x="66.04" y="139.7" size="1.016" layer="96" align="bottom-center" display="off"/>
-</instance>
 <instance part="P+15" gate="G$1" x="215.9" y="162.56"/>
 <instance part="P+20" gate="G$1" x="50.8" y="157.48"/>
 <instance part="U2" gate="G$1" x="124.46" y="129.54"/>
@@ -5657,8 +5666,8 @@ Either populate the NRF52840
 <instance part="R13" gate="G$1" x="152.4" y="45.72" rot="R90">
 <attribute name="DIGIKEY" x="152.4" y="45.72" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
-<instance part="BT2" gate="G$1" x="198.12" y="114.3"/>
-<instance part="BT3" gate="G$1" x="220.98" y="114.3"/>
+<instance part="BT2" gate="G$1" x="193.04" y="114.3"/>
+<instance part="BT3" gate="G$1" x="215.9" y="114.3"/>
 <instance part="R14" gate="G$1" x="172.72" y="58.42" rot="R90">
 <attribute name="DIGIKEY" x="172.72" y="58.42" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
@@ -5667,6 +5676,16 @@ Either populate the NRF52840
 </instance>
 <instance part="GND31" gate="1" x="172.72" y="27.94"/>
 <instance part="L8" gate="G$1" x="48.26" y="63.5" rot="R90"/>
+<instance part="GND4" gate="1" x="124.46" y="165.1"/>
+<instance part="C7" gate="G$1" x="119.38" y="175.26">
+<attribute name="DIGIKEY" x="119.38" y="175.26" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="C8" gate="G$1" x="66.04" y="139.7">
+<attribute name="DIGIKEY" x="66.04" y="139.7" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="C3" gate="G$1" x="127" y="175.26">
+<attribute name="DIGIKEY" x="127" y="175.26" size="1.778" layer="96" display="off"/>
+</instance>
 </instances>
 <busses>
 </busses>
@@ -5698,20 +5717,20 @@ Either populate the NRF52840
 <pinref part="GND5" gate="1" pin="GND"/>
 <wire x1="50.8" y1="127" x2="50.8" y2="124.46" width="0.1524" layer="91"/>
 <junction x="50.8" y="127"/>
-<pinref part="C40" gate="G$1" pin="2"/>
 <wire x1="66.04" y1="134.62" x2="66.04" y2="127" width="0.1524" layer="91"/>
 <pinref part="C17" gate="G$1" pin="2"/>
 <wire x1="81.28" y1="129.54" x2="81.28" y2="127" width="0.1524" layer="91"/>
 <wire x1="66.04" y1="127" x2="81.28" y2="127" width="0.1524" layer="91"/>
 <junction x="66.04" y="127"/>
+<pinref part="C8" gate="G$1" pin="2"/>
 </segment>
 <segment>
 <pinref part="BT4" gate="G$1" pin="-"/>
 <wire x1="243.84" y1="106.68" x2="243.84" y2="109.22" width="0.1524" layer="91"/>
 <wire x1="220.98" y1="106.68" x2="243.84" y2="106.68" width="0.1524" layer="91"/>
-<wire x1="220.98" y1="109.22" x2="220.98" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="220.98" y1="111.76" x2="220.98" y2="106.68" width="0.1524" layer="91"/>
 <junction x="220.98" y="106.68"/>
-<wire x1="198.12" y1="109.22" x2="198.12" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="198.12" y1="111.76" x2="198.12" y2="106.68" width="0.1524" layer="91"/>
 <wire x1="198.12" y1="106.68" x2="220.98" y2="106.68" width="0.1524" layer="91"/>
 <pinref part="GND20" gate="1" pin="GND"/>
 <wire x1="243.84" y1="106.68" x2="243.84" y2="101.6" width="0.1524" layer="91"/>
@@ -5748,6 +5767,16 @@ Either populate the NRF52840
 <pinref part="GND31" gate="1" pin="GND"/>
 <pinref part="R16" gate="G$1" pin="1"/>
 <wire x1="172.72" y1="30.48" x2="172.72" y2="40.64" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<wire x1="119.38" y1="170.18" x2="119.38" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="119.38" y1="167.64" x2="124.46" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="124.46" y1="167.64" x2="127" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="127" y1="167.64" x2="127" y2="170.18" width="0.1524" layer="91"/>
+<pinref part="GND4" gate="1" pin="GND"/>
+<junction x="124.46" y="167.64"/>
+<pinref part="C7" gate="G$1" pin="2"/>
+<pinref part="C3" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="SW" class="0">
@@ -5819,32 +5848,7 @@ Either populate the NRF52840
 <junction x="175.26" y="180.34"/>
 </segment>
 </net>
-<net name="VBAT" class="0">
-<segment>
-<wire x1="198.12" y1="127" x2="205.74" y2="127" width="0.1524" layer="91"/>
-<pinref part="BT4" gate="G$1" pin="+"/>
-<wire x1="205.74" y1="127" x2="220.98" y2="127" width="0.1524" layer="91"/>
-<wire x1="220.98" y1="127" x2="243.84" y2="127" width="0.1524" layer="91"/>
-<wire x1="243.84" y1="127" x2="243.84" y2="121.92" width="0.1524" layer="91"/>
-<pinref part="P+4" gate="VCC" pin="VBAT"/>
-<wire x1="205.74" y1="127" x2="205.74" y2="129.54" width="0.1524" layer="91"/>
-<junction x="205.74" y="127"/>
-<wire x1="198.12" y1="127" x2="198.12" y2="139.7" width="0.1524" layer="91"/>
-<pinref part="U2" gate="G$1" pin="VBAT_PRI"/>
-<wire x1="152.4" y1="139.7" x2="182.88" y2="139.7" width="0.1524" layer="91"/>
-<pinref part="Q6" gate=".1" pin="D"/>
-<wire x1="182.88" y1="139.7" x2="198.12" y2="139.7" width="0.1524" layer="91"/>
-<wire x1="182.88" y1="157.48" x2="182.88" y2="139.7" width="0.1524" layer="91"/>
-<junction x="182.88" y="139.7"/>
-<pinref part="BT2" gate="G$1" pin="+"/>
-<wire x1="198.12" y1="121.92" x2="198.12" y2="127" width="0.1524" layer="91"/>
-<junction x="198.12" y="127"/>
-<pinref part="BT3" gate="G$1" pin="+"/>
-<wire x1="220.98" y1="121.92" x2="220.98" y2="127" width="0.1524" layer="91"/>
-<junction x="220.98" y="127"/>
-</segment>
-</net>
-<net name="N$30" class="0">
+<net name="VREF_SAMP" class="0">
 <segment>
 <pinref part="C17" gate="G$1" pin="1"/>
 <wire x1="81.28" y1="137.16" x2="81.28" y2="139.7" width="0.1524" layer="91"/>
@@ -5865,27 +5869,7 @@ Either populate the NRF52840
 <wire x1="203.2" y1="149.86" x2="203.2" y2="154.94" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="VSOL" class="0">
-<segment>
-<pinref part="D1" gate="G$1" pin="V+"/>
-<wire x1="50.8" y1="147.32" x2="50.8" y2="149.86" width="0.1524" layer="91"/>
-<wire x1="50.8" y1="149.86" x2="50.8" y2="154.94" width="0.1524" layer="91"/>
-<junction x="50.8" y="149.86"/>
-<pinref part="P+20" gate="G$1" pin="VSOL"/>
-<pinref part="L7" gate="G$1" pin="2"/>
-<wire x1="50.8" y1="149.86" x2="66.04" y2="149.86" width="0.1524" layer="91"/>
-<pinref part="C40" gate="G$1" pin="1"/>
-<wire x1="66.04" y1="149.86" x2="73.66" y2="149.86" width="0.1524" layer="91"/>
-<wire x1="73.66" y1="149.86" x2="83.82" y2="149.86" width="0.1524" layer="91"/>
-<wire x1="66.04" y1="142.24" x2="66.04" y2="149.86" width="0.1524" layer="91"/>
-<junction x="66.04" y="149.86"/>
-<pinref part="U2" gate="G$1" pin="VIN_DC"/>
-<wire x1="106.68" y1="144.78" x2="73.66" y2="144.78" width="0.1524" layer="91"/>
-<wire x1="73.66" y1="144.78" x2="73.66" y2="149.86" width="0.1524" layer="91"/>
-<junction x="73.66" y="149.86"/>
-</segment>
-</net>
-<net name="N$40" class="0">
+<net name="LBST" class="0">
 <segment>
 <pinref part="L7" gate="G$1" pin="1"/>
 <pinref part="U2" gate="G$1" pin="LBST"/>
@@ -5899,7 +5883,7 @@ Either populate the NRF52840
 <wire x1="167.64" y1="167.64" x2="167.64" y2="170.18" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$46" class="0">
+<net name="!VBAT_SEC_ON" class="0">
 <segment>
 <pinref part="U2" gate="G$1" pin="!VBAT_SEC_ON"/>
 <pinref part="Q5" gate=".1" pin="G"/>
@@ -5919,7 +5903,7 @@ Either populate the NRF52840
 <wire x1="182.88" y1="167.64" x2="182.88" y2="170.18" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$56" class="0">
+<net name="!VBAT_PRI_ON" class="0">
 <segment>
 <pinref part="U2" gate="G$1" pin="!VBAT_PRI_ON"/>
 <pinref part="Q6" gate=".1" pin="G"/>
@@ -5930,19 +5914,27 @@ Either populate the NRF52840
 <junction x="187.96" y="162.56"/>
 </segment>
 </net>
-<net name="N$47" class="0">
+<net name="VOC_SAMP_VSTOR" class="0">
 <segment>
 <pinref part="U2" gate="G$1" pin="VSTOR"/>
 <wire x1="154.94" y1="154.94" x2="152.4" y2="154.94" width="0.1524" layer="91"/>
 <pinref part="U2" gate="G$1" pin="VOC_SAMP"/>
 <wire x1="106.68" y1="154.94" x2="101.6" y2="154.94" width="0.1524" layer="91"/>
-<wire x1="101.6" y1="154.94" x2="101.6" y2="167.64" width="0.1524" layer="91"/>
-<wire x1="101.6" y1="167.64" x2="154.94" y2="167.64" width="0.1524" layer="91"/>
-<wire x1="154.94" y1="154.94" x2="154.94" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="101.6" y1="154.94" x2="101.6" y2="180.34" width="0.1524" layer="91"/>
+<wire x1="101.6" y1="180.34" x2="119.38" y2="180.34" width="0.1524" layer="91"/>
+<wire x1="119.38" y1="180.34" x2="127" y2="180.34" width="0.1524" layer="91"/>
+<wire x1="127" y1="180.34" x2="154.94" y2="180.34" width="0.1524" layer="91"/>
+<wire x1="154.94" y1="154.94" x2="154.94" y2="180.34" width="0.1524" layer="91"/>
 <wire x1="154.94" y1="154.94" x2="167.64" y2="154.94" width="0.1524" layer="91"/>
 <junction x="154.94" y="154.94"/>
 <pinref part="Q5" gate=".1" pin="D"/>
 <wire x1="167.64" y1="154.94" x2="167.64" y2="157.48" width="0.1524" layer="91"/>
+<wire x1="119.38" y1="177.8" x2="119.38" y2="180.34" width="0.1524" layer="91"/>
+<junction x="119.38" y="180.34"/>
+<wire x1="127" y1="177.8" x2="127" y2="180.34" width="0.1524" layer="91"/>
+<junction x="127" y="180.34"/>
+<pinref part="C7" gate="G$1" pin="1"/>
+<pinref part="C3" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="N$18" class="0">
@@ -6034,6 +6026,51 @@ Either populate the NRF52840
 <wire x1="172.72" y1="60.96" x2="172.72" y2="81.28" width="0.1524" layer="91"/>
 <wire x1="172.72" y1="81.28" x2="152.4" y2="81.28" width="0.1524" layer="91"/>
 <junction x="152.4" y="81.28"/>
+</segment>
+</net>
+<net name="VSOL" class="0">
+<segment>
+<pinref part="D1" gate="G$1" pin="V+"/>
+<wire x1="50.8" y1="147.32" x2="50.8" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="50.8" y1="149.86" x2="50.8" y2="154.94" width="0.1524" layer="91"/>
+<junction x="50.8" y="149.86"/>
+<pinref part="P+20" gate="G$1" pin="VSOL"/>
+<pinref part="L7" gate="G$1" pin="2"/>
+<wire x1="50.8" y1="149.86" x2="66.04" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="66.04" y1="149.86" x2="73.66" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="73.66" y1="149.86" x2="83.82" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="66.04" y1="142.24" x2="66.04" y2="149.86" width="0.1524" layer="91"/>
+<junction x="66.04" y="149.86"/>
+<pinref part="U2" gate="G$1" pin="VIN_DC"/>
+<wire x1="106.68" y1="144.78" x2="73.66" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="73.66" y1="144.78" x2="73.66" y2="149.86" width="0.1524" layer="91"/>
+<junction x="73.66" y="149.86"/>
+<pinref part="C8" gate="G$1" pin="1"/>
+</segment>
+</net>
+<net name="VBAT" class="0">
+<segment>
+<wire x1="198.12" y1="127" x2="205.74" y2="127" width="0.1524" layer="91"/>
+<pinref part="BT4" gate="G$1" pin="+"/>
+<wire x1="205.74" y1="127" x2="220.98" y2="127" width="0.1524" layer="91"/>
+<wire x1="220.98" y1="127" x2="243.84" y2="127" width="0.1524" layer="91"/>
+<wire x1="243.84" y1="127" x2="243.84" y2="121.92" width="0.1524" layer="91"/>
+<pinref part="P+4" gate="VCC" pin="VBAT"/>
+<wire x1="205.74" y1="127" x2="205.74" y2="129.54" width="0.1524" layer="91"/>
+<junction x="205.74" y="127"/>
+<wire x1="198.12" y1="127" x2="198.12" y2="139.7" width="0.1524" layer="91"/>
+<pinref part="U2" gate="G$1" pin="VBAT_PRI"/>
+<wire x1="152.4" y1="139.7" x2="182.88" y2="139.7" width="0.1524" layer="91"/>
+<pinref part="Q6" gate=".1" pin="D"/>
+<wire x1="182.88" y1="139.7" x2="198.12" y2="139.7" width="0.1524" layer="91"/>
+<wire x1="182.88" y1="157.48" x2="182.88" y2="139.7" width="0.1524" layer="91"/>
+<junction x="182.88" y="139.7"/>
+<pinref part="BT2" gate="G$1" pin="+"/>
+<wire x1="198.12" y1="116.84" x2="198.12" y2="127" width="0.1524" layer="91"/>
+<junction x="198.12" y="127"/>
+<pinref part="BT3" gate="G$1" pin="+"/>
+<wire x1="220.98" y1="116.84" x2="220.98" y2="127" width="0.1524" layer="91"/>
+<junction x="220.98" y="127"/>
 </segment>
 </net>
 </nets>
