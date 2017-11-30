@@ -4688,7 +4688,7 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <part name="GND18" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="P+19" library="mote" deviceset="VSW" device=""/>
 <part name="GND20" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="C17" library="passives" deviceset="CAPACITOR" device="0603_CAP" value="10nF">
+<part name="C17" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="10nF">
 <attribute name="DIGIKEY" value="490-4516-1-ND"/>
 </part>
 <part name="L7" library="passives" deviceset="INDUCTOR" device="74437324220" value="22uH">
@@ -4807,7 +4807,7 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <part name="C7" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.7uF">
 <attribute name="DIGIKEY" value="445-5947-1-ND"/>
 </part>
-<part name="C8" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.7uF">
+<part name="C8" library="passives" deviceset="CAPACITOR" device="0603_CAP" value="4.7uF">
 <attribute name="DIGIKEY" value="445-5947-1-ND"/>
 </part>
 <part name="C3" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.01uF">
