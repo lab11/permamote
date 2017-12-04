@@ -2107,6 +2107,18 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <circle x="0" y="0" radius="10" width="0.127" layer="21"/>
 <text x="0" y="10.5" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
 </package>
+<package name="VL-2020">
+<pad name="+" x="-5.1" y="-1.35" drill="1.9"/>
+<pad name="-" x="5.2" y="1.35" drill="0.8"/>
+<wire x1="-5.1" y1="2" x2="-5.1" y2="1" width="0.127" layer="25"/>
+<wire x1="-5.6" y1="1.5" x2="-4.6" y2="1.5" width="0.127" layer="25"/>
+<wire x1="4.7" y1="-1" x2="5.7" y2="-1" width="0.127" layer="25"/>
+<wire x1="-7.112" y1="-3.302" x2="-7.112" y2="2.54" width="0.127" layer="25"/>
+<wire x1="-7.112" y1="2.54" x2="6.858" y2="2.54" width="0.127" layer="25"/>
+<wire x1="6.858" y1="2.54" x2="6.858" y2="-3.302" width="0.127" layer="25"/>
+<wire x1="6.858" y1="-3.302" x2="-7.112" y2="-3.302" width="0.127" layer="25"/>
+<text x="-7.112" y="3.048" size="1.016" layer="25" font="vector" ratio="12">&gt;NAME</text>
+</package>
 </packages>
 <symbols>
 <symbol name="BATTERY">
@@ -2209,6 +2221,27 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <technology name="">
 <attribute name="DIGIKEY" value="BAT-HLD-002-THM-ND" constant="no"/>
 <attribute name="MOUSER" value="712-BAT-HLD-002-THM" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="VL" prefix="BAT">
+<description>Vanadium Pentoxide Lithium Coin Battery</description>
+<gates>
+<gate name="G$1" symbol="BAT-CELL" x="0" y="0"/>
+</gates>
+<devices>
+<device name="-2020" package="VL-2020">
+<connects>
+<connect gate="G$1" pin="+" pad="+"/>
+<connect gate="G$1" pin="-" pad="-"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="DIGIKEY" value="P082-ND" constant="no"/>
+<attribute name="MANUFACTURER" value="PANASONIC" constant="no"/>
+<attribute name="MPN" value="VL-2020/VCN" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -5769,6 +5802,8 @@ Source: http://www.ftdichip.com/Documents/DataSheets/DS_FT232R_v104.pdf</descrip
 <part name="JP20" library="SparkFun-Passives" deviceset="JUMPER-2" device="SMD-NC"/>
 <part name="JP21" library="SparkFun-Passives" deviceset="JUMPER-2" device="SMD-NC"/>
 <part name="JP22" library="SparkFun-Passives" deviceset="JUMPER-2" device="SMD-NC"/>
+<part name="BT5" library="batteries" deviceset="VL" device="-2020"/>
+<part name="GND34" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -7255,6 +7290,8 @@ Either populate the NRF52840
 <instance part="GND31" gate="1" x="172.72" y="27.94"/>
 <instance part="L8" gate="G$1" x="48.26" y="63.5" rot="R90"/>
 <instance part="D1" gate="G$1" x="50.8" y="137.16"/>
+<instance part="BT5" gate="G$1" x="236.22" y="144.78"/>
+<instance part="GND34" gate="1" x="236.22" y="134.62"/>
 </instances>
 <busses>
 </busses>
@@ -7336,6 +7373,11 @@ Either populate the NRF52840
 <pinref part="GND31" gate="1" pin="GND"/>
 <pinref part="R16" gate="G$1" pin="1"/>
 <wire x1="172.72" y1="30.48" x2="172.72" y2="40.64" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="BT5" gate="G$1" pin="-"/>
+<wire x1="236.22" y1="139.7" x2="236.22" y2="137.16" width="0.1524" layer="91"/>
+<pinref part="GND34" gate="1" pin="GND"/>
 </segment>
 </net>
 <net name="SW" class="0">
@@ -7454,6 +7496,9 @@ Either populate the NRF52840
 <pinref part="U2" gate="G$1" pin="VBAT_SEC"/>
 <wire x1="152.4" y1="149.86" x2="203.2" y2="149.86" width="0.1524" layer="91"/>
 <wire x1="203.2" y1="149.86" x2="203.2" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="BT5" gate="G$1" pin="+"/>
+<wire x1="215.9" y1="154.94" x2="236.22" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="236.22" y1="154.94" x2="236.22" y2="152.4" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="VSOL" class="0">
