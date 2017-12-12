@@ -1,0 +1,52 @@
+#! /usr/bin/env python3
+
+import argparse
+from copy import deepcopy
+from config import sim_config
+from config import sweep_vars
+import numpy as np
+from simulate_enhants import simulate
+import matplotlib.pyplot as plt
+
+
+# Input files for simulation
+parser = argparse.ArgumentParser(description='Energy Harvesting Simulation.')
+parser.add_argument('lightfile', metavar='l', type=str, help='A file to use to simulate light conditions')
+args = parser.parse_args()
+
+# load light and motion files
+lights = np.load(args.lightfile)
+
+sim_config_default = sim_config()
+
+sweep_lifetimes = []
+for sweep_var in sweep_vars:
+    # load default config
+    sweep_config = deepcopy(sim_config_default)
+    sweep_lifetime = []
+    for config in sweep_config.config_list:
+        if config['name'] == sweep_var[0][0] and sweep_var[0][1] in config:
+            sweep_design_parameter = sweep_var[0][1]
+            sweep_design_component = config
+            sweep_parameter_name = config['name'] + '_' + sweep_design_parameter
+            sweep_range = sweep_var[1]
+            break;
+
+    print(sweep_parameter_name)
+    for i in sweep_range:
+        print()
+        print(i)
+        sweep_design_component[sweep_design_parameter] = i
+        lifetime = simulate(sweep_config, lights)
+        sweep_lifetime.append([i, lifetime])
+        print(str(lifetime) + ' years')
+    sweep_lifetime = np.array(sweep_lifetime)
+    sweep_lifetimes.append((sweep_parameter_name, sweep_lifetime))
+
+for parameter_sweep in sweep_lifetimes:
+    plt.figure()
+    plt.plot(parameter_sweep[1][:,0], parameter_sweep[1][:,1])
+    plt.title(' '.join(parameter_sweep[0].split('_')[:-1]))
+    plt.ylabel('lifetime (years)')
+    plt.xlabel(' '.join(parameter_sweep[0].split('_')[1:]))
+    plt.show()
