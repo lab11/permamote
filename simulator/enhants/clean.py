@@ -12,7 +12,7 @@ if not os.path.exists('numpy_arrays'):
 fnames = glob('enhants_data/*')
 def parse(fname):
     print('    ' + fname)
-    basename = fname.split('/')[-1].split('.')[0]
+    basename = fname.split('/')[1].split('_')[0]
     a = np.loadtxt(fname, delimiter='\t', dtype=str)
     if(a[0,0].strip() == 'sec'):
         a = a[1:, :]
@@ -28,8 +28,8 @@ def parse(fname):
     np.save('numpy_arrays/' + basename, data)
 
 
-#p = Pool(8)
-#p.map(parse, sorted(fnames))
-for fname in sorted(fnames):
-    parse(fname)
+p = Pool(len(fnames))
+p.map(parse, sorted(fnames))
+#for fname in sorted(fnames):
+#    parse(fname)
 
