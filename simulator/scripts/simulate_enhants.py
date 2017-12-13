@@ -17,21 +17,28 @@ def simulate(config, lights):
     else:
         secondary_config = 0
 
-    solar_config = config.solar_config
-
     # initialize energy for sleep and active
     sleep_current = design_config['sleep_current_A'] * \
-            design_config['operating_voltage_V'] / \
             design_config['boost_efficiency']
     active_current = design_config['active_current_A'] * \
-            design_config['operating_voltage_V'] / \
             design_config['boost_efficiency'] \
 
     # initialize energy for primary and secondary
-    primary_capacity= primary_config['capacity_mAh']
-    primary_energy = primary_energy_max = primary_capacity*1E-3*primary_config['nominal_voltage_V']*3600
-    primary_leakage_current = primary_config['leakage_percent_year']/100 * primary_config['capacity_mAh'] /(24*365)/1000
-    primary_leakage_energy = primary_config['nominal_voltage_V'] * primary_leakage_current * 60
+    #primary_capacity= primary_config['capacity_mAh']
+    primary_volume = primary_config['volume_L']
+    primary_density = primary_config['density_WhpL']
+    #primary_energy = primary_energy_max = primary_capacity*1E-3*primary_config['nominal_voltage_V']*3600
+    primary_energy = primary_energy_max = primary_volume * primary_density * 3600
+    #primary_leakage_current = primary_config['leakage_percent_year']/100 * primary_config['capacity_mAh'] /(24*365)/1000
+    #primary_leakage_energy = primary_config['nominal_voltage_V'] * primary_leakage_current * 60
+    primary_leakage_energy = primary_energy * primary_config['leakage_percent_year']/100 /(60*24*365)
+
+    solar_config = config.solar_config
+    if 'area_cm2' in solar_config:
+        solar_area = solar_config['area_cm2']
+    else: solar_area = 2 * 100 * primary_volume ** (2.0/3.0)
+    print(solar_area)
+    print(primary_volume)
 
     # calculate total leakage energy from storage
     secondary_leakage_energy = 0
@@ -62,7 +69,7 @@ def simulate(config, lights):
 
         primary_discharge = 0
         # energy from solar panel:
-        incoming_energy = light * 1E-6 * solar_config['area_cm2'] \
+        incoming_energy = light * 1E-6 * solar_area \
                 * solar_config['efficiency'] * design_config['frontend_efficiency'] * 60
         solar_powers.append(incoming_energy / 60)
         possible_energy += incoming_energy
@@ -78,12 +85,11 @@ def simulate(config, lights):
             charge_hysteresis = False
 
         # subtract active transmission
-        outgoing_energy = sleep_current * (60 - design_config['active_period_s'])
+        outgoing_energy = sleep_current * (60 - design_config['active_period_s']) * design_config['operating_voltage_V']
         time_to_transmit -= 1
         if time_to_transmit == 0:
             time_to_transmit = design_config['active_frequency_minutes']
-            outgoing_energy += active_current * design_config['active_period_s']
-
+            outgoing_energy += active_current * design_config['active_period_s'] * design_config['operating_voltage_V']
         out_powers.append(outgoing_energy/60)
 
         # if not waiting for secondary to recharge, use secondary energy
@@ -116,17 +122,17 @@ def simulate(config, lights):
         primary_soc.append(primary_energy)
         minutes.append(minute)
 
-    print('\nAverages:')
+    print('Averages:')
     print('  light ' + str(np.mean(lights)) + ' uW/cm^2')
-    print('  solar ' + str(np.mean(solar_powers)) + ' W')
-    print('  secondary: ' + str(secondary_leakage_energy/60) + ' W')
-    print('  primary: ' + str(primary_leakage_energy/60) + ' W')
-    print('  out ' + str(np.mean(out_powers)) + ' W')
-    print('  total ' + str(np.mean(solar_powers) - primary_leakage_energy/60 - secondary_leakage_energy/60 - np.mean(out_powers)) + ' W')
-    print('  Wasted ' + str(wasted_energy))
-    print('  Possibly Collected ' + str(possible_energy))
-    print('  average primary discharge ' + str(np.mean(primary_discharges)/60))
-    print('  minimum primary discharge ' + str(primary_leakage_current))
+    #print('  solar ' + str(np.mean(solar_powers)) + ' W')
+    #print('  secondary: ' + str(secondary_leakage_energy/60) + ' W')
+    #print('  primary: ' + str(primary_leakage_energy/60) + ' W')
+    #print('  out ' + str(np.mean(out_powers)) + ' W')
+    #print('  total ' + str(np.mean(solar_powers) - primary_leakage_energy/60 - secondary_leakage_energy/60 - np.mean(out_powers)) + ' W')
+    #print('  Wasted ' + str(wasted_energy))
+    #print('  Possibly Collected ' + str(possible_energy))
+    #print('  average primary discharge ' + str(np.mean(primary_discharges)/60))
+    ##print('  minimum primary discharge ' + str(primary_leakage_current))
 
     #plt.figure()
     #plt.plot(minutes, [x*1E3/2.4/3600 for x in secondary_soc])
