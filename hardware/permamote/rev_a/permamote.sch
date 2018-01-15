@@ -3780,6 +3780,32 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="SJ4" library="SparkFun-Passives" deviceset="SOLDERJUMPER" device="NC2"/>
 <part name="SJ5" library="SparkFun-Passives" deviceset="SOLDERJUMPER" device="NC2"/>
 <part name="TP1" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP2" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP3" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP4" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP5" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP6" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP7" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP8" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP9" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP10" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP11" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP12" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP13" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP14" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP15" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP16" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP17" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP18" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP19" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP20" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP21" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP22" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP23" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP24" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP25" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP26" library="headers" deviceset="TEST-POINT" device="3"/>
+<part name="TP27" library="headers" deviceset="TEST-POINT" device="3"/>
 </parts>
 <sheets>
 <sheet>
@@ -3863,7 +3889,7 @@ Either populate the NRF52840
 <instance part="J1" gate="G$1" x="33.02" y="76.2"/>
 <instance part="GND17" gate="1" x="17.78" y="66.04"/>
 <instance part="P+9" gate="VCC" x="17.78" y="86.36"/>
-<instance part="P+14" gate="VCC" x="175.26" y="165.1"/>
+<instance part="P+14" gate="VCC" x="182.88" y="160.02"/>
 <instance part="C18" gate="G$1" x="81.28" y="139.7">
 <attribute name="DIGIKEY" x="81.28" y="139.7" size="1.778" layer="96" display="off"/>
 </instance>
@@ -3881,8 +3907,8 @@ Either populate the NRF52840
 <attribute name="DIGIKEY" x="220.98" y="91.44" size="1.778" layer="96" rot="R270" display="off"/>
 </instance>
 <instance part="GND28" gate="1" x="228.6" y="73.66"/>
-<instance part="P+3" gate="G$1" x="167.64" y="165.1"/>
-<instance part="P+23" gate="G$1" x="182.88" y="160.02"/>
+<instance part="P+3" gate="G$1" x="198.12" y="160.02"/>
+<instance part="P+23" gate="G$1" x="190.5" y="160.02"/>
 <instance part="A2" gate="G$1" x="238.76" y="76.2"/>
 <instance part="S1" gate="G$1" x="88.9" y="7.62"/>
 <instance part="R6" gate="G$1" x="116.84" y="25.4" rot="R90">
@@ -4185,9 +4211,9 @@ Either populate the NRF52840
 <label x="200.66" y="114.3" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="U10" gate="G$1" pin="P0.24"/>
-<wire x1="114.3" y1="76.2" x2="109.22" y2="76.2" width="0.1524" layer="91"/>
-<label x="109.22" y="76.2" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="U10" gate="G$1" pin="P0.14"/>
+<wire x1="114.3" y1="99.06" x2="109.22" y2="99.06" width="0.1524" layer="91"/>
+<label x="109.22" y="99.06" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="SDA" class="0">
@@ -4198,9 +4224,9 @@ Either populate the NRF52840
 <pinref part="R3" gate="G$1" pin="1"/>
 </segment>
 <segment>
-<pinref part="U10" gate="G$1" pin="P1.00"/>
-<wire x1="160.02" y1="137.16" x2="162.56" y2="137.16" width="0.1524" layer="91"/>
-<label x="162.56" y="137.16" size="1.27" layer="95" xref="yes"/>
+<pinref part="U10" gate="G$1" pin="P0.15"/>
+<wire x1="114.3" y1="96.52" x2="109.22" y2="96.52" width="0.1524" layer="91"/>
+<label x="109.22" y="96.52" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="N$25" class="0">
@@ -4218,9 +4244,9 @@ Either populate the NRF52840
 <label x="48.26" y="20.32" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="U10" gate="G$1" pin="P0.12"/>
-<wire x1="114.3" y1="104.14" x2="109.22" y2="104.14" width="0.1524" layer="91"/>
-<label x="109.22" y="104.14" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="U10" gate="G$1" pin="P1.09"/>
+<wire x1="160.02" y1="114.3" x2="165.1" y2="114.3" width="0.1524" layer="91"/>
+<label x="165.1" y="114.3" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="MOSI" class="0">
@@ -4297,9 +4323,9 @@ Either populate the NRF52840
 <label x="86.36" y="33.02" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
-<pinref part="U10" gate="G$1" pin="P0.16"/>
-<wire x1="114.3" y1="93.98" x2="109.22" y2="93.98" width="0.1524" layer="91"/>
-<label x="109.22" y="93.98" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="U10" gate="G$1" pin="P1.13"/>
+<wire x1="160.02" y1="104.14" x2="165.1" y2="104.14" width="0.1524" layer="91"/>
+<label x="165.1" y="104.14" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="!RTC_IRQ2" class="0">
@@ -4309,9 +4335,9 @@ Either populate the NRF52840
 <label x="86.36" y="30.48" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
-<pinref part="U10" gate="G$1" pin="P0.19"/>
-<wire x1="114.3" y1="88.9" x2="109.22" y2="88.9" width="0.1524" layer="91"/>
-<label x="109.22" y="88.9" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="U10" gate="G$1" pin="P1.14"/>
+<wire x1="160.02" y1="101.6" x2="165.1" y2="101.6" width="0.1524" layer="91"/>
+<label x="165.1" y="101.6" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="WDI" class="0">
@@ -4326,9 +4352,9 @@ Either populate the NRF52840
 <label x="96.52" y="45.72" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
-<pinref part="U10" gate="G$1" pin="P0.15"/>
-<wire x1="114.3" y1="96.52" x2="109.22" y2="96.52" width="0.1524" layer="91"/>
-<label x="109.22" y="96.52" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="U10" gate="G$1" pin="P0.02/AIN0"/>
+<wire x1="160.02" y1="160.02" x2="162.56" y2="160.02" width="0.1524" layer="91"/>
+<label x="162.56" y="160.02" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="SCK" class="0">
@@ -4338,15 +4364,17 @@ Either populate the NRF52840
 <label x="48.26" y="22.86" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="U10" gate="G$1" pin="P1.09"/>
-<wire x1="160.02" y1="114.3" x2="165.1" y2="114.3" width="0.1524" layer="91"/>
-<label x="165.1" y="114.3" size="1.27" layer="95" xref="yes"/>
+<pinref part="U10" gate="G$1" pin="P0.12"/>
+<wire x1="114.3" y1="104.14" x2="109.22" y2="104.14" width="0.1524" layer="91"/>
+<label x="109.22" y="104.14" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="VBAT" class="0">
 <segment>
 <pinref part="P+14" gate="VCC" pin="VBAT"/>
-<wire x1="175.26" y1="154.94" x2="175.26" y2="162.56" width="0.1524" layer="91"/>
+<pinref part="U10" gate="G$1" pin="P0.29/AIN5"/>
+<wire x1="160.02" y1="147.32" x2="182.88" y2="147.32" width="0.1524" layer="91"/>
+<wire x1="182.88" y1="147.32" x2="182.88" y2="157.48" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U1" gate="G$1" pin="VBAT"/>
@@ -4374,30 +4402,23 @@ Either populate the NRF52840
 <label x="48.26" y="15.24" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="U10" gate="G$1" pin="P0.14"/>
-<wire x1="114.3" y1="99.06" x2="109.22" y2="99.06" width="0.1524" layer="91"/>
-<label x="109.22" y="99.06" size="1.27" layer="95" rot="R180" xref="yes"/>
-</segment>
-</net>
-<net name="!LT_EN" class="0">
-<segment>
-<pinref part="U10" gate="G$1" pin="P0.20"/>
-<wire x1="114.3" y1="86.36" x2="109.22" y2="86.36" width="0.1524" layer="91"/>
-<label x="109.22" y="86.36" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="U10" gate="G$1" pin="P1.12"/>
+<wire x1="160.02" y1="106.68" x2="165.1" y2="106.68" width="0.1524" layer="91"/>
+<label x="165.1" y="106.68" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="PIR_OUT" class="0">
 <segment>
-<pinref part="U10" gate="G$1" pin="P1.03"/>
-<wire x1="160.02" y1="129.54" x2="162.56" y2="129.54" width="0.1524" layer="91"/>
-<label x="162.56" y="129.54" size="1.27" layer="95" xref="yes"/>
+<pinref part="U10" gate="G$1" pin="P0.16"/>
+<wire x1="114.3" y1="93.98" x2="109.22" y2="93.98" width="0.1524" layer="91"/>
+<label x="109.22" y="93.98" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="ACC_INT1" class="0">
 <segment>
-<pinref part="U10" gate="G$1" pin="P0.06"/>
-<wire x1="114.3" y1="114.3" x2="109.22" y2="114.3" width="0.1524" layer="91"/>
-<label x="109.22" y="114.3" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="U10" gate="G$1" pin="P0.20"/>
+<wire x1="114.3" y1="86.36" x2="109.22" y2="86.36" width="0.1524" layer="91"/>
+<label x="109.22" y="86.36" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="!CLR_INT" class="0">
@@ -4409,16 +4430,16 @@ Either populate the NRF52840
 </net>
 <net name="!LT_INT" class="0">
 <segment>
-<pinref part="U10" gate="G$1" pin="P0.22"/>
-<wire x1="114.3" y1="81.28" x2="109.22" y2="81.28" width="0.1524" layer="91"/>
-<label x="109.22" y="81.28" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="U10" gate="G$1" pin="P1.00"/>
+<wire x1="160.02" y1="137.16" x2="162.56" y2="137.16" width="0.1524" layer="91"/>
+<label x="162.56" y="137.16" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="ACC_INT2" class="0">
 <segment>
-<pinref part="U10" gate="G$1" pin="P0.05/AIN3"/>
-<wire x1="160.02" y1="152.4" x2="162.56" y2="152.4" width="0.1524" layer="91"/>
-<label x="162.56" y="152.4" size="1.27" layer="95" xref="yes"/>
+<pinref part="U10" gate="G$1" pin="P0.22"/>
+<wire x1="114.3" y1="81.28" x2="109.22" y2="81.28" width="0.1524" layer="91"/>
+<label x="109.22" y="81.28" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="N$44" class="0">
@@ -4462,9 +4483,9 @@ Either populate the NRF52840
 <net name="VSEC" class="0">
 <segment>
 <pinref part="P+3" gate="G$1" pin="VSEC"/>
-<pinref part="U10" gate="G$1" pin="P0.04/AIN2"/>
-<wire x1="160.02" y1="154.94" x2="167.64" y2="154.94" width="0.1524" layer="91"/>
-<wire x1="167.64" y1="154.94" x2="167.64" y2="162.56" width="0.1524" layer="91"/>
+<wire x1="198.12" y1="142.24" x2="198.12" y2="157.48" width="0.1524" layer="91"/>
+<pinref part="U10" gate="G$1" pin="P0.31/AIN7"/>
+<wire x1="160.02" y1="142.24" x2="198.12" y2="142.24" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="!CLR_EN" class="0">
@@ -4481,17 +4502,17 @@ Either populate the NRF52840
 <label x="86.36" y="27.94" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
-<pinref part="U10" gate="G$1" pin="P0.17"/>
-<wire x1="114.3" y1="91.44" x2="109.22" y2="91.44" width="0.1524" layer="91"/>
-<label x="109.22" y="91.44" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="U10" gate="G$1" pin="P1.15"/>
+<wire x1="160.02" y1="99.06" x2="165.1" y2="99.06" width="0.1524" layer="91"/>
+<label x="165.1" y="99.06" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="VSOL" class="0">
 <segment>
 <pinref part="P+23" gate="G$1" pin="VSOL"/>
-<wire x1="182.88" y1="144.78" x2="182.88" y2="157.48" width="0.1524" layer="91"/>
+<wire x1="190.5" y1="144.78" x2="190.5" y2="157.48" width="0.1524" layer="91"/>
 <pinref part="U10" gate="G$1" pin="P0.30/AIN6"/>
-<wire x1="182.88" y1="144.78" x2="160.02" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="190.5" y1="144.78" x2="160.02" y2="144.78" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SWDCLK" class="0">
@@ -4506,32 +4527,11 @@ Either populate the NRF52840
 <label x="109.22" y="66.04" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="!PIR_EN" class="0">
-<segment>
-<pinref part="U10" gate="G$1" pin="P1.01"/>
-<wire x1="160.02" y1="134.62" x2="162.56" y2="134.62" width="0.1524" layer="91"/>
-<label x="162.56" y="134.62" size="1.27" layer="95" xref="yes"/>
-</segment>
-</net>
-<net name="!PR_EN" class="0">
-<segment>
-<pinref part="U10" gate="G$1" pin="P0.11"/>
-<wire x1="114.3" y1="106.68" x2="109.22" y2="106.68" width="0.1524" layer="91"/>
-<label x="109.22" y="106.68" size="1.27" layer="95" rot="R180" xref="yes"/>
-</segment>
-</net>
-<net name="!HUM_EN" class="0">
-<segment>
-<pinref part="U10" gate="G$1" pin="P1.08"/>
-<wire x1="160.02" y1="116.84" x2="165.1" y2="116.84" width="0.1524" layer="91"/>
-<label x="165.1" y="116.84" size="1.27" layer="95" xref="yes"/>
-</segment>
-</net>
 <net name="ACC_CS" class="0">
 <segment>
-<pinref part="U10" gate="G$1" pin="P0.07"/>
-<wire x1="114.3" y1="111.76" x2="109.22" y2="111.76" width="0.1524" layer="91"/>
-<label x="109.22" y="111.76" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="U10" gate="G$1" pin="P0.21"/>
+<wire x1="114.3" y1="83.82" x2="109.22" y2="83.82" width="0.1524" layer="91"/>
+<label x="109.22" y="83.82" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="SW" class="0">
@@ -4541,11 +4541,25 @@ Either populate the NRF52840
 <label x="162.56" y="149.86" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="DBG_RX" class="0">
+<net name="!PIR_EN" class="0">
 <segment>
-<pinref part="U10" gate="G$1" pin="P0.26"/>
-<wire x1="160.02" y1="93.98" x2="165.1" y2="93.98" width="0.1524" layer="91"/>
-<label x="165.1" y="93.98" size="1.27" layer="95" xref="yes"/>
+<pinref part="U10" gate="G$1" pin="P0.17"/>
+<wire x1="114.3" y1="91.44" x2="109.22" y2="91.44" width="0.1524" layer="91"/>
+<label x="109.22" y="91.44" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="!HUM_EN" class="0">
+<segment>
+<pinref part="U10" gate="G$1" pin="P1.10"/>
+<wire x1="160.02" y1="111.76" x2="165.1" y2="111.76" width="0.1524" layer="91"/>
+<label x="165.1" y="111.76" size="1.27" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="!PR_EN" class="0">
+<segment>
+<pinref part="U10" gate="G$1" pin="P1.11"/>
+<wire x1="160.02" y1="109.22" x2="165.1" y2="109.22" width="0.1524" layer="91"/>
+<label x="165.1" y="109.22" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="DBG_TX" class="0">
@@ -4553,6 +4567,20 @@ Either populate the NRF52840
 <pinref part="U10" gate="G$1" pin="P0.27"/>
 <wire x1="160.02" y1="96.52" x2="165.1" y2="96.52" width="0.1524" layer="91"/>
 <label x="165.1" y="96.52" size="1.27" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="DBG_RX" class="0">
+<segment>
+<pinref part="U10" gate="G$1" pin="P0.26"/>
+<wire x1="160.02" y1="93.98" x2="165.1" y2="93.98" width="0.1524" layer="91"/>
+<label x="165.1" y="93.98" size="1.27" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="!LT_EN" class="0">
+<segment>
+<pinref part="U10" gate="G$1" pin="P0.24"/>
+<wire x1="114.3" y1="76.2" x2="109.22" y2="76.2" width="0.1524" layer="91"/>
+<label x="109.22" y="76.2" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 </nets>
@@ -5673,7 +5701,33 @@ Either populate the NRF52840
 <instance part="SJ3" gate="1" x="35.56" y="111.76"/>
 <instance part="SJ4" gate="1" x="109.22" y="121.92"/>
 <instance part="SJ5" gate="1" x="109.22" y="132.08"/>
-<instance part="TP1" gate="G$1" x="180.34" y="137.16"/>
+<instance part="TP1" gate="G$1" x="180.34" y="132.08"/>
+<instance part="TP2" gate="G$1" x="180.34" y="129.54"/>
+<instance part="TP3" gate="G$1" x="180.34" y="127"/>
+<instance part="TP4" gate="G$1" x="180.34" y="124.46"/>
+<instance part="TP5" gate="G$1" x="180.34" y="121.92"/>
+<instance part="TP6" gate="G$1" x="180.34" y="119.38"/>
+<instance part="TP7" gate="G$1" x="180.34" y="116.84"/>
+<instance part="TP8" gate="G$1" x="180.34" y="114.3"/>
+<instance part="TP9" gate="G$1" x="180.34" y="111.76"/>
+<instance part="TP10" gate="G$1" x="180.34" y="109.22"/>
+<instance part="TP11" gate="G$1" x="180.34" y="106.68"/>
+<instance part="TP12" gate="G$1" x="180.34" y="104.14"/>
+<instance part="TP13" gate="G$1" x="180.34" y="101.6"/>
+<instance part="TP14" gate="G$1" x="180.34" y="99.06"/>
+<instance part="TP15" gate="G$1" x="180.34" y="96.52"/>
+<instance part="TP16" gate="G$1" x="180.34" y="93.98"/>
+<instance part="TP17" gate="G$1" x="180.34" y="91.44"/>
+<instance part="TP18" gate="G$1" x="180.34" y="88.9"/>
+<instance part="TP19" gate="G$1" x="180.34" y="86.36"/>
+<instance part="TP20" gate="G$1" x="180.34" y="83.82"/>
+<instance part="TP21" gate="G$1" x="180.34" y="81.28"/>
+<instance part="TP22" gate="G$1" x="180.34" y="78.74"/>
+<instance part="TP23" gate="G$1" x="180.34" y="76.2"/>
+<instance part="TP24" gate="G$1" x="180.34" y="73.66"/>
+<instance part="TP25" gate="G$1" x="180.34" y="68.58"/>
+<instance part="TP26" gate="G$1" x="180.34" y="66.04"/>
+<instance part="TP27" gate="G$1" x="180.34" y="63.5"/>
 </instances>
 <busses>
 </busses>
@@ -5717,138 +5771,161 @@ Either populate the NRF52840
 <pinref part="GND30" gate="1" pin="GND"/>
 <wire x1="172.72" y1="60.96" x2="172.72" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="172.72" y1="63.5" x2="180.34" y2="63.5" width="0.1524" layer="91"/>
+<pinref part="TP27" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="SCL" class="0">
 <segment>
 <wire x1="180.34" y1="129.54" x2="177.8" y2="129.54" width="0.1524" layer="91"/>
 <label x="177.8" y="129.54" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP2" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="SDA" class="0">
 <segment>
 <wire x1="180.34" y1="132.08" x2="177.8" y2="132.08" width="0.1524" layer="91"/>
 <label x="177.8" y="132.08" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP1" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="!CLR_INT" class="0">
 <segment>
 <wire x1="180.34" y1="83.82" x2="177.8" y2="83.82" width="0.1524" layer="91"/>
 <label x="177.8" y="83.82" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP20" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="!LT_INT" class="0">
 <segment>
 <wire x1="180.34" y1="81.28" x2="177.8" y2="81.28" width="0.1524" layer="91"/>
 <label x="177.8" y="81.28" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP21" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="SCK" class="0">
 <segment>
 <wire x1="180.34" y1="127" x2="177.8" y2="127" width="0.1524" layer="91"/>
 <label x="177.8" y="127" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP3" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="ACC_CS" class="0">
 <segment>
 <wire x1="180.34" y1="116.84" x2="177.8" y2="116.84" width="0.1524" layer="91"/>
 <label x="177.8" y="116.84" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP7" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="MOSI" class="0">
 <segment>
 <wire x1="180.34" y1="121.92" x2="177.8" y2="121.92" width="0.1524" layer="91"/>
 <label x="177.8" y="121.92" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP5" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="MISO" class="0">
 <segment>
 <wire x1="180.34" y1="124.46" x2="177.8" y2="124.46" width="0.1524" layer="91"/>
 <label x="177.8" y="124.46" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP4" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="ACC_INT1" class="0">
 <segment>
 <wire x1="180.34" y1="88.9" x2="177.8" y2="88.9" width="0.1524" layer="91"/>
 <label x="177.8" y="88.9" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP18" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="ACC_INT2" class="0">
 <segment>
 <wire x1="180.34" y1="86.36" x2="177.8" y2="86.36" width="0.1524" layer="91"/>
 <label x="177.8" y="86.36" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP19" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="!CLR_EN" class="0">
 <segment>
 <wire x1="180.34" y1="111.76" x2="177.8" y2="111.76" width="0.1524" layer="91"/>
 <label x="177.8" y="111.76" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP9" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="!PR_EN" class="0">
 <segment>
 <wire x1="180.34" y1="114.3" x2="177.8" y2="114.3" width="0.1524" layer="91"/>
 <label x="177.8" y="114.3" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP8" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="!HUM_EN" class="0">
 <segment>
 <wire x1="180.34" y1="104.14" x2="177.8" y2="104.14" width="0.1524" layer="91"/>
 <label x="177.8" y="104.14" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP12" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="!PIR_EN" class="0">
 <segment>
 <wire x1="180.34" y1="106.68" x2="177.8" y2="106.68" width="0.1524" layer="91"/>
 <label x="177.8" y="106.68" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP11" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="PIR_OUT" class="0">
 <segment>
 <wire x1="180.34" y1="78.74" x2="177.8" y2="78.74" width="0.1524" layer="91"/>
 <label x="177.8" y="78.74" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP22" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="!LT_EN" class="0">
 <segment>
 <wire x1="180.34" y1="109.22" x2="177.8" y2="109.22" width="0.1524" layer="91"/>
 <label x="177.8" y="109.22" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP10" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="!RTC_IRQ1" class="0">
 <segment>
 <wire x1="180.34" y1="101.6" x2="177.8" y2="101.6" width="0.1524" layer="91"/>
 <label x="177.8" y="101.6" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP13" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="!RTC_IRQ2" class="0">
 <segment>
 <wire x1="180.34" y1="99.06" x2="177.8" y2="99.06" width="0.1524" layer="91"/>
 <label x="177.8" y="99.06" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP14" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="!RTC_IRQ3" class="0">
 <segment>
 <wire x1="180.34" y1="96.52" x2="177.8" y2="96.52" width="0.1524" layer="91"/>
 <label x="177.8" y="96.52" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP15" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="RTC_CS" class="0">
 <segment>
 <wire x1="180.34" y1="119.38" x2="177.8" y2="119.38" width="0.1524" layer="91"/>
 <label x="177.8" y="119.38" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP6" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="WDI" class="0">
 <segment>
 <wire x1="180.34" y1="93.98" x2="177.8" y2="93.98" width="0.1524" layer="91"/>
 <label x="177.8" y="93.98" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP16" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="!RST" class="0">
 <segment>
 <wire x1="180.34" y1="91.44" x2="177.8" y2="91.44" width="0.1524" layer="91"/>
 <label x="177.8" y="91.44" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP17" gate="G$1" pin="1"/>
 </segment>
 <segment>
 <pinref part="SJ3" gate="1" pin="1"/>
@@ -5860,18 +5937,21 @@ Either populate the NRF52840
 <segment>
 <wire x1="180.34" y1="76.2" x2="177.8" y2="76.2" width="0.1524" layer="91"/>
 <label x="177.8" y="76.2" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP23" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="SW" class="0">
 <segment>
 <wire x1="180.34" y1="68.58" x2="177.8" y2="68.58" width="0.1524" layer="91"/>
 <label x="177.8" y="68.58" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP25" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="VSEC" class="0">
 <segment>
 <wire x1="180.34" y1="73.66" x2="177.8" y2="73.66" width="0.1524" layer="91"/>
 <label x="177.8" y="73.66" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP24" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="TXD" class="0">
@@ -5893,6 +5973,7 @@ Either populate the NRF52840
 <segment>
 <wire x1="180.34" y1="66.04" x2="177.8" y2="66.04" width="0.1524" layer="91"/>
 <label x="177.8" y="66.04" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="TP26" gate="G$1" pin="1"/>
 </segment>
 <segment>
 <pinref part="SJ2" gate="1" pin="1"/>
@@ -5960,21 +6041,12 @@ Either populate the NRF52840
 <wire x1="114.3" y1="132.08" x2="116.84" y2="132.08" width="0.1524" layer="91"/>
 <label x="116.84" y="132.08" size="1.27" layer="95" xref="yes"/>
 </segment>
-<segment>
-<wire x1="180.34" y1="134.62" x2="177.8" y2="134.62" width="0.1524" layer="91"/>
-<label x="177.8" y="134.62" size="1.27" layer="95" rot="R180" xref="yes"/>
-</segment>
 </net>
 <net name="DBG_TX" class="0">
 <segment>
 <pinref part="SJ4" gate="1" pin="2"/>
 <wire x1="114.3" y1="121.92" x2="116.84" y2="121.92" width="0.1524" layer="91"/>
 <label x="116.84" y="121.92" size="1.27" layer="95" xref="yes"/>
-</segment>
-<segment>
-<wire x1="180.34" y1="137.16" x2="177.8" y2="137.16" width="0.1524" layer="91"/>
-<label x="177.8" y="137.16" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="TP1" gate="G$1" pin="1"/>
 </segment>
 </net>
 </nets>
