@@ -2068,23 +2068,23 @@ Quickturn PCB 4 Layer .DRU</description>
 </pass>
 </autorouter>
 <elements>
-<element name="C35" library="passives" package="0402_CAP" value="4.7uF" x="23.114" y="12.446" smashed="yes">
+<element name="C26" library="passives" package="0402_CAP" value="4.7uF" x="23.114" y="12.446" smashed="yes">
 <attribute name="DIGIKEY" value="445-5947-1-ND" x="23.114" y="12.446" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="23.622" y="11.938" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="C20" library="passives" package="0402_CAP" value="0.1uF" x="24.733" y="19.773" smashed="yes">
+<element name="C12" library="passives" package="0402_CAP" value="0.1uF" x="24.733" y="19.773" smashed="yes">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="24.733" y="19.773" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="24.765" y="19.304" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="C21" library="passives" package="0402_CAP" value="0.1uF" x="25.146" y="16.002" smashed="yes" rot="R270">
+<element name="C13" library="passives" package="0402_CAP" value="0.1uF" x="25.146" y="16.002" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="25.146" y="16.002" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="25.527" y="16.002" size="1.016" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="C22" library="passives" package="0402_CAP" value="0.1uF" x="16.732" y="11.518" smashed="yes" rot="R270">
+<element name="C14" library="passives" package="0402_CAP" value="0.1uF" x="16.732" y="11.518" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="16.732" y="11.518" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="15.582" y="10.605" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="C23" library="passives" package="0402_CAP" value="0.1uF" x="15.208" y="19.265" smashed="yes" rot="R90">
+<element name="C15" library="passives" package="0402_CAP" value="0.1uF" x="15.208" y="19.265" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="15.208" y="19.265" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="16.351" y="21.17" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
@@ -2094,19 +2094,19 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="MPN" value="NRF52840" x="19.992" y="16.61" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="21.902" y="20.344" size="1.016" layer="25" font="vector" ratio="12"/>
 </element>
-<element name="C29" library="passives" package="0402_CAP" value="1uF" x="15.716" y="11.518" smashed="yes" rot="R270">
+<element name="C21" library="passives" package="0402_CAP" value="1uF" x="15.716" y="11.518" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="490-7195-1-ND " x="15.716" y="11.518" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="14.009" y="11.525" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="C13" library="passives" package="0402_CAP" value="100pF" x="16.747" y="21.887" smashed="yes" rot="R90">
+<element name="C8" library="passives" package="0402_CAP" value="100pF" x="16.747" y="21.887" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="490-5922-1-ND" x="16.747" y="21.887" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="16.56" y="22.679" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C4" library="passives" package="0402_CAP" value="12pF" x="11.684" y="22.86" smashed="yes" rot="R90">
+<element name="C3" library="passives" package="0402_CAP" value="12pF" x="11.684" y="22.86" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="490-6197-1-ND" x="11.684" y="22.86" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="11.684" y="21.844" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="C5" library="passives" package="0402_CAP" value="12pF" x="13.557" y="19.392" smashed="yes">
+<element name="C4" library="passives" package="0402_CAP" value="12pF" x="13.557" y="19.392" smashed="yes">
 <attribute name="DIGIKEY" value="490-6197-1-ND" x="13.557" y="19.392" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="13.557" y="19.011" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
@@ -2128,29 +2128,29 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="MPN" value="7M-32.000MAHV-T" x="13.684" y="22.186" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="15.192" y="24.091" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C30" library="passives" package="0402_CAP" value="1uF" x="15.335" y="14.947" smashed="yes" rot="R90">
+<element name="C22" library="passives" package="0402_CAP" value="1uF" x="15.335" y="14.947" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="490-7195-1-ND " x="15.335" y="14.947" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="15.9" y="16.987" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="U6" library="chips" package="UDFN-6-MAXIM" value="MAX17222" x="19.939" y="41.275" smashed="yes" rot="R90">
+<element name="U7" library="chips" package="UDFN-6-MAXIM" value="MAX17222" x="19.939" y="41.275" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="MAX17222ELT+TCT-ND" x="19.939" y="41.275" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="MANUFACTURER" value="MAXIM INTEGRATED" x="19.939" y="41.275" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="MPN" value="MAX17222ELT+T" x="19.939" y="41.275" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="20.05" y="43.167" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C37" library="passives" package="0603_CAP" value="10uF" x="16.891" y="44.45" smashed="yes" rot="R180">
+<element name="C29" library="passives" package="0603_CAP" value="10uF" x="16.891" y="44.45" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" value="490-3896-1-ND" x="16.891" y="44.45" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="16.891" y="45.085" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C38" library="passives" package="0603_CAP" value="10uF" x="16.891" y="38.481" smashed="yes" rot="R180">
+<element name="C30" library="passives" package="0603_CAP" value="10uF" x="16.891" y="38.481" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" value="490-3896-1-ND" x="16.891" y="38.481" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="16.129" y="37.719" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="R9" library="passives" package="0603-RES" value="80.6kΩ" x="16.891" y="41.275" smashed="yes">
+<element name="R13" library="passives" package="0603-RES" value="80.6k" x="16.891" y="41.275" smashed="yes">
 <attribute name="DIGIKEY" value="311-80.6KHRCT-ND" x="16.891" y="41.275" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="16.891" y="40.64" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="R22" library="passives" package="0603-RES" value="33MΩ" x="16.891" y="42.672" smashed="yes" rot="R180">
+<element name="R22" library="passives" package="0603-RES" value="33M" x="16.891" y="42.672" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" value="HMC0603JT33M0CT-ND" x="16.891" y="42.672" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="15.748" y="42.672" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
@@ -2163,41 +2163,41 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="MPN" value="BH123A" x="13.462" y="26.416" size="1.778" layer="28" rot="MR90" display="off"/>
 <attribute name="NAME" x="22.606" y="4.826" size="1.016" layer="22" font="vector" ratio="12" rot="MR90"/>
 </element>
-<element name="U4" library="chips" package="ODFN-6-1.5MMX1.6MM" value="ISL29125" x="25.146" y="2.032" smashed="yes" rot="R90">
+<element name="U5" library="chips" package="ODFN-6-1.5MMX1.6MM" value="ISL29125" x="25.146" y="2.032" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="ISL29125IROZ-T7ACT-ND " x="25.146" y="2.032" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MANUFACTURER" value="INTERSIL" x="25.146" y="2.032" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="ISL29125IROZ-T7A" x="25.146" y="2.032" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="23.268" y="2.282" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="top-center"/>
 </element>
-<element name="U7" library="chips" package="UDFN-6-EXPOSED" value="MAX44009" x="19.812" y="2.286" smashed="yes" rot="R90">
+<element name="U8" library="chips" package="UDFN-6-EXPOSED" value="MAX44009" x="19.812" y="2.286" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="MAX44009EDT+TCT-ND" x="19.812" y="2.286" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MANUFACTURER" value="MAXIM" x="19.812" y="2.286" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="MAX44009EDT+T" x="19.812" y="2.286" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="18.542" y="2.413" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="C31" library="passives" package="0402_CAP" value="1uF" x="22.225" y="4.699" smashed="yes" rot="R90">
+<element name="C23" library="passives" package="0402_CAP" value="1uF" x="22.225" y="4.699" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="490-7195-1-ND " x="22.225" y="4.699" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="22.225" y="5.461" size="0.762" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C24" library="passives" package="0402_CAP" value="0.1uF" x="23.241" y="4.699" smashed="yes" rot="R90">
+<element name="C16" library="passives" package="0402_CAP" value="0.1uF" x="23.241" y="4.699" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="23.241" y="4.699" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="22.987" y="3.937" size="0.762" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="C32" library="passives" package="0402_CAP" value="1uF" x="21.209" y="4.699" smashed="yes" rot="R90">
+<element name="C24" library="passives" package="0402_CAP" value="1uF" x="21.209" y="4.699" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="490-7195-1-ND " x="21.209" y="4.699" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="19.939" y="3.556" size="0.762" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="R2" library="passives" package="0402_RES" value="10kΩ" x="1.207" y="23.232" smashed="yes">
+<element name="R6" library="passives" package="0402_RES" value="10k" x="1.207" y="23.232" smashed="yes">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND " x="2.477" y="23.232" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="1.207" y="23.613" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="1.207" y="21.835" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="R3" library="passives" package="0402_RES" value="10kΩ" x="2.985" y="23.232" smashed="yes" rot="R180">
+<element name="R7" library="passives" package="0402_RES" value="10k" x="2.985" y="23.232" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND " x="2.985" y="23.232" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="2.985" y="23.613" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="2.985" y="24.629" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="U5" library="chips" package="LGA-12" value="LIS2DW12" x="12.954" y="1.778" smashed="yes" rot="R270">
+<element name="U6" library="chips" package="LGA-12" value="LIS2DW12" x="12.954" y="1.778" smashed="yes" rot="R270">
 <attribute name="MANUFACTURER" value="STMicroelectronics" x="12.954" y="1.778" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MOUSER" value="511-LIS2DW12TR" x="12.954" y="1.778" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="LIS2DW12TR" x="12.954" y="1.778" size="1.778" layer="27" rot="R270" display="off"/>
@@ -2209,7 +2209,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="MPN" value="AB1815-T3" x="-6.35" y="33.528" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="7.063" y="25.595" size="1.016" layer="25" font="vector" ratio="12"/>
 </element>
-<element name="C12" library="passives" package="0402_CAP" value="47pF" x="7.874" y="29.972" smashed="yes">
+<element name="C7" library="passives" package="0402_CAP" value="47pF" x="7.874" y="29.972" smashed="yes">
 <attribute name="DIGIKEY" value="490-5942-1-ND" x="4.064" y="36.322" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="10.16" y="29.464" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
@@ -2219,31 +2219,31 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="MPN" value="ABS07-32.768KHZ-7-T " x="-8.128" y="34.544" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="2.286" y="32.258" size="1.016" layer="21" font="vector" ratio="12"/>
 </element>
-<element name="C42" library="passives" package="0402_CAP" value="DNP" x="1.778" y="31.242" smashed="yes" rot="R90">
+<element name="C32" library="passives" package="0402_CAP" value="DNP" x="1.778" y="31.242" smashed="yes" rot="R90">
 <attribute name="NAME" x="1.27" y="31.242" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="C43" library="passives" package="0402_CAP" value="DNP" x="7.366" y="31.242" smashed="yes" rot="R90">
+<element name="C33" library="passives" package="0402_CAP" value="DNP" x="7.366" y="31.242" smashed="yes" rot="R90">
 <attribute name="NAME" x="9.144" y="30.988" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C33" library="passives" package="0402_CAP" value="1uF" x="7.62" y="28.702" smashed="yes">
+<element name="C25" library="passives" package="0402_CAP" value="1uF" x="7.62" y="28.702" smashed="yes">
 <attribute name="DIGIKEY" value="490-7195-1-ND " x="-2.54" y="27.432" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="7.874" y="28.194" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="C25" library="passives" package="0402_CAP" value="0.1uF" x="16.764" y="2.286" smashed="yes">
+<element name="C17" library="passives" package="0402_CAP" value="0.1uF" x="16.764" y="2.286" smashed="yes">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="16.764" y="2.286" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="17.018" y="3.81" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="C39" library="passives" package="0603_CAP" value="10uF" x="16.51" y="1.016" smashed="yes">
+<element name="C31" library="passives" package="0603_CAP" value="10uF" x="16.51" y="1.016" smashed="yes">
 <attribute name="DIGIKEY" value="490-3896-1-ND" x="17.78" y="1.016" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="16.002" y="2.54" size="0.762" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="U8" library="chips" package="4-SMD" value="MS5637-02BA03" x="2.032" y="13.335" smashed="yes" rot="R90">
+<element name="U9" library="chips" package="4-SMD" value="MS5637-02BA03" x="2.032" y="13.335" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="223-1199-1-ND" x="2.032" y="13.335" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MANUFACTURER" value="TE CONNECTIVITY" x="2.032" y="13.335" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="MS563702BA03-50" x="2.032" y="13.335" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="2.032" y="15.113" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C26" library="passives" package="0402_CAP" value="0.1uF" x="7.366" y="20.32" smashed="yes">
+<element name="C18" library="passives" package="0402_CAP" value="0.1uF" x="7.366" y="20.32" smashed="yes">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="7.366" y="20.32" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="7.366" y="19.939" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
@@ -2252,66 +2252,66 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="MOUSER" value="634-SI7021-A20-GM1" x="2.023" y="19.875" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="2.023" y="21.907" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C27" library="passives" package="0402_CAP" value="0.1uF" x="7.366" y="21.336" smashed="yes">
+<element name="C19" library="passives" package="0402_CAP" value="0.1uF" x="7.366" y="21.336" smashed="yes">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="8.636" y="21.336" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="7.62" y="21.717" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
 <element name="J1" library="connector" package="TC2030-IDC-NL" value="TC2030-JLINK-NL" x="24.384" y="30.861" smashed="yes" rot="R90">
 <attribute name="VALUE" x="30.4165" y="30.861" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="R23" library="passives" package="0402_RES" value="100MΩ" x="23.876" y="6.604" smashed="yes" rot="R180">
+<element name="R23" library="passives" package="0402_RES" value="100M" x="23.876" y="6.604" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" value="541-100MAHCT-ND" x="23.876" y="6.604" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="24.892" y="7.112" size="1.016" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 <attribute name="VALUE" x="23.876" y="8.001" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="R24" library="passives" package="0402_RES" value="100MΩ" x="17.78" y="3.81" smashed="yes" rot="R270">
+<element name="R24" library="passives" package="0402_RES" value="100M" x="17.78" y="3.81" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="541-100MAHCT-ND" x="17.78" y="3.81" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="18.161" y="5.842" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="16.383" y="3.81" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="R25" library="passives" package="0402_RES" value="100MΩ" x="7.112" y="18.542" smashed="yes" rot="R180">
+<element name="R25" library="passives" package="0402_RES" value="100M" x="7.112" y="18.542" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" value="541-100MAHCT-ND" x="7.112" y="18.542" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="9.398" y="17.907" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="7.112" y="19.939" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="R26" library="passives" package="0402_RES" value="100MΩ" x="5.588" y="22.606" smashed="yes">
+<element name="R26" library="passives" package="0402_RES" value="100M" x="5.588" y="22.606" smashed="yes">
 <attribute name="DIGIKEY" value="541-100MAHCT-ND" x="5.588" y="22.606" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="5.588" y="23.114" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="5.588" y="21.209" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="R27" library="passives" package="0402_RES" value="100MΩ" x="11.43" y="8.382" smashed="yes" rot="R180">
+<element name="R27" library="passives" package="0402_RES" value="100M" x="11.43" y="8.382" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" value="541-100MAHCT-ND" x="11.43" y="-17.018" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="12.138" y="6.874" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="11.43" y="9.779" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="C17" library="passives" package="0402_CAP" value="10nF" x="24.892" y="55.34" smashed="yes">
+<element name="C9" library="passives" package="0402_CAP" value="10nF" x="24.892" y="55.34" smashed="yes">
 <attribute name="DIGIKEY" value="490-4516-1-ND" x="24.892" y="55.34" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="24.86" y="55.88" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="L7" library="passives" package="74437324220" value="22uH" x="22.86" y="47.72" smashed="yes" rot="R180">
+<element name="L5" library="passives" package="74437324220" value="22uH" x="22.86" y="47.72" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" value="732-3340-1-ND" x="22.86" y="47.72" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="25.114" y="49.53" size="1.016" layer="25" font="vector" ratio="12"/>
 <attribute name="VALUE" x="26.035" y="52.8" size="1.27" layer="27" rot="R180"/>
 </element>
-<element name="R4" library="passives" package="0402_RES" value="10kΩ" x="23.876" y="7.747" smashed="yes" rot="R180">
+<element name="R8" library="passives" package="0402_RES" value="10k" x="23.876" y="7.747" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND " x="23.876" y="7.747" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="23.876" y="8.128" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="23.876" y="9.144" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="R5" library="passives" package="0402_RES" value="10kΩ" x="21.336" y="6.604" smashed="yes">
+<element name="R9" library="passives" package="0402_RES" value="10k" x="21.336" y="6.604" smashed="yes">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND " x="21.336" y="6.604" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="21.336" y="6.985" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="21.336" y="5.207" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C18" library="passives" package="0402_CAP" value="47nF" x="14.065" y="14.947" smashed="yes" rot="R90">
+<element name="C11" library="passives" package="0402_CAP" value="47nF" x="14.065" y="14.947" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="445-1264-1-ND" x="14.065" y="14.947" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="13.557" y="16.217" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="L3" library="passives" package="0402_CAP" value="15nH" x="13.303" y="13.931" smashed="yes" rot="R270">
+<element name="L2" library="passives" package="0402_CAP" value="15nH" x="13.303" y="13.931" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="587-1521-1-ND" x="17.113" y="12.407" size="1.016" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="12.922" y="14.185" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="L6" library="passives" package="0603_CAP" value="10uH" x="14.827" y="13.423" smashed="yes">
+<element name="L4" library="passives" package="0603_CAP" value="10uH" x="14.827" y="13.423" smashed="yes">
 <attribute name="DIGIKEY" value="490-4025-1-ND" x="16.351" y="10.375" size="1.016" layer="27" display="off"/>
 <attribute name="NAME" x="14.446" y="12.788" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
@@ -2322,11 +2322,11 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="NAME" x="19.391" y="11.802" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="19.734" y="11.176" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="C10" library="passives" package="0402_CAP" value="12pF" x="19.05" y="10.668" smashed="yes" rot="R90">
+<element name="C5" library="passives" package="0402_CAP" value="12pF" x="19.05" y="10.668" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="490-6197-1-ND" x="19.05" y="6.096" size="1.016" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="19.558" y="10.16" size="1.016" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="C11" library="passives" package="0402_CAP" value="12pF" x="17.526" y="9.652" smashed="yes">
+<element name="C6" library="passives" package="0402_CAP" value="12pF" x="17.526" y="9.652" smashed="yes">
 <attribute name="DIGIKEY" value="490-6197-1-ND" x="9.906" y="6.604" size="1.016" layer="27" display="off"/>
 <attribute name="NAME" x="17.288" y="9.287" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
@@ -2340,12 +2340,12 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="DIGIKEY" value="P11084SCT-ND" x="2.54" y="39.116" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="VALUE" x="-0.616" y="42.418" size="1.27" layer="27" font="vector" ratio="10" rot="R270"/>
 </element>
-<element name="R6" library="passives" package="0402_RES" value="10kΩ" x="2.159" y="43.561" smashed="yes" rot="R180">
+<element name="R10" library="passives" package="0402_RES" value="10k" x="2.159" y="43.561" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND " x="2.159" y="43.561" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="1.143" y="43.688" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="2.159" y="44.958" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="R7" library="passives" package="0402_RES" value="10kΩ" x="2.032" y="28.956" smashed="yes" rot="R90">
+<element name="R11" library="passives" package="0402_RES" value="10k" x="2.032" y="28.956" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND " x="2.032" y="28.956" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="2.54" y="27.432" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="3.429" y="28.956" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
@@ -2404,27 +2404,27 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="NAME" x="17.32" y="46.99" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="18.288" y="45.958" size="1.016" layer="27" font="vector" ratio="12" align="top-center"/>
 </element>
-<element name="R11" library="passives" package="0402_RES" value="3.9M" x="12.192" y="57.404" smashed="yes" rot="R270">
+<element name="R14" library="passives" package="0402_RES" value="3.9M" x="12.192" y="57.404" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="YAG3306CT-ND" x="12.192" y="57.404" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
 <attribute name="NAME" x="12.192" y="58.42" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="10.795" y="57.404" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="R15" library="passives" package="0402_RES" value="9.09M" x="13.716" y="57.404" smashed="yes" rot="R90">
+<element name="R21" library="passives" package="0402_RES" value="9.09M" x="13.716" y="57.404" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="YAG3306CT-ND" x="13.716" y="57.404" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="NAME" x="15.24" y="58.42" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="15.113" y="57.404" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="R21" library="passives" package="0402_RES" value="6.04k" x="11.176" y="56.388" smashed="yes" rot="R90">
+<element name="R4" library="passives" package="0402_RES" value="6.04k" x="11.176" y="56.388" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="YAG3306CT-ND" x="11.176" y="56.388" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="NAME" x="10.795" y="56.896" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="12.573" y="56.388" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="R28" library="passives" package="0402_RES" value="6.19M" x="12.192" y="55.372" smashed="yes" rot="R90">
+<element name="R17" library="passives" package="0402_RES" value="6.19M" x="12.192" y="55.372" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="YAG3306CT-ND" x="12.192" y="55.372" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="NAME" x="10.541" y="55.245" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 <attribute name="VALUE" x="13.589" y="55.372" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="R29" library="passives" package="0402_RES" value="6.81M" x="13.716" y="55.372" smashed="yes" rot="R270">
+<element name="R18" library="passives" package="0402_RES" value="6.81M" x="13.716" y="55.372" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="YAG3306CT-ND" x="13.716" y="55.372" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
 <attribute name="NAME" x="14.097" y="55.372" size="1.016" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 <attribute name="VALUE" x="12.319" y="55.372" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
@@ -2432,17 +2432,17 @@ Quickturn PCB 4 Layer .DRU</description>
 <element name="SJ1" library="jumper" library_urn="urn:adsk.eagle:library:252" package="SJ_2" package3d_urn="urn:adsk.eagle:package:15474/1" value="" x="20.193" y="57.626" smashed="yes">
 <attribute name="VALUE" x="20.0929" y="57.626" size="0.02" layer="27"/>
 </element>
-<element name="R10" library="passives" package="0402_RES" value="6.04k" x="10.414" y="51.816" smashed="yes" rot="R270">
+<element name="R5" library="passives" package="0402_RES" value="6.04k" x="10.414" y="51.816" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="YAG3306CT-ND" x="10.414" y="51.816" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
 <attribute name="NAME" x="10.033" y="51.308" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="9.017" y="51.816" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="R12" library="passives" package="0402_RES" value="8.87M" x="11.43" y="52.832" smashed="yes" rot="R270">
+<element name="R20" library="passives" package="0402_RES" value="8.87M" x="11.43" y="52.832" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="YAG3306CT-ND" x="11.43" y="52.832" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
 <attribute name="NAME" x="9.779" y="53.594" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 <attribute name="VALUE" x="10.033" y="52.832" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="R13" library="passives" package="0402_RES" value="4.22M" x="12.7" y="52.832" smashed="yes" rot="R90">
+<element name="R15" library="passives" package="0402_RES" value="4.22M" x="12.7" y="52.832" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="YAG3306CT-ND" x="12.7" y="52.832" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="NAME" x="14.224" y="52.324" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="14.097" y="52.832" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
@@ -2457,7 +2457,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="MOUSER" value="712-BAT-HLD-002-THM" x="11.176" y="38.1" size="1.778" layer="28" rot="MR270" display="off"/>
 <attribute name="NAME" x="21.803" y="38.1" size="1.016" layer="26" font="vector" ratio="12" rot="MR90" align="bottom-center"/>
 </element>
-<element name="R14" library="passives" package="0402_RES" value="7.32M" x="11.43" y="50.8" smashed="yes" rot="R90">
+<element name="R19" library="passives" package="0402_RES" value="7.32M" x="11.43" y="50.8" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="YAG3306CT-ND" x="11.43" y="50.8" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="NAME" x="11.43" y="49.911" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 <attribute name="VALUE" x="12.827" y="50.8" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
@@ -2467,13 +2467,13 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="NAME" x="13.081" y="50.8" size="1.016" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 <attribute name="VALUE" x="11.303" y="50.8" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="L8" library="passives" package="IHL-1212BZ-11" value="1uH" x="24.638" y="41.148" smashed="yes" rot="R270">
+<element name="L3" library="passives" package="IHL-1212BZ-11" value="1uH" x="24.638" y="41.148" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="541-1319-1-ND" x="24.638" y="41.148" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
 <attribute name="MANUFACTURER" value="Vishay Dale" x="24.638" y="41.148" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
 <attribute name="MPN" value="IHLP1212BZER1R0M11" x="24.638" y="41.148" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
 <attribute name="NAME" x="23" y="43.456" size="1.016" layer="25" font="vector" ratio="12"/>
 </element>
-<element name="U12" library="ftdichip" library_urn="urn:adsk.eagle:library:231" package="QFN32" package3d_urn="urn:adsk.eagle:package:14014/1" value="FT232RQ" x="3.557" y="50.467" smashed="yes" rot="R90">
+<element name="U4" library="ftdichip" library_urn="urn:adsk.eagle:library:231" package="QFN32" package3d_urn="urn:adsk.eagle:package:14014/1" value="FT232RQ" x="3.557" y="50.467" smashed="yes" rot="R90">
 <attribute name="MF" value="" x="3.557" y="50.467" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="FT232RQ" x="3.557" y="50.467" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="1.27" y="53.34" size="1.016" layer="25" font="vector" ratio="12"/>
@@ -2481,7 +2481,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="OC_NEWARK" value="91K9919" x="3.557" y="50.467" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="VALUE" x="7.907" y="46.417" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="C41" library="passives" package="0402_CAP" value="0.1uF" x="7.629" y="52.179" smashed="yes">
+<element name="C20" library="passives" package="0402_CAP" value="0.1uF" x="7.629" y="52.179" smashed="yes">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="8.629" y="52.179" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="8.146" y="53.857" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
@@ -2506,7 +2506,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="NAME" x="10.668" y="10.795" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="10.668" y="10.906" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="top-center"/>
 </element>
-<element name="R1" library="passives" package="0402_RES" value="10kΩ" x="0.889" y="28.956" smashed="yes" rot="R90">
+<element name="R12" library="passives" package="0402_RES" value="10k" x="0.889" y="28.956" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND " x="0.889" y="28.956" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="1.27" y="27.432" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="2.286" y="28.956" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
@@ -2518,15 +2518,15 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="NEWARK" value="69W0714" x="5.5" y="60" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="VALUE" x="5.5" y="61.9" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="C7" library="passives" package="0402_CAP" value="4.7uF" x="18.288" y="49.276" smashed="yes" rot="R270">
+<element name="C27" library="passives" package="0402_CAP" value="4.7uF" x="18.288" y="49.276" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="445-5947-1-ND" x="18.288" y="47.752" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="17.907" y="49.276" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="C8" library="passives" package="0603_CAP" value="4.7uF" x="25.146" y="53.054" smashed="yes">
+<element name="C28" library="passives" package="0603_CAP" value="4.7uF" x="25.146" y="53.054" smashed="yes">
 <attribute name="DIGIKEY" value="445-5947-1-ND" x="25.146" y="53.054" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="25.146" y="53.689" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C3" library="passives" package="0402_CAP" value="0.01uF" x="19.304" y="49.276" smashed="yes" rot="R270">
+<element name="C10" library="passives" package="0402_CAP" value="10nF" x="19.304" y="49.276" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="490-4516-1-ND" x="19.304" y="49.276" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="20.066" y="47.752" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
@@ -2549,17 +2549,17 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="MANUFACTURER" value="Lumex Opto" x="10.414" y="15.494" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="SML-LX0404SIUPGUSB" x="10.414" y="15.494" size="1.778" layer="27" display="off"/>
 </element>
-<element name="R8" library="passives" package="0402_RES" value="470" x="11.684" y="12.7" smashed="yes" rot="R270">
+<element name="R1" library="passives" package="0402_RES" value="470" x="11.684" y="12.7" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="311-470JRCT-ND" x="11.684" y="11.938" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="12.065" y="12.446" size="1.016" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 <attribute name="VALUE" x="10.287" y="12.7" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="R17" library="passives" package="0402_RES" value="470" x="9.144" y="12.7" smashed="yes" rot="R270">
+<element name="R2" library="passives" package="0402_RES" value="470" x="9.144" y="12.7" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="311-470JRCT-ND" x="9.144" y="12.7" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="8.763" y="12.7" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="7.747" y="12.7" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="R18" library="passives" package="0402_RES" value="470" x="10.414" y="12.7" smashed="yes" rot="R270">
+<element name="R3" library="passives" package="0402_RES" value="470" x="10.414" y="12.7" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="311-470JRCT-ND" x="10.414" y="12.7" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="10.414" y="13.589" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="9.017" y="12.7" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
@@ -2595,16 +2595,16 @@ Quickturn PCB 4 Layer .DRU</description>
 <signals>
 <signal name="N$2">
 <contactref element="U10" pad="C1"/>
-<contactref element="C22" pad="1"/>
+<contactref element="C14" pad="1"/>
 <wire x1="17.742" y1="12.96106875" x2="16.732" y2="11.95106875" width="0.1524" layer="1"/>
 <wire x1="17.742" y1="13.36" x2="17.742" y2="12.96106875" width="0.1524" layer="1"/>
 </signal>
 <signal name="N$3">
 <contactref element="U10" pad="B5"/>
-<contactref element="C30" pad="1"/>
-<contactref element="C18" pad="1"/>
+<contactref element="C22" pad="1"/>
+<contactref element="C11" pad="1"/>
 <contactref element="U10" pad="E24"/>
-<contactref element="L3" pad="1"/>
+<contactref element="L2" pad="1"/>
 <wire x1="15.335" y1="14.51393125" x2="14.065" y2="14.51393125" width="0.254" layer="1"/>
 <wire x1="14.065" y1="14.51393125" x2="13.4528625" y2="14.51393125" width="0.254" layer="1"/>
 <wire x1="13.4528625" y1="14.51393125" x2="13.303" y2="14.36406875" width="0.254" layer="1"/>
@@ -2623,7 +2623,7 @@ Quickturn PCB 4 Layer .DRU</description>
 </signal>
 <signal name="N$4">
 <contactref element="U10" pad="D23"/>
-<contactref element="C13" pad="1"/>
+<contactref element="C8" pad="1"/>
 <wire x1="16.747" y1="21.428" x2="16.747" y2="21.127" width="0.1524" layer="1"/>
 <wire x1="16.747" y1="21.428" x2="16.747" y2="21.45393125" width="0.1524" layer="1"/>
 <wire x1="17.992" y1="19.36" x2="17.646" y2="19.706" width="0.2032" layer="1"/>
@@ -2655,20 +2655,20 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="20.35006875" y1="24.518" x2="25.312" y2="24.518" width="0.3048" layer="1"/>
 </signal>
 <signal name="GND">
-<contactref element="C35" pad="2"/>
-<contactref element="C29" pad="2"/>
-<contactref element="C23" pad="2"/>
-<contactref element="C20" pad="2"/>
+<contactref element="C26" pad="2"/>
+<contactref element="C21" pad="2"/>
+<contactref element="C15" pad="2"/>
+<contactref element="C12" pad="2"/>
 <contactref element="U10" pad="B7"/>
 <contactref element="U10" pad="GND"/>
 <contactref element="U10" pad="F23"/>
 <contactref element="C2" pad="2"/>
 <contactref element="C1" pad="2"/>
+<contactref element="C14" pad="2"/>
 <contactref element="C22" pad="2"/>
-<contactref element="C30" pad="2"/>
-<contactref element="C13" pad="2"/>
+<contactref element="C8" pad="2"/>
 <contactref element="U10" pad="AD2"/>
-<contactref element="C21" pad="2"/>
+<contactref element="C13" pad="2"/>
 <polygon width="0.254" layer="1" rank="2">
 <vertex x="0" y="60"/>
 <vertex x="27" y="60"/>
@@ -2681,42 +2681,42 @@ Quickturn PCB 4 Layer .DRU</description>
 <vertex x="27" y="0"/>
 <vertex x="0" y="0"/>
 </polygon>
-<contactref element="C37" pad="2"/>
-<contactref element="R9" pad="1"/>
-<contactref element="U6" pad="3"/>
-<contactref element="C38" pad="2"/>
-<contactref element="U4" pad="3"/>
-<contactref element="U7" pad="2"/>
-<contactref element="U7" pad="EP"/>
+<contactref element="C29" pad="2"/>
+<contactref element="R13" pad="1"/>
 <contactref element="U7" pad="3"/>
-<contactref element="C12" pad="2"/>
-<contactref element="C42" pad="2"/>
-<contactref element="C43" pad="2"/>
+<contactref element="C30" pad="2"/>
+<contactref element="U5" pad="3"/>
+<contactref element="U8" pad="2"/>
+<contactref element="U8" pad="EP"/>
+<contactref element="U8" pad="3"/>
+<contactref element="C7" pad="2"/>
+<contactref element="C32" pad="2"/>
 <contactref element="C33" pad="2"/>
-<contactref element="U1" pad="GND"/>
-<contactref element="U5" pad="6"/>
-<contactref element="U5" pad="5"/>
-<contactref element="U5" pad="7"/>
-<contactref element="U5" pad="8"/>
 <contactref element="C25" pad="2"/>
-<contactref element="C39" pad="2"/>
-<contactref element="U8" pad="4"/>
+<contactref element="U1" pad="GND"/>
+<contactref element="U6" pad="6"/>
+<contactref element="U6" pad="5"/>
+<contactref element="U6" pad="7"/>
+<contactref element="U6" pad="8"/>
+<contactref element="C17" pad="2"/>
+<contactref element="C31" pad="2"/>
+<contactref element="U9" pad="4"/>
 <contactref element="U11" pad="2"/>
 <contactref element="J1" pad="5"/>
 <contactref element="BT4" pad="-"/>
-<contactref element="C17" pad="2"/>
+<contactref element="C9" pad="2"/>
+<contactref element="C16" pad="2"/>
+<contactref element="C23" pad="2"/>
 <contactref element="C24" pad="2"/>
-<contactref element="C31" pad="2"/>
-<contactref element="C32" pad="2"/>
-<contactref element="C26" pad="2"/>
-<contactref element="C27" pad="2"/>
 <contactref element="C18" pad="2"/>
-<contactref element="C4" pad="1"/>
+<contactref element="C19" pad="2"/>
+<contactref element="C11" pad="2"/>
+<contactref element="C3" pad="1"/>
 <contactref element="X1" pad="4"/>
 <contactref element="X1" pad="2"/>
+<contactref element="C4" pad="1"/>
+<contactref element="C6" pad="1"/>
 <contactref element="C5" pad="1"/>
-<contactref element="C11" pad="1"/>
-<contactref element="C10" pad="1"/>
 <contactref element="A2" pad="S2"/>
 <polygon width="0.1016" layer="1" thermals="no" rank="2">
 <vertex x="24.55" y="22.05"/>
@@ -2733,8 +2733,8 @@ Quickturn PCB 4 Layer .DRU</description>
 <contactref element="S1" pad="P$3"/>
 <contactref element="S1" pad="P$1"/>
 <contactref element="U3" pad="GND"/>
-<contactref element="R15" pad="1"/>
-<contactref element="R29" pad="1"/>
+<contactref element="R21" pad="1"/>
+<contactref element="R18" pad="1"/>
 <contactref element="U2" pad="1"/>
 <contactref element="U2" pad="17"/>
 <contactref element="U2" pad="16"/>
@@ -2742,16 +2742,16 @@ Quickturn PCB 4 Layer .DRU</description>
 <contactref element="U2" pad="6"/>
 <contactref element="U2" pad="15"/>
 <contactref element="BT1" pad="-"/>
-<contactref element="R13" pad="1"/>
+<contactref element="R15" pad="1"/>
 <contactref element="BT2" pad="GND"/>
 <contactref element="BT3" pad="GND"/>
 <contactref element="R16" pad="1"/>
-<contactref element="U12" pad="26"/>
-<contactref element="U12" pad="4"/>
-<contactref element="U12" pad="17"/>
-<contactref element="U12" pad="20"/>
-<contactref element="U12" pad="24"/>
-<contactref element="C41" pad="2"/>
+<contactref element="U4" pad="26"/>
+<contactref element="U4" pad="4"/>
+<contactref element="U4" pad="17"/>
+<contactref element="U4" pad="20"/>
+<contactref element="U4" pad="24"/>
+<contactref element="C20" pad="2"/>
 <contactref element="J5" pad="5"/>
 <wire x1="18.534" y1="18.6392" x2="18.5288" y2="18.634" width="0.1016" layer="1"/>
 <wire x1="18.6052" y1="20.48673125" x2="18.6052" y2="19.7057" width="0.1016" layer="1"/>
@@ -2763,9 +2763,9 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="8.06206875" y1="52.179" x2="8.06206875" y2="52.35793125" width="0.2032" layer="1"/>
 <wire x1="8.06206875" y1="52.35793125" x2="7.366" y2="53.054" width="0.2032" layer="1"/>
 <via x="8.89" y="54.07" extent="1-16" drill="0.2032"/>
-<contactref element="C8" pad="2"/>
-<contactref element="C7" pad="2"/>
-<contactref element="C3" pad="2"/>
+<contactref element="C28" pad="2"/>
+<contactref element="C27" pad="2"/>
+<contactref element="C10" pad="2"/>
 <via x="11.938" y="51.784" extent="1-16" drill="0.2032"/>
 <via x="12.954" y="56.356" extent="1-16" drill="0.2032"/>
 <wire x1="1.032" y1="14.335" x2="1.032" y2="15.129" width="0.4064" layer="1"/>
@@ -2884,7 +2884,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <signal name="N$8">
 <contactref element="U10" pad="B24"/>
 <contactref element="X1" pad="3"/>
-<contactref element="C4" pad="2"/>
+<contactref element="C3" pad="2"/>
 <wire x1="13.6652" y1="24.8412" x2="12.834" y2="24.01" width="0.2032" layer="1"/>
 <wire x1="12.834" y1="24.01" x2="12.834" y2="23.286" width="0.2032" layer="1"/>
 <wire x1="11.684" y1="23.29306875" x2="12.82693125" y2="23.29306875" width="0.2032" layer="1"/>
@@ -2898,7 +2898,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <signal name="N$9">
 <contactref element="U10" pad="A23"/>
 <contactref element="X1" pad="1"/>
-<contactref element="C5" pad="2"/>
+<contactref element="C4" pad="2"/>
 <wire x1="14.534" y1="21.086" x2="13.99006875" y2="20.54206875" width="0.2032" layer="1"/>
 <wire x1="13.99006875" y1="20.54206875" x2="13.99006875" y2="19.392" width="0.2032" layer="1"/>
 <wire x1="15.046" y1="21.086" x2="14.534" y2="21.086" width="0.2032" layer="1"/>
@@ -2906,8 +2906,8 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="15.046" y1="21.056" x2="15.046" y2="21.086" width="0.2032" layer="1"/>
 </signal>
 <signal name="VCC">
-<contactref element="U6" pad="1"/>
-<contactref element="C38" pad="1"/>
+<contactref element="U7" pad="1"/>
+<contactref element="C30" pad="1"/>
 <contactref element="J1" pad="1"/>
 <polygon width="0.2032" layer="1" isolate="0.2032" thermals="no">
 <vertex x="18.415" y="40.64"/>
@@ -2923,45 +2923,45 @@ Quickturn PCB 4 Layer .DRU</description>
 <vertex x="27" y="0"/>
 <vertex x="0" y="0"/>
 </polygon>
-<contactref element="R2" pad="2"/>
-<contactref element="R3" pad="2"/>
-<contactref element="U5" pad="9"/>
-<contactref element="U5" pad="10"/>
-<contactref element="C39" pad="1"/>
-<contactref element="C25" pad="1"/>
-<contactref element="R23" pad="2"/>
-<contactref element="C24" pad="1"/>
+<contactref element="R6" pad="2"/>
+<contactref element="R7" pad="2"/>
+<contactref element="U6" pad="9"/>
+<contactref element="U6" pad="10"/>
 <contactref element="C31" pad="1"/>
-<contactref element="R4" pad="2"/>
-<contactref element="C26" pad="1"/>
+<contactref element="C17" pad="1"/>
+<contactref element="R23" pad="2"/>
+<contactref element="C16" pad="1"/>
+<contactref element="C23" pad="1"/>
+<contactref element="R8" pad="2"/>
+<contactref element="C18" pad="1"/>
 <contactref element="R25" pad="2"/>
 <contactref element="R26" pad="2"/>
-<contactref element="C27" pad="1"/>
+<contactref element="C19" pad="1"/>
 <contactref element="R27" pad="2"/>
 <contactref element="Q7" pad="1"/>
 <contactref element="Q10" pad="1"/>
 <contactref element="Q8" pad="4"/>
 <contactref element="Q8" pad="1"/>
-<contactref element="C35" pad="1"/>
-<contactref element="C29" pad="1"/>
-<contactref element="C23" pad="1"/>
-<contactref element="C20" pad="1"/>
+<contactref element="C26" pad="1"/>
 <contactref element="C21" pad="1"/>
+<contactref element="C15" pad="1"/>
+<contactref element="C12" pad="1"/>
+<contactref element="C13" pad="1"/>
 <contactref element="U10" pad="Y2"/>
 <contactref element="U10" pad="B1"/>
 <contactref element="U10" pad="AD14"/>
 <contactref element="U10" pad="AD23"/>
 <contactref element="U10" pad="W1"/>
 <contactref element="U10" pad="A22"/>
-<contactref element="C32" pad="1"/>
+<contactref element="C24" pad="1"/>
 <contactref element="R24" pad="2"/>
-<contactref element="R5" pad="2"/>
+<contactref element="R9" pad="2"/>
 <contactref element="Q7" pad="4"/>
 <contactref element="U1" pad="13"/>
-<contactref element="C33" pad="1"/>
-<contactref element="R6" pad="2"/>
-<contactref element="R7" pad="2"/>
-<contactref element="R1" pad="2"/>
+<contactref element="C25" pad="1"/>
+<contactref element="R10" pad="2"/>
+<contactref element="R11" pad="2"/>
+<contactref element="R12" pad="2"/>
 <wire x1="23.284" y1="19.503" x2="23.558" y2="19.777" width="0.2032" layer="1"/>
 <wire x1="23.558" y1="19.777" x2="24.29593125" y2="19.777" width="0.2032" layer="1"/>
 <wire x1="24.29593125" y1="19.777" x2="24.29993125" y2="19.773" width="0.2032" layer="1"/>
@@ -3104,20 +3104,20 @@ Quickturn PCB 4 Layer .DRU</description>
 <via x="25.4" y="58.42" extent="1-16" drill="0.2032"/>
 </signal>
 <signal name="N$12">
-<contactref element="U6" pad="4"/>
-<contactref element="R9" pad="2"/>
+<contactref element="U7" pad="4"/>
+<contactref element="R13" pad="2"/>
 <wire x1="17.541" y1="41.275" x2="20.193" y2="41.275" width="0.2032" layer="1"/>
 <wire x1="20.589" y1="41.671" x2="20.589" y2="42.19" width="0.2032" layer="1"/>
 <wire x1="20.193" y1="41.275" x2="20.589" y2="41.671" width="0.2032" layer="1"/>
 </signal>
 <signal name="N$14">
 <contactref element="R22" pad="1"/>
-<contactref element="U6" pad="6"/>
+<contactref element="U7" pad="6"/>
 <wire x1="18.807" y1="42.672" x2="19.289" y2="42.19" width="0.2032" layer="1"/>
 <wire x1="17.541" y1="42.672" x2="18.807" y2="42.672" width="0.2032" layer="1"/>
 </signal>
 <signal name="SCL">
-<contactref element="R2" pad="1"/>
+<contactref element="R6" pad="1"/>
 <contactref element="Q1" pad="1"/>
 <contactref element="Q2" pad="1"/>
 <contactref element="Q3" pad="1"/>
@@ -3166,7 +3166,7 @@ Quickturn PCB 4 Layer .DRU</description>
 </signal>
 <signal name="MISO">
 <contactref element="U1" pad="6"/>
-<contactref element="U5" pad="3"/>
+<contactref element="U6" pad="3"/>
 <wire x1="12.704" y1="2.528" x2="12.7" y2="2.532" width="0.1524" layer="1"/>
 <via x="12.7" y="3.175" extent="1-16" drill="0.2032"/>
 <contactref element="U10" pad="R1"/>
@@ -3195,7 +3195,7 @@ Quickturn PCB 4 Layer .DRU</description>
 </signal>
 <signal name="MOSI">
 <contactref element="U1" pad="9"/>
-<contactref element="U5" pad="4"/>
+<contactref element="U6" pad="4"/>
 <contactref element="U10" pad="N1"/>
 <via x="13.335" y="3.683" extent="1-16" drill="0.2032"/>
 <wire x1="12.204" y1="2.528" x2="12.2682" y2="2.5922" width="0.1524" layer="1"/>
@@ -3225,7 +3225,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <contactref element="U1" pad="3"/>
 <contactref element="S1" pad="P$4"/>
 <contactref element="S1" pad="P$2"/>
-<contactref element="R6" pad="1"/>
+<contactref element="R10" pad="1"/>
 <wire x1="3.448" y1="36.4933" x2="3.448" y2="36.576" width="0.2032" layer="1"/>
 <wire x1="3.448" y1="41.656" x2="3.448" y2="36.576" width="0.2032" layer="1"/>
 <wire x1="2.59206875" y1="43.561" x2="3.448" y2="42.70506875" width="0.2032" layer="1"/>
@@ -3244,7 +3244,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <contactref element="U10" pad="AC13"/>
 <contactref element="J1" pad="3"/>
 <contactref element="U1" pad="1"/>
-<contactref element="R7" pad="1"/>
+<contactref element="R11" pad="1"/>
 <via x="22.742" y="16.61" extent="1-16" drill="0.1016"/>
 <contactref element="SJ3" pad="1"/>
 <wire x1="22.742" y1="16.61" x2="23.368" y2="17.236" width="0.1524" layer="15"/>
@@ -3311,7 +3311,7 @@ Quickturn PCB 4 Layer .DRU</description>
 </signal>
 <signal name="WDI">
 <contactref element="U1" pad="2"/>
-<contactref element="R1" pad="1"/>
+<contactref element="R12" pad="1"/>
 <wire x1="3.68" y1="27.428" x2="2.286" y2="27.428" width="0.1524" layer="1"/>
 <wire x1="2.286" y1="27.428" x2="1.98393125" y2="27.428" width="0.1524" layer="1"/>
 <wire x1="1.98393125" y1="27.428" x2="0.889" y2="28.52293125" width="0.1524" layer="1"/>
@@ -3330,7 +3330,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="1.016" y1="26.162" x2="2.286" y2="26.162" width="0.1524" layer="1"/>
 </signal>
 <signal name="SDA">
-<contactref element="R3" pad="1"/>
+<contactref element="R7" pad="1"/>
 <contactref element="Q1" pad="4"/>
 <contactref element="Q2" pad="4"/>
 <contactref element="Q3" pad="4"/>
@@ -3383,8 +3383,8 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="1.016" y1="9.906" x2="6.35" y2="9.906" width="0.1524" layer="16"/>
 </signal>
 <signal name="!CLR_INT">
-<contactref element="U4" pad="5"/>
-<contactref element="R4" pad="1"/>
+<contactref element="U5" pad="5"/>
+<contactref element="R8" pad="1"/>
 <contactref element="U10" pad="AC19"/>
 <via x="22.742" y="18.11" extent="1-16" drill="0.1016"/>
 <via x="25.146" y="3.5052" extent="1-16" drill="0.2032"/>
@@ -3405,8 +3405,8 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="25.4" y1="10.922" x2="26.3142" y2="10.922" width="0.1524" layer="16"/>
 </signal>
 <signal name="!LT_INT">
-<contactref element="U7" pad="4"/>
-<contactref element="R5" pad="1"/>
+<contactref element="U8" pad="4"/>
+<contactref element="R9" pad="1"/>
 <wire x1="20.462" y1="3.211" x2="20.574" y2="3.323" width="0.2032" layer="1"/>
 <wire x1="20.574" y1="3.323" x2="20.574" y2="4.064" width="0.2032" layer="1"/>
 <wire x1="20.574" y1="4.064" x2="20.574" y2="6.27506875" width="0.1524" layer="1"/>
@@ -3424,7 +3424,7 @@ Quickturn PCB 4 Layer .DRU</description>
 </signal>
 <signal name="N$25">
 <contactref element="U1" pad="14"/>
-<contactref element="C12" pad="1"/>
+<contactref element="C7" pad="1"/>
 <wire x1="5.33" y1="28.578" x2="5.334" y2="28.582" width="0.2032" layer="1"/>
 <wire x1="5.334" y1="28.582" x2="5.334" y2="29.21" width="0.2032" layer="1"/>
 <wire x1="5.334" y1="29.21" x2="5.588" y2="29.464" width="0.2032" layer="1"/>
@@ -3433,7 +3433,7 @@ Quickturn PCB 4 Layer .DRU</description>
 </signal>
 <signal name="N$26">
 <contactref element="X4" pad="1"/>
-<contactref element="C42" pad="1"/>
+<contactref element="C32" pad="1"/>
 <contactref element="U1" pad="16"/>
 <wire x1="4.33" y1="28.578" x2="4.33" y2="29.198" width="0.2032" layer="1"/>
 <wire x1="3.3274" y1="30.734" x2="3.3274" y2="30.2006" width="0.2032" layer="1"/>
@@ -3443,7 +3443,7 @@ Quickturn PCB 4 Layer .DRU</description>
 </signal>
 <signal name="N$27">
 <contactref element="X4" pad="2"/>
-<contactref element="C43" pad="1"/>
+<contactref element="C33" pad="1"/>
 <contactref element="U1" pad="15"/>
 <wire x1="4.83" y1="28.578" x2="4.83" y2="29.206" width="0.2032" layer="1"/>
 <wire x1="4.83" y1="29.206" x2="4.826" y2="29.21" width="0.2032" layer="1"/>
@@ -3456,7 +3456,7 @@ Quickturn PCB 4 Layer .DRU</description>
 </signal>
 <signal name="SCK">
 <contactref element="U1" pad="7"/>
-<contactref element="U5" pad="1"/>
+<contactref element="U6" pad="1"/>
 <wire x1="13.704" y1="2.528" x2="13.779125" y2="2.528" width="0.1524" layer="1"/>
 <wire x1="13.779125" y1="2.528" x2="14.3885625" y2="3.1374375" width="0.1524" layer="1"/>
 <via x="14.3885625" y="3.1374375" extent="1-16" drill="0.2032"/>
@@ -3481,7 +3481,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="21.59" y1="11.43" x2="21.242" y2="11.43" width="0.1524" layer="1"/>
 </signal>
 <signal name="ACC_CS">
-<contactref element="U5" pad="2"/>
+<contactref element="U6" pad="2"/>
 <wire x1="13.204" y1="2.528" x2="13.3004" y2="2.6244" width="0.1524" layer="1"/>
 <wire x1="13.3004" y1="2.6244" x2="13.3004" y2="2.8101875" width="0.1524" layer="1"/>
 <wire x1="13.3004" y1="2.8101875" x2="14.3002125" y2="3.81" width="0.1524" layer="1"/>
@@ -3505,7 +3505,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="15.748" y1="5.08" x2="15.748" y2="5.588" width="0.1524" layer="1"/>
 </signal>
 <signal name="ACC_INT1">
-<contactref element="U5" pad="12"/>
+<contactref element="U6" pad="12"/>
 <wire x1="13.704" y1="2.028" x2="14.017225" y2="2.028" width="0.1524" layer="1"/>
 <wire x1="14.017225" y1="2.028" x2="21.285625" y2="9.2964" width="0.1524" layer="1"/>
 <contactref element="U10" pad="AD16"/>
@@ -3520,7 +3520,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="25.273" y1="12.319" x2="25.3238" y2="12.2682" width="0.1524" layer="1"/>
 </signal>
 <signal name="ACC_INT2">
-<contactref element="U5" pad="11"/>
+<contactref element="U6" pad="11"/>
 <wire x1="13.704" y1="1.528" x2="13.8004" y2="1.6244" width="0.1524" layer="1"/>
 <wire x1="13.8004" y1="1.6244" x2="14.04468125" y2="1.6244" width="0.1524" layer="1"/>
 <wire x1="14.04468125" y1="1.6244" x2="14.592140625" y2="2.171859375" width="0.1524" layer="1"/>
@@ -3535,8 +3535,8 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="14.986" y1="1.778" x2="14.592140625" y2="2.171859375" width="0.1524" layer="1"/>
 </signal>
 <signal name="VSW">
-<contactref element="C37" pad="1"/>
-<contactref element="U6" pad="5"/>
+<contactref element="C29" pad="1"/>
+<contactref element="U7" pad="5"/>
 <contactref element="R22" pad="2"/>
 <polygon width="0.2032" layer="1" isolate="0.2032" thermals="no">
 <vertex x="19.812" y="41.783"/>
@@ -3550,7 +3550,7 @@ Quickturn PCB 4 Layer .DRU</description>
 </polygon>
 <contactref element="Q5" pad="3"/>
 <contactref element="Q6" pad="3"/>
-<contactref element="L8" pad="P$1"/>
+<contactref element="L3" pad="P$1"/>
 <via x="14.732" y="47.72" extent="1-16" drill="0.2032"/>
 <wire x1="14.911" y1="47.72" x2="14.732" y2="47.72" width="0.2032" layer="1"/>
 <wire x1="15.3174" y1="48.1264" x2="14.911" y2="47.72" width="0.2032" layer="1"/>
@@ -3621,7 +3621,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="16.70658125" y1="15.86" x2="16.742" y2="15.86" width="0.1524" layer="1"/>
 </signal>
 <signal name="N$21">
-<contactref element="U8" pad="1"/>
+<contactref element="U9" pad="1"/>
 <contactref element="Q8" pad="6"/>
 <wire x1="5.759" y1="16.733" x2="5.917" y2="16.891" width="0.2032" layer="1"/>
 <wire x1="6.604" y1="16.891" x2="7.112" y2="16.383" width="0.2032" layer="1"/>
@@ -3781,7 +3781,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="9.35" y1="0.81" x2="9.398" y2="0.762" width="0.1524" layer="1"/>
 </signal>
 <signal name="SW">
-<contactref element="U6" pad="2"/>
+<contactref element="U7" pad="2"/>
 <polygon width="0.2032" layer="1" isolate="0.2032" thermals="no">
 <vertex x="19.812" y="40.767"/>
 <vertex x="19.812" y="37.846"/>
@@ -3790,7 +3790,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <vertex x="20.066" y="39.497"/>
 <vertex x="20.066" y="40.767"/>
 </polygon>
-<contactref element="L8" pad="P$2"/>
+<contactref element="L3" pad="P$2"/>
 <contactref element="U10" pad="B11"/>
 <via x="17.242" y="16.11" extent="1-16" drill="0.1016"/>
 <wire x1="17.242" y1="16.11" x2="16.764" y2="16.588" width="0.1524" layer="15"/>
@@ -3832,21 +3832,21 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="20.066" y1="6.096" x2="20.32" y2="5.842" width="0.1524" layer="16"/>
 </signal>
 <signal name="VREF_SAMP">
-<contactref element="C17" pad="1"/>
+<contactref element="C9" pad="1"/>
 <contactref element="U2" pad="4"/>
 <wire x1="21.806" y1="53.554" x2="22.606" y2="53.554" width="0.4064" layer="1"/>
 <wire x1="22.606" y1="53.554" x2="24.392" y2="55.34" width="0.4064" layer="1"/>
 <wire x1="24.392" y1="55.34" x2="24.45893125" y2="55.34" width="0.4064" layer="1"/>
 </signal>
 <signal name="N$31">
-<contactref element="U4" pad="1"/>
+<contactref element="U5" pad="1"/>
 <contactref element="Q7" pad="6"/>
 <wire x1="22.777" y1="2.382" x2="22.935" y2="2.54" width="0.1524" layer="1"/>
 <wire x1="23.538" y1="2.54" x2="24.646" y2="1.432" width="0.1524" layer="1"/>
 <wire x1="22.935" y1="2.54" x2="23.538" y2="2.54" width="0.1524" layer="1"/>
 </signal>
 <signal name="N$20">
-<contactref element="U7" pad="1"/>
+<contactref element="U8" pad="1"/>
 <contactref element="Q7" pad="3"/>
 <wire x1="19.162" y1="1.361" x2="19.162" y2="0.65" width="0.1524" layer="1"/>
 <wire x1="19.162" y1="0.65" x2="19.304" y2="0.508" width="0.1524" layer="1"/>
@@ -3856,7 +3856,7 @@ Quickturn PCB 4 Layer .DRU</description>
 </signal>
 <signal name="N$44">
 <contactref element="U10" pad="B3"/>
-<contactref element="L6" pad="2"/>
+<contactref element="L4" pad="2"/>
 <wire x1="15.477" y1="13.423" x2="16.573" y2="13.423" width="0.254" layer="1"/>
 <wire x1="16.573" y1="13.423" x2="16.573" y2="13.441" width="0.254" layer="1"/>
 <wire x1="16.573" y1="13.441" x2="17.242" y2="14.11" width="0.254" layer="1"/>
@@ -3868,14 +3868,14 @@ Quickturn PCB 4 Layer .DRU</description>
 <signal name="N$72">
 </signal>
 <signal name="N$49">
-<contactref element="L3" pad="2"/>
-<contactref element="L6" pad="1"/>
+<contactref element="L2" pad="2"/>
+<contactref element="L4" pad="1"/>
 <wire x1="14.177" y1="13.423" x2="13.37793125" y2="13.423" width="0.254" layer="1"/>
 <wire x1="13.37793125" y1="13.423" x2="13.303" y2="13.49793125" width="0.254" layer="1"/>
 </signal>
 <signal name="XL1">
 <contactref element="U10" pad="D2"/>
-<contactref element="C11" pad="2"/>
+<contactref element="C6" pad="2"/>
 <contactref element="X3" pad="A"/>
 <wire x1="17.992" y1="13.86" x2="17.992" y2="13.6095" width="0.1016" layer="1"/>
 <wire x1="17.992" y1="13.6095" x2="18.0952" y2="13.5063" width="0.1016" layer="1"/>
@@ -3888,7 +3888,7 @@ Quickturn PCB 4 Layer .DRU</description>
 </signal>
 <signal name="XL2">
 <contactref element="U10" pad="F2"/>
-<contactref element="C10" pad="2"/>
+<contactref element="C5" pad="2"/>
 <contactref element="X3" pad="B"/>
 <wire x1="18.492" y1="13.86" x2="18.492" y2="13.6095" width="0.1016" layer="1"/>
 <wire x1="18.492" y1="13.6095" x2="18.3888" y2="13.5063" width="0.1016" layer="1"/>
@@ -3967,11 +3967,11 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="6.604" y1="23.622" x2="6.604" y2="24.638" width="0.1524" layer="16"/>
 </signal>
 <signal name="VSOL">
-<contactref element="L7" pad="P$2"/>
+<contactref element="L5" pad="P$2"/>
 <contactref element="U2" pad="2"/>
 <wire x1="21.806" y1="52.554" x2="24.122" y2="52.554" width="0.4064" layer="1"/>
 <wire x1="24.122" y1="52.554" x2="24.13" y2="52.546" width="0.4064" layer="1"/>
-<contactref element="C8" pad="1"/>
+<contactref element="C28" pad="1"/>
 <polygon width="0.254" layer="1" thermals="no">
 <vertex x="23.876" y="53.562"/>
 <vertex x="23.876" y="52.546"/>
@@ -4046,7 +4046,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="19.6342" y1="21.0058" x2="19.6342" y2="26.52046875" width="0.1524" layer="16"/>
 </signal>
 <signal name="N$41">
-<contactref element="U8" pad="2"/>
+<contactref element="U9" pad="2"/>
 <contactref element="Q1" pad="3"/>
 <wire x1="3.048" y1="12.319" x2="3.032" y2="12.335" width="0.254" layer="1"/>
 <wire x1="3.032" y1="12.335" x2="5.604" y2="12.335" width="0.2032" layer="1"/>
@@ -4055,7 +4055,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="5.684" y1="13.418" x2="5.842" y2="13.26" width="0.2032" layer="1"/>
 </signal>
 <signal name="N$34">
-<contactref element="U8" pad="3"/>
+<contactref element="U9" pad="3"/>
 <contactref element="Q1" pad="6"/>
 <wire x1="3.032" y1="14.335" x2="3.099" y2="14.268" width="0.2032" layer="1"/>
 <wire x1="4.9784" y1="14.268" x2="3.099" y2="14.268" width="0.2032" layer="1"/>
@@ -4080,7 +4080,7 @@ Quickturn PCB 4 Layer .DRU</description>
 </signal>
 <signal name="N$51">
 <contactref element="Q3" pad="3"/>
-<contactref element="U7" pad="6"/>
+<contactref element="U8" pad="6"/>
 <wire x1="19.162" y1="3.211" x2="19.141" y2="3.211" width="0.1524" layer="1"/>
 <wire x1="19.141" y1="3.211" x2="18.542" y2="3.81" width="0.1524" layer="1"/>
 <wire x1="18.542" y1="5.08" x2="18.542" y2="3.81" width="0.1524" layer="1"/>
@@ -4089,20 +4089,20 @@ Quickturn PCB 4 Layer .DRU</description>
 </signal>
 <signal name="N$52">
 <contactref element="Q3" pad="6"/>
-<contactref element="U7" pad="5"/>
+<contactref element="U8" pad="5"/>
 <wire x1="19.908" y1="4.655" x2="19.908" y2="3.307" width="0.1524" layer="1"/>
 <wire x1="19.908" y1="3.307" x2="19.812" y2="3.211" width="0.1524" layer="1"/>
 </signal>
 <signal name="N$54">
 <contactref element="Q4" pad="3"/>
-<contactref element="U4" pad="4"/>
+<contactref element="U5" pad="4"/>
 <wire x1="25.75" y1="4.655" x2="25.9" y2="4.505" width="0.1524" layer="1"/>
 <wire x1="25.9" y1="4.505" x2="25.9" y2="2.961" width="0.1524" layer="1"/>
 <wire x1="25.9" y1="2.961" x2="25.646" y2="2.707" width="0.1524" layer="1"/>
 </signal>
 <signal name="N$55">
 <contactref element="Q4" pad="6"/>
-<contactref element="U4" pad="6"/>
+<contactref element="U5" pad="6"/>
 <wire x1="25.05" y1="5.505" x2="24.902" y2="5.357" width="0.1524" layer="1"/>
 <wire x1="24.902" y1="5.357" x2="24.89739375" y2="5.357" width="0.1524" layer="1"/>
 <wire x1="24.384" y1="4.84360625" x2="24.89739375" y2="5.357" width="0.1524" layer="1"/>
@@ -4110,7 +4110,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="24.384" y1="2.969" x2="24.384" y2="4.84360625" width="0.1524" layer="1"/>
 </signal>
 <signal name="LBST">
-<contactref element="L7" pad="P$1"/>
+<contactref element="L5" pad="P$1"/>
 <contactref element="U2" pad="20"/>
 <wire x1="21.082" y1="50.006" x2="21.082" y2="47.792" width="0.4064" layer="1"/>
 <wire x1="21.082" y1="47.792" x2="21.01" y2="47.72" width="0.4064" layer="1"/>
@@ -4186,8 +4186,8 @@ Quickturn PCB 4 Layer .DRU</description>
 <via x="20.574" y="50.292" extent="1-16" drill="0.2032"/>
 <wire x1="20.574" y1="50.292" x2="20.566" y2="50.522" width="0.2032" layer="1"/>
 <wire x1="20.566" y1="50.522" x2="20.566" y2="51.314" width="0.2032" layer="1"/>
-<contactref element="C7" pad="1"/>
-<contactref element="C3" pad="1"/>
+<contactref element="C27" pad="1"/>
+<contactref element="C10" pad="1"/>
 <wire x1="21.806" y1="53.054" x2="21.8234" y2="53.0714" width="0.254" layer="1"/>
 <wire x1="23.3059" y1="53.0714" x2="23.3473" y2="53.1128" width="0.254" layer="1"/>
 <wire x1="23.3473" y1="53.1128" x2="23.45506875" y2="53.1128" width="0.254" layer="1"/>
@@ -4201,11 +4201,11 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="19.304" y1="49.70906875" x2="19.99106875" y2="49.70906875" width="0.1524" layer="1"/>
 </signal>
 <signal name="N$18">
-<contactref element="R15" pad="2"/>
-<contactref element="R11" pad="1"/>
+<contactref element="R21" pad="2"/>
+<contactref element="R14" pad="1"/>
 <contactref element="U2" pad="7"/>
 <contactref element="R16" pad="2"/>
-<contactref element="R14" pad="1"/>
+<contactref element="R19" pad="1"/>
 <wire x1="11.43" y1="50.36693125" x2="12.7" y2="50.36693125" width="0.254" layer="1"/>
 <wire x1="12.7" y1="50.36693125" x2="13.02893125" y2="50.33493125" width="0.254" layer="1"/>
 <wire x1="13.462" y1="50.768" x2="13.02893125" y2="50.33493125" width="0.254" layer="1"/>
@@ -4231,11 +4231,11 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="20.066" y1="57.499" x2="20.193" y2="57.626" width="0.254" layer="1"/>
 </signal>
 <signal name="N$57">
-<contactref element="R29" pad="2"/>
-<contactref element="R28" pad="1"/>
+<contactref element="R18" pad="2"/>
+<contactref element="R17" pad="1"/>
 <contactref element="U2" pad="12"/>
-<contactref element="R13" pad="2"/>
-<contactref element="R12" pad="1"/>
+<contactref element="R15" pad="2"/>
+<contactref element="R20" pad="1"/>
 <via x="15.367" y="53.975" extent="1-16" drill="0.2032"/>
 <wire x1="18.326" y1="53.554" x2="15.788" y2="53.554" width="0.254" layer="1"/>
 <wire x1="15.788" y1="53.554" x2="15.367" y2="53.975" width="0.254" layer="1"/>
@@ -4251,11 +4251,11 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="12.7" y1="53.26506875" x2="11.43" y2="53.26506875" width="0.254" layer="1"/>
 </signal>
 <signal name="N$58">
-<contactref element="R28" pad="2"/>
-<contactref element="R21" pad="1"/>
+<contactref element="R17" pad="2"/>
+<contactref element="R4" pad="1"/>
 <contactref element="U2" pad="11"/>
-<contactref element="R12" pad="2"/>
-<contactref element="R10" pad="1"/>
+<contactref element="R20" pad="2"/>
+<contactref element="R5" pad="1"/>
 <wire x1="11.4071375" y1="52.34406875" x2="11.43" y2="52.39893125" width="0.254" layer="1"/>
 <wire x1="12.192" y1="55.848" x2="12.192" y2="55.80506875" width="0.254" layer="1"/>
 <via x="15.875" y="54.483" extent="1-16" drill="0.2032"/>
@@ -4274,8 +4274,8 @@ Quickturn PCB 4 Layer .DRU</description>
 </signal>
 <signal name="N$1">
 <contactref element="SJ1" pad="3"/>
-<contactref element="R21" pad="2"/>
-<contactref element="R11" pad="2"/>
+<contactref element="R4" pad="2"/>
+<contactref element="R14" pad="2"/>
 <wire x1="21.844" y1="58.388" x2="21.082" y2="59.15" width="0.254" layer="1"/>
 <wire x1="21.844" y1="58.388" x2="21.844" y2="57.753" width="0.254" layer="1"/>
 <wire x1="21.844" y1="57.753" x2="21.717" y2="57.626" width="0.254" layer="1"/>
@@ -4286,9 +4286,9 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="11.176" y1="57.912" x2="11.176" y2="56.82106875" width="0.254" layer="1"/>
 </signal>
 <signal name="N$16">
-<contactref element="R10" pad="2"/>
+<contactref element="R5" pad="2"/>
 <contactref element="SJ1" pad="1"/>
-<contactref element="R14" pad="2"/>
+<contactref element="R19" pad="2"/>
 <via x="14.224" y="53.308" extent="1-16" drill="0.2032"/>
 <via x="10.668" y="50.546" extent="1-16" drill="0.2032"/>
 <wire x1="18.669" y1="57.626" x2="18.25979375" y2="57.626" width="0.254" layer="1"/>
@@ -4302,7 +4302,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="11.462" y1="50.546" x2="14.224" y2="53.308" width="0.254" layer="16"/>
 </signal>
 <signal name="TXD">
-<contactref element="U12" pad="30"/>
+<contactref element="U4" pad="30"/>
 <wire x1="1.257" y1="49.717" x2="0.695" y2="49.717" width="0.2032" layer="1"/>
 <wire x1="0.695" y1="49.717" x2="0.508" y2="49.53" width="0.2032" layer="1"/>
 <wire x1="0.508" y1="49.53" x2="0.508" y2="47.752" width="0.2032" layer="1"/>
@@ -4315,7 +4315,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="2.9409" y1="46.736" x2="3.302" y2="46.3749" width="0.2032" layer="1"/>
 </signal>
 <signal name="RXD">
-<contactref element="U12" pad="2"/>
+<contactref element="U4" pad="2"/>
 <contactref element="SJ4" pad="1"/>
 <wire x1="2.307" y1="48.167" x2="2.307" y2="47.731" width="0.2032" layer="1"/>
 <wire x1="2.794" y1="47.244" x2="4.826" y2="47.244" width="0.2032" layer="1"/>
@@ -4324,20 +4324,20 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="2.307" y1="47.731" x2="2.794" y2="47.244" width="0.2032" layer="1"/>
 </signal>
 <signal name="USB_5V">
-<contactref element="U12" pad="19"/>
+<contactref element="U4" pad="19"/>
 <contactref element="J5" pad="1"/>
 <wire x1="4.307" y1="52.767" x2="4.307" y2="55.768" width="0.2032" layer="1"/>
 <wire x1="4.307" y1="55.768" x2="4.2" y2="55.875" width="0.2032" layer="1"/>
 </signal>
 <signal name="N$13">
-<contactref element="U12" pad="16"/>
-<contactref element="C41" pad="1"/>
+<contactref element="U4" pad="16"/>
+<contactref element="C20" pad="1"/>
 <wire x1="5.857" y1="52.217" x2="7.15793125" y2="52.217" width="0.2032" layer="1"/>
 <wire x1="7.15793125" y1="52.217" x2="7.19593125" y2="52.179" width="0.2032" layer="1"/>
 </signal>
 <signal name="D-">
 <contactref element="J5" pad="2"/>
-<contactref element="U12" pad="15"/>
+<contactref element="U4" pad="15"/>
 <wire x1="5.857" y1="51.717" x2="6.671" y2="51.717" width="0.2032" layer="1"/>
 <wire x1="6.671" y1="51.717" x2="6.858" y2="51.53" width="0.2032" layer="1"/>
 <wire x1="6.858" y1="51.53" x2="8.382" y2="51.53" width="0.2032" layer="1"/>
@@ -4349,7 +4349,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="8.636" y1="52.546" x2="7.366" y2="53.816" width="0.2032" layer="1"/>
 </signal>
 <signal name="D+">
-<contactref element="U12" pad="14"/>
+<contactref element="U4" pad="14"/>
 <contactref element="J5" pad="3"/>
 <wire x1="6.33485" y1="51.022" x2="8.636" y2="51.022" width="0.2032" layer="1"/>
 <wire x1="8.636" y1="51.022" x2="9.144" y2="51.53" width="0.2032" layer="1"/>
@@ -4374,7 +4374,7 @@ Quickturn PCB 4 Layer .DRU</description>
 </polygon>
 </signal>
 <signal name="!FTDI_RESET">
-<contactref element="U12" pad="18"/>
+<contactref element="U4" pad="18"/>
 <contactref element="SJ3" pad="2"/>
 <wire x1="4.807" y1="52.767" x2="4.807" y2="53.543" width="0.2032" layer="1"/>
 <wire x1="4.807" y1="53.543" x2="4.826" y2="53.562" width="0.2032" layer="1"/>
@@ -4386,7 +4386,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="5.2387" y1="44.45" x2="5.334" y2="44.3547" width="0.2032" layer="1"/>
 </signal>
 <signal name="FTDI_VCCIO">
-<contactref element="U12" pad="1"/>
+<contactref element="U4" pad="1"/>
 <contactref element="SJ2" pad="2"/>
 <wire x1="1.807" y1="48.167" x2="1.807" y2="46.9237" width="0.2032" layer="1"/>
 <wire x1="1.807" y1="46.9237" x2="1.27" y2="46.3867" width="0.2032" layer="1"/>
@@ -4428,24 +4428,24 @@ Quickturn PCB 4 Layer .DRU</description>
 </signal>
 <signal name="N$15">
 <contactref element="D2" pad="2"/>
-<contactref element="R8" pad="1"/>
+<contactref element="R1" pad="1"/>
 <wire x1="10.8458" y1="15.0622" x2="11.684" y2="14.224" width="0.2032" layer="1"/>
 <wire x1="11.684" y1="14.224" x2="11.684" y2="13.13306875" width="0.2032" layer="1"/>
 </signal>
 <signal name="N$17">
 <contactref element="D2" pad="4"/>
-<contactref element="R17" pad="1"/>
+<contactref element="R2" pad="1"/>
 <wire x1="9.9822" y1="15.9258" x2="9.144" y2="15.0876" width="0.2032" layer="1"/>
 <wire x1="9.144" y1="15.0876" x2="9.144" y2="13.13306875" width="0.2032" layer="1"/>
 </signal>
 <signal name="N$19">
 <contactref element="D2" pad="3"/>
-<contactref element="R18" pad="1"/>
+<contactref element="R3" pad="1"/>
 <wire x1="9.9822" y1="15.0622" x2="9.9822" y2="13.56486875" width="0.2032" layer="1"/>
 <wire x1="9.9822" y1="13.56486875" x2="10.414" y2="13.13306875" width="0.2032" layer="1"/>
 </signal>
 <signal name="LED_RED">
-<contactref element="R8" pad="2"/>
+<contactref element="R1" pad="2"/>
 <wire x1="11.684" y1="12.26693125" x2="11.75893125" y2="12.192" width="0.2032" layer="1"/>
 <wire x1="11.75893125" y1="12.192" x2="13.462" y2="12.192" width="0.2032" layer="1"/>
 <via x="13.462" y="12.192" extent="1-16" drill="0.2032"/>
@@ -4458,7 +4458,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="19.242" y1="12.762" x2="19.304" y2="12.7" width="0.1524" layer="1"/>
 </signal>
 <signal name="LED_GREEN">
-<contactref element="R17" pad="2"/>
+<contactref element="R2" pad="2"/>
 <contactref element="U10" pad="L1"/>
 <via x="9.144" y="11.176" extent="1-16" drill="0.2032"/>
 <wire x1="9.144" y1="11.176" x2="9.144" y2="12.26693125" width="0.2032" layer="1"/>
@@ -4469,7 +4469,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="19.742" y1="11.614" x2="19.685" y2="11.557" width="0.1524" layer="1"/>
 </signal>
 <signal name="LED_BLUE">
-<contactref element="R18" pad="2"/>
+<contactref element="R3" pad="2"/>
 <wire x1="10.414" y1="12.26693125" x2="10.59306875" y2="12.26693125" width="0.2032" layer="1"/>
 <wire x1="10.59306875" y1="12.26693125" x2="11.176" y2="11.684" width="0.2032" layer="1"/>
 <via x="11.176" y="11.684" extent="1-16" drill="0.2032"/>
