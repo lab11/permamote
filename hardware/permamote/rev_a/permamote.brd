@@ -695,7 +695,7 @@ Neal Jackson
 <wire x1="3.556" y1="0.7747" x2="3.556" y2="-0.7747" width="0.127" layer="21"/>
 <wire x1="3.556" y1="-0.7747" x2="2.286" y2="-2.0447" width="0.127" layer="21" curve="-90"/>
 </package>
-<package name="USB_MICRO_B-HIROSE-ZX62R-B-5P">
+<package name="MICRO_USB_B_HIROSE_ZX62R-B-5P(30)">
 <description>Hirose Electric Co Ltd ZX62R-B-5P&lt;br&gt;
 CONN RCPT MICRO USB B SMD R/A&lt;br&gt;&lt;br&gt;
 Round side is up.</description>
@@ -2405,44 +2405,49 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="VALUE" x="18.288" y="45.958" size="1.016" layer="27" font="vector" ratio="12" align="top-center"/>
 </element>
 <element name="R14" library="passives" package="0402_RES" value="3.9M" x="12.192" y="57.404" smashed="yes" rot="R270">
-<attribute name="DIGIKEY" value="YAG3306CT-ND" x="12.192" y="57.404" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
+<attribute name="DIGIKEY" value="YAG3301CT-ND" x="12.192" y="57.404" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
+<attribute name="MPN" value="RC0402JR-073M9L" x="12.192" y="57.404" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="12.192" y="58.42" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="10.795" y="57.404" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="R21" library="passives" package="0402_RES" value="9.09M" x="13.716" y="57.404" smashed="yes" rot="R90">
-<attribute name="DIGIKEY" value="YAG3306CT-ND" x="13.716" y="57.404" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
+<element name="R21" library="passives" package="0402_RES" value="9.1M" x="13.716" y="57.404" smashed="yes" rot="R90">
+<attribute name="DIGIKEY" value="YAG3322CT-ND" x="13.716" y="57.404" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
+<attribute name="MPN" value="RC0402JR-079M1L" x="13.716" y="57.404" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="15.24" y="58.42" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="15.113" y="57.404" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
 <element name="R4" library="passives" package="0402_RES" value="6.04k" x="11.176" y="56.388" smashed="yes" rot="R90">
-<attribute name="DIGIKEY" value="YAG3306CT-ND" x="11.176" y="56.388" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
+<attribute name="DIGIKEY" value="YAG2293CT-ND" x="11.176" y="56.388" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
+<attribute name="MPN" value="RC0402FR-076K04L" x="11.176" y="56.388" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="10.795" y="56.896" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="12.573" y="56.388" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="R17" library="passives" package="0402_RES" value="6.19M" x="12.192" y="55.372" smashed="yes" rot="R90">
-<attribute name="DIGIKEY" value="YAG3306CT-ND" x="12.192" y="55.372" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
+<element name="R17" library="passives" package="0402_RES" value="6.2M" x="12.192" y="55.372" smashed="yes" rot="R90">
+<attribute name="DIGIKEY" value="YAG3309CT-ND" x="12.192" y="55.372" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
+<attribute name="MPN" value="RC0402JR-076M2L" x="12.192" y="55.372" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="10.541" y="55.245" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 <attribute name="VALUE" x="13.589" y="55.372" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="R18" library="passives" package="0402_RES" value="6.81M" x="13.716" y="55.372" smashed="yes" rot="R270">
-<attribute name="DIGIKEY" value="YAG3306CT-ND" x="13.716" y="55.372" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
+<element name="R18" library="passives" package="0402_RES" value="6.8M" x="13.716" y="55.372" smashed="yes" rot="R270">
+<attribute name="DIGIKEY" value="YAG3310CT-ND" x="13.716" y="55.372" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
+<attribute name="MPN" value="RC0402JR-076M8L" x="13.716" y="55.372" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="14.097" y="55.372" size="1.016" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 <attribute name="VALUE" x="12.319" y="55.372" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
 <element name="SJ1" library="jumper" library_urn="urn:adsk.eagle:library:252" package="SJ_2" package3d_urn="urn:adsk.eagle:package:15474/1" value="" x="20.193" y="57.626" smashed="yes">
 <attribute name="VALUE" x="20.0929" y="57.626" size="0.02" layer="27"/>
 </element>
-<element name="R5" library="passives" package="0402_RES" value="6.04k" x="10.414" y="51.816" smashed="yes" rot="R270">
+<element name="R5" library="passives" package="0402_RES" value="DNP" x="10.414" y="51.816" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="YAG3306CT-ND" x="10.414" y="51.816" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
 <attribute name="NAME" x="10.033" y="51.308" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="9.017" y="51.816" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="R20" library="passives" package="0402_RES" value="8.87M" x="11.43" y="52.832" smashed="yes" rot="R270">
+<element name="R20" library="passives" package="0402_RES" value="DNP" x="11.43" y="52.832" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="YAG3306CT-ND" x="11.43" y="52.832" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
 <attribute name="NAME" x="9.779" y="53.594" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 <attribute name="VALUE" x="10.033" y="52.832" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="R15" library="passives" package="0402_RES" value="4.22M" x="12.7" y="52.832" smashed="yes" rot="R90">
+<element name="R15" library="passives" package="0402_RES" value="DNP" x="12.7" y="52.832" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="YAG3306CT-ND" x="12.7" y="52.832" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="NAME" x="14.224" y="52.324" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="14.097" y="52.832" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
@@ -2457,12 +2462,12 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="MOUSER" value="712-BAT-HLD-002-THM" x="11.176" y="38.1" size="1.778" layer="28" rot="MR270" display="off"/>
 <attribute name="NAME" x="21.803" y="38.1" size="1.016" layer="26" font="vector" ratio="12" rot="MR90" align="bottom-center"/>
 </element>
-<element name="R19" library="passives" package="0402_RES" value="7.32M" x="11.43" y="50.8" smashed="yes" rot="R90">
+<element name="R19" library="passives" package="0402_RES" value="DNP" x="11.43" y="50.8" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="YAG3306CT-ND" x="11.43" y="50.8" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="NAME" x="11.43" y="49.911" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 <attribute name="VALUE" x="12.827" y="50.8" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="R16" library="passives" package="0402_RES" value="5.62M" x="12.7" y="50.8" smashed="yes" rot="R270">
+<element name="R16" library="passives" package="0402_RES" value="DNP" x="12.7" y="50.8" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="YAG3306CT-ND" x="12.7" y="50.8" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
 <attribute name="NAME" x="13.081" y="50.8" size="1.016" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 <attribute name="VALUE" x="11.303" y="50.8" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
@@ -2511,18 +2516,19 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="NAME" x="1.27" y="27.432" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="2.286" y="28.956" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="J5" library="connector" package="USB_MICRO_B-HIROSE-ZX62R-B-5P" value="MICRO_USB_B_HIROSE_ZX62R-B-5P" x="5.5" y="60" smashed="yes" rot="R180">
-<attribute name="DIGIKEY" value="H11574CT-ND" x="5.5" y="60" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="MOUSER" value="798-ZX62R-B-5P" x="5.5" y="60" size="1.778" layer="27" rot="R180" display="off"/>
+<element name="J5" library="connector" package="MICRO_USB_B_HIROSE_ZX62R-B-5P(30)" value="MICRO_USB_B_HIROSE_ZX62R-B-5P(30)" x="5.5" y="60" smashed="yes" rot="R180">
+<attribute name="DIGIKEY" value="H125274CT-ND" x="5.5" y="60" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="MOUSER" value="798-ZX62R-B-5P30" x="5.5" y="60" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="MPN" value="ZX62R-B-5P(30)" x="5.5" y="60" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="5.5" y="54.9" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
-<attribute name="NEWARK" value="69W0714" x="5.5" y="60" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="NEWARK" value="84Y6712" x="5.5" y="60" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="VALUE" x="5.5" y="61.9" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
 <element name="C27" library="passives" package="0402_CAP" value="4.7uF" x="18.288" y="49.276" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="445-5947-1-ND" x="18.288" y="47.752" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="17.907" y="49.276" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="C28" library="passives" package="0603_CAP" value="4.7uF" x="25.146" y="53.054" smashed="yes">
+<element name="C28" library="passives" package="0402_CAP" value="4.7uF" x="25.146" y="53.054" smashed="yes">
 <attribute name="DIGIKEY" value="445-5947-1-ND" x="25.146" y="53.054" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="25.146" y="53.689" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
@@ -4812,112 +4818,158 @@ Quickturn PCB 4 Layer .DRU</description>
 <approved hash="5,1,cbcb305dbdc97b27"/>
 <approved hash="5,1,21ef965dedcb3f05"/>
 <approved hash="5,1,1269ec78f9f160f9"/>
-<approved hash="5,1,a83a901b7b72bb50"/>
-<approved hash="5,1,ce1b3d0c8974826c"/>
-<approved hash="19,1,3c581c2e1c0a3c7c"/>
-<approved hash="19,1,96cbf8bdfa8994ff"/>
 <approved hash="5,1,a2e973530692c54f"/>
-<approved hash="5,1,b671c9097fd97759"/>
-<approved hash="5,1,b3867d072654aadb"/>
-<approved hash="5,1,a41f27920cd7cbcd"/>
-<approved hash="5,1,4e30b5fc8f7488bd"/>
-<approved hash="19,1,8f24dd52de288c5e"/>
-<approved hash="19,1,3e261e501d283d5e"/>
-<approved hash="5,1,4fc0c0b07f15b0b1"/>
-<approved hash="5,1,99430f16bfb0bfb2"/>
-<approved hash="19,1,935afd2cfd0a937c"/>
-<approved hash="5,1,bb2d7b588c32b444"/>
-<approved hash="5,1,3be2b8648cdad436"/>
-<approved hash="5,1,04646bf89c8ef0ee"/>
-<approved hash="19,1,39c919bf1b893bff"/>
-<approved hash="19,1,8d5adf2cdf0a8d7c"/>
-<approved hash="5,1,4165b20c8b748012"/>
-<approved hash="5,1,07e8ed6e505a74bc"/>
-<approved hash="19,1,88cbdabdd8898aff"/>
-<approved hash="5,1,b066430c95749e11"/>
-<approved hash="5,1,fda47353565c7aa8"/>
-<approved hash="5,1,903eb41ca5768554"/>
-<approved hash="5,1,87871152bf28a176"/>
-<approved hash="5,1,14d2a5a5e6d94cfb"/>
-<approved hash="5,1,9686fae0bbd74eae"/>
-<approved hash="5,1,35ccfb4aa662aca0"/>
-<approved hash="5,1,8704530b87169d8a"/>
-<approved hash="19,1,9124ff52fc28925e"/>
-<approved hash="5,1,444bba5d7e36b6da"/>
-<approved hash="5,1,76c798becb8327fa"/>
-<approved hash="5,1,35ba1ef34dce5ecf"/>
-<approved hash="5,1,a0b7b380e0bdcbc2"/>
-<approved hash="5,1,f93cc0b03e8b0715"/>
-<approved hash="5,1,0a15192c725b592a"/>
 <approved hash="5,1,a2aa22b2069181f1"/>
-<approved hash="5,1,14990a51edcb9e73"/>
-<approved hash="5,1,14d265eb6c9e45ef"/>
-<approved hash="5,1,b6728945ce33294d"/>
-<approved hash="5,1,b637a35da3c995df"/>
-<approved hash="5,1,254840fdc9c4d04c"/>
-<approved hash="5,1,d3cfb67dccc4d54b"/>
-<approved hash="5,1,5fe8362ccc85d924"/>
-<approved hash="5,1,a96fc0acc985dc23"/>
-<approved hash="5,1,23ca4a2ccc85d906"/>
-<approved hash="5,1,e15e432b5c176065"/>
-<approved hash="5,1,d737307e77094809"/>
-<approved hash="5,1,307d235aa3f393a8"/>
-<approved hash="5,1,d9fac9d96cf393af"/>
-<approved hash="5,1,5fb049de6cc995d8"/>
-<approved hash="5,1,d98e35cd66f088b3"/>
-<approved hash="5,1,d5d1e5801191e9f8"/>
-<approved hash="5,1,327b10122c03c652"/>
-<approved hash="5,1,a18149c8752155b1"/>
-<approved hash="5,1,8e3274a2804bb202"/>
-<approved hash="5,1,834d6f04531d777d"/>
-<approved hash="5,1,98d8029c48242abd"/>
-<approved hash="5,1,021d1324121f6b6e"/>
-<approved hash="5,1,913ee851e96af84d"/>
-<approved hash="5,1,cb15fb440f55f73c"/>
-<approved hash="5,1,2cbf0ed632c7d896"/>
-<approved hash="5,1,2f1530d9bccb9e7f"/>
-<approved hash="5,1,ad5fb0dcbcd19c2a"/>
+<approved hash="5,1,14d2a5a5e6d94cfb"/>
 <approved hash="5,1,3ded539600aa6cd1"/>
-<approved hash="5,1,96d38a54edd19c26"/>
-<approved hash="5,1,9686fae7a9dbc7ba"/>
+<approved hash="19,1,8d5adf2cdf0a8d7c"/>
+<approved hash="5,1,bb2d7b588c32b444"/>
+<approved hash="5,1,07e8ed6e505a74bc"/>
 <approved hash="5,1,ae6b995f0e61e11e"/>
 <approved hash="5,1,07a5e8d77fea48d3"/>
-<approved hash="5,1,7bc388c4ecc172a6"/>
-<approved hash="5,1,bfb996d69fa3ee84"/>
-<approved hash="5,1,142d3d5d3427c51e"/>
-<approved hash="5,1,a2e953d05aab73db"/>
-<approved hash="5,1,5e2b6f6f111621cc"/>
-<approved hash="5,1,afedca7dccc4d569"/>
-<approved hash="5,1,545331fdcfc4d657"/>
-<approved hash="5,1,0a59d55b6fcb57b4"/>
-<approved hash="5,1,94e355546fc1490b"/>
-<approved hash="5,1,5143f33a9206ce7e"/>
-<approved hash="5,1,a2aa22b20691c1f1"/>
-<approved hash="5,1,be9c066c4ca40871"/>
-<approved hash="5,1,751fcdec4fa40b72"/>
-<approved hash="5,1,7d66444bbaa2837f"/>
-<approved hash="5,1,07983be424df86a4"/>
 <approved hash="5,1,9829b05ebdcea8c1"/>
-<approved hash="5,1,07d43059bdcbb73e"/>
 <approved hash="5,1,bb21a41ebb245c54"/>
-<approved hash="5,1,3babdcddc3e0dcd9"/>
-<approved hash="5,1,acfe529ea68790ce"/>
-<approved hash="5,1,539207ea90d532ae"/>
-<approved hash="5,1,16963108cf33e8bf"/>
-<approved hash="5,1,f1444d3c4f140f88"/>
+<approved hash="5,1,3d5809d06ccbb732"/>
+<approved hash="5,1,a2aa22b20691c1f1"/>
+<approved hash="5,1,a2a589d76ccea8cd"/>
+<approved hash="19,1,96cbf8bdfa8994ff"/>
+<approved hash="5,1,7bc388c4ecc172a6"/>
+<approved hash="5,1,0a15192c725b592a"/>
+<approved hash="5,1,b637a35da3c995df"/>
+<approved hash="5,1,b6728945ce33294d"/>
+<approved hash="5,1,35ccfb4aa662aca0"/>
+<approved hash="5,1,a0b7b380e0bdcbc2"/>
+<approved hash="5,1,35ba1ef34dce5ecf"/>
+<approved hash="5,1,b3867d072654aadb"/>
+<approved hash="5,1,2cbf0ed632c7d896"/>
 <approved hash="5,1,3ac786bc4c140c8b"/>
+<approved hash="5,1,cb15fb440f55f73c"/>
+<approved hash="5,1,99430f16bfb0bfb2"/>
+<approved hash="5,1,4fc0c0b07f15b0b1"/>
+<approved hash="5,1,f81408d9ecd1717c"/>
+<approved hash="5,1,939062465dd17178"/>
+<approved hash="5,1,07983be424df86a4"/>
+<approved hash="5,1,3be2b8648cdad436"/>
+<approved hash="5,1,14d265eb6c9e45ef"/>
+<approved hash="5,1,14990a51edcb9e73"/>
+<approved hash="5,1,bfb996d69fa3ee84"/>
+<approved hash="5,1,96d38a54edd19c26"/>
+<approved hash="5,1,d9fac9d96cf393af"/>
+<approved hash="5,1,142d3d5d3427c51e"/>
+<approved hash="5,1,903eb41ca5768554"/>
+<approved hash="5,1,b066430c95749e11"/>
+<approved hash="5,1,4165b20c8b748012"/>
+<approved hash="5,1,94e355546fc1490b"/>
+<approved hash="19,1,39c919bf1b893bff"/>
+<approved hash="5,1,ce1b3d0c8974826c"/>
+<approved hash="5,1,9686fae7a9dbc7ba"/>
+<approved hash="5,1,0a59d55b6fcb57b4"/>
 <approved hash="5,1,535bc91c4b2429be"/>
+<approved hash="5,1,acfe529ea68790ce"/>
+<approved hash="5,1,7d66444bbaa2837f"/>
+<approved hash="5,1,751fcdec4fa40b72"/>
+<approved hash="5,1,be9c066c4ca40871"/>
+<approved hash="5,1,5fb049de6cc995d8"/>
+<approved hash="5,1,307d235aa3f393a8"/>
+<approved hash="5,1,d737307e77094809"/>
+<approved hash="5,1,5fe8362ccc85d924"/>
+<approved hash="5,1,a96fc0acc985dc23"/>
+<approved hash="5,1,ad5fb0dcbcd19c2a"/>
+<approved hash="5,1,913ee851e96af84d"/>
+<approved hash="19,1,9124ff52fc28925e"/>
+<approved hash="5,1,f1444d3c4f140f88"/>
+<approved hash="5,1,1047e25b5dc172a2"/>
+<approved hash="5,1,07d43059bdcbb73e"/>
+<approved hash="5,1,3babdcddc3e0dcd9"/>
+<approved hash="5,1,d874b1accf85da38"/>
+<approved hash="19,1,8f24dd52de288c5e"/>
+<approved hash="5,1,23ca4a2ccc85d906"/>
+<approved hash="5,1,a18149c8752155b1"/>
+<approved hash="5,1,8e3274a2804bb202"/>
+<approved hash="5,1,e15e432b5c176065"/>
+<approved hash="5,1,a41f27920cd7cbcd"/>
+<approved hash="5,1,539207ea90d532ae"/>
+<approved hash="5,1,5143f33a9206ce7e"/>
+<approved hash="5,1,98d8029c48242abd"/>
+<approved hash="5,1,fda47353565c7aa8"/>
+<approved hash="5,1,a2e953d05aab73db"/>
+<approved hash="5,1,04646bf89c8ef0ee"/>
+<approved hash="5,1,a83a901b7b72bb50"/>
+<approved hash="5,1,16963108cf33e8bf"/>
+<approved hash="5,1,f93cc0b03e8b0715"/>
+<approved hash="5,1,444bba5d7e36b6da"/>
+<approved hash="5,1,4e30b5fc8f7488bd"/>
+<approved hash="5,1,545331fdcfc4d657"/>
+<approved hash="19,1,88cbdabdd8898aff"/>
+<approved hash="19,1,935afd2cfd0a937c"/>
+<approved hash="19,1,3c581c2e1c0a3c7c"/>
+<approved hash="5,1,53ddfbdadccb57b0"/>
 <approved hash="5,1,ef8071ac73942dd4"/>
 <approved hash="5,1,2403ba2c70942ed7"/>
 <approved hash="5,1,08522f44d16ff67b"/>
-<approved hash="5,1,d874b1accf85da38"/>
-<approved hash="5,1,939062465dd17178"/>
-<approved hash="5,1,1047e25b5dc172a2"/>
-<approved hash="5,1,f81408d9ecd1717c"/>
-<approved hash="5,1,3d5809d06ccbb732"/>
-<approved hash="5,1,a2a589d76ccea8cd"/>
+<approved hash="5,1,d5d1e5801191e9f8"/>
+<approved hash="5,1,327b10122c03c652"/>
+<approved hash="5,1,d3cfb67dccc4d54b"/>
+<approved hash="5,1,254840fdc9c4d04c"/>
+<approved hash="5,1,afedca7dccc4d569"/>
+<approved hash="5,1,021d1324121f6b6e"/>
+<approved hash="19,1,3e261e501d283d5e"/>
+<approved hash="5,1,b671c9097fd97759"/>
+<approved hash="5,1,5e2b6f6f111621cc"/>
+<approved hash="5,1,834d6f04531d777d"/>
+<approved hash="5,1,8704530b87169d8a"/>
+<approved hash="5,1,87871152bf28a176"/>
+<approved hash="5,1,9686fae0bbd74eae"/>
 <approved hash="5,1,cd677bd5dcc1490f"/>
-<approved hash="5,1,53ddfbdadccb57b0"/>
+<approved hash="5,1,d98e35cd66f088b3"/>
+<approved hash="5,1,76c798becb8327fa"/>
+<approved hash="5,1,2f1530d9bccb9e7f"/>
+<approved hash="1,20,6431c2c3c2976465"/>
+<approved hash="1,20,57d8722a72665794"/>
+<approved hash="1,20,631fcaedcaa06352"/>
+<approved hash="1,20,9d1852ea52a79d55"/>
+<approved hash="1,20,63f7ca05ca6e639c"/>
+<approved hash="1,20,9dd8522a52669d94"/>
+<approved hash="1,20,63dfca2dcde66414"/>
+<approved hash="1,20,1c303ec23e961c64"/>
+<approved hash="1,20,9df8520a53b59c47"/>
+<approved hash="1,20,63b7ca45ca906362"/>
+<approved hash="1,20,67d8422a42676795"/>
+<approved hash="1,20,9dd8522a55e19a13"/>
+<approved hash="1,20,9d80527253a59c57"/>
+<approved hash="1,20,63a7ca55ca68639a"/>
+<approved hash="1,20,9db0524252979d65"/>
+<approved hash="1,20,9df0520252699d9b"/>
+<approved hash="19,1,007b560156130069"/>
+<approved hash="19,1,31340b4e34ea0e90"/>
+<approved hash="19,1,2f16556c554a2f30"/>
+<approved hash="19,1,7f14d56ed5517f2b"/>
+<approved hash="19,1,2f06557c550a2f70"/>
+<approved hash="19,1,4131eb4bd4f07e8a"/>
+<approved hash="19,1,8961e48fe58c8862"/>
+<approved hash="19,1,055fe8b1e964048a"/>
+<approved hash="19,1,1f61930f920d1e63"/>
+<approved hash="19,1,8763a70da60e8660"/>
+<approved hash="19,1,0b5dab33aae60a88"/>
+<approved hash="19,1,a1e15e175ff4a002"/>
+<approved hash="19,1,19e9b987a6da06b4"/>
+<approved hash="19,1,935f9f319ee5928b"/>
+<approved hash="19,1,81eb8d8592d99eb7"/>
+<approved hash="19,1,17ebfa05e55808b6"/>
+<approved hash="19,1,2a36504c56ea2c90"/>
+<approved hash="19,1,7a7be001e02a7a50"/>
+<approved hash="19,1,96f5d883dea390d5"/>
+<approved hash="19,1,a0525fa45ca4a352"/>
+<approved hash="19,1,01533fa53ca20254"/>
+<approved hash="19,1,00e03e163ff20104"/>
+<approved hash="19,1,22f6588c56aa2cd0"/>
+<approved hash="19,1,2a06507c56aa2cd0"/>
+<approved hash="19,1,b13deb47d4e38e99"/>
+<approved hash="19,1,7db4d7ced6517c2b"/>
+<approved hash="19,1,6274c80ed6517c2b"/>
+<approved hash="19,1,7f04d57ed5117f6b"/>
+<approved hash="19,1,72f4d88ed6b17ccb"/>
+<approved hash="19,1,7a34d04ed6f17c8b"/>
 </errors>
 </board>
 </drawing>
