@@ -3695,7 +3695,7 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="GND12" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="R6" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND "/>
-<attribute name="MPN" value="RC0402JR-0710KL "/>
+<attribute name="MPN" value="RC0402JR-0710KL"/>
 </part>
 <part name="P+8" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="P+1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
@@ -3736,8 +3736,7 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 </part>
 <part name="GND15" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="U11" library="chips" deviceset="SI7021" device="-A20-GM1">
-<attribute name="MPN" value="SI7021-A20-GM1
-"/>
+<attribute name="MPN" value="SI7021-A20-GM1 "/>
 </part>
 <part name="C19" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
@@ -3792,7 +3791,7 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="GND27" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="R8" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND "/>
-<attribute name="MPN" value="RC0402JR-0710KL "/>
+<attribute name="MPN" value="RC0402JR-0710KL"/>
 </part>
 <part name="R9" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND "/>
@@ -3827,8 +3826,7 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="A2" library="chips" deviceset="ANT3216A063R2400A" device=""/>
 <part name="GND30" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="S1" library="switches" deviceset="EVQP2" device="">
-<attribute name="MPN" value="EVQ-P2K02Q
-"/>
+<attribute name="MPN" value="EVQ-P2K02Q "/>
 </part>
 <part name="R10" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND "/>
