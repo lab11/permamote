@@ -3596,43 +3596,56 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="U10" library="chips" deviceset="NRF52840" device=""/>
 <part name="C26" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.7uF">
 <attribute name="DIGIKEY" value="445-5947-1-ND"/>
+<attribute name="MPN" value="C1005X5R0J475K050BC "/>
 </part>
 <part name="C12" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
+<attribute name="MPN" value="GRM155R71C104KA88J "/>
 </part>
 <part name="C13" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
+<attribute name="MPN" value="GRM155R71C104KA88J "/>
 </part>
 <part name="C14" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
+<attribute name="MPN" value="GRM155R71C104KA88J "/>
 </part>
 <part name="C15" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
+<attribute name="MPN" value="GRM155R71C104KA88J "/>
 </part>
 <part name="C21" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
 <attribute name="DIGIKEY" value="490-7195-1-ND "/>
+<attribute name="MPN" value="GRM155R70G105KA12D "/>
 </part>
 <part name="C8" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="100pF">
 <attribute name="DIGIKEY" value="490-5922-1-ND"/>
+<attribute name="MPN" value="GRM1555C1H101JA01D "/>
 </part>
 <part name="C3" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="12pF">
 <attribute name="DIGIKEY" value="490-6197-1-ND"/>
+<attribute name="MPN" value="GRM1555C1H120GA01D "/>
 </part>
 <part name="C4" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="12pF">
 <attribute name="DIGIKEY" value="490-6197-1-ND"/>
+<attribute name="MPN" value="GRM1555C1H120GA01D "/>
 </part>
 <part name="C2" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.8pF">
 <attribute name="DIGIKEY" value="490-6269-1-ND"/>
+<attribute name="MPN" value="GRM1555C1HR80BA01D "/>
 </part>
 <part name="C1" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.5pF">
 <attribute name="DIGIKEY" value="490-6264-1-ND"/>
+<attribute name="MPN" value="GRM1555C1HR50WA01D "/>
 </part>
 <part name="L1" library="passives" deviceset="INDUCTOR" device="0402" value="3.3nH">
 <attribute name="DIGIKEY" value="535-10426-1-ND"/>
+<attribute name="MPN" value="AISC-0402-3N3J-T "/>
 </part>
 <part name="X1" library="crystals" deviceset="7V" device="-32.000MAHV-T" value="32MHz"/>
 <part name="C22" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
 <attribute name="DIGIKEY" value="490-7195-1-ND "/>
+<attribute name="MPN" value="GRM155R70G105KA12D "/>
 </part>
 <part name="GND1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND2" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
@@ -3641,18 +3654,22 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="U7" library="chips" deviceset="MAX17222" device=""/>
 <part name="C29" library="passives" deviceset="CAPACITOR" device="0603_CAP" value="10uF">
 <attribute name="DIGIKEY" value="490-3896-1-ND"/>
+<attribute name="MPN" value="GRM188R60J106ME47D "/>
 </part>
 <part name="C30" library="passives" deviceset="CAPACITOR" device="0603_CAP" value="10uF">
 <attribute name="DIGIKEY" value="490-3896-1-ND"/>
+<attribute name="MPN" value="GRM188R60J106ME47D "/>
 </part>
 <part name="R13" library="passives" deviceset="RESISTOR" device="0603_RES" value="80.6k">
 <attribute name="DIGIKEY" value="311-80.6KHRCT-ND"/>
+<attribute name="MPN" value="RC0603FR-0780K6L "/>
 </part>
 <part name="GND8" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND9" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND10" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="R22" library="passives" deviceset="RESISTOR" device="0603_RES" value="33M">
 <attribute name="DIGIKEY" value="HMC0603JT33M0CT-ND"/>
+<attribute name="MPN" value="HMC0603JT33M0 "/>
 </part>
 <part name="P+2" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="BT1" library="batteries" deviceset="LTOHTC" device="1020"/>
@@ -3664,27 +3681,33 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="U8" library="chips" deviceset="MAX44009" device=""/>
 <part name="C23" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
 <attribute name="DIGIKEY" value="490-7195-1-ND "/>
+<attribute name="MPN" value="GRM155R70G105KA12D "/>
 </part>
 <part name="C16" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
+<attribute name="MPN" value="GRM155R71C104KA88J "/>
 </part>
 <part name="GND11" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="C24" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
 <attribute name="DIGIKEY" value="490-7195-1-ND "/>
+<attribute name="MPN" value="GRM155R70G105KA12D "/>
 </part>
 <part name="GND12" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="R6" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND "/>
+<attribute name="MPN" value="RC0402JR-0710KL "/>
 </part>
 <part name="P+8" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="P+1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="R7" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND "/>
+<attribute name="MPN" value="RC0402JR-0710KL"/>
 </part>
 <part name="U6" library="chips" deviceset="LIS2DW12" device=""/>
 <part name="U1" library="chips" deviceset="AB1815-T3" device=""/>
 <part name="C7" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="47pF">
 <attribute name="DIGIKEY" value="490-5942-1-ND"/>
+<attribute name="MPN" value="GRM1555C1H470JA01D "/>
 </part>
 <part name="GND13" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND14" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
@@ -3693,24 +3716,32 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="C33" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="DNP"/>
 <part name="C25" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
 <attribute name="DIGIKEY" value="490-7195-1-ND "/>
+<attribute name="MPN" value="GRM155R70G105KA12D "/>
 </part>
 <part name="C17" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
+<attribute name="MPN" value="GRM155R71C104KA88J "/>
 </part>
 <part name="GND6" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="P+5" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="C31" library="passives" deviceset="CAPACITOR" device="0603_CAP" value="10uF">
 <attribute name="DIGIKEY" value="490-3896-1-ND"/>
+<attribute name="MPN" value="GRM188R60J106ME47D "/>
 </part>
 <part name="GND7" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="U9" library="chips" deviceset="MS5637-02BA03" device=""/>
 <part name="C18" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
+<attribute name="MPN" value="GRM155R71C104KA88J "/>
 </part>
 <part name="GND15" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="U11" library="chips" deviceset="SI7021" device="-A20-GM1"/>
+<part name="U11" library="chips" deviceset="SI7021" device="-A20-GM1">
+<attribute name="MPN" value="SI7021-A20-GM1
+"/>
+</part>
 <part name="C19" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
+<attribute name="MPN" value="GRM155R71C104KA88J "/>
 </part>
 <part name="GND16" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="P+12" library="mote" deviceset="VSW" device=""/>
@@ -3721,15 +3752,19 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="P+14" library="mote" deviceset="VBAT" device=""/>
 <part name="R23" library="passives" deviceset="RESISTOR" device="0402_RES" value="100M">
 <attribute name="DIGIKEY" value="541-100MAHCT-ND"/>
+<attribute name="MPN" value="HMC0402JT100M "/>
 </part>
 <part name="R24" library="passives" deviceset="RESISTOR" device="0402_RES" value="100M">
 <attribute name="DIGIKEY" value="541-100MAHCT-ND"/>
+<attribute name="MPN" value="HMC0402JT100M "/>
 </part>
 <part name="R25" library="passives" deviceset="RESISTOR" device="0402_RES" value="100M">
 <attribute name="DIGIKEY" value="541-100MAHCT-ND"/>
+<attribute name="MPN" value="HMC0402JT100M "/>
 </part>
 <part name="R26" library="passives" deviceset="RESISTOR" device="0402_RES" value="100M">
 <attribute name="DIGIKEY" value="541-100MAHCT-ND"/>
+<attribute name="MPN" value="HMC0402JT100M "/>
 </part>
 <part name="P+6" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="P+7" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
@@ -3737,6 +3772,7 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="P+11" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="R27" library="passives" deviceset="RESISTOR" device="0402_RES" value="100M">
 <attribute name="DIGIKEY" value="541-100MAHCT-ND"/>
+<attribute name="MPN" value="HMC0402JT100M "/>
 </part>
 <part name="P+17" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="GND18" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
@@ -3744,9 +3780,11 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="GND20" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="C9" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="10nF">
 <attribute name="DIGIKEY" value="490-4516-1-ND"/>
+<attribute name="MPN" value="GRM155R71H103KA88D "/>
 </part>
 <part name="L5" library="passives" deviceset="INDUCTOR" device="74437324220" value="22uH">
 <attribute name="DIGIKEY" value="732-3340-1-ND"/>
+<attribute name="MPN" value="74437324220 "/>
 </part>
 <part name="GND24" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND25" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
@@ -3754,25 +3792,32 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="GND27" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="R8" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND "/>
+<attribute name="MPN" value="RC0402JR-0710KL "/>
 </part>
 <part name="R9" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND "/>
+<attribute name="MPN" value="RC0402JR-0710KL"/>
 </part>
 <part name="C11" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="47nF">
 <attribute name="DIGIKEY" value="445-1264-1-ND"/>
+<attribute name="MPN" value="C1005X7R1C473K050BC "/>
 </part>
 <part name="L2" library="passives" deviceset="INDUCTOR" device="0402" value="15nH">
 <attribute name="DIGIKEY" value="587-1521-1-ND"/>
+<attribute name="MPN" value="HK100515NJ-T "/>
 </part>
 <part name="L4" library="passives" deviceset="INDUCTOR" device="0603" value="10uH">
 <attribute name="DIGIKEY" value="490-4025-1-ND"/>
+<attribute name="MPN" value="LQM18FN100M00D "/>
 </part>
 <part name="X3" library="crystals" deviceset="ABS05-32.768KHZ" device="-9-T" value="32.768kHz"/>
 <part name="C5" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="12pF">
 <attribute name="DIGIKEY" value="490-6197-1-ND"/>
+<attribute name="MPN" value="GRM1555C1H120GA01D "/>
 </part>
 <part name="C6" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="12pF">
 <attribute name="DIGIKEY" value="490-6197-1-ND"/>
+<attribute name="MPN" value="GRM1555C1H120GA01D "/>
 </part>
 <part name="GND28" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="P+3" library="mote" deviceset="VSEC" device=""/>
@@ -3781,12 +3826,17 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="P+23" library="mote" deviceset="VSOL" device=""/>
 <part name="A2" library="chips" deviceset="ANT3216A063R2400A" device=""/>
 <part name="GND30" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="S1" library="switches" deviceset="EVQP2" device=""/>
+<part name="S1" library="switches" deviceset="EVQP2" device="">
+<attribute name="MPN" value="EVQ-P2K02Q
+"/>
+</part>
 <part name="R10" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND "/>
+<attribute name="MPN" value="RC0402JR-0710KL"/>
 </part>
 <part name="R11" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND "/>
+<attribute name="MPN" value="RC0402JR-0710KL"/>
 </part>
 <part name="U3" library="chips" deviceset="EKMB" device="1101111"/>
 <part name="Q1" library="fets" deviceset="PMDXB950UPEL" device=""/>
@@ -3831,8 +3881,16 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="R15" library="passives" deviceset="RESISTOR" device="0402_RES" value="DNP">
 <attribute name="DIGIKEY" value="YAG3306CT-ND"/>
 </part>
-<part name="BT2" library="batteries" deviceset="BAT-HLD-002-THM" device=""/>
-<part name="BT3" library="batteries" deviceset="BAT-HLD-002-THM" device=""/>
+<part name="BT2" library="batteries" deviceset="BAT-HLD-002-THM" device="">
+<attribute name="DIGIKEY" value="BAT-HLD-001-THM-ND"/>
+<attribute name="MOUSER" value="712-BAT-HLD-001-THM"/>
+<attribute name="MPN" value="BAT-HLD-001-THM"/>
+</part>
+<part name="BT3" library="batteries" deviceset="BAT-HLD-002-THM" device="">
+<attribute name="DIGIKEY" value="BAT-HLD-001-THM-ND"/>
+<attribute name="MOUSER" value="712-BAT-HLD-001-THM"/>
+<attribute name="MPN" value="BAT-HLD-001-THM"/>
+</part>
 <part name="R19" library="passives" deviceset="RESISTOR" device="0402_RES" value="DNP">
 <attribute name="DIGIKEY" value="YAG3306CT-ND"/>
 </part>
@@ -3849,12 +3907,14 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="GND33" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="C20" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
+<attribute name="MPN" value="GRM155R71C104KA88J "/>
 </part>
 <part name="Q7" library="fets" deviceset="PMDXB950UPEL" device=""/>
 <part name="Q8" library="fets" deviceset="PMDXB950UPEL" device=""/>
 <part name="Q10" library="fets" deviceset="PMDXB950UPEL" device=""/>
 <part name="R12" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND "/>
+<attribute name="MPN" value="RC0402JR-0710KL"/>
 </part>
 <part name="J5" library="connector" deviceset="MICRO_USB_B_HIROSE_ZX62R-B-5P(30)" device=""/>
 <part name="P+16" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
@@ -3862,12 +3922,15 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="GND4" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="C27" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.7uF">
 <attribute name="DIGIKEY" value="445-5947-1-ND"/>
+<attribute name="MPN" value="C1005X5R0J475K050BC "/>
 </part>
 <part name="C28" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.7uF">
 <attribute name="DIGIKEY" value="445-5947-1-ND"/>
+<attribute name="MPN" value="C1005X5R0J475K050BC "/>
 </part>
 <part name="C10" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="10nF">
 <attribute name="DIGIKEY" value="490-4516-1-ND"/>
+<attribute name="MPN" value="GRM155R71H103KA88D "/>
 </part>
 <part name="SJ2" library="SparkFun-Passives" deviceset="SOLDERJUMPER" device="NC2"/>
 <part name="SJ3" library="SparkFun-Passives" deviceset="SOLDERJUMPER" device="NC2"/>
@@ -3877,12 +3940,15 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="D2" library="leds" deviceset="SML-LX0404SIUPGUSB" device=""/>
 <part name="R1" library="passives" deviceset="RESISTOR" device="0402_RES" value="470">
 <attribute name="DIGIKEY" value="311-470JRCT-ND"/>
+<attribute name="MPN" value="RC0402JR-07470RL "/>
 </part>
 <part name="R2" library="passives" deviceset="RESISTOR" device="0402_RES" value="470">
 <attribute name="DIGIKEY" value="311-470JRCT-ND"/>
+<attribute name="MPN" value="RC0402JR-07470RL "/>
 </part>
 <part name="R3" library="passives" deviceset="RESISTOR" device="0402_RES" value="470">
 <attribute name="DIGIKEY" value="311-470JRCT-ND"/>
+<attribute name="MPN" value="RC0402JR-07470RL "/>
 </part>
 <part name="P+21" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="P+22" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
@@ -3933,58 +3999,74 @@ Either populate the NRF52840
 <instance part="U10" gate="G$1" x="116.84" y="63.5"/>
 <instance part="C26" gate="G$1" x="182.88" y="172.72">
 <attribute name="DIGIKEY" x="182.88" y="172.72" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="182.88" y="172.72" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="C12" gate="G$1" x="205.74" y="172.72">
 <attribute name="DIGIKEY" x="205.74" y="172.72" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="205.74" y="172.72" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="C13" gate="G$1" x="213.36" y="172.72">
 <attribute name="DIGIKEY" x="213.36" y="172.72" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="213.36" y="172.72" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="C14" gate="G$1" x="58.42" y="139.7">
 <attribute name="DIGIKEY" x="58.42" y="139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="58.42" y="139.7" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="C15" gate="G$1" x="198.12" y="172.72">
 <attribute name="DIGIKEY" x="198.12" y="172.72" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="198.12" y="172.72" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="C21" gate="G$1" x="190.5" y="172.72">
 <attribute name="DIGIKEY" x="190.5" y="172.72" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="190.5" y="172.72" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="C8" gate="G$1" x="66.04" y="139.7">
 <attribute name="DIGIKEY" x="66.04" y="139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="66.04" y="139.7" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="C3" gate="G$1" x="198.12" y="99.06" rot="R270">
 <attribute name="DIGIKEY" x="198.12" y="99.06" size="1.778" layer="96" rot="R270" display="off"/>
+<attribute name="MPN" x="198.12" y="99.06" size="1.778" layer="96" rot="R270" display="off"/>
 </instance>
 <instance part="C4" gate="G$1" x="198.12" y="83.82" rot="R270">
 <attribute name="DIGIKEY" x="198.12" y="83.82" size="1.778" layer="96" rot="R270" display="off"/>
+<attribute name="MPN" x="198.12" y="83.82" size="1.778" layer="96" rot="R270" display="off"/>
 </instance>
 <instance part="C2" gate="G$1" x="185.42" y="63.5">
 <attribute name="DIGIKEY" x="185.42" y="63.5" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="185.42" y="63.5" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="C1" gate="G$1" x="215.9" y="63.5">
 <attribute name="DIGIKEY" x="215.9" y="63.5" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="215.9" y="63.5" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="L1" gate="G$1" x="200.66" y="68.58" rot="R270">
 <attribute name="DIGIKEY" x="200.66" y="68.58" size="1.778" layer="96" rot="R270" display="off"/>
+<attribute name="MPN" x="200.66" y="68.58" size="1.778" layer="96" rot="R270" display="off"/>
 </instance>
 <instance part="X1" gate="G$1" x="190.5" y="91.44" rot="R90"/>
 <instance part="C22" gate="G$1" x="73.66" y="139.7">
 <attribute name="DIGIKEY" x="73.66" y="139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="73.66" y="139.7" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="GND1" gate="1" x="213.36" y="162.56"/>
 <instance part="GND2" gate="1" x="137.16" y="50.8"/>
 <instance part="GND3" gate="1" x="66.04" y="127"/>
 <instance part="R6" gate="G$1" x="210.82" y="121.92" rot="R90">
 <attribute name="DIGIKEY" x="210.82" y="121.92" size="1.778" layer="96" rot="R90" display="off"/>
+<attribute name="MPN" x="210.82" y="121.92" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="P+8" gate="VCC" x="210.82" y="134.62"/>
 <instance part="P+1" gate="VCC" x="134.62" y="182.88"/>
 <instance part="R7" gate="G$1" x="218.44" y="121.92" rot="R90">
 <attribute name="DIGIKEY" x="218.44" y="121.92" size="1.778" layer="96" rot="R90" display="off"/>
+<attribute name="MPN" x="218.44" y="121.92" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="U1" gate="G$1" x="53.34" y="12.7"/>
 <instance part="C7" gate="G$1" x="30.48" y="22.86">
 <attribute name="DIGIKEY" x="30.48" y="22.86" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="30.48" y="22.86" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="GND13" gate="1" x="30.48" y="5.08"/>
 <instance part="GND14" gate="1" x="68.58" y="5.08"/>
@@ -3993,6 +4075,7 @@ Either populate the NRF52840
 <instance part="C33" gate="G$1" x="22.86" y="22.86"/>
 <instance part="C25" gate="G$1" x="7.62" y="38.1">
 <attribute name="DIGIKEY" x="7.62" y="38.1" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="7.62" y="38.1" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="P+13" gate="VCC" x="48.26" y="48.26"/>
 <instance part="J1" gate="G$1" x="33.02" y="76.2"/>
@@ -4001,33 +4084,43 @@ Either populate the NRF52840
 <instance part="P+14" gate="VCC" x="182.88" y="160.02"/>
 <instance part="C11" gate="G$1" x="81.28" y="139.7">
 <attribute name="DIGIKEY" x="81.28" y="139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="81.28" y="139.7" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="L2" gate="G$1" x="83.82" y="157.48" rot="R90">
 <attribute name="DIGIKEY" x="83.82" y="157.48" size="1.778" layer="96" rot="R90" display="off"/>
+<attribute name="MPN" x="83.82" y="157.48" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="L4" gate="G$1" x="101.6" y="157.48" rot="R90">
 <attribute name="DIGIKEY" x="101.6" y="157.48" size="1.778" layer="96" rot="R90" display="off"/>
+<attribute name="MPN" x="101.6" y="157.48" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="X3" gate="G$1" x="213.36" y="83.82" rot="MR270"/>
 <instance part="C5" gate="G$1" x="220.98" y="76.2" rot="R270">
 <attribute name="DIGIKEY" x="220.98" y="76.2" size="1.778" layer="96" rot="R270" display="off"/>
+<attribute name="MPN" x="220.98" y="76.2" size="1.778" layer="96" rot="R270" display="off"/>
 </instance>
 <instance part="C6" gate="G$1" x="220.98" y="91.44" rot="R270">
 <attribute name="DIGIKEY" x="220.98" y="91.44" size="1.778" layer="96" rot="R270" display="off"/>
+<attribute name="MPN" x="220.98" y="91.44" size="1.778" layer="96" rot="R270" display="off"/>
 </instance>
 <instance part="GND28" gate="1" x="228.6" y="73.66"/>
 <instance part="P+3" gate="G$1" x="198.12" y="160.02"/>
 <instance part="P+23" gate="G$1" x="190.5" y="160.02"/>
 <instance part="A2" gate="G$1" x="238.76" y="76.2"/>
-<instance part="S1" gate="G$1" x="88.9" y="7.62"/>
+<instance part="S1" gate="G$1" x="88.9" y="7.62">
+<attribute name="MPN" x="88.9" y="7.62" size="1.778" layer="96" display="off"/>
+</instance>
 <instance part="R10" gate="G$1" x="116.84" y="25.4" rot="R90">
 <attribute name="DIGIKEY" x="116.84" y="25.4" size="1.778" layer="96" rot="R90" display="off"/>
+<attribute name="MPN" x="116.84" y="25.4" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="R11" gate="G$1" x="104.14" y="27.94" rot="R90">
 <attribute name="DIGIKEY" x="104.14" y="27.94" size="1.778" layer="96" rot="R90" display="off"/>
+<attribute name="MPN" x="104.14" y="27.94" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="R12" gate="G$1" x="104.14" y="40.64">
 <attribute name="DIGIKEY" x="104.14" y="40.64" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="104.14" y="40.64" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="P+16" gate="VCC" x="7.62" y="48.26"/>
 <instance part="P+18" gate="VCC" x="116.84" y="48.26"/>
@@ -4731,18 +4824,22 @@ Either populate the NRF52840
 <instance part="U7" gate="G$1" x="58.42" y="35.56"/>
 <instance part="C29" gate="G$1" x="12.7" y="45.72">
 <attribute name="DIGIKEY" x="12.7" y="45.72" size="1.016" layer="96" align="bottom-center" display="off"/>
+<attribute name="MPN" x="12.7" y="45.72" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="C30" gate="G$1" x="86.36" y="45.72">
 <attribute name="DIGIKEY" x="86.36" y="45.72" size="1.016" layer="96" align="bottom-center" display="off"/>
+<attribute name="MPN" x="86.36" y="45.72" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="R13" gate="G$1" x="48.26" y="15.24" rot="R90">
 <attribute name="DIGIKEY" x="48.26" y="15.24" size="1.016" layer="96" rot="R90" align="bottom-center" display="off"/>
+<attribute name="MPN" x="48.26" y="15.24" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="GND8" gate="1" x="48.26" y="5.08"/>
 <instance part="GND9" gate="1" x="71.12" y="10.16"/>
 <instance part="GND10" gate="1" x="12.7" y="30.48"/>
 <instance part="R22" gate="G$1" x="40.64" y="50.8" rot="R180">
 <attribute name="DIGIKEY" x="40.64" y="50.8" size="1.016" layer="96" rot="R180" align="bottom-center" display="off"/>
+<attribute name="MPN" x="40.64" y="50.8" size="1.778" layer="96" rot="R180" display="off"/>
 </instance>
 <instance part="P+2" gate="VCC" x="99.06" y="60.96"/>
 <instance part="BT1" gate="G$1" x="215.9" y="144.78"/>
@@ -4754,9 +4851,11 @@ Either populate the NRF52840
 <instance part="GND20" gate="1" x="243.84" y="99.06"/>
 <instance part="C9" gate="G$1" x="81.28" y="134.62">
 <attribute name="DIGIKEY" x="81.28" y="134.62" size="1.016" layer="96" align="bottom-center" display="off"/>
+<attribute name="MPN" x="81.28" y="134.62" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="L5" gate="G$1" x="91.44" y="149.86" rot="R270">
 <attribute name="DIGIKEY" x="91.44" y="149.86" size="1.016" layer="96" rot="R270" align="bottom-center" display="off"/>
+<attribute name="MPN" x="91.44" y="149.86" size="1.778" layer="96" rot="R270" display="off"/>
 </instance>
 <instance part="P+15" gate="G$1" x="215.9" y="162.56"/>
 <instance part="P+20" gate="G$1" x="50.8" y="157.48"/>
@@ -4799,8 +4898,12 @@ Either populate the NRF52840
 <instance part="R15" gate="G$1" x="152.4" y="45.72" rot="R90">
 <attribute name="DIGIKEY" x="152.4" y="45.72" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
-<instance part="BT2" gate="G$1" x="193.04" y="114.3"/>
-<instance part="BT3" gate="G$1" x="215.9" y="114.3"/>
+<instance part="BT2" gate="G$1" x="193.04" y="114.3">
+<attribute name="MPN" x="193.04" y="114.3" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="BT3" gate="G$1" x="215.9" y="114.3">
+<attribute name="MPN" x="215.9" y="114.3" size="1.778" layer="96" display="off"/>
+</instance>
 <instance part="R19" gate="G$1" x="172.72" y="58.42" rot="R90">
 <attribute name="DIGIKEY" x="172.72" y="58.42" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
@@ -4812,12 +4915,15 @@ Either populate the NRF52840
 <instance part="GND4" gate="1" x="124.46" y="165.1"/>
 <instance part="C27" gate="G$1" x="119.38" y="175.26">
 <attribute name="DIGIKEY" x="119.38" y="175.26" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="119.38" y="175.26" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="C28" gate="G$1" x="66.04" y="139.7">
 <attribute name="DIGIKEY" x="66.04" y="139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="66.04" y="139.7" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="C10" gate="G$1" x="127" y="175.26">
 <attribute name="DIGIKEY" x="127" y="175.26" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="127" y="175.26" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="D1" gate="G$1" x="50.8" y="137.16"/>
 </instances>
@@ -5248,46 +5354,59 @@ Either populate the NRF52840
 <instance part="U8" gate="G$1" x="195.58" y="111.76"/>
 <instance part="C23" gate="G$1" x="121.92" y="144.78">
 <attribute name="DIGIKEY" x="121.92" y="144.78" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="121.92" y="144.78" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="C16" gate="G$1" x="114.3" y="144.78">
 <attribute name="DIGIKEY" x="114.3" y="144.78" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="114.3" y="144.78" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="GND11" gate="1" x="104.14" y="106.68"/>
 <instance part="C24" gate="G$1" x="213.36" y="137.16">
 <attribute name="DIGIKEY" x="213.36" y="137.16" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="213.36" y="137.16" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="GND12" gate="1" x="187.96" y="106.68"/>
 <instance part="U6" gate="G$1" x="22.86" y="101.6"/>
 <instance part="C17" gate="G$1" x="33.02" y="139.7">
 <attribute name="DIGIKEY" x="33.02" y="139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="33.02" y="139.7" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="GND6" gate="1" x="40.64" y="96.52"/>
 <instance part="P+5" gate="VCC" x="17.78" y="149.86"/>
 <instance part="C31" gate="G$1" x="25.4" y="139.7">
 <attribute name="DIGIKEY" x="25.4" y="139.7" size="1.016" layer="96" align="bottom-center" display="off"/>
+<attribute name="MPN" x="25.4" y="139.7" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="GND7" gate="1" x="33.02" y="129.54"/>
 <instance part="U9" gate="G$1" x="20.32" y="22.86"/>
 <instance part="C18" gate="G$1" x="35.56" y="48.26">
 <attribute name="DIGIKEY" x="35.56" y="48.26" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="35.56" y="48.26" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="GND15" gate="1" x="15.24" y="17.78"/>
-<instance part="U11" gate="G$1" x="106.68" y="27.94"/>
+<instance part="U11" gate="G$1" x="106.68" y="27.94">
+<attribute name="MPN" x="106.68" y="27.94" size="1.778" layer="96" display="off"/>
+</instance>
 <instance part="C19" gate="G$1" x="114.3" y="48.26">
 <attribute name="DIGIKEY" x="114.3" y="48.26" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="114.3" y="48.26" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="GND16" gate="1" x="93.98" y="20.32"/>
 <instance part="R23" gate="G$1" x="96.52" y="142.24" rot="R90">
 <attribute name="DIGIKEY" x="96.52" y="142.24" size="1.27" layer="96" rot="R90" display="off"/>
+<attribute name="MPN" x="96.52" y="142.24" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="R24" gate="G$1" x="185.42" y="142.24" rot="R90">
 <attribute name="DIGIKEY" x="185.42" y="142.24" size="1.27" layer="96" rot="R90" display="off"/>
+<attribute name="MPN" x="185.42" y="142.24" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="R25" gate="G$1" x="7.62" y="53.34" rot="R90">
 <attribute name="DIGIKEY" x="7.62" y="53.34" size="1.27" layer="96" rot="R90" display="off"/>
+<attribute name="MPN" x="7.62" y="53.34" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="R26" gate="G$1" x="86.36" y="53.34" rot="R90">
 <attribute name="DIGIKEY" x="86.36" y="53.34" size="1.27" layer="96" rot="R90" display="off"/>
+<attribute name="MPN" x="86.36" y="53.34" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="P+6" gate="VCC" x="96.52" y="157.48"/>
 <instance part="P+7" gate="VCC" x="185.42" y="152.4"/>
@@ -5295,6 +5414,7 @@ Either populate the NRF52840
 <instance part="P+11" gate="VCC" x="86.36" y="63.5"/>
 <instance part="R27" gate="G$1" x="172.72" y="58.42" rot="R90">
 <attribute name="DIGIKEY" x="172.72" y="58.42" size="1.27" layer="96" rot="R90" display="off"/>
+<attribute name="MPN" x="172.72" y="58.42" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="P+17" gate="VCC" x="172.72" y="68.58"/>
 <instance part="GND18" gate="1" x="180.34" y="30.48"/>
@@ -5304,9 +5424,11 @@ Either populate the NRF52840
 <instance part="GND27" gate="1" x="114.3" y="38.1"/>
 <instance part="R8" gate="G$1" x="132.08" y="132.08" rot="R90">
 <attribute name="DIGIKEY" x="132.08" y="132.08" size="1.778" layer="96" rot="R90" display="off"/>
+<attribute name="MPN" x="132.08" y="132.08" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="R9" gate="G$1" x="220.98" y="137.16" rot="R90">
 <attribute name="DIGIKEY" x="220.98" y="137.16" size="1.778" layer="96" rot="R90" display="off"/>
+<attribute name="MPN" x="220.98" y="137.16" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="U3" gate="G$1" x="165.1" y="38.1"/>
 <instance part="Q1" gate=".1" x="45.72" y="30.48" rot="MR270"/>
@@ -5830,6 +5952,7 @@ Either populate the NRF52840
 <instance part="GND33" gate="1" x="60.96" y="63.5"/>
 <instance part="C20" gate="G$1" x="66.04" y="76.2">
 <attribute name="DIGIKEY" x="66.04" y="76.2" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="66.04" y="76.2" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="J5" gate="G$1" x="48.26" y="81.28" rot="MR0"/>
 <instance part="SJ2" gate="1" x="43.18" y="114.3"/>
@@ -5839,12 +5962,15 @@ Either populate the NRF52840
 <instance part="D2" gate="G$1" x="121.92" y="154.94"/>
 <instance part="R1" gate="G$1" x="144.78" y="162.56">
 <attribute name="DIGIKEY" x="144.78" y="162.56" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="144.78" y="162.56" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="R2" gate="G$1" x="144.78" y="154.94">
 <attribute name="DIGIKEY" x="144.78" y="154.94" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="144.78" y="154.94" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="R3" gate="G$1" x="144.78" y="147.32">
 <attribute name="DIGIKEY" x="144.78" y="147.32" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="144.78" y="147.32" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="P+21" gate="VCC" x="33.02" y="119.38"/>
 <instance part="P+22" gate="VCC" x="106.68" y="162.56"/>
