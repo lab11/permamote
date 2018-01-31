@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="8.5.2">
+<eagle version="8.6.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -3369,9 +3369,9 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <package name="SOLAR_HOLES">
 <pad name="+" x="0" y="0" drill="1"/>
 <pad name="-" x="42" y="0" drill="1"/>
-<wire x1="-0.5" y1="1.5" x2="0.5" y2="1.5" width="0.127" layer="21"/>
-<wire x1="0" y1="2" x2="0" y2="1" width="0.127" layer="21"/>
-<wire x1="41.5" y1="1.5" x2="42.5" y2="1.5" width="0.127" layer="21"/>
+<wire x1="-1.5" y1="1" x2="-0.5" y2="1" width="0.127" layer="21"/>
+<wire x1="-1" y1="1.5" x2="-1" y2="0.5" width="0.127" layer="21"/>
+<wire x1="42.5" y1="1" x2="43.5" y2="1" width="0.127" layer="21"/>
 <text x="-0.5" y="2.5" size="1.016" layer="21" font="vector" ratio="12">&gt;NAME</text>
 </package>
 <package name="PHEONIX-1935161">
