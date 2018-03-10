@@ -36,6 +36,7 @@ int main(void) {
     led_off(LED2);
 
     nrf_sdh_enable_request();
+    sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
 
     for (int i = 0; i < 7; i++) {
       nrf_gpio_cfg_output(enables[i]);
