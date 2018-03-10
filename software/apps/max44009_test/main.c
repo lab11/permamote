@@ -10,49 +10,38 @@
 #include "nrf_drv_twi.h"
 #include "nrf_drv_gpiote.h"
 #include "app_util_platform.h"
-#include "ble_advdata.h"
 #include "nordic_common.h"
-#include "softdevice_handler.h"
-#include "ble_debug_assert_handler.h"
+#include "nrf_sdh.h"
+#include "nrf_soc.h"
+#include "app_timer.h"
 #include "led.h"
 #include "app_uart.h"
+#include "nrf_drv_clock.h"
 
-#include "simple_ble.h"
-#include "simple_adv.h"
 #include "permamote.h"
 #include "max44009.h"
 
-#define MAX_TEST_DATA_BYTES  (15U)
 #define UART_TX_BUF_SIZE     256
 #define UART_RX_BUF_SIZE     256
 
-char name[10] = "Permamote";
+#define LED0 NRF_GPIO_PIN_MAP(0,4)
+#define LED1 NRF_GPIO_PIN_MAP(0,5)
+#define LED2 NRF_GPIO_PIN_MAP(0,6)
 
-// Intervals for advertising and connections
-static simple_ble_config_t ble_config = {
-  .platform_id       = 0x00,              // used as 4th octect in device BLE address
-  .device_id         = DEVICE_ID_DEFAULT,
-  .adv_name          = name,
-  .adv_interval      = MSEC_TO_UNITS(500, UNIT_0_625_MS),
-  .min_conn_interval = MSEC_TO_UNITS(500, UNIT_1_25_MS),
-  .max_conn_interval = MSEC_TO_UNITS(1000, UNIT_1_25_MS)
+#define SENSOR_RATE APP_TIMER_TICKS(1000)
+APP_TIMER_DEF(sensor_read_timer);
+
+uint8_t enables[7] = {
+   MAX44009_EN,
+   ISL29125_EN,
+   MS5637_EN,
+   SI7021_EN,
+   PIR_EN,
+   I2C_SDA,
+   I2C_SCL
 };
 
-nrf_drv_twi_t twi_instance = NRF_DRV_TWI_INSTANCE(1);
-
-void twi_init(void) {
-  ret_code_t err_code;
-
-  const nrf_drv_twi_config_t twi_config = {
-    .scl                = I2C_SCL,
-    .sda                = I2C_SDA,
-    .frequency          = NRF_TWI_FREQ_100K,
-    .interrupt_priority = APP_IRQ_PRIORITY_HIGH
-  };
-
-  err_code = nrf_drv_twi_init(&twi_instance, &twi_config, NULL, NULL);
-  APP_ERROR_CHECK(err_code);
-}
+nrf_drv_twi_t twi_instance = NRF_DRV_TWI_INSTANCE(0);
 
 void uart_error_handle (app_uart_evt_t * p_event) {
     if (p_event->evt_type == APP_UART_COMMUNICATION_ERROR) {
@@ -62,13 +51,29 @@ void uart_error_handle (app_uart_evt_t * p_event) {
     }
 }
 
+static void sensor_read_callback(void* p_context) {
+    float lux = max44009_read_lux();
+    printf("lux: %f\n", lux);
+
+}
+
+static void timer_init(void)
+{
+    uint32_t err_code = app_timer_init();
+    APP_ERROR_CHECK(err_code);
+    err_code = app_timer_create(&sensor_read_timer, APP_TIMER_MODE_REPEATED, sensor_read_callback);
+    APP_ERROR_CHECK(err_code);
+    err_code = app_timer_start(sensor_read_timer, SENSOR_RATE, NULL);
+    APP_ERROR_CHECK(err_code);
+}
+
 void uart_init(void) {
   uint32_t err_code;
 
   const app_uart_comm_params_t comm_params =
   {
-    11,
-    12,
+    UART_RX,
+    UART_TX,
     0,
     0,
     APP_UART_FLOW_CONTROL_DISABLED,
@@ -85,16 +90,38 @@ void uart_init(void) {
 
 }
 
+void twi_init(void) {
+  ret_code_t err_code;
+
+  const nrf_drv_twi_config_t twi_config = {
+    .scl                = I2C_SCL,
+    .sda                = I2C_SDA,
+    .frequency          = NRF_TWI_FREQ_100K,
+    .interrupt_priority = APP_IRQ_PRIORITY_HIGH
+  };
+
+  err_code = nrf_drv_twi_init(&twi_instance, &twi_config, NULL, NULL);
+  APP_ERROR_CHECK(err_code);
+}
+
 int main(void) {
-  // Setup BLE
-  simple_ble_init(&ble_config);
+  // init softdevice
+  nrf_sdh_enable_request();
+  sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
+
+  // init led
+  led_init(LED2);
+  led_off(LED2);
 
   // init uart
   uart_init();
+
   printf("\nLUX TEST\n");
 
   // Init twi
   twi_init();
+
+  timer_init();
 
   // Turn on power gate
   nrf_gpio_cfg_output(MAX44009_EN);
@@ -116,12 +143,7 @@ int main(void) {
   max44009_init(&twi_instance);
   max44009_config(config);
 
-  // Advertise because why not
-  simple_adv_only_name();
-
   while (1) {
-    float lux = max44009_read_lux();
-    printf("lux: %f\n", lux);
-    nrf_delay_ms(5000);
+    sd_app_evt_wait();
   }
 }

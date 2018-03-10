@@ -4,10 +4,10 @@
 
 static nrf_drv_twi_t* twi_instance;
 
-static inline void max44009_reg_read(uint8_t reg, uint8_t* data) {
+static inline void max44009_reg_read(uint8_t reg, uint8_t* data, size_t len) {
   nrf_drv_twi_enable(twi_instance);
   nrf_drv_twi_tx(twi_instance, MAX44009_ADDR, &reg, 1, true);
-  nrf_drv_twi_rx(twi_instance, MAX44009_ADDR, data, 1);
+  nrf_drv_twi_rx(twi_instance, MAX44009_ADDR, data, len);
   nrf_drv_twi_disable(twi_instance);
 }
 
@@ -33,11 +33,11 @@ void max44009_config(max44009_config_t config) {
 }
 
 float max44009_read_lux(void) {
-  uint8_t raw, exp, mantissa;
-  max44009_reg_read(MAX44009_LUX_HIGH, &raw);
-  exp = (raw & 0xF0) >> 4;
-  mantissa = raw & 0xF;
-  max44009_reg_read(MAX44009_LUX_LOW, &raw);
-  mantissa |= raw & 0xF;
+  uint8_t exp, mantissa;
+  uint8_t data[2];
+  max44009_reg_read(MAX44009_LUX_HIGH, (uint8_t*)&data, 2);
+  exp = (data[0] & 0xF0) >> 4;
+  mantissa = data[0] & 0xF0;
+  mantissa |= data[1] & 0xF;
   return pow(2, exp) * mantissa * 0.045;
 }
