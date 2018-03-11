@@ -15,52 +15,56 @@
 // DEFINES FOR NRF52840
 #ifdef NRF52840
 
-// I2C through headers
-#define I2C_SCL     NRF_GPIO_PIN_MAP(0,8)
-#define I2C_SDA     NRF_GPIO_PIN_MAP(0,6)
+// UART
+#define UART_RX 26
+#define UART_TX 27
 
-// SPI through headers
-#define SPI_SCLK    NRF_GPIO_PIN_MAP(0,22)
-#define SPI_MISO    NRF_GPIO_PIN_MAP(1,0)
-#define SPI_MOSI    NRF_GPIO_PIN_MAP(0,24)
+// I2C
+#define I2C_SCL     NRF_GPIO_PIN_MAP(0,14)
+#define I2C_SDA     NRF_GPIO_PIN_MAP(0,15)
+
+// SPI
+#define SPI_SCLK    NRF_GPIO_PIN_MAP(0,12)
+#define SPI_MISO    NRF_GPIO_PIN_MAP(1,9)
+#define SPI_MOSI    NRF_GPIO_PIN_MAP(0,8)
 
 // Light Sensor
-#define MAX44009_EN  NRF_GPIO_PIN_MAP(1,13)
-#define MAX44009_INT NRF_GPIO_PIN_MAP(1,4)
+#define MAX44009_EN  NRF_GPIO_PIN_MAP(0, 24)
+#define MAX44009_INT NRF_GPIO_PIN_MAP(1,0)
 
 // Color Sensor
-#define ISL29125_EN  NRF_GPIO_PIN_MAP(0,11)
-#define ISL29125_INT NRF_GPIO_PIN_MAP(1,2)
+#define ISL29125_EN  NRF_GPIO_PIN_MAP(0,25)
+#define ISL29125_INT NRF_GPIO_PIN_MAP(0,23)
 
 // Pressure sensor
 #define MS5637_EN   NRF_GPIO_PIN_MAP(1,11)
 
 //Humidity Sensor
-#define SI7021_EN   NRF_GPIO_PIN_MAP(0,12)
+#define SI7021_EN   NRF_GPIO_PIN_MAP(1,10)
 
 // Accelerometer
-#define LI2D_CS     NRF_GPIO_PIN_MAP(0,13)
-#define LI2D_INT1   NRF_GPIO_PIN_MAP(1,6)
-#define LI2D_INT2   NRF_GPIO_PIN_MAP(0,9)
+#define LI2D_CS     NRF_GPIO_PIN_MAP(0,21)
+#define LI2D_INT1   NRF_GPIO_PIN_MAP(0,20)
+#define LI2D_INT2   NRF_GPIO_PIN_MAP(0,22)
 
 //PIR
-#define PIR_EN      NRF_GPIO_PIN_MAP(1,10)
-#define PIR_OUT     NRF_GPIO_PIN_MAP(1,1)
+#define PIR_EN      NRF_GPIO_PIN_MAP(0,17)
+#define PIR_OUT     NRF_GPIO_PIN_MAP(0,16)
 
 //RTC
-#define RTC_CS      NRF_GPIO_PIN_MAP(0,15)
-#define RTC_INT1    NRF_GPIO_PIN_MAP(0,14)
-#define RTC_INT2    NRF_GPIO_PIN_MAP(0,20)
-#define RTC_INT3    NRF_GPIO_PIN_MAP(1,10)
-#define RTC_WDI     NRF_GPIO_PIN_MAP(0,31)
+#define RTC_CS      NRF_GPIO_PIN_MAP(1,12)
+#define RTC_INT1    NRF_GPIO_PIN_MAP(1,13)
+#define RTC_INT2    NRF_GPIO_PIN_MAP(1,14)
+#define RTC_INT3    NRF_GPIO_PIN_MAP(1,15)
+#define RTC_WDI     NRF_GPIO_PIN_MAP(0,2)
 
 //ICOUNT
-#define SWITCH      NRF_GPIO_PIN_MAP(0,26)
+#define SWITCH      NRF_GPIO_PIN_MAP(0,28)
 
 //BATTERIES
-#define VSOL        NRF_GPIO_PIN_MAP(0,29)
-#define VPRIMARY    NRF_GPIO_PIN_MAP(0,4)
-#define VSECONDARY  NRF_GPIO_PIN_MAP(0,2)
+#define VSOL        NRF_GPIO_PIN_MAP(0,30)
+#define VPRIMARY    NRF_GPIO_PIN_MAP(0,29)
+#define VSECONDARY  NRF_GPIO_PIN_MAP(0,31)
 
 // DEFINES FOR NRF51822
 #elif defined(NRF51822)
