@@ -2153,7 +2153,7 @@
 
 
 #ifndef PPI_ENABLED
-#define PPI_ENABLED 0
+#define PPI_ENABLED 1
 #endif
 
 // <e> PWM_ENABLED - nrf_drv_pwm - PWM peripheral driver
@@ -3304,7 +3304,7 @@
 
 
 #ifndef NRF_TWI_MNGR_ENABLED
-#define NRF_TWI_MNGR_ENABLED 0
+#define NRF_TWI_MNGR_ENABLED 1
 #endif
 
 // <e> APP_UART_ENABLED - app_uart - UART driver
@@ -4051,7 +4051,7 @@
 
 
 #ifndef NRF_QUEUE_ENABLED
-#define NRF_QUEUE_ENABLED 0
+#define NRF_QUEUE_ENABLED 1
 #endif
 
 // <q> NRF_SECTION_ITER_ENABLED  - nrf_section_iter - Section iterator

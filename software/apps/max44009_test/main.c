@@ -1,13 +1,9 @@
-/*
- * Send an advertisement periodically
- */
-
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include "nrf_gpio.h"
 #include "nrf_delay.h"
-#include "nrf_drv_twi.h"
+#include "nrf_twi_mngr.h"
 #include "nrf_drv_gpiote.h"
 #include "app_util_platform.h"
 #include "nordic_common.h"
@@ -41,7 +37,7 @@ uint8_t enables[7] = {
    I2C_SCL
 };
 
-nrf_drv_twi_t twi_instance = NRF_DRV_TWI_INSTANCE(0);
+NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 
 void uart_error_handle (app_uart_evt_t * p_event) {
     if (p_event->evt_type == APP_UART_COMMUNICATION_ERROR) {
@@ -50,18 +46,19 @@ void uart_error_handle (app_uart_evt_t * p_event) {
         APP_ERROR_HANDLER(p_event->data.error_code);
     }
 }
-
-static void sensor_read_callback(void* p_context) {
-    float lux = max44009_read_lux();
+static void sensor_read_callback(float lux) {
     printf("lux: %f\n", lux);
+}
 
+static void read_timer_callback (void* p_context) {
+    max44009_schedule_read_lux();
 }
 
 static void timer_init(void)
 {
     uint32_t err_code = app_timer_init();
     APP_ERROR_CHECK(err_code);
-    err_code = app_timer_create(&sensor_read_timer, APP_TIMER_MODE_REPEATED, sensor_read_callback);
+    err_code = app_timer_create(&sensor_read_timer, APP_TIMER_MODE_REPEATED, read_timer_callback);
     APP_ERROR_CHECK(err_code);
     err_code = app_timer_start(sensor_read_timer, SENSOR_RATE, NULL);
     APP_ERROR_CHECK(err_code);
@@ -96,11 +93,13 @@ void twi_init(void) {
   const nrf_drv_twi_config_t twi_config = {
     .scl                = I2C_SCL,
     .sda                = I2C_SDA,
-    .frequency          = NRF_TWI_FREQ_100K,
-    .interrupt_priority = APP_IRQ_PRIORITY_HIGH
+    .frequency          = NRF_TWI_FREQ_400K,
   };
 
-  err_code = nrf_drv_twi_init(&twi_instance, &twi_config, NULL, NULL);
+  //err_code = nrf_drv_twi_init(&twi_instance, &twi_config, NULL, NULL);
+  //APP_ERROR_CHECK(err_code);
+
+  err_code = nrf_twi_mngr_init(&twi_mngr_instance, &twi_config);
   APP_ERROR_CHECK(err_code);
 }
 
@@ -140,7 +139,7 @@ int main(void) {
     .int_time = 3,
   };
 
-  max44009_init(&twi_instance);
+  max44009_init(&twi_mngr_instance, sensor_read_callback);
   max44009_config(config);
 
   while (1) {

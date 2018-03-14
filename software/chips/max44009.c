@@ -1,26 +1,56 @@
-#include <math.h>
-
 #include "max44009.h"
 
-static nrf_drv_twi_t* twi_instance;
+#include "nrf_delay.h"
 
-static inline void max44009_reg_read(uint8_t reg, uint8_t* data, size_t len) {
-  nrf_drv_twi_enable(twi_instance);
-  nrf_drv_twi_tx(twi_instance, MAX44009_ADDR, &reg, 1, true);
-  nrf_drv_twi_rx(twi_instance, MAX44009_ADDR, data, len);
-  nrf_drv_twi_disable(twi_instance);
+static const nrf_twi_mngr_t* twi_mngr_instance;
+static uint8_t lux_read_buf[2] = {0};
+static uint8_t config_buf[2] = {MAX44009_CONFIG, 0};
+static const uint8_t max44009_lux_addr = MAX44009_LUX_HIGH;
+
+static max44009_read_lux_callback* master_callback;
+
+static void max44009_lux_callback(ret_code_t result, void* p_context) {
+  uint8_t exp, mantissa;
+  float lux;
+  exp = (lux_read_buf[0] & 0xF0) >> 4;
+  mantissa = lux_read_buf[0] & 0xF0;
+  mantissa |= lux_read_buf[1] & 0xF;
+  lux = (float)(1 << exp) * (float)mantissa * 0.045;
+  master_callback(lux);
 }
 
-static inline void max44009_reg_write(uint8_t reg, uint8_t data) {
-  uint8_t cmd[2] = {reg, data};
+static nrf_twi_mngr_transfer_t const lux_read_transfer[] = {
+  NRF_TWI_MNGR_WRITE(MAX44009_ADDR, &max44009_lux_addr, 1, NRF_TWI_MNGR_NO_STOP),
+  NRF_TWI_MNGR_READ(MAX44009_ADDR, lux_read_buf, 2, 0)
+};
 
-  nrf_drv_twi_enable(twi_instance);
-  nrf_drv_twi_tx(twi_instance, MAX44009_ADDR, cmd, 2, true);
-  nrf_drv_twi_disable(twi_instance);
-}
+static nrf_twi_mngr_transfer_t const config_transfer[] = {
+  NRF_TWI_MNGR_WRITE(MAX44009_ADDR, config_buf, 2, 0)
+};
 
-void max44009_init(nrf_drv_twi_t* instance) {
-  twi_instance = instance;
+static nrf_twi_mngr_transaction_t const lux_read_transaction =
+{
+  .callback = max44009_lux_callback,
+  .p_user_data = NULL,
+  .p_transfers = lux_read_transfer,
+  .number_of_transfers = sizeof(lux_read_transfer)/sizeof(lux_read_transfer[0]),
+  .p_required_twi_cfg = NULL
+
+};
+
+static nrf_twi_mngr_transaction_t const config_transaction =
+{
+  .callback = NULL,
+  .p_user_data = NULL,
+  .p_transfers = config_transfer,
+  .number_of_transfers = sizeof(config_transfer)/sizeof(config_transfer[0]),
+  .p_required_twi_cfg = NULL
+
+};
+
+void max44009_init(const nrf_twi_mngr_t* instance, max44009_read_lux_callback* callback) {
+  twi_mngr_instance = instance;
+  master_callback = callback;
 }
 
 void max44009_config(max44009_config_t config) {
@@ -29,15 +59,12 @@ void max44009_config(max44009_config_t config) {
                         config.cdr << 3 |
                         (config.int_time & 0x7);
 
-  max44009_reg_write(MAX44009_CONFIG, config_byte);
+  config_buf[1] = config_byte;
+
+  int error = (nrf_twi_mngr_schedule(twi_mngr_instance, &config_transaction));
+  APP_ERROR_CHECK(error);
 }
 
-float max44009_read_lux(void) {
-  uint8_t exp, mantissa;
-  uint8_t data[2];
-  max44009_reg_read(MAX44009_LUX_HIGH, (uint8_t*)&data, 2);
-  exp = (data[0] & 0xF0) >> 4;
-  mantissa = data[0] & 0xF0;
-  mantissa |= data[1] & 0xF;
-  return pow(2, exp) * mantissa * 0.045;
+void max44009_schedule_read_lux(void) {
+  APP_ERROR_CHECK(nrf_twi_mngr_schedule(twi_mngr_instance, &lux_read_transaction));
 }
