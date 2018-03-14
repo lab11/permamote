@@ -12,6 +12,7 @@
 #include "app_timer.h"
 #include "led.h"
 #include "app_uart.h"
+#include "app_timer.h"
 #include "nrf_drv_clock.h"
 
 #include "permamote.h"
@@ -21,6 +22,8 @@
 #define UART_TX_BUF_SIZE     256
 #define UART_RX_BUF_SIZE     256
 
+#define SENSOR_RATE APP_TIMER_TICKS(1000)
+APP_TIMER_DEF(sensor_read_timer);
 nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(0);
 
 void spi_init(void) {
@@ -36,6 +39,20 @@ void spi_init(void) {
 
   err_code = nrf_drv_spi_init(&spi_instance, &spi_config, NULL, NULL);
   APP_ERROR_CHECK(err_code);
+}
+
+static void read_timer_callback (void* p_context) {
+
+}
+
+static void timer_init(void)
+{
+    uint32_t err_code = app_timer_init();
+    APP_ERROR_CHECK(err_code);
+    err_code = app_timer_create(&sensor_read_timer, APP_TIMER_MODE_REPEATED, read_timer_callback);
+    APP_ERROR_CHECK(err_code);
+    err_code = app_timer_start(sensor_read_timer, SENSOR_RATE, NULL);
+    APP_ERROR_CHECK(err_code);
 }
 
 void uart_error_handle (app_uart_evt_t * p_event) {
@@ -71,10 +88,12 @@ void uart_init(void) {
 
 int main(void) {
   // Setup BLE
+  nrf_sdh_enable_request();
+  sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
 
   // init uart
-  uart_init();
-  printf("\nACC TEST\n");
+  //uart_init();
+  //printf("\nACC TEST\n");
 
   // Init spi
   spi_init();
@@ -93,25 +112,26 @@ int main(void) {
   nrf_gpio_pin_set(MS5637_EN);
   nrf_gpio_pin_set(SI7021_EN);
 
-  uint8_t write[2] = {0};
-  uint8_t read[2] = {0};
+  lis2dw12_init(&spi_instance, LI2D_CS);
+
+  lis2dw12_config_t config = {
+    .odr = lis2dw12_odr_12_5,
+    .mode = lis2dw12_low_power,
+    .lp_mode = lis2dw12_lp_2,
+    .cs_pullup = 0,
+    .bdu = 0,
+    .auto_increment = 0,
+    .on_demand = 0,
+    .bandwidth = lis2dw12_bw_odr_2,
+    .fs = lis2dw12_fs_2g,
+    .high_pass = 0,
+    .low_noise = 1,
+  };
+
+  lis2dw12_config(config);
 
   while (1) {
-    write[0] = 0x0F | 0x80;
-    //write[1] = 0x90;
-    nrf_gpio_pin_clear(LI2D_CS);
-    int err = nrf_drv_spi_transfer(&spi_instance, write, 2, read, 2);
-    nrf_gpio_pin_set(LI2D_CS);
-    printf("write: %x, %x\n", write[0], write[1]);
-    //write[0] = 0x1E | 0x80;
-    //write[1] = 0x00;
-    //nrf_gpio_pin_clear(LI2D_CS);
-    //nrf_drv_spi_transfer(&spi_instance, write, 2, read, 2);
-    //nrf_gpio_pin_set(LI2D_CS);
-    printf("read: %x, %x\n", read[0], read[1]);
-    //si7021_read_temp_and_RH(&temp, &hum);
-    //printf("temperature: %f\n", temp);
-    //printf("humidity: %f\n\n", hum);
-    nrf_delay_ms(5000);
+      ret_code_t err_code = sd_app_evt_wait();
+      APP_ERROR_CHECK(err_code);
   }
 }
