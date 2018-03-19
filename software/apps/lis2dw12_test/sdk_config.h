@@ -1796,7 +1796,7 @@
 // <e> GPIOTE_ENABLED - nrf_drv_gpiote - GPIOTE peripheral driver
 //==========================================================
 #ifndef GPIOTE_ENABLED
-#define GPIOTE_ENABLED 0
+#define GPIOTE_ENABLED 1
 #endif
 // <o> GPIOTE_CONFIG_NUM_OF_LOW_POWER_EVENTS - Number of lower power input pins
 #ifndef GPIOTE_CONFIG_NUM_OF_LOW_POWER_EVENTS
@@ -3311,6 +3311,13 @@
 #define NRF_TWI_MNGR_ENABLED 0
 #endif
 
+// <q> NRF_SPI_MNGR_ENABLED  - nrf_spi_mngr - TWI transaction manager
+
+
+#ifndef NRF_SPI_MNGR_ENABLED
+#define NRF_SPI_MNGR_ENABLED 1
+#endif
+
 // <e> APP_UART_ENABLED - app_uart - UART driver
 //==========================================================
 #ifndef APP_UART_ENABLED
@@ -4055,7 +4062,7 @@
 
 
 #ifndef NRF_QUEUE_ENABLED
-#define NRF_QUEUE_ENABLED 0
+#define NRF_QUEUE_ENABLED 1
 #endif
 
 // <q> NRF_SECTION_ITER_ENABLED  - nrf_section_iter - Section iterator
