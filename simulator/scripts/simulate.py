@@ -4,6 +4,7 @@ import numpy as np
 from scipy import signal
 from scipy import stats
 import arrow
+import math
 from itertools import cycle
 from datetime import datetime
 import matplotlib.pyplot as plt
@@ -19,6 +20,7 @@ def simulate(config, lights):
     design_config = config.design_config
     workload_config = config.workload_config
     primary_config = config.primary_config
+    dataset_config = config.dataset
     if 'secondary' in design_config:
         secondary_config = config.secondary_configs[design_config['secondary']]
     else:
@@ -56,13 +58,11 @@ def simulate(config, lights):
         secondary_leakage_energy= secondary_config['capacity_mAh'] * 1E-3 / secondary_config['leakage_constant'] * secondary_config['nominal_voltage_V']
 
     # convert trace to second resolution
-    lights = np.array([lights,]*30)
-    lights = lights.reshape(lights.size, order='F')
+    seconds = np.arange(lights.size*dataset_config['resolution_s'])
 
     # begin simulation
     secondary_soc = []
     primary_soc = []
-    seconds = np.arange(lights.size);
     solar_powers = []
     out_powers = []
     primary_discharges = []
@@ -72,10 +72,11 @@ def simulate(config, lights):
     time_to_transmit = workload_config['period_s']
     # wait for secondary to charge
     charge_hysteresis = False;
-    for light in lights:
+    for second in seconds:
         primary_discharge = 0
         # energy from solar panel:
-        incoming_energy = light * 1E-6 * solar_area \
+        if (second % dataset_config['resolution_s'] == 0):
+            incoming_energy = lights[math.floor(second / dataset_config['resolution_s'])] * 1E-6 * solar_area \
                 * solar_config['efficiency'] * design_config['frontend_efficiency']
         #solar_powers.append(incoming_energy)
         possible_energy += incoming_energy
@@ -128,7 +129,6 @@ def simulate(config, lights):
 
         secondary_soc.append(secondary_energy)
         primary_soc.append(primary_energy)
-        #seconds.append(seconds)
 
     #print('Averages:')
     ##print('  light ' + str(np.mean(lights)) + ' uW/cm^2')
@@ -142,6 +142,8 @@ def simulate(config, lights):
     #print('  average primary discharge ' + str(np.mean(primary_discharges)/60))
     ##print('  minimum primary discharge ' + str(primary_leakage_current))
 
+    print(len(seconds))
+    print(len(secondary_soc))
     plt.figure()
     plt.plot(seconds, [x*1E3/2.4/3600 for x in secondary_soc])
     plt.figure()
