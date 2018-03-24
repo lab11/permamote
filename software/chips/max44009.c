@@ -16,7 +16,7 @@ static void max44009_lux_callback(ret_code_t result, void* p_context) {
   mantissa = lux_read_buf[0] & 0xF0;
   mantissa |= lux_read_buf[1] & 0xF;
   lux = (float)(1 << exp) * (float)mantissa * 0.045;
-  lux_read_callback(lux);
+  lux_read_callback(lux, mantissa, exp);
 }
 
 static nrf_twi_mngr_transfer_t const lux_read_transfer[] = {

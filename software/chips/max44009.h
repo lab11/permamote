@@ -11,7 +11,7 @@
 #define MAX44009_LUX_HIGH   0x03
 #define MAX44009_LUX_LOW    0x04
 
-typedef void max44009_read_lux_callback(float lux_result);
+typedef void max44009_read_lux_callback(float lux, uint8_t mantissa, uint8_t exp);
 
 typedef struct {
   bool continuous;  // enable continuous sample mode
