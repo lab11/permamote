@@ -7,7 +7,7 @@ static uint8_t lux_read_buf[2] = {0};
 static uint8_t config_buf[2] = {MAX44009_CONFIG, 0};
 static const uint8_t max44009_lux_addr = MAX44009_LUX_HIGH;
 
-static max44009_read_lux_callback* master_callback;
+static max44009_read_lux_callback* lux_read_callback;
 
 static void max44009_lux_callback(ret_code_t result, void* p_context) {
   uint8_t exp, mantissa;
@@ -16,7 +16,7 @@ static void max44009_lux_callback(ret_code_t result, void* p_context) {
   mantissa = lux_read_buf[0] & 0xF0;
   mantissa |= lux_read_buf[1] & 0xF;
   lux = (float)(1 << exp) * (float)mantissa * 0.045;
-  master_callback(lux);
+  lux_read_callback(lux);
 }
 
 static nrf_twi_mngr_transfer_t const lux_read_transfer[] = {
@@ -50,7 +50,7 @@ static nrf_twi_mngr_transaction_t const config_transaction =
 
 void max44009_init(const nrf_twi_mngr_t* instance, max44009_read_lux_callback* callback) {
   twi_mngr_instance = instance;
-  master_callback = callback;
+  lux_read_callback = callback;
 }
 
 void max44009_config(max44009_config_t config) {
