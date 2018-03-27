@@ -8,7 +8,7 @@ import math
 from itertools import cycle
 from datetime import datetime
 import matplotlib.pyplot as plt
-from permamote_config import sim_config
+from opportunistic_config import sim_config
 
 SECONDS_IN_YEAR = 60*60*24*365
 SECONDS_IN_DAY = 60*60*24
@@ -19,7 +19,6 @@ def simulate(config, lights):
     # load configs
     design_config = config.design_config
     workload_config = config.workload_config
-    primary_config = config.primary_config
     dataset_config = config.dataset
     if 'secondary' in design_config:
         secondary_config = config.secondary_configs[design_config['secondary']]
@@ -30,19 +29,26 @@ def simulate(config, lights):
     sleep_current = workload_config['sleep_current_A'] /\
             design_config['boost_efficiency']
     event_energy = (workload_config['radio_energy_J'] + \
-            workload_config['comm_energy_J']) /\
+            workload_config['sensor_energy_J']) /\
             design_config['boost_efficiency']
 
     # initialize energy for primary and secondary
-    if 'volume_L' in primary_config and 'density_Whpl' in primary_config:
-        primary_volume = primary_config['volume_L']
-        primary_density = primary_config['density_WhpL']
-        primary_energy = primary_energy_max = primary_volume * primary_density * SECONDS_IN_HOUR
-        primary_leakage_energy = primary_energy * primary_config['leakage_percent_year']/100/SECONDS_IN_YEAR
+    if not design_config['intermittent']:
+        has_primary = True
+        primary_config = config.primary_config
+        if 'volume_L' in primary_config and 'density_Whpl' in primary_config:
+            primary_volume = primary_config['volume_L']
+            primary_density = primary_config['density_WhpL']
+            primary_energy = primary_energy_max = primary_volume * primary_density * SECONDS_IN_HOUR
+            primary_leakage_energy = primary_energy * primary_config['leakage_percent_year']/100/SECONDS_IN_YEAR
+        else:
+            primary_energy = primary_energy_max = primary_config['capacity_mAh'] *\
+                    1E-3 * primary_config['nominal_voltage_V'] * SECONDS_IN_HOUR
+            primary_leakage_energy = primary_energy * primary_config['leakage_percent_year']/100/SECONDS_IN_YEAR
     else:
-        primary_energy = primary_energy_max = primary_config['capacity_mAh'] *\
-                1E-3 * primary_config['nominal_voltage_V'] * SECONDS_IN_HOUR
-        primary_leakage_energy = primary_energy * primary_config['leakage_percent_year']/100/SECONDS_IN_YEAR
+        has_primary = False
+        primary_energy = 0
+        primary_leakage_energy = 0
 
     solar_config = config.solar_config
     if 'area_cm2' in solar_config:
@@ -50,12 +56,20 @@ def simulate(config, lights):
     else: solar_area = 2 * 100 * primary_volume ** (2.0/3.0)
 
     if secondary_config:
-        secondary_energy_max = secondary_config['capacity_mAh']*1E-3*secondary_config['nominal_voltage_V']*SECONDS_IN_HOUR
+        # using a battery:
+        if secondary_config['type'] == 'battery':
+            secondary_energy_max = secondary_config['capacity_mAh']*1E-3*secondary_config['nominal_voltage_V']*SECONDS_IN_HOUR
+            secondary_leakage_energy= secondary_config['capacity_mAh'] * 1E-3 / secondary_config['leakage_constant'] * secondary_config['nominal_voltage_V']
+            secondary_energy_up = design_config['secondary_max_percent'] / 100 * secondary_energy_max
+            secondary_energy_min = design_config['secondary_min_percent'] / 100 * secondary_energy_max
+        # using a capacitor:
+        elif secondary_config['type'] == 'capacitor':
+            secondary_energy_max = secondary_config['capacity_J']
+            secondary_leakage_energy = 0
+            secondary_energy_up = secondary_config['min_capacity_J']
+            secondary_energy_min = secondary_config['min_capacity_J']
         # start at half full
-        secondary_energy = secondary_energy_max / 2
-        secondary_energy_up = design_config['secondary_max_percent'] / 100 * secondary_energy_max
-        secondary_energy_min = design_config['secondary_min_percent'] / 100 * secondary_energy_max
-        secondary_leakage_energy= secondary_config['capacity_mAh'] * 1E-3 / secondary_config['leakage_constant'] * secondary_config['nominal_voltage_V']
+        secondary_energy = (secondary_energy_max + secondary_energy_up) / 2
 
     # convert trace to second resolution
     seconds = np.arange(lights.size*dataset_config['resolution_s'])
@@ -65,7 +79,8 @@ def simulate(config, lights):
     primary_soc = []
     solar_powers = []
     out_powers = []
-    primary_discharges = []
+    offline = []
+    missed = []
     wasted_energy = 0
     possible_energy = 0
     # counter until transmit
@@ -75,9 +90,8 @@ def simulate(config, lights):
     for second in seconds:
         primary_discharge = 0
         # energy from solar panel:
-        if (second % dataset_config['resolution_s'] == 0):
-            incoming_energy = lights[math.floor(second / dataset_config['resolution_s'])] * 1E-6 * solar_area \
-                * solar_config['efficiency'] * design_config['frontend_efficiency']
+        incoming_energy = lights[math.floor(second / dataset_config['resolution_s'])] * 1E-6 * solar_area \
+            * solar_config['efficiency'] * design_config['frontend_efficiency']
         #solar_powers.append(incoming_energy)
         possible_energy += incoming_energy
 
@@ -88,18 +102,30 @@ def simulate(config, lights):
             wasted_energy += secondary_energy - secondary_energy_max
             secondary_energy = secondary_energy_max
         # if charged enough
-        if secondary_energy > secondary_energy_up:
+        if secondary_energy >= secondary_energy_up:
             charge_hysteresis = False
 
-        # subtract active transmission
-        #outgoing_energy = sleep_current * (60 - design_config['active_period_s']) * design_config['operating_voltage_V']
-        # double counting sleep current for now
         outgoing_energy = sleep_current * design_config['operating_voltage_V']
-        time_to_transmit -= 1
-        if time_to_transmit == 0:
-            time_to_transmit = workload_config['period_s']
-            outgoing_energy += event_energy
-        #out_powers.append(outgoing_energy)
+        if design_config['intermittent'] and design_config['intermittent_mode'] == 'opportunistic':
+            available = secondary_energy
+            while (available > event_energy):
+                outgoing_energy += event_energy
+                missed.append((second, 1))
+        else:
+            # subtract active transmission
+            #outgoing_energy = sleep_current * (60 - design_config['active_period_s']) * design_config['operating_voltage_V']
+            # double counting sleep current for now
+            time_to_transmit -= 1
+            if time_to_transmit == 0:
+                time_to_transmit = workload_config['period_s']
+                if design_config['intermittent'] and design_config['intermittent_mode'] == 'periodic':
+                    if secondary_energy < event_energy:
+                        missed.append((second, 1))
+                    else:
+                        missed.append((second, 0))
+                        outgoing_energy += event_energy
+                else:
+                    outgoing_energy += event_energy
 
         # if not waiting for secondary to recharge, use secondary energy
         if not charge_hysteresis:
@@ -118,13 +144,18 @@ def simulate(config, lights):
         # if secondary low, just charge
         if secondary_energy < secondary_energy_min:
             charge_hysteresis = True
-        # if primary is dead, break simulation
+        # if primary is dead, note offline
         if primary_energy <= 0:
-            break;
+            primary_energy = 0
+            offline.append(1)
+            # if we have a primary cell, break simulation
+            if has_primary:
+                break;
+        else: offline.append(0)
+
         # subtract leakage
         primary_energy -= primary_leakage_energy
         primary_discharge += primary_leakage_energy
-        #primary_discharges.append(primary_discharge)
         secondary_energy -= secondary_leakage_energy
 
         secondary_soc.append(secondary_energy)
@@ -139,18 +170,17 @@ def simulate(config, lights):
     #print('  total ' + str(np.mean(solar_powers) - primary_leakage_energy/60 - secondary_leakage_energy/60 - np.mean(out_powers)) + ' W')
     #print('  Wasted ' + str(wasted_energy))
     #print('  Possibly Collected ' + str(possible_energy))
-    #print('  average primary discharge ' + str(np.mean(primary_discharges)/60))
     ##print('  minimum primary discharge ' + str(primary_leakage_current))
 
-    print(len(seconds))
-    print(len(secondary_soc))
-    plt.figure()
-    plt.plot(seconds, [x*1E3/2.4/3600 for x in secondary_soc])
-    plt.figure()
-    plt.plot(seconds, [x*1E3/2.4/3600 for x in primary_soc])
-    plt.show()
+    #plt.figure()
+    #plt.plot(np.arange(lights.size), [x for x in lights])
+    #plt.figure()
+    #plt.plot(seconds, [x*1E3/2.4/3600 for x in secondary_soc])
+    #plt.figure()
+    #plt.plot(seconds, [x*1E3/2.4/3600 for x in primary_soc])
+    #plt.show()
     #slope, intercept, _, _, _ = stats.linregress(minutes, primary_soc)
-    lifetime_years = (primary_energy_max/ np.mean(primary_discharges))/(SECONDS_IN_YEAR)#(intercept/(-slope))/(60*24*365)
+    lifetime_years = 15#(primary_energy_max/ np.mean(primary_discharges))/(SECONDS_IN_YEAR)#(intercept/(-slope))/(60*24*365)
     if (lifetime_years > 15): return 15.0, wasted_energy, possible_energy
     #plt.plot([x for x in minutes], [intercept + slope*x*1E3/2.4/3600 for x in minutes])
     #lifetime_years = minute/60/24/365
@@ -160,5 +190,7 @@ config = sim_config()
 trace_fname = config.dataset['filename']
 trace = np.load(trace_fname)
 
-simulate(config, trace)
+lifetime, wasted, possible = simulate(config, trace)
+print(str(lifetime) + " years")
+print("%.2f/%.2f Joules used" % (possible - wasted, possible))
 

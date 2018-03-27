@@ -22,12 +22,12 @@ class sim_config:
         }
         self.design_config = {
             'name' : 'design',
-            'intermittent' : False,
-            'active_frequency_minutes' : 1,
+            'intermittent' : True,
+            'intermittent_mode' : 'periodic', # periodic or opportunistic
             'operating_voltage_V' : 3.3,
             'boost_efficiency' : 0.8,
             'frontend_efficiency' : 0.8,
-            'secondary' : 'lto_battery',
+            'secondary' : 'cap',
             'secondary_max_percent': 80.1,
             'secondary_min_percent': 80,
         }
@@ -39,39 +39,28 @@ class sim_config:
         self.workload_config = {
             'name' : 'sense_and_send',
             'sleep_current_A' : 1.5E-6,
+            'startup_energy_J' : 6E-6,
             'sensor_energy_J': 6.11E-6, # i2c communication + sensor energy
             'radio_energy_J': 1.15E-4, # one BLE advertisement
-            'period_s': 9,
+            'period_s': 10,
         }
-        self.primary_config= {
-            'name' : 'primary',
-            'capacity_mAh' : 480,
-            'nominal_voltage_V' : 3,
-            #'density_WhpL': self.chemistry_energy_density_WhpL['LiMnO2'],
-            #'volume_L':   self.battery_type_to_volume_L['CR123A'],
-            'leakage_percent_year' : 1,
-        }
-        self.secondary_lipo_config = {
+        self.secondary_cap = {
             'name' : 'secondary',
-            'type' : 'battery',
-            'charge_discharge_eff' : 0.95,
-            'capacity_mAh' : 20,
-            'nominal_voltage_V' : 3.6,
-            'lifetime_cycles' : 1000,
-            'leakage_constant': 5E4,
+            'type' : 'capacitor',
+            'charge_discharge_eff' : 0.80,
+            'capacity_J': (1000E-6) * (3.3**2),
+            'min_capacity_J': (1000E-6) * (0.4**2),
         }
-        self.secondary_lto_config = {
+        self.secondary_super_cap = {
             'name' : 'secondary',
-            'type' : 'battery',
-            'charge_discharge_eff' : 0.95,
-            'capacity_mAh' : 20,
-            'nominal_voltage_V' : 2.4,
-            'lifetime_cycles' : 10000,
-            'leakage_constant': 5E4,
+            'type' : 'capacitor',
+            'charge_discharge_eff' : 0.75,
+            'capacity_J': (1000E-6 + 7.5E-3) * (3.3**2),
+            'min_capacity_J': (1000E-6 + 7.5E-3) * (0.4**2),
         }
         self.secondary_configs = {
-            'lipo_battery' : self.secondary_lipo_config,
-            'lto_battery' : self.secondary_lto_config,
+            'cap' : self.secondary_cap,
+            'super_cap' : self.secondary_super_cap,
         }
         self.solar_config = {
             'name' : 'solar',
@@ -79,10 +68,9 @@ class sim_config:
             'area_cm2' : 10,
             'efficiency' : 0.19,
         }
-        self.config_list = [self.design_config, self.primary_config, self.secondary_configs[self.design_config['secondary']], self.solar_config]
+        self.config_list = [self.design_config, self.secondary_configs[self.design_config['secondary']], self.solar_config]
 
 sweep_vars = [
                 [('solar', 'area_cm2'), [i*10**exp for exp in range(0, 2) for i in range(1,10)], 'both']
-                #[('primary', 'volume_L'), [i*10**(-3) for i in range(1, 16)], 'life'],
                 #[('secondary', 'capacity_mAh'), [i*10**exp for exp in range(-5, 2) for i in range(1, 10, 2)], 'both'],
              ]
