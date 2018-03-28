@@ -22,7 +22,8 @@ class sim_config:
         }
         self.design_config = {
             'name' : 'design',
-            'intermittent' : False,
+            'intermittent' : True,
+            'intermittent_mode' : 'periodic', # periodic or opportunistic
             'active_frequency_minutes' : 1,
             'operating_voltage_V' : 3.3,
             'boost_efficiency' : 0.8,
@@ -39,9 +40,11 @@ class sim_config:
         self.workload_config = {
             'name' : 'sense_and_send',
             'sleep_current_A' : 1.5E-6,
-            'sensor_energy_J': 6.11E-6, # i2c communication + sensor energy
-            'radio_energy_J': 1.15E-4, # one BLE advertisement
-            'period_s': 9,
+            'startup_energy_J': 6.11E-6,
+            'startup_period_s': 376E-3,
+            'event_energy_J': 5E-4 + 8.62E-5,
+            'event_period_s': 510E-3,
+            'period_s': 10,
         }
         self.primary_config= {
             'name' : 'primary',

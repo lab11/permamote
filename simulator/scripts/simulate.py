@@ -8,7 +8,7 @@ import math
 from itertools import cycle
 from datetime import datetime
 import matplotlib.pyplot as plt
-from opportunistic_config import sim_config
+from intermittent_config import sim_config
 
 SECONDS_IN_YEAR = 60*60*24*365
 SECONDS_IN_DAY = 60*60*24
@@ -28,8 +28,8 @@ def simulate(config, lights):
     # initialize energy for sleep and active
     sleep_current = workload_config['sleep_current_A'] /\
             design_config['boost_efficiency']
-    event_energy = (workload_config['radio_energy_J'] + \
-            workload_config['sensor_energy_J']) /\
+    sleep_power = sleep_current * design_config['operating_voltage_V']
+    event_energy = workload_config['event_energy_J'] /\
             design_config['boost_efficiency']
 
     # initialize energy for primary and secondary
@@ -79,8 +79,9 @@ def simulate(config, lights):
     primary_soc = []
     solar_powers = []
     out_powers = []
-    offline = []
+    offline = [1]
     missed = []
+    remaining = []
     wasted_energy = 0
     possible_energy = 0
     # counter until transmit
@@ -88,7 +89,10 @@ def simulate(config, lights):
     # wait for secondary to charge
     charge_hysteresis = False;
     for second in seconds:
-        primary_discharge = 0
+
+        ##
+        ## INCOMING ENERGY
+        ##
         # energy from solar panel:
         incoming_energy = lights[math.floor(second / dataset_config['resolution_s'])] * 1E-6 * solar_area \
             * solar_config['efficiency'] * design_config['frontend_efficiency']
@@ -105,29 +109,73 @@ def simulate(config, lights):
         if secondary_energy >= secondary_energy_up:
             charge_hysteresis = False
 
-        outgoing_energy = sleep_current * design_config['operating_voltage_V']
+        ###
+        ### OUTGOING ENERGY
+        ###
+        outgoing_energy = 0
+        # TODO don't assume events are less than a second
+        # amount of time spent in sleep for this workload
+        period_sleep = 1
+        # if offline, need to pay startup cost
+        if offline[-1]:
+            if secondary_energy - secondary_energy_min > workload_config['startup_energy_J']:
+                outgoing_energy += workload_config['startup_energy_J']
+                period_sleep -= workload_config['startup_period_s']
+            # don't have enough energy to turn on
+            else:
+                offline.append(1)
+                continue
+
+        # helper variable for remaining energy in secondary cell
+        remaining_secondary_energy = secondary_energy - secondary_energy_min - outgoing_energy
+        # we are on or had enough energy to turn on, can we do any work?
         if design_config['intermittent'] and design_config['intermittent_mode'] == 'opportunistic':
-            available = secondary_energy
-            while (available > event_energy):
+            # if there is remaining energy to send
+            # TODO support multiple per interation
+            if remaining_secondary_energy >= event_energy:
                 outgoing_energy += event_energy
-                missed.append((second, 1))
+                period_sleep -= workload_config['event_period_s']
+                missed.append(np.array([second, 0]))
         else:
-            # subtract active transmission
-            #outgoing_energy = sleep_current * (60 - design_config['active_period_s']) * design_config['operating_voltage_V']
-            # double counting sleep current for now
+            # if it's time to perform periodic event
             time_to_transmit -= 1
             if time_to_transmit == 0:
                 time_to_transmit = workload_config['period_s']
-                if design_config['intermittent'] and design_config['intermittent_mode'] == 'periodic':
-                    if secondary_energy < event_energy:
-                        missed.append((second, 1))
-                    else:
-                        missed.append((second, 0))
-                        outgoing_energy += event_energy
-                else:
+                if not design_config['intermittent']:
+                    # if primary cell, can always send
+                    missed.append(np.array([second, 0]))
                     outgoing_energy += event_energy
+                    period_sleep -= workload_config['event_period_s']
+                if design_config['intermittent_mode'] == 'periodic':
+                    if remaining_secondary_energy < event_energy:
+                        # don't have enough energy to send, sleep until next chance
+                        missed.append(np.array([second, 1]))
+                    else:
+                        # we have energy to send
+                        outgoing_energy += event_energy
+                        period_sleep -= workload_config['event_period_s']
+                        missed.append(np.array([second, 0]))
 
-        # if not waiting for secondary to recharge, use secondary energy
+        # update this variable again
+        remaining_secondary_energy = secondary_energy - secondary_energy_min - outgoing_energy
+
+        # any remaining time is spent sleeping
+        # can we sleep the rest of the iteration?
+        if remaining_secondary_energy > sleep_power * period_sleep:
+            outgoing_energy += sleep_power * period_sleep
+            period_on = 1
+        # if not, how long can we sleep for?
+        else:
+            outgoing_energy += remaining_secondary_energy
+            period_on = 1 - period_sleep
+            period_on += remaining_secondary_energy / sleep_power
+
+        ###
+        ### UPDATE STATE
+        ###
+        primary_discharge = 0
+
+        # charge used energy to secondary if possible
         if not charge_hysteresis:
             secondary_energy -= outgoing_energy
         # otherwise charge secondary and use primary
@@ -135,23 +183,26 @@ def simulate(config, lights):
             primary_energy -= outgoing_energy
             primary_discharge += outgoing_energy
 
-        # reset secondary to 0 if negative
-        if secondary_energy < 0:
-            primary_energy + secondary_energy
-            primary_discharge += abs(secondary_energy)
-            secondary_energy = 0
-            charge_hysteresis = True
-        # if secondary low, just charge
+        # reset secondary to minimum if under
         if secondary_energy < secondary_energy_min:
+            primary_energy + secondary_energy - secondary_energy_min
+            primary_discharge += abs(secondary_energy - secondary_energy_min)
+            secondary_energy = secondary_energy_min
             charge_hysteresis = True
-        # if primary is dead, note offline
+
+        # check if now offline
+        is_offline = False
+        # if primary and secondary are dead, note offline
         if primary_energy <= 0:
             primary_energy = 0
-            offline.append(1)
+            # secondary is empty too
+            if charge_hysteresis:
+                is_offline = True
             # if we have a primary cell, break simulation
             if has_primary:
                 break;
-        else: offline.append(0)
+        offline.append(is_offline)
+
 
         # subtract leakage
         primary_energy -= primary_leakage_energy
@@ -160,6 +211,9 @@ def simulate(config, lights):
 
         secondary_soc.append(secondary_energy)
         primary_soc.append(primary_energy)
+
+    # convert to np array
+    missed = np.asarray(missed)
 
     #print('Averages:')
     ##print('  light ' + str(np.mean(lights)) + ' uW/cm^2')
@@ -176,6 +230,8 @@ def simulate(config, lights):
     #plt.plot(np.arange(lights.size), [x for x in lights])
     #plt.figure()
     #plt.plot(seconds, [x*1E3/2.4/3600 for x in secondary_soc])
+    #plt.plot(seconds, [x*1E3/2.4/3600 for x in offline[1:]])
+    #plt.plot(missed[:,0], missed[:,1])
     #plt.figure()
     #plt.plot(seconds, [x*1E3/2.4/3600 for x in primary_soc])
     #plt.show()
@@ -184,13 +240,17 @@ def simulate(config, lights):
     if (lifetime_years > 15): return 15.0, wasted_energy, possible_energy
     #plt.plot([x for x in minutes], [intercept + slope*x*1E3/2.4/3600 for x in minutes])
     #lifetime_years = minute/60/24/365
-    return lifetime_years, wasted_energy, possible_energy
+    offline = np.asarray(offline)
+    return lifetime_years, wasted_energy, possible_energy, np.sum(missed[:,1]), len(missed), offline
 
 config = sim_config()
 trace_fname = config.dataset['filename']
 trace = np.load(trace_fname)
 
-lifetime, wasted, possible = simulate(config, trace)
+lifetime, wasted, possible, missed, opportunities, offline = simulate(config, trace)
 print(str(lifetime) + " years")
 print("%.2f/%.2f Joules used" % (possible - wasted, possible))
+print("%.2f%% events successful" % (100 * (opportunities - missed)/opportunities))
+print("%.2f%% of time offline" % (100 * np.sum(offline) / offline.size))
+
 

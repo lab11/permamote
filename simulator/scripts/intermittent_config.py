@@ -27,7 +27,7 @@ class sim_config:
             'operating_voltage_V' : 3.3,
             'boost_efficiency' : 0.8,
             'frontend_efficiency' : 0.8,
-            'secondary' : 'cap',
+            'secondary' : 'super_cap',
             'secondary_max_percent': 80.1,
             'secondary_min_percent': 80,
         }
@@ -39,9 +39,10 @@ class sim_config:
         self.workload_config = {
             'name' : 'sense_and_send',
             'sleep_current_A' : 1.5E-6,
-            'startup_energy_J' : 6E-6,
-            'sensor_energy_J': 6.11E-6, # i2c communication + sensor energy
-            'radio_energy_J': 1.15E-4, # one BLE advertisement
+            'startup_energy_J': 6.11E-6,
+            'startup_period_s': 376E-3,
+            'event_energy_J': 5E-4 + 8.62E-5,
+            'event_period_s': 510E-3,
             'period_s': 10,
         }
         self.secondary_cap = {
@@ -70,7 +71,3 @@ class sim_config:
         }
         self.config_list = [self.design_config, self.secondary_configs[self.design_config['secondary']], self.solar_config]
 
-sweep_vars = [
-                [('solar', 'area_cm2'), [i*10**exp for exp in range(0, 2) for i in range(1,10)], 'both']
-                #[('secondary', 'capacity_mAh'), [i*10**exp for exp in range(-5, 2) for i in range(1, 10, 2)], 'both'],
-             ]
