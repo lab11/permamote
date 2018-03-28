@@ -29,7 +29,7 @@ class sim_config:
             'boost_efficiency' : 0.8,
             'frontend_efficiency' : 0.8,
             'secondary' : 'lto_battery',
-            'secondary_max_percent': 80.1,
+            'secondary_max_percent': 80.5,
             'secondary_min_percent': 80,
         }
         self.dataset = {
@@ -40,7 +40,7 @@ class sim_config:
         self.workload_config = {
             'name' : 'sense_and_send',
             'sleep_current_A' : 1.5E-6,
-            'startup_energy_J': 6.11E-6,
+            'startup_energy_J': 1.02E-3,
             'startup_period_s': 376E-3,
             'event_energy_J': 5E-4 + 8.62E-5,
             'event_period_s': 510E-3,

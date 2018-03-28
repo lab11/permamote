@@ -1,5 +1,7 @@
 #! /usr/bin/env python3
 
+import argparse
+import importlib
 import numpy as np
 from scipy import signal
 from scipy import stats
@@ -8,7 +10,6 @@ import math
 from itertools import cycle
 from datetime import datetime
 import matplotlib.pyplot as plt
-from intermittent_config import sim_config
 
 SECONDS_IN_YEAR = 60*60*24*365
 SECONDS_IN_DAY = 60*60*24
@@ -79,9 +80,8 @@ def simulate(config, lights):
     primary_soc = []
     solar_powers = []
     out_powers = []
-    offline = [1]
+    online = [0]
     missed = []
-    remaining = []
     wasted_energy = 0
     possible_energy = 0
     # counter until transmit
@@ -116,15 +116,13 @@ def simulate(config, lights):
         # TODO don't assume events are less than a second
         # amount of time spent in sleep for this workload
         period_sleep = 1
+        currently_online = online[-1] == 1
         # if offline, need to pay startup cost
-        if offline[-1]:
+        if not currently_online:
             if secondary_energy - secondary_energy_min > workload_config['startup_energy_J']:
                 outgoing_energy += workload_config['startup_energy_J']
                 period_sleep -= workload_config['startup_period_s']
-            # don't have enough energy to turn on
-            else:
-                offline.append(1)
-                continue
+                currently_online = 1
 
         # helper variable for remaining energy in secondary cell
         remaining_secondary_energy = secondary_energy - secondary_energy_min - outgoing_energy
@@ -132,7 +130,7 @@ def simulate(config, lights):
         if design_config['intermittent'] and design_config['intermittent_mode'] == 'opportunistic':
             # if there is remaining energy to send
             # TODO support multiple per interation
-            if remaining_secondary_energy >= event_energy:
+            if currently_online and remaining_secondary_energy >= event_energy:
                 outgoing_energy += event_energy
                 period_sleep -= workload_config['event_period_s']
                 missed.append(np.array([second, 0]))
@@ -146,12 +144,12 @@ def simulate(config, lights):
                     missed.append(np.array([second, 0]))
                     outgoing_energy += event_energy
                     period_sleep -= workload_config['event_period_s']
-                if design_config['intermittent_mode'] == 'periodic':
-                    if remaining_secondary_energy < event_energy:
-                        # don't have enough energy to send, sleep until next chance
+                elif design_config['intermittent_mode'] == 'periodic':
+                    if not currently_online or remaining_secondary_energy < event_energy:
+                        # don't have enough energy to perform task, sleep until next chance
                         missed.append(np.array([second, 1]))
                     else:
-                        # we have energy to send
+                        # we have energy to perform task
                         outgoing_energy += event_energy
                         period_sleep -= workload_config['event_period_s']
                         missed.append(np.array([second, 0]))
@@ -159,9 +157,12 @@ def simulate(config, lights):
         # update this variable again
         remaining_secondary_energy = secondary_energy - secondary_energy_min - outgoing_energy
 
+        # if we couldn't turn on
+        if not currently_online:
+            period_on = 0
         # any remaining time is spent sleeping
         # can we sleep the rest of the iteration?
-        if remaining_secondary_energy > sleep_power * period_sleep:
+        elif remaining_secondary_energy > sleep_power * period_sleep:
             outgoing_energy += sleep_power * period_sleep
             period_on = 1
         # if not, how long can we sleep for?
@@ -169,6 +170,7 @@ def simulate(config, lights):
             outgoing_energy += remaining_secondary_energy
             period_on = 1 - period_sleep
             period_on += remaining_secondary_energy / sleep_power
+        online.append(period_on)
 
         ###
         ### UPDATE STATE
@@ -185,23 +187,23 @@ def simulate(config, lights):
 
         # reset secondary to minimum if under
         if secondary_energy < secondary_energy_min:
-            primary_energy + secondary_energy - secondary_energy_min
+            primary_energy + (secondary_energy - secondary_energy_min)
             primary_discharge += abs(secondary_energy - secondary_energy_min)
             secondary_energy = secondary_energy_min
             charge_hysteresis = True
 
         # check if now offline
-        is_offline = False
+        #is_offline = False
         # if primary and secondary are dead, note offline
         if primary_energy <= 0:
             primary_energy = 0
             # secondary is empty too
-            if charge_hysteresis:
-                is_offline = True
+            #if charge_hysteresis:
+                #is_offline = True
             # if we have a primary cell, break simulation
             if has_primary:
                 break;
-        offline.append(is_offline)
+        #offline.append(is_offline)
 
 
         # subtract leakage
@@ -240,17 +242,23 @@ def simulate(config, lights):
     if (lifetime_years > 15): return 15.0, wasted_energy, possible_energy
     #plt.plot([x for x in minutes], [intercept + slope*x*1E3/2.4/3600 for x in minutes])
     #lifetime_years = minute/60/24/365
-    offline = np.asarray(offline)
-    return lifetime_years, wasted_energy, possible_energy, np.sum(missed[:,1]), len(missed), offline
+    online = np.asarray(online)
+    return lifetime_years, wasted_energy, possible_energy, missed[:,1], online
 
-config = sim_config()
+# Input files for simulation
+parser = argparse.ArgumentParser(description='Energy Harvesting Simulation.')
+parser.add_argument('-c', dest='config', default='permamote_config.py', help='input config file e.g. `permamote_config.py`')
+args = parser.parse_args()
+
+imported_config = importlib.import_module(args.config.split('.')[0])
+config = imported_config.sim_config()
 trace_fname = config.dataset['filename']
 trace = np.load(trace_fname)
 
-lifetime, wasted, possible, missed, opportunities, offline = simulate(config, trace)
+lifetime, wasted, possible, missed, online = simulate(config, trace)
 print(str(lifetime) + " years")
 print("%.2f/%.2f Joules used" % (possible - wasted, possible))
-print("%.2f%% events successful" % (100 * (opportunities - missed)/opportunities))
-print("%.2f%% of time offline" % (100 * np.sum(offline) / offline.size))
+print("%.2f%% events successful" % (100 * (missed.size - np.sum(missed))/missed.size))
+print("%.2f%% of time online" % (100 * np.sum(online) / online.size))
 
 
