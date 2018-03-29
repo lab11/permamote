@@ -29,49 +29,32 @@ influxdb_config.read_string(config_str)
 config = influxdb_config['global']
 
 # configurations
-begin_time =    '01-01-2015 00:00:00 US/Eastern'
-end_time =      '07-01-2017 00:00:00 US/Eastern'
-
-tag_list = {
-        'device_class': ['BLEES'],
-        'location': ['2725', '2733', '3901', '3941', '4908', '4941'],
-        #'device_id': ['c098e530006a', 'c098e530006b', 'c098e5300069', 'c098e5300072', 'c098e5300065', 'c098e530003a'],
-        }
-group_list = ['location', 'device_class', 'device_id']
-select_operation = 'value'
-measurement_list = 'light_lux'
-out_filename = 'raw_data/light'
-generate_csv(config, select_operation, measurement_list, tag_list, group_list, begin_time, end_time, out_filename)
+begin_time =    '07-01-2016 00:00:00 US/Eastern'
+end_time =      '08-15-2016 00:00:00 US/Eastern'
 
 tag_list = {
         'device_class': ['Blink'],
-        'location': ['2725', '2733', '3901', '3941', '4908', '4941'],
-        #'device_id':[   'c098e5900092', 'c098e5900029', 'c098e590009a',
-        #                'c098e590002a', 'c098e5900093', 'c098e5900021',
-        #                'c098e590009d', 'c098e5900060', 'c098e5900020'
-        #            ],
+        #'location': ['4th_Floor_Hallway_outside_4908', '3rd_Floor', '545R'],
+        'device_id': ['c098e5900023','c098e5900064'],
         }
 group_list = ['location', 'device_class', 'device_id']
 select_operation = 'value'
-measurement_list = 'motion_last_minute'
+measurement_list = ['motion_last_minute']
 out_filename = 'raw_data/motion'
-generate_csv(config, select_operation, measurement_list, tag_list, group_list, begin_time, end_time, out_filename)
+generate_csv(config, select_operation, measurement_list, tag_list, begin_time, end_time, group_list,  out_filename)
 
-#tag_list = {
-#        'device_class': ['Blink'],
-#        'location': ['2725', '2733', '3901', '3941', '4908', '4941'],
-#        'device_id':[
-#                        'c098e590009e', 'c098e5900006', 'c098e5900095',
-#                        #'c098e5900097',
-#                    ],
-#        }
-#generate_csv(config, select_operation, measurement_list, tag_list, group_list, begin_time, end_time, out_filename)
-#
-#tag_list = {
-#        'device_class': ['Blink'],
-#        'location': ['2725', '2733', '3901', '3941', '4908', '4941'],
-#        #'device_id':[
-#        #                'c098e5900099', 'c098e590009f', #'c098e5900008', #'c098e590000d',
-#        #            ],
-#        }
-##generate_csv(config, select_operation, measurement_list, tag_list, group_list, begin_time, end_time, out_filename)
+# configurations
+begin_time =    '02-01-2017 00:00:00 US/Pacific'
+end_time =      '03-01-2017 00:00:00 US/Pacific'
+
+tag_list = {
+        'device_class': ['Blink'],
+        #'location': ['4th_Floor_Hallway_outside_4908', '3rd_Floor', '545R'],
+        'device_id': ['c098e5900084'],
+        }
+group_list = ['location', 'device_class', 'device_id']
+select_operation = 'value'
+measurement_list = ['motion_last_minute']
+out_filename = 'raw_data/motion'
+generate_csv(config, select_operation, measurement_list, tag_list, begin_time, end_time, group_list,  out_filename)
+
