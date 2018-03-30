@@ -1,7 +1,7 @@
 import math
 
 
-class sim_config:
+class config:
     def __init__(self):
         self.battery_type_to_volume_L = {
             #https://en.wikipedia.org/wiki/List_of_battery_sizes
@@ -28,22 +28,13 @@ class sim_config:
             'boost_efficiency' : 0.8,
             'frontend_efficiency' : 0.8,
             'secondary' : 'super_cap',
-            'secondary_max_percent': 80.1,
+            'secondary_max_percent': 80.5,
             'secondary_min_percent': 80,
         }
         self.dataset = {
             'name': 'dataset',
             'filename': '../enhants/numpy_arrays/SetupA.npy',
             'resolution_s': 30,
-        }
-        self.workload_config = {
-            'name' : 'sense_and_send',
-            'sleep_current_A' : 1.5E-6,
-            'startup_energy_J': 1.02E-3,
-            'startup_period_s': 376E-3,
-            'event_energy_J': 5E-4 + 8.62E-5,
-            'event_period_s': 510E-3,
-            'period_s': 30,
         }
         self.secondary_cap = {
             'name' : 'secondary',

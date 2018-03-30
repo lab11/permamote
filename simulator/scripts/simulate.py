@@ -11,15 +11,52 @@ from itertools import cycle
 from datetime import datetime
 import matplotlib.pyplot as plt
 
+np.random.seed(42)
+
 SECONDS_IN_YEAR = 60*60*24*365
 SECONDS_IN_DAY = 60*60*24
 SECONDS_IN_HOUR = 60*60
 SECONDS_IN_MINUTE = 60
 
-def simulate(config, lights):
+# state for reactive workload
+_lambda_set = np.ndarray(0)
+_reactive_hour = None
+_current_hour_P = None
+transmits = 0
+
+def is_time_to_transmit(workload, second):
+    global _lambda_set
+    global _reactive_hour
+    global _current_hour_P
+    global transmits
+    if workload['type'] == 'periodic':
+        if int(second) % int(workload['period_s']) == 0:
+            return 1
+        return 0
+    if workload['type'] == 'reactive':
+        if _lambda_set.size == 0:
+            # not initialized yet!
+            _lambda_set = np.ceil(workload['lambda'] * np.load(workload['curve'])).astype(int)
+        # get hour of day from second
+        remainder = second % SECONDS_IN_DAY
+        hour = int(math.floor(remainder / SECONDS_IN_HOUR))
+        if hour != _reactive_hour:
+            #print('transmits: ' + str(transmits))
+            transmits = 0
+            _reactive_hour = hour
+            # get probability of event happening each second in this hour
+            #print('expected transmits: ' + str(_lambda_set[hour]))
+            p = np.random.poisson(_lambda_set[hour], 1)
+            #print('num transmits after poisson: ' + str(p))
+            _current_hour_P = p / SECONDS_IN_HOUR #np.random.poisson(_lambda_set[hour], 1) / SECONDS_IN_HOUR
+        transmit = np.random.random() <= _current_hour_P
+        transmits += transmit
+        return transmit
+
+def simulate(config, workload, lights):
     # load configs
     design_config = config.design_config
-    workload_config = config.workload_config
+    workload_config = workload.config
     dataset_config = config.dataset
     if 'secondary' in design_config:
         secondary_config = config.secondary_configs[design_config['secondary']]
@@ -72,7 +109,10 @@ def simulate(config, lights):
         # start at half full
         secondary_energy = (secondary_energy_max + secondary_energy_up) / 2
 
-    # convert trace to second resolution
+    # prepare light dataset
+    start_time = lights[0].astype('datetime64[s]')
+    start_seconds = int((start_time - start_time.astype('datetime64[D]')) / np.timedelta64(1, 's'))
+    lights = lights[1:]
     seconds = np.arange(lights.size*dataset_config['resolution_s'])
 
     # begin simulation
@@ -84,8 +124,6 @@ def simulate(config, lights):
     missed = []
     wasted_energy = 0
     possible_energy = 0
-    # counter until transmit
-    time_to_transmit = workload_config['period_s']
     # wait for secondary to charge
     charge_hysteresis = False;
     for second in seconds:
@@ -136,9 +174,7 @@ def simulate(config, lights):
                 missed.append(np.array([second, 0]))
         else:
             # if it's time to perform periodic event
-            time_to_transmit -= 1
-            if time_to_transmit == 0:
-                time_to_transmit = workload_config['period_s']
+            if is_time_to_transmit(workload_config, second + start_seconds):
                 if not design_config['intermittent']:
                     # if primary cell, can always send
                     missed.append(np.array([second, 0]))
@@ -248,14 +284,17 @@ def simulate(config, lights):
 # Input files for simulation
 parser = argparse.ArgumentParser(description='Energy Harvesting Simulation.')
 parser.add_argument('-c', dest='config', default='permamote_config.py', help='input config file e.g. `permamote_config.py`')
+parser.add_argument('-w', dest='workload', default='sense_and_send_workload.py', help='input workload config file e.g. `sense_and_send_workload.py`')
 args = parser.parse_args()
 
 imported_config = importlib.import_module(args.config.split('.')[0])
-config = imported_config.sim_config()
+imported_workload = importlib.import_module(args.workload.split('.')[0])
+config = imported_config.config()
+workload = imported_workload.workload()
 trace_fname = config.dataset['filename']
 trace = np.load(trace_fname)
 
-lifetime, wasted, possible, missed, online = simulate(config, trace)
+lifetime, wasted, possible, missed, online = simulate(config, workload, trace)
 print(str(lifetime) + " years")
 print("%.2f/%.2f Joules used" % (possible - wasted, possible))
 print("%.2f%% events successful" % (100 * (missed.size - np.sum(missed))/missed.size))
