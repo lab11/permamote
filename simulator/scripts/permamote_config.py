@@ -31,11 +31,6 @@ class config:
             'secondary_max_percent': 80.5,
             'secondary_min_percent': 80,
         }
-        self.dataset = {
-            'name': 'dataset',
-            'filename': '../enhants/numpy_arrays/SetupA.npy',
-            'resolution_s': 30,
-        }
         self.primary_config= {
             'name' : 'primary',
             'capacity_mAh' : 480,
@@ -69,13 +64,8 @@ class config:
         self.solar_config = {
             'name' : 'solar',
             'nominal_voltage_V' : 2.5,
-            'area_cm2' : 10,
+            'area_cm2' : 2.1*4.2,
             'efficiency' : 0.19,
         }
         self.config_list = [self.design_config, self.primary_config, self.secondary_configs[self.design_config['secondary']], self.solar_config]
 
-sweep_vars = [
-                [('solar', 'area_cm2'), [i*10**exp for exp in range(0, 2) for i in range(1,10)], 'both']
-                #[('primary', 'volume_L'), [i*10**(-3) for i in range(1, 16)], 'life'],
-                #[('secondary', 'capacity_mAh'), [i*10**exp for exp in range(-5, 2) for i in range(1, 10, 2)], 'both'],
-             ]

@@ -38,7 +38,6 @@ def parse(fname):
     # average every two datapoints to get to minute granularity
     #data = np.mean(a[:].reshape(-1, 2), axis=1)
 
-    print(b)
     print(fname)
     print('    length: ' + str(b[1:].shape[0]/2/60/24) + ' days')
     print('    average: ' + str(np.mean(b[1:])) + ' uW/cm^2')

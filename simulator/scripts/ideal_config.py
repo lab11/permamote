@@ -1,6 +1,5 @@
 import math
 
-
 class config:
     def __init__(self):
         self.battery_type_to_volume_L = {
@@ -23,31 +22,22 @@ class config:
         self.design_config = {
             'name' : 'design',
             'intermittent' : True,
-            'intermittent_mode' : 'periodic', # periodic or opportunistic
             'operating_voltage_V' : 3.3,
             'boost_efficiency' : 0.8,
             'frontend_efficiency' : 0.8,
-            'secondary' : 'super_cap',
-            'secondary_max_percent': 80.5,
-            'secondary_min_percent': 80,
+            'secondary' : 'storage',
         }
-        self.secondary_cap = {
+        self.secondary_storage_config = {
             'name' : 'secondary',
             'type' : 'capacitor',
-            'charge_discharge_eff' : 0.80,
-            'capacity_J': (1000E-6) * (3.3**2),
-            'min_capacity_J': (1000E-6) * (0.4**2),
-        }
-        self.secondary_super_cap = {
-            'name' : 'secondary',
-            'type' : 'capacitor',
-            'charge_discharge_eff' : 0.75,
-            'capacity_J': (1000E-6 + 7.5E-3) * (3.3**2),
-            'min_capacity_J': (1000E-6 + 7.5E-3) * (0.4**2),
+            'charge_discharge_eff' : 1,
+            'capacity_J' : 5,
+            'min_capacity_J' : 0,
+            'nominal_voltage_V' : 3.0,
+            'leakage_J': 0,
         }
         self.secondary_configs = {
-            'cap' : self.secondary_cap,
-            'super_cap' : self.secondary_super_cap,
+            'storage' : self.secondary_storage_config,
         }
         self.solar_config = {
             'name' : 'solar',
