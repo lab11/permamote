@@ -1,10 +1,13 @@
 #! /usr/bin/env python3
 
 import os
+import math
 import numpy as np
 from glob import glob
 from multiprocessing import Pool
 import arrow
+
+HALF_MINUTES_IN_WEEK = 7*24*60*2
 
 # Make folders if needed
 if not os.path.exists('numpy_arrays'):
@@ -28,10 +31,30 @@ def parse(fname):
     # first element of array is start timestamp
     b[0] = start_time.timestamp
 
-    b[1:] = a[:,1].astype(float)
     # get rid of date/time information
-    replace = np.isnan(b)
-    b[replace] = 0
+    c = a[:,1].astype(float)
+    # fill in bad data
+    # first get a representative week of good data
+    # find transition points
+    transitions = np.argwhere(np.diff(~np.isnan(c)).squeeze())
+    starts = []
+    stops = []
+    for idx in transitions:
+        if np.isnan(c[idx[0]+1]):
+            starts.append(idx[0]+1)
+        else:
+            stops.append(idx[0]+1)
+
+    for start, stop in zip(starts, stops):
+        span_len = stop - start
+        replace_size = int(HALF_MINUTES_IN_WEEK * math.ceil(span_len / HALF_MINUTES_IN_WEEK))
+        replace_start = start - replace_size
+        if replace_start < 0:
+            replacement = np.tile(c[0:start], math.ceil(span_len / start))
+            c[start:stop] = replacement[:span_len]
+        else:
+            c[start:stop] = c[replace_start:(replace_start + span_len)]
+    b[1:] = c
 
     #if len(a) % 2 != 0:
     #    a = np.append(a, 0)
@@ -45,8 +68,8 @@ def parse(fname):
     np.save('numpy_arrays/' + basename, b)
 
 
-#p = Pool(len(fnames))
-#p.map(parse, sorted(fnames))
-for fname in sorted(fnames):
-    parse(fname)
+p = Pool(len(fnames))
+p.map(parse, sorted(fnames))
+#for fname in sorted(fnames):
+#    parse(fname)
 
