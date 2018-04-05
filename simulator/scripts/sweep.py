@@ -36,48 +36,53 @@ def sweep(config, workload, sweep):
     # load light
     trace_fname = workload.dataset['filename']
     lights = np.load(trace_fname)
-    if workload.config['type'] == 'periodic' or workload.config['type'] == 'random':
+    if 'period_s' in sweep.sweep_vars[0][0]:
+        workload_modifier = str(config.secondary_configs[config.design_config['secondary']]['capacity_J'])
+    elif workload.config['type'] == 'periodic' or workload.config['type'] == 'random':
         workload_modifier = str(workload.config['period_s'])
     else:
         workload_modifier = str(workload.config['lambda'])
     description = trace_fname.split('/')[-1].split('.')[0] + ' ' + ' '.join(workload.config['name'].split('_')) + ' ' + workload_modifier
     print(description)
-    sweep_config.config_list.append(workload.config)
 
     sweep_results = []
     for sweep_var in sweep.sweep_vars:
         # load default config
         sweep_config = deepcopy(config)
         sweep_result = []
-        for config in sweep_config.config_list:
-            if config['name'] == sweep_var[0][0] and sweep_var[0][1] in config:
+        for s_config in sweep_config.config_list:
+            if s_config['name'] == sweep_var[0][0] and sweep_var[0][1] in s_config:
                 sweep_design_parameter = sweep_var[0][1]
-                sweep_design_component = config
-                sweep_parameter_name = config['name'] + '_' + sweep_design_parameter
+                sweep_design_component = s_config
+                sweep_parameter_name = s_config['name'] + '_' + sweep_design_parameter
                 sweep_range = sweep_var[1]
                 break;
+
+        if workload.config['name'] == sweep_var[0][0] and sweep_var[0][1] in workload.config:
+           sweep_design_parameter = sweep_var[0][1]
+           sweep_design_component = workload.config
+           sweep_parameter_name = workload.config['name'] + '_' + sweep_design_parameter
+           sweep_range = sweep_var[1]
 
         for i in sweep_range:
             print(sweep_parameter_name + ': ' + str(i))
             sweep_design_component[sweep_design_parameter] = i
-            lifetime, wasted, possible, missed, online, event_ttc = simulate(sweep_config, workload, lights)
-            energy_used = (possible-wasted)/possible
+            lifetime, used, possible, missed, online, event_ttc = simulate(sweep_config, workload, lights)
+            energy_used = used/possible
             events_successful = (missed.size - np.sum(missed))/missed.size
             time_online = np.sum(online) / online.size
-            ttc = np.average(event_ttc)/ workload.config['event_period_s']
+            ttc = event_ttc#np.average(event_ttc)/ workload.config['event_period_s']
             sweep_result.append([i, lifetime, energy_used, events_successful, time_online, ttc])
             print("%.2f%% Joules used" % (100*energy_used))
             print("%.2f%% events successful" % (100*events_successful))
             print("%.2f%% of time online" % (100*time_online))
-            print("%.2f%% x expected event time to completion" % (ttc))
+            print("%.2f%% x expected event time to completion" % (np.average(event_ttc)/workload.config['event_period_s']))
 
-        sweep_result = np.array(sweep_result)
+        sweep_result = np.array(sweep_result, dtype='object')
         sweep_results.append((sweep_parameter_name, sweep_result))
 
     for sweep_var, parameter_sweep in zip(sweep.sweep_vars, sweep_results):
-        print(parameter_sweep)
         x = parameter_sweep[1]
-        print(x)
         titlestr = trace_fname.split('/')[-1].split('.')[0] + ' ' + ' '.join(parameter_sweep[0].split('_')[:-1]) + ' ' + ' '.join(workload.config['name'].split('_')) + ' ' + workload_modifier
         print(titlestr)
         np.save(save_dir + titlestr.replace(' ', '_'), x)

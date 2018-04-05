@@ -71,7 +71,7 @@ def simulate(config, workload, lights):
     # load configs
     design_config = config.design_config
     workload_config = workload.config
-    dataset_config = config.dataset
+    dataset_config = workload.dataset
     if 'secondary' in design_config:
         secondary_config = config.secondary_configs[design_config['secondary']]
     else:
@@ -152,7 +152,8 @@ def simulate(config, workload, lights):
     out_powers = []
     online = [0]
     missed = []
-    wasted_energy = 0
+    #wasted_energy = 0
+    used_energy = 0
     possible_energy = 0
     # state to keep track of ongoing events
     currently_performing = False
@@ -180,7 +181,7 @@ def simulate(config, workload, lights):
 
         # reset secondary to max if full
         if secondary_energy > secondary_energy_max:
-            wasted_energy += secondary_energy - secondary_energy_max
+            #wasted_energy += secondary_energy - secondary_energy_max
             secondary_energy = secondary_energy_max
         # if charged enough
         if secondary_energy >= secondary_energy_up:
@@ -267,12 +268,14 @@ def simulate(config, workload, lights):
             online.append(period_on)
 
             secondary_energy -= outgoing_energy()
+            used_energy += outgoing_energy()
 
             if secondary_energy <= secondary_energy_min:
                 charge_hysteresis = True
         else:
             if charge_hysteresis:
                 secondary_energy -= outgoing_energy()
+                used_energy += outgoing_energy()
             # enter hysteresis if under
             if secondary_energy <= secondary_energy_min:
                 primary_energy + (secondary_energy - secondary_energy_min)
@@ -324,7 +327,7 @@ def simulate(config, workload, lights):
     #lifetime_years = minute/60/24/365
     online = np.asarray(online)
 
-    return lifetime_years, wasted_energy, possible_energy, missed[:,1], online, event_ttc
+    return lifetime_years, used_energy, possible_energy, missed[:,1], online, event_ttc
 
 if __name__ == "__main__":
     import argparse
