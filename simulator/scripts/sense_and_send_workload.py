@@ -3,8 +3,8 @@ class workload:
     def __init__(self):
         self.dataset = {
             'name': 'dataset',
-            'filename': '../enhants/numpy_arrays/SetupC.npy',
-            'resolution_s': 60,
+            'filename': '../enhants/numpy_arrays/SetupA.npy',
+            'resolution_s': 30,
         }
         self.config = {
             # name and type of workload

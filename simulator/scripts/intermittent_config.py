@@ -1,6 +1,5 @@
 import math
 
-
 class config:
     def __init__(self):
         self.battery_type_to_volume_L = {
@@ -27,32 +26,41 @@ class config:
             'operating_voltage_V' : 3.3,
             'boost_efficiency' : 0.8,
             'frontend_efficiency' : 0.8,
-            'secondary' : 'super_cap',
-            'secondary_max_percent': 80.5,
-            'secondary_min_percent': 80,
+            'secondary' : 'extra_super_cap',
         }
         self.secondary_cap = {
             'name' : 'secondary',
             'type' : 'capacitor',
-            'charge_discharge_eff' : 0.80,
-            'capacity_J': (1000E-6) * (3.3**2),
-            'min_capacity_J': (1000E-6) * (0.4**2),
+            'esr_ohm' : 0.1,
+            'capacity_J': 1.292E-4 * (3.3**2),
+            'min_capacity_J': 1.292E-4 * (0.4**2),
+            'leakage_power_W': 10E-9 * 3,
         }
         self.secondary_super_cap = {
             'name' : 'secondary',
             'type' : 'capacitor',
-            'charge_discharge_eff' : 0.75,
-            'capacity_J': (1000E-6 + 7.5E-3) * (3.3**2),
+            'esr_ohm' : 25,
+            'capacity_J': (300E-6 + 1100E-6 + 7.5E-3) * (3.3**2),
             'min_capacity_J': (1000E-6 + 7.5E-3) * (0.4**2),
+            'leakage_power_W': 10E-9 * 2.4,
+        }
+        self.secondary_extra_super_cap = {
+            'name' : 'secondary',
+            'type' : 'capacitor',
+            'esr_ohm' : 200,
+            'capacity_J': 100E-3  * (3.3**2),
+            'min_capacity_J': 100E-3  * (0.4**2),
+            'leakage_power_W': 10E-9 * 2.4,
         }
         self.secondary_configs = {
             'cap' : self.secondary_cap,
             'super_cap' : self.secondary_super_cap,
+            'extra_super_cap' : self.secondary_extra_super_cap,
         }
         self.solar_config = {
             'name' : 'solar',
             'nominal_voltage_V' : 2.5,
-            'area_cm2' : 10,
+            'area_cm2' : 2.1*4.2,
             'efficiency' : 0.19,
         }
         self.config_list = [self.design_config, self.secondary_configs[self.design_config['secondary']], self.solar_config]

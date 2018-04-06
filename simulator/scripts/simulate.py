@@ -83,8 +83,18 @@ def simulate(config, workload, lights):
     sleep_power = sleep_current * design_config['operating_voltage_V']
     event_energy = workload_config['event_energy_J'] /\
             design_config['boost_efficiency']
+
+
     event_period = workload_config['event_period_s']
     event_period_min = workload_config['event_period_min_s']
+
+    # ESR losses
+    event_current = event_energy / event_period / design_config['operating_voltage_V']
+    esr_power = event_current**2 * secondary_config['esr_ohm']
+    print(event_energy)
+    event_energy += esr_power * event_period
+    print(event_energy)
+
     atomic = workload_config['atomic']
 
     # initialize energy for primary and secondary
@@ -114,8 +124,8 @@ def simulate(config, workload, lights):
         # using a battery:
         if secondary_config['type'] == 'battery':
             secondary_energy_max = secondary_config['capacity_mAh']*1E-3*secondary_config['nominal_voltage_V']*SECONDS_IN_HOUR
-            if 'leakage_J' in secondary_config:
-                secondary_leakage_energy = secondary_config['leakage_J']
+            if 'leakage_power_W' in secondary_config:
+                secondary_leakage_energy = secondary_config['leakage_power_W'] * 1
             else:
                 secondary_leakage_energy= secondary_config['capacity_mAh'] * 1E-3 / secondary_config['leakage_constant'] * secondary_config['nominal_voltage_V']
             secondary_energy_up = design_config['secondary_max_percent'] / 100 * secondary_energy_max
@@ -123,11 +133,14 @@ def simulate(config, workload, lights):
         # using a capacitor:
         elif secondary_config['type'] == 'capacitor':
             secondary_energy_max = secondary_config['capacity_J']
-            secondary_leakage_energy = 0
+            secondary_leakage_energy = secondary_config['leakage_power_W'] * 1
             secondary_energy_up = secondary_config['min_capacity_J']
             secondary_energy_min = secondary_config['min_capacity_J']
         # start at empty
         secondary_energy = secondary_energy_min
+
+    actual_seconary_energy = (secondary_energy_max - secondary_energy_min)
+    print(actual_seconary_energy)
 
     # if we couldn't possibly ever perform any work throw an error
     if (atomic and (event_energy > secondary_energy_max - secondary_energy_min)\
@@ -139,6 +152,7 @@ def simulate(config, workload, lights):
         print('ERROR: event either takes too long or takes too much energy with this config to be performed in one step')
         exit()
 
+
     # prepare light dataset
     start_time = lights[0].astype('datetime64[s]')
     start_seconds = int((start_time - start_time.astype('datetime64[D]')) / np.timedelta64(1, 's'))
@@ -148,6 +162,7 @@ def simulate(config, workload, lights):
     # begin simulation
     secondary_soc = []
     primary_soc = []
+    primary_discharge = 0
     solar_powers = []
     out_powers = []
     online = [0]
@@ -224,7 +239,10 @@ def simulate(config, workload, lights):
         # if we need to work on an event
         if currently_performing and currently_online:
             # calculated expected period, energy, and if finished for this cycle
-            used_p, used_e, finished = perform_event(period_sleep, remaining_secondary_energy(), event_period_remaining, event_energy_remaining)
+            if not has_primary:
+                used_p, used_e, finished = perform_event(period_sleep, remaining_secondary_energy(), event_period_remaining, event_energy_remaining)
+            else:
+                used_p, used_e, finished = perform_event(period_sleep, remaining_secondary_energy() + primary_energy, event_period_remaining, event_energy_remaining)
             outgoing_event_energy = used_e
             event_energy_remaining -= used_e
             event_period_remaining -= used_p
@@ -249,7 +267,6 @@ def simulate(config, workload, lights):
         ### UPDATE STATE
         ###
 
-        primary_discharge = 0
         if not has_primary:
             # if we couldn't turn on
             if not currently_online:
@@ -273,15 +290,18 @@ def simulate(config, workload, lights):
             if secondary_energy <= secondary_energy_min:
                 charge_hysteresis = True
         else:
-            if charge_hysteresis:
-                secondary_energy -= outgoing_energy()
-                used_energy += outgoing_energy()
+            online.append(1)
+            secondary_energy -= outgoing_energy()
+
             # enter hysteresis if under
             if secondary_energy <= secondary_energy_min:
+                used_energy += abs(secondary_energy + outgoing_energy() - secondary_energy_min)
                 primary_energy + (secondary_energy - secondary_energy_min)
                 primary_discharge += abs(secondary_energy - secondary_energy_min)
                 secondary_energy = secondary_energy_min
                 charge_hysteresis = True
+            else:
+                used_energy += outgoing_energy()
 
             # check if now offline
             # if primary and secondary are dead, note offline
@@ -321,13 +341,15 @@ def simulate(config, workload, lights):
     #plt.show()
     #slope, intercept, _, _, _ = stats.linregress(minutes, primary_soc)
     if has_primary:
-        lifetime_years = (primary_energy_max/ np.mean(primary_discharges))/(SECONDS_IN_YEAR)
+        #lifetime_years = (primary_energy_max/ np.mean(primary_discharges))/(SECONDS_IN_YEAR)
+        print (primary_discharge, primary_energy_max)
+        lifetime_years = primary_energy_max / (primary_discharge / seconds.size) / SECONDS_IN_YEAR
     else: lifetime_years = -1
     #plt.plot([x for x in minutes], [intercept + slope*x*1E3/2.4/3600 for x in minutes])
     #lifetime_years = minute/60/24/365
     online = np.asarray(online)
 
-    return lifetime_years, used_energy, possible_energy, missed[:,1], online, event_ttc
+    return lifetime_years, used_energy, possible_energy, missed[:,1], online, event_ttc, actual_seconary_energy
 
 if __name__ == "__main__":
     import argparse
@@ -347,9 +369,9 @@ if __name__ == "__main__":
     trace_fname = workload.dataset['filename']
     trace = np.load(trace_fname)
 
-    lifetime, wasted, possible, missed, online, event_ttc = simulate(config, workload, trace)
-    #print(str(lifetime) + " years")
-    print("%.2f/%.2f Joules used" % (possible - wasted, possible))
+    lifetime, used, possible, missed, online, event_ttc, actual_e= simulate(config, workload, trace)
+    print(str(lifetime) + " years")
+    print("%.2f/%.2f Joules used" % (used, possible))
     print("%.2f%% events successful" % (100 * (missed.size - np.sum(missed))/missed.size))
     print("%.2f%% of time online" % (100 * np.sum(online) / online.size))
     print("%.2f%% x expected event time to completion" % (np.average(event_ttc) / workload.config['event_period_s']))

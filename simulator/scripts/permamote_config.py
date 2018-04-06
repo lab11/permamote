@@ -21,13 +21,11 @@ class config:
         }
         self.design_config = {
             'name' : 'design',
-            'intermittent' : True,
-            'intermittent_mode' : 'periodic', # periodic or opportunistic
-            'active_frequency_minutes' : 1,
+            'intermittent' : False,
             'operating_voltage_V' : 3.3,
             'boost_efficiency' : 0.8,
             'frontend_efficiency' : 0.8,
-            'secondary' : 'lto_battery',
+            'secondary' : 'LTO_battery',
             'secondary_max_percent': 80.5,
             'secondary_min_percent': 80,
         }
@@ -39,27 +37,34 @@ class config:
             #'volume_L':   self.battery_type_to_volume_L['CR123A'],
             'leakage_percent_year' : 1,
         }
-        self.secondary_lipo_config = {
+        self.secondary_lifepo4_config = {
             'name' : 'secondary',
             'type' : 'battery',
             'charge_discharge_eff' : 0.95,
-            'capacity_mAh' : 20,
-            'nominal_voltage_V' : 3.6,
-            'lifetime_cycles' : 1000,
-            'leakage_constant': 5E4,
+            'capacity_mAh' : 30,
+            'nominal_voltage_V' : 3.2,
+            'leakage_constant': 1E5,
         }
         self.secondary_lto_config = {
             'name' : 'secondary',
             'type' : 'battery',
-            'charge_discharge_eff' : 0.95,
+            'esr_ohm' : 0.1,
             'capacity_mAh' : 20,
-            'nominal_voltage_V' : 2.4,
-            'lifetime_cycles' : 10000,
-            'leakage_constant': 5E4,
+            'nominal_voltage_V' : 3.6,
+            'leakage_constant': 1E5,
+        }
+        self.secondary_thin_film_config = {
+            'name' : 'secondary',
+            'type' : 'battery',
+            'esr_ohm' : 80,
+            'capacity_mAh' : 0.7,
+            'nominal_voltage_V' : 3.9,
+            'leakage_power_W': 0,
         }
         self.secondary_configs = {
-            'lipo_battery' : self.secondary_lipo_config,
-            'lto_battery' : self.secondary_lto_config,
+            'LiFePo4_battery' : self.secondary_lifepo4_config,
+            'LTO_battery' : self.secondary_lto_config,
+            'thin_film_battery' : self.secondary_thin_film_config,
         }
         self.solar_config = {
             'name' : 'solar',
