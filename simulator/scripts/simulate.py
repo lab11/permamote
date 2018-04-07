@@ -88,13 +88,6 @@ def simulate(config, workload, lights):
     event_period = workload_config['event_period_s']
     event_period_min = workload_config['event_period_min_s']
 
-    # ESR losses
-    event_current = event_energy / event_period / design_config['operating_voltage_V']
-    esr_power = event_current**2 * secondary_config['esr_ohm']
-    print(event_energy)
-    event_energy += esr_power * event_period
-    print(event_energy)
-
     atomic = workload_config['atomic']
 
     # initialize energy for primary and secondary
@@ -113,6 +106,7 @@ def simulate(config, workload, lights):
     else:
         has_primary = False
         primary_energy = 0
+        primary_energy_max = 0
         primary_leakage_energy = 0
 
     solar_config = config.solar_config
@@ -139,13 +133,22 @@ def simulate(config, workload, lights):
         # start at empty
         secondary_energy = secondary_energy_min
 
-    actual_seconary_energy = (secondary_energy_max - secondary_energy_min)
-    print(actual_seconary_energy)
+        # ESR losses
+        event_current = event_energy / event_period / design_config['operating_voltage_V']
+        esr_power = event_current**2 * secondary_config['esr_ohm']
+        print(event_energy)
+        event_energy += esr_power * event_period
+        print(event_energy)
+    else:
+        secondary_leakage_energy = secondary_energy = secondary_energy_max = secondary_energy_up = secondary_energy_min = 0
+
+    actual_secondary_energy = (secondary_energy_max - secondary_energy_min)
+    print(actual_secondary_energy)
 
     # if we couldn't possibly ever perform any work throw an error
-    if (atomic and (event_energy > secondary_energy_max - secondary_energy_min)\
+    if (atomic and (event_energy > primary_energy_max + secondary_energy_max - secondary_energy_min)\
             or event_period_min > 1)\
-            or secondary_energy_max <= workload_config['startup_energy_J']:
+            or primary_energy_max + secondary_energy_max <= workload_config['startup_energy_J']:
         print(atomic and event_energy > secondary_energy_max - secondary_energy_min)
         print(event_period_min > 1)
         print(secondary_energy_max <= workload_config['startup_energy_J'])
@@ -218,7 +221,7 @@ def simulate(config, workload, lights):
 
         # if offline, need to pay startup cost
         if not currently_online and not charge_hysteresis:
-            if remaining_secondary_energy() > workload_config['startup_energy_J']:
+            if remaining_secondary_energy() + primary_energy > workload_config['startup_energy_J']:
                 outgoing_startup_energy = workload_config['startup_energy_J']
                 period_sleep -= workload_config['startup_period_s']
                 currently_online = 1
@@ -349,7 +352,7 @@ def simulate(config, workload, lights):
     #lifetime_years = minute/60/24/365
     online = np.asarray(online)
 
-    return lifetime_years, used_energy, possible_energy, missed[:,1], online, event_ttc, actual_seconary_energy
+    return lifetime_years, used_energy, possible_energy, missed[:,1], online, event_ttc
 
 if __name__ == "__main__":
     import argparse

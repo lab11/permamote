@@ -10,7 +10,7 @@ class workload:
             # name and type of workload
             'name' : 'sense_and_send',
             'type' : 'periodic',
-            'period_s': 30,
+            'period_s': 10,
 
             'sleep_current_A' : 1.5E-6,
             'startup_energy_J': 150E-6,
