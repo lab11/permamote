@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(description='Energy Harvesting Simulation.')
 parser.add_argument('-c', dest='config', default='permamote_config.py', help='input config file e.g. `permamote_config.py`')
 parser.add_argument('-w', dest='workload', default='sense_and_send_workload.py', help='input workload config file e.g. `sense_and_send_workload.py`')
 parser.add_argument('-s', dest='sweep', default='sec_size_sweep.py', help='input sweep config file e.g. `sec_size_sweep.py`')
-parser.add_argument('-p', dest='plot', action='store_true', default=False, help='plot data instead of putting into numpy array')
+parser.add_argument('-t', dest='title', help='description of run')
 args = parser.parse_args()
 
 #trace_to_use_list = ['SetupB']#'SetupD', 'SetupE']
@@ -36,7 +36,9 @@ def sweep(config, workload, sweep):
     # load light
     trace_fname = workload.dataset['filename']
     lights = np.load(trace_fname)
-    if 'period_s' in sweep.sweep_vars[0][0]:
+    if args.title:
+        workload_modifier = args.title
+    elif 'period_s' in sweep.sweep_vars[0][0]:
         workload_modifier = str(config.secondary_configs[config.design_config['secondary']]['capacity_J'])
     elif workload.config['type'] == 'periodic' or workload.config['type'] == 'random':
         workload_modifier = str(workload.config['period_s'])
