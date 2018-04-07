@@ -8,6 +8,7 @@ from multiprocessing import Pool
 import arrow
 
 HALF_MINUTES_IN_WEEK = 7*24*60*2
+HALF_MINUTES_IN_DAY = 24*60*2
 
 # Make folders if needed
 if not os.path.exists('numpy_arrays'):
@@ -64,12 +65,21 @@ def parse(fname):
     print(fname)
     print('    length: ' + str(b[1:].shape[0]/2/60/24) + ' days')
     print('    average: ' + str(np.mean(b[1:])) + ' uW/cm^2')
-    print('    std dev: ' + str(np.std(b[1:])) + ' uW/cm^2')
+    # calculate daily percentiles
+    #shear off end:
+    c = b[1:]
+    c = c[:HALF_MINUTES_IN_DAY*math.floor(c.size/HALF_MINUTES_IN_DAY)]
+    # bin by days:
+    days = []
+    for i in range(1, int(c.size/HALF_MINUTES_IN_DAY)):
+        days.append(np.average(c[(i-1)*HALF_MINUTES_IN_DAY:i*HALF_MINUTES_IN_DAY]))
+    print('    90th percentile: ' + str(np.percentile(days, 90)) + ' uW/cm^2')
+    print('    10th percentile: ' + str(np.percentile(days, 10)) + ' uW/cm^2')
     np.save('numpy_arrays/' + basename, b)
 
 
-p = Pool(len(fnames))
-p.map(parse, sorted(fnames))
-#for fname in sorted(fnames):
-#    parse(fname)
+#p = Pool(len(fnames))
+#p.map(parse, sorted(fnames))
+for fname in sorted(fnames):
+    parse(fname)
 
