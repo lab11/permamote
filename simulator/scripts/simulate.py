@@ -372,7 +372,7 @@ if __name__ == "__main__":
     trace_fname = workload.dataset['filename']
     trace = np.load(trace_fname)
 
-    lifetime, used, possible, missed, online, event_ttc, actual_e= simulate(config, workload, trace)
+    lifetime, used, possible, missed, online, event_ttc = simulate(config, workload, trace)
     print(str(lifetime) + " years")
     print("%.2f/%.2f Joules used" % (used, possible))
     print("%.2f%% events successful" % (100 * (missed.size - np.sum(missed))/missed.size))
