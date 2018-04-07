@@ -136,14 +136,11 @@ def simulate(config, workload, lights):
         # ESR losses
         event_current = event_energy / event_period / design_config['operating_voltage_V']
         esr_power = event_current**2 * secondary_config['esr_ohm']
-        print(event_energy)
         event_energy += esr_power * event_period
-        print(event_energy)
     else:
         secondary_leakage_energy = secondary_energy = secondary_energy_max = secondary_energy_up = secondary_energy_min = 0
 
     actual_secondary_energy = (secondary_energy_max - secondary_energy_min)
-    print(actual_secondary_energy)
 
     # if we couldn't possibly ever perform any work throw an error
     if (atomic and (event_energy > primary_energy_max + secondary_energy_max - secondary_energy_min)\
@@ -183,7 +180,7 @@ def simulate(config, workload, lights):
     event_ttc = []
     # wait for secondary to charge
     charge_hysteresis = False;
-    for second in seconds[:10*SECONDS_IN_DAY]:
+    for second in seconds:
 
         ##
         ## INCOMING ENERGY
@@ -345,7 +342,7 @@ def simulate(config, workload, lights):
     #slope, intercept, _, _, _ = stats.linregress(minutes, primary_soc)
     if has_primary:
         #lifetime_years = (primary_energy_max/ np.mean(primary_discharges))/(SECONDS_IN_YEAR)
-        print (primary_discharge, primary_energy_max)
+        #print (primary_discharge, primary_energy_max)
         lifetime_years = primary_energy_max / (primary_discharge / seconds.size) / SECONDS_IN_YEAR
     else: lifetime_years = -1
     #plt.plot([x for x in minutes], [intercept + slope*x*1E3/2.4/3600 for x in minutes])
