@@ -183,7 +183,7 @@ def simulate(config, workload, lights):
     event_ttc = []
     # wait for secondary to charge
     charge_hysteresis = False;
-    for second in seconds:
+    for second in seconds[:10*SECONDS_IN_DAY]:
 
         ##
         ## INCOMING ENERGY
@@ -352,7 +352,7 @@ def simulate(config, workload, lights):
     #lifetime_years = minute/60/24/365
     online = np.asarray(online)
 
-    return lifetime_years, used_energy, possible_energy, missed[:,1], online, event_ttc
+    return lifetime_years, used_energy, possible_energy, missed[:,1], online, np.average(event_ttc)
 
 if __name__ == "__main__":
     import argparse
@@ -377,6 +377,7 @@ if __name__ == "__main__":
     print("%.2f/%.2f Joules used" % (used, possible))
     print("%.2f%% events successful" % (100 * (missed.size - np.sum(missed))/missed.size))
     print("%.2f%% of time online" % (100 * np.sum(online) / online.size))
-    print("%.2f%% x expected event time to completion" % (np.average(event_ttc) / workload.config['event_period_s']))
+    print("%.2f%% x expected event time to completion" % (event_ttc / workload.config['event_period_s']))
+    #print("%.2f%% x expected event time to completion" % (np.average(event_ttc) / workload.config['event_period_s']))
 
 
