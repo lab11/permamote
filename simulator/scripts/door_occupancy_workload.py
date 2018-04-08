@@ -18,6 +18,6 @@ class workload:
             'startup_period_s': 3.4E-3,
             'event_energy_J': 8.62E-5,
             'event_period_s': 3E-3,
-            'event_period_min_s': 510E-3,
+            'event_period_min_s': 3E-3,
             'atomic': True,
         }

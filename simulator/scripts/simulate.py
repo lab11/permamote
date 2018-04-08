@@ -128,10 +128,13 @@ def simulate(config, workload, lights):
         elif secondary_config['type'] == 'capacitor':
             secondary_energy_max = secondary_config['capacity_J']
             secondary_leakage_energy = secondary_config['leakage_power_W'] * 1
-            secondary_energy_up = secondary_config['min_capacity_J']
-            secondary_energy_min = secondary_config['min_capacity_J']
+            secondary_energy_up = secondary_energy_min = secondary_config['min_capacity_J']
+
+        if 'secondary_start_percent' in design_config:
+            secondary_energy = secondary_energy_max * design_config['secondary_start_percent']/100
         # start at empty
-        secondary_energy = secondary_energy_min
+        else:
+            secondary_energy = secondary_energy_min
 
         # ESR losses
         event_current = event_energy / event_period / design_config['operating_voltage_V']
@@ -147,6 +150,7 @@ def simulate(config, workload, lights):
             or event_period_min > 1)\
             or primary_energy_max + secondary_energy_max <= workload_config['startup_energy_J']:
         print(atomic and event_energy > secondary_energy_max - secondary_energy_min)
+        print(event_energy, secondary_energy_max - secondary_energy_min)
         print(event_period_min > 1)
         print(secondary_energy_max <= workload_config['startup_energy_J'])
         print('ERROR: event either takes too long or takes too much energy with this config to be performed in one step')
@@ -167,8 +171,9 @@ def simulate(config, workload, lights):
     out_powers = []
     online = [0]
     missed = []
+    #events = []
     #wasted_energy = 0
-    used_energy = 0
+    used_energy = secondary_energy_min - secondary_energy
     possible_energy = 0
     # state to keep track of ongoing events
     currently_performing = False
@@ -176,7 +181,7 @@ def simulate(config, workload, lights):
     event_energy_remaining = 0
     event_started_second = 0
     actual_period = 0
-    events_completed = 0
+    #events_completed = 0
     event_ttc = []
     # wait for secondary to charge
     charge_hysteresis = False;
@@ -199,9 +204,8 @@ def simulate(config, workload, lights):
             #wasted_energy += secondary_energy - secondary_energy_max
             secondary_energy = secondary_energy_max
         # if charged enough
-        if secondary_energy >= secondary_energy_up:
+        if charge_hysteresis and secondary_energy >= secondary_energy_up:
             charge_hysteresis = False
-        else: charge_hysteresis = True
 
         ###
         ### OUTGOING ENERGY
@@ -217,18 +221,32 @@ def simulate(config, workload, lights):
         currently_online = online[-1] == 1
 
         # if offline, need to pay startup cost
+        # don't go online until we can do useful work
         if not currently_online and not charge_hysteresis:
-            if remaining_secondary_energy() + primary_energy > workload_config['startup_energy_J']:
+            if workload_config['name'] == 'ota_update':
+                energy_to_turn_on = secondary_energy_max
+            else:
+                energy_to_turn_on = workload_config['startup_energy_J'] + event_energy
+            if remaining_secondary_energy() + primary_energy >= energy_to_turn_on:
                 outgoing_startup_energy = workload_config['startup_energy_J']
                 period_sleep -= workload_config['startup_period_s']
                 currently_online = 1
 
         # if it's time to perform an event
-        if is_time_to_transmit(workload_config, second + start_seconds):
+        # if opportunistic, try to send
+        if design_config['intermittent_mode'] == 'opportunistic':
+            if currently_online:
+                actual_period = 0
+                currently_performing = 1
+                event_energy_remaining = event_energy
+                event_period_remaining = event_period
+            else:
+                missed.append(np.array([start_time+second, 1]))
+        elif is_time_to_transmit(workload_config, second + start_seconds):
             # we're already working on an event, or we're not online to do
             # event, count it as a miss and try next time
             if currently_performing or not currently_online:
-                missed.append(np.array([second, 1]))
+                missed.append(np.array([start_time+second, 1]))
             # reset event energy/period state and start new event
             else:
                 actual_period = 0
@@ -249,20 +267,21 @@ def simulate(config, workload, lights):
             period_sleep -= used_p
             # if we finished the event this iteration
             if finished:
-                events_completed += 1
+                #events_completed += 1
                 actual_period += used_p
                 #reset event state variables
                 currently_performing = 0
                 # successfully completed event
-                missed.append(np.array([second, 0]))
+                missed.append(np.array([start_time+second, 0]))
+                #events.append(start_time+second)
                 event_ttc.append(actual_period)
             # if atomic, count not finishing as failure
             elif atomic:
                 currently_performing = 0
-                missed.append(np.array([second, 1]))
-
+                missed.append(np.array([start_time+second, 1]))
         actual_period += 1
 
+        #print(remaining_secondary_energy())
         ###
         ### UPDATE STATE
         ###
@@ -281,7 +300,7 @@ def simulate(config, workload, lights):
                 outgoing_sleep_energy  = remaining_secondary_energy()
                 period_on = 1 - period_sleep
                 period_on += remaining_secondary_energy() / sleep_power
-
+                currently_online = 0
             online.append(period_on)
 
             secondary_energy -= outgoing_energy()
@@ -291,17 +310,21 @@ def simulate(config, workload, lights):
                 charge_hysteresis = True
         else:
             online.append(1)
-            secondary_energy -= outgoing_energy()
 
-            # enter hysteresis if under
-            if secondary_energy <= secondary_energy_min:
-                used_energy += abs(secondary_energy + outgoing_energy() - secondary_energy_min)
-                primary_energy + (secondary_energy - secondary_energy_min)
-                primary_discharge += abs(secondary_energy - secondary_energy_min)
-                secondary_energy = secondary_energy_min
-                charge_hysteresis = True
+            if charge_hysteresis:
+                primary_energy -= outgoing_energy()
+                primary_discharge += outgoing_energy()
             else:
+                secondary_energy -= outgoing_energy()
                 used_energy += outgoing_energy()
+                # enter hysteresis if under
+                if secondary_energy <= secondary_energy_min:
+                    if secondary_energy < 0:
+                        used_energy += secondary_energy
+                        primary_energy + secondary_energy
+                        primary_discharge += abs(secondary_energy)
+                    secondary_energy = secondary_energy_min
+                    charge_hysteresis = True
 
             # check if now offline
             # if primary and secondary are dead, note offline
@@ -317,7 +340,7 @@ def simulate(config, workload, lights):
         primary_soc.append(primary_energy)
 
     # convert to np array
-    missed = np.asarray(missed)
+    missed = np.asarray(missed, dtype='object')
     event_ttc = np.asarray(event_ttc)
     #print('Averages:')
     ##print('  light ' + str(np.mean(lights)) + ' uW/cm^2')
@@ -332,8 +355,10 @@ def simulate(config, workload, lights):
 
     #plt.figure()
     #plt.plot(np.arange(lights.size), [x for x in lights])
+    #print(len(events))
     #plt.figure()
-    #plt.plot(seconds, [x*1E3/2.4/3600 for x in secondary_soc])
+    #plt.plot(seconds, [x for x in secondary_soc])
+    #plt.show()
     #plt.plot(seconds, [x*1E3/2.4/3600 for x in offline[1:]])
     #plt.plot(missed[:,0], missed[:,1])
     #plt.figure()
@@ -349,6 +374,7 @@ def simulate(config, workload, lights):
     #lifetime_years = minute/60/24/365
     online = np.asarray(online)
 
+    #np.save('seq_no-Ligeiro-c098e5d00047_sim', events)
     return lifetime_years, used_energy, possible_energy, missed[:,1], online, np.average(event_ttc)
 
 if __name__ == "__main__":

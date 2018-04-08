@@ -22,6 +22,7 @@ class config:
         self.design_config = {
             'name' : 'design',
             'intermittent' : True,
+            'intermittent_mode' : 'periodic',
             'operating_voltage_V' : 3.3,
             'boost_efficiency' : 0.8,
             'frontend_efficiency' : 0.8,

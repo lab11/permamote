@@ -75,6 +75,7 @@ def sweep(config, workload, sweep):
             time_online = np.sum(online) / online.size
             ttc = event_ttc#np.average(event_ttc)/ workload.config['event_period_s']
             sweep_result.append([i, lifetime, energy_used, events_successful, time_online, ttc])
+            print("%d%% lifetime" % lifetime)
             print("%.2f%% Joules used" % (100*energy_used))
             print("%.2f%% events successful" % (100*events_successful))
             print("%.2f%% of time online" % (100*time_online))
