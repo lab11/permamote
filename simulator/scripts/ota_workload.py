@@ -18,5 +18,5 @@ class workload:
             'event_energy_J': 5.3E-3*3.3*50E3*8/75E3,
             'atomic': False,
             'event_period_s': 50E3*8/75E3,
-            'event_period_min_s': 0.5,
+            'event_period_min_s': 0.028,
         }

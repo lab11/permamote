@@ -22,18 +22,20 @@ class config:
         self.design_config = {
             'name' : 'design',
             'intermittent' : False,
+            'intermittent_mode' : 'periodic',
             'operating_voltage_V' : 3.3,
             'boost_efficiency' : 0.8,
             'frontend_efficiency' : 0.8,
             'secondary' : 'LTO_battery',
-            'secondary_max_percent': 80.5,
-            'secondary_min_percent': 80,
+            'secondary_start_percent': 70,
+            'secondary_max_percent': 71,
+            'secondary_min_percent': 57,
         }
         self.primary_config= {
             'name' : 'primary',
-            'capacity_mAh' : 30,  #CR927
+            #'capacity_mAh' : 30,  #CR927
             #'capacity_mAh' : 240, #CR2032
-            #'capacity_mAh' : 1500, #CR123A
+            'capacity_mAh' : 1500, #CR123A
             'nominal_voltage_V' : 3,
             #'density_WhpL': self.chemistry_energy_density_WhpL['LiMnO2'],
             #'volume_L':   self.battery_type_to_volume_L['CR123A'],
@@ -51,7 +53,7 @@ class config:
             'name' : 'secondary',
             'type' : 'battery',
             'esr_ohm' : 0.1,
-            'capacity_mAh' : 20,
+            'capacity_mAh' : 1.8,
             'nominal_voltage_V' : 2.4,
             'leakage_constant': 1E5,
         }

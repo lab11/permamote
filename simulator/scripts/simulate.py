@@ -224,7 +224,7 @@ def simulate(config, workload, lights):
         # don't go online until we can do useful work
         if not currently_online and not charge_hysteresis:
             if workload_config['name'] == 'ota_update':
-                energy_to_turn_on = secondary_energy_max
+                energy_to_turn_on = workload_config['startup_energy_J'] + event_energy/event_period * event_period_min
             else:
                 energy_to_turn_on = workload_config['startup_energy_J'] + event_energy
             if remaining_secondary_energy() + primary_energy >= energy_to_turn_on:
@@ -375,7 +375,7 @@ def simulate(config, workload, lights):
     online = np.asarray(online)
 
     #np.save('seq_no-Ligeiro-c098e5d00047_sim', events)
-    return lifetime_years, used_energy, possible_energy, missed[:,1], online, np.average(event_ttc)
+    return lifetime_years, used_energy, possible_energy, missed[:,1], online, event_ttc
 
 if __name__ == "__main__":
     import argparse
@@ -400,7 +400,7 @@ if __name__ == "__main__":
     print("%.2f/%.2f Joules used" % (used, possible))
     print("%.2f%% events successful" % (100 * (missed.size - np.sum(missed))/missed.size))
     print("%.2f%% of time online" % (100 * np.sum(online) / online.size))
-    print("%.2f%% x expected event time to completion" % (event_ttc / workload.config['event_period_s']))
-    #print("%.2f%% x expected event time to completion" % (np.average(event_ttc) / workload.config['event_period_s']))
+    #print("%.2f%% x expected event time to completion" % (event_ttc / workload.config['event_period_s']))
+    print("%.2f%% x expected event time to completion" % (np.average(event_ttc) / workload.config['event_period_s']))
 
 
