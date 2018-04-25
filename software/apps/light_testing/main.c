@@ -42,7 +42,7 @@
 #define PHYSWEB_URL     "j2x.us/perm"
 #define ADV_SWITCH_MS 500
 
-#define SENSOR_RATE APP_TIMER_TICKS(1000)
+#define SENSOR_RATE APP_TIMER_TICKS(5000)
 APP_TIMER_DEF(sensor_read_timer);
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
@@ -87,7 +87,7 @@ void saadc_handler(nrf_drv_saadc_evt_t * p_event) {
 }
 
 static void lux_sensor_read_callback(float lux, uint8_t mant, uint8_t exp) {
-  //printf("lux: %f\n", lux);
+  printf("lux:\n%f\n", lux);
   m_sensor_info.light = lux;
   m_sensor_info.light_mant = mant;
   m_sensor_info.light_exp = exp;
@@ -107,7 +107,8 @@ static void color_sensor_int_handler(void) {
 
 static void color_sensor_read_callback(uint16_t red, uint16_t green, uint16_t blue) {
   nrf_gpio_pin_set(ISL29125_EN);
-  //printf("red: %u, green: %u, blue %u\n", red, green, blue);
+  printf("adc counts red, green, blue:\n");
+  printf("%u, %u, %u\n\n", red, green, blue);
   m_sensor_info.color_red = red;
   m_sensor_info.color_green = green;
   m_sensor_info.color_blue = blue;
@@ -121,14 +122,14 @@ static void read_timer_callback (void* p_context) {
 
   max44009_schedule_read_lux();
 
-  nrf_saadc_value_t adc_samples[3];
-  nrf_drv_saadc_sample_convert(0, adc_samples);
-  nrf_drv_saadc_sample_convert(1, adc_samples+1);
-  nrf_drv_saadc_sample_convert(2, adc_samples+2);
+  //nrf_saadc_value_t adc_samples[3];
+  //nrf_drv_saadc_sample_convert(0, adc_samples);
+  //nrf_drv_saadc_sample_convert(1, adc_samples+1);
+  //nrf_drv_saadc_sample_convert(2, adc_samples+2);
 
-  m_sensor_info.vbat = adc_samples[0];
-  m_sensor_info.vsol = adc_samples[1];
-  m_sensor_info.vsec = adc_samples[2];
+  //m_sensor_info.vbat = adc_samples[0];
+  //m_sensor_info.vsol = adc_samples[1];
+  //m_sensor_info.vsec = adc_samples[2];
 
   //m_sensor_info.vbat = 0.6 * 6 * (float)adc_samples[0] / ((1 << 10)-1);
   //m_sensor_info.vsol = 0.6 * 6 * (float)adc_samples[1] / ((1 << 10)-1);
@@ -188,39 +189,39 @@ void twi_init(void) {
  *   Configure Advertisements
  ******************************************************************************/
 
-static void adv_config_eddystone () {
-    eddystone_adv(PHYSWEB_URL, NULL);
-}
-
-static void adv_config_data () {
-    ble_advdata_manuf_data_t manuf_specific_data;
-
-    // update sequence number only if data actually changed
-    if (data_updated) {
-        m_sensor_info.sequence_num++;
-        data_updated = false;
-    }
-
-    // Register this manufacturer data specific data as the BLEES service
-    m_beacon_info[0] = APP_BEACON_INFO_SERVICE_PERM;
-    //memcpy(&m_beacon_info[1],  &m_sensor_info.light, 4);
-    memcpy(&m_beacon_info[1],  &m_sensor_info.light_exp, 1);
-    memcpy(&m_beacon_info[2],  &m_sensor_info.light_mant, 1);
-    memcpy(&m_beacon_info[3],  &m_sensor_info.color_red, 2);
-    memcpy(&m_beacon_info[5],  &m_sensor_info.color_green, 2);
-    memcpy(&m_beacon_info[7],  &m_sensor_info.color_blue, 2);
-    memcpy(&m_beacon_info[9],  &m_sensor_info.vbat, 2);
-    memcpy(&m_beacon_info[11],  &m_sensor_info.vsol, 2);
-    memcpy(&m_beacon_info[13],  &m_sensor_info.vsec, 2);
-    memcpy(&m_beacon_info[15],  &m_sensor_info.sequence_num, 4);
-
-    memset(&manuf_specific_data, 0, sizeof(manuf_specific_data));
-    manuf_specific_data.company_identifier = UMICH_COMPANY_IDENTIFIER;
-    manuf_specific_data.data.p_data = (uint8_t*) m_beacon_info;
-    manuf_specific_data.data.size   = APP_BEACON_INFO_LENGTH;
-
-    simple_adv_manuf_data(&manuf_specific_data);
-}
+//static void adv_config_eddystone () {
+//    eddystone_adv(PHYSWEB_URL, NULL);
+//}
+//
+//static void adv_config_data () {
+//    ble_advdata_manuf_data_t manuf_specific_data;
+//
+//    // update sequence number only if data actually changed
+//    if (data_updated) {
+//        m_sensor_info.sequence_num++;
+//        data_updated = false;
+//    }
+//
+//    // Register this manufacturer data specific data as the BLEES service
+//    m_beacon_info[0] = APP_BEACON_INFO_SERVICE_PERM;
+//    //memcpy(&m_beacon_info[1],  &m_sensor_info.light, 4);
+//    memcpy(&m_beacon_info[1],  &m_sensor_info.light_exp, 1);
+//    memcpy(&m_beacon_info[2],  &m_sensor_info.light_mant, 1);
+//    memcpy(&m_beacon_info[3],  &m_sensor_info.color_red, 2);
+//    memcpy(&m_beacon_info[5],  &m_sensor_info.color_green, 2);
+//    memcpy(&m_beacon_info[7],  &m_sensor_info.color_blue, 2);
+//    memcpy(&m_beacon_info[9],  &m_sensor_info.vbat, 2);
+//    memcpy(&m_beacon_info[11],  &m_sensor_info.vsol, 2);
+//    memcpy(&m_beacon_info[13],  &m_sensor_info.vsec, 2);
+//    memcpy(&m_beacon_info[15],  &m_sensor_info.sequence_num, 4);
+//
+//    memset(&manuf_specific_data, 0, sizeof(manuf_specific_data));
+//    manuf_specific_data.company_identifier = UMICH_COMPANY_IDENTIFIER;
+//    manuf_specific_data.data.p_data = (uint8_t*) m_beacon_info;
+//    manuf_specific_data.data.size   = APP_BEACON_INFO_LENGTH;
+//
+//    simple_adv_manuf_data(&manuf_specific_data);
+//}
 
 /*******************************************************************************
  *   MAIN LOOP
@@ -228,17 +229,17 @@ static void adv_config_data () {
 
 int main(void) {
   // init uart
-  //uart_init();
+  uart_init();
 
   // init softdevice
-  //nrf_sdh_enable_request();
-  //sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
-  simple_ble_init(&ble_config);
+  nrf_sdh_enable_request();
+  sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
+  //simple_ble_init(&ble_config);
 
-  multi_adv_init(ADV_SWITCH_MS);
+  //multi_adv_init(ADV_SWITCH_MS);
   // Now register our advertisement configure functions
-  multi_adv_register_config(adv_config_eddystone);
-  multi_adv_register_config(adv_config_data);
+  //multi_adv_register_config(adv_config_eddystone);
+  //multi_adv_register_config(adv_config_data);
 
   // init led
   led_init(LED2);
@@ -274,8 +275,9 @@ int main(void) {
   max44009_config(lux_config);
 
   const isl29125_config_t color_config = {
+    .range = 1,
     .mode = isl29125_mode_green_red_blue,
-    .resolution = 1,
+    .resolution = 0,
   };
   const isl29125_int_config_t color_int_config = {
     .int_conversion_done = 1,
@@ -283,25 +285,25 @@ int main(void) {
   isl29125_init(&twi_mngr_instance, color_config, color_int_config, color_sensor_read_callback, color_sensor_int_handler);
 
   // set up voltage ADC
-  nrf_saadc_channel_config_t primary_channel_config =
-    NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN5);
-  primary_channel_config.burst = NRF_SAADC_BURST_ENABLED;
+  //nrf_saadc_channel_config_t primary_channel_config =
+  //  NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN5);
+  //primary_channel_config.burst = NRF_SAADC_BURST_ENABLED;
 
-  nrf_saadc_channel_config_t solar_channel_config =
-    NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN6);
+  //nrf_saadc_channel_config_t solar_channel_config =
+  //  NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN6);
 
-  nrf_saadc_channel_config_t secondary_channel_config =
-    NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN7);
+  //nrf_saadc_channel_config_t secondary_channel_config =
+  //  NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN7);
 
-  nrf_drv_saadc_init(NULL, saadc_handler);
+  //nrf_drv_saadc_init(NULL, saadc_handler);
 
-  nrf_drv_saadc_channel_init(0, &primary_channel_config);
-  nrf_drv_saadc_channel_init(1, &solar_channel_config);
-  nrf_drv_saadc_channel_init(2, &secondary_channel_config);
-  nrf_drv_saadc_calibrate_offset();
-  nrf_delay_ms(500);
+  //nrf_drv_saadc_channel_init(0, &primary_channel_config);
+  //nrf_drv_saadc_channel_init(1, &solar_channel_config);
+  //nrf_drv_saadc_channel_init(2, &secondary_channel_config);
+  //nrf_drv_saadc_calibrate_offset();
+  //nrf_delay_ms(500);
 
-  multi_adv_start();
+  //multi_adv_start();
 
   while (1) {
     power_manage();

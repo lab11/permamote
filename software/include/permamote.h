@@ -2,7 +2,7 @@
 #define PERMAMOTE_H
 
 #ifndef DEVICE_NAME
-#define DEVICE_NAME "PERMAMOTE"
+#define DEVICE_NAME "Permamote"
 #endif /*DEVICE_NAME*/
 
 #include <stdint.h>
@@ -13,7 +13,7 @@
 //#define ADDRESS_FLASH_LOCATION 0x0003fff8
 
 // DEFINES FOR NRF52840
-#ifdef NRF52840
+#if defined(NRF52840) || defined(NRF52)
 
 // UART
 #define UART_RX 26

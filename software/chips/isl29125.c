@@ -65,9 +65,9 @@ uint8_t isl29125_read_status() {
 void isl29125_configure(isl29125_config_t config) {
   static uint8_t data[2];
   uint8_t config_byte = 0;
-  config_byte = config.sync_int << 4 |
-                config.resolution << 3 |
-                config.range << 2 |
+  config_byte = config.sync_int << 5 |
+                config.resolution << 4 |
+                config.range << 3 |
                 config.mode;
   data[0] = ISL29125_CFG1;
   data[1] = config_byte;
