@@ -5,7 +5,8 @@
 static const nrf_twi_mngr_t* twi_mngr_instance;
 static uint8_t lux_read_buf[2] = {0};
 static uint8_t config_buf[2] = {MAX44009_CONFIG, 0};
-static const uint8_t max44009_lux_addr = MAX44009_LUX_HIGH;
+static const uint8_t max44009_lux_high_addr = MAX44009_LUX_HIGH;
+static const uint8_t max44009_lux_low_addr = MAX44009_LUX_LOW;
 
 static max44009_read_lux_callback* lux_read_callback;
 
@@ -13,15 +14,17 @@ static void max44009_lux_callback(ret_code_t result, void* p_context) {
   uint8_t exp, mantissa;
   float lux;
   exp = (lux_read_buf[0] & 0xF0) >> 4;
-  mantissa = lux_read_buf[0] & 0xF0;
+  mantissa = (lux_read_buf[0] & 0x0F) << 4;
   mantissa |= lux_read_buf[1] & 0xF;
   lux = (float)(1 << exp) * (float)mantissa * 0.045;
   lux_read_callback(lux, mantissa, exp);
 }
 
 static nrf_twi_mngr_transfer_t const lux_read_transfer[] = {
-  NRF_TWI_MNGR_WRITE(MAX44009_ADDR, &max44009_lux_addr, 1, NRF_TWI_MNGR_NO_STOP),
-  NRF_TWI_MNGR_READ(MAX44009_ADDR, lux_read_buf, 2, 0)
+  NRF_TWI_MNGR_WRITE(MAX44009_ADDR, &max44009_lux_high_addr, 1, NRF_TWI_MNGR_NO_STOP),
+  NRF_TWI_MNGR_READ(MAX44009_ADDR, lux_read_buf, 1, 0),
+  NRF_TWI_MNGR_WRITE(MAX44009_ADDR, &max44009_lux_low_addr, 1, NRF_TWI_MNGR_NO_STOP),
+  NRF_TWI_MNGR_READ(MAX44009_ADDR, lux_read_buf+1, 1, 0)
 };
 
 static nrf_twi_mngr_transfer_t const config_transfer[] = {
