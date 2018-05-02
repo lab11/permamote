@@ -1,0 +1,16 @@
+Estimated print time: 4h 53m
+Material usage: 8.49m (21g)
+Printer: Zortrax M300
+Profile: Last settings
+Material: Z-HIPS
+Layer: 0.09 mm
+Quality: High
+Infill: Solid
+Fan speed: Auto
+Seam: Random
+Outer contours: 0
+Holes: 0
+Surface layers Top: 8
+Surface layers Bottom: 4
+Support Lite: No
+Smart bridges: No
