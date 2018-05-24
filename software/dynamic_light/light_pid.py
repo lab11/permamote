@@ -23,7 +23,7 @@ light_data = {}
 lan = LifxLAN()
 light = lan.get_device_by_name("Neal's light")
 while light is None or light.get_service() != 1:
-    light = lan.get_device_by_name("Neal's Light")
+    light = lan.get_device_by_name("Neal's light")
 light.set_power(1)
 brightness = light.get_color()[2]
 #light.set_brightness(brightness, 100)
@@ -59,10 +59,10 @@ def set_brightness(lux):
     brightness += light_pid.output
     if brightness > 65535:
         brightness = 65535
-        light_pid.clear()
+        #light_pid.clear()
     elif brightness < 0:
         brightness = 0
-        light_pid.clear()
+        #light_pid.clear()
     try:
         light.set_brightness(brightness, duration)
         print('light brightness set to ' + str(brightness/65535*100) + ' percent at ' + str(datetime.datetime.now()))
@@ -86,7 +86,6 @@ def on_message(client, userdata, msg):
         return
     last_seq = seq_no
     lux = float(data['light_lux'])
-    global brightness
     print('Current reading is %.02f lux, seq %d' % (lux, seq_no))
     set_brightness(lux)
 
