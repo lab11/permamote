@@ -1,10 +1,11 @@
+import lifxlan
 from lifxlan import LifxLAN
 import paho.mqtt.client as mqtt
 from PID import PID
 from enum import Enum
 import numpy as np
 import time
-import dill as pickle
+import pickle
 import json
 from lightsensor import LightSensor
 import os.path
@@ -44,22 +45,46 @@ class LightControl:
     def discover(self, light_list, sensor_list, shade_list):
         # discover lights, shades, sensors
         if light_list is None:
-            self.lights = self.lan.get_lights()
+            while(1):
+                try:
+                    self.lights = self.lan.get_lights()
+                    break;
+                except lifxlan.errors.WorkflowException:
+                    print('failed to set up light color for discovery')
         else:
             for label in light_list:
-                self.lights.append(self.lan.get_device_by_name(label))
-                if self.lights[-1] is None:
-                    print('failed to get light ' + label)
+                while(1):
+                    try:
+                        light = self.lan.get_device_by_name(label)
+                    except lifxlan.errors.WorkflowException as e:
+                        print('failed to get ' + label)
+                        print(e)
+                        time.sleep(1)
+                        continue
+                    if light is None:
+                        print('failed to get ' + label)
+                        print('\tlight is None')
+                        time.sleep(1)
+                    else:
+                        self.lights.append(light)
+                        print('successfully got light ' + label)
+                        break
         for light in self.lights:
             pid = PID(300, 0, 50)
-            pid.SetPoint = 100
+            pid.SetPoint = 150
             self.pid_controllers[light.label] = pid
 
             # turn all lights off
-            init_color = [0, 0, 65535, 4000]
-            light.set_color(init_color)
-            light.set_power(0)
-
+            while(1):
+                try:
+                    init_color = list(light.get_color())
+                    init_color[-1] = 4000
+                    #init_color = [0, 0, 0, 4000]
+                    light.set_color(init_color)
+                    light.set_power(0)
+                    break;
+                except lifxlan.errors.WorkflowException:
+                    print('failed to set up light color for discovery')
         # shade discover is kind of dumb right now
         self.shades = shade_list
         # start sensor discovery
@@ -67,23 +92,20 @@ class LightControl:
         # sleep for some time to allow discovery
         # BLE sucks sometimes, eh?
         time.sleep(10)
+        print('Discovered the following sensors:')
+        for sensor in self.sensors:
+            print('\t' + sensor)
 
     def characterize(self):
-        if os.path.isfile('sensor_light_characterization.pkl'):
-            with open('sensor_light_characterization.pkl', 'rb') as output:
-                self.sensor = pickle.load(output)
+
+        if os.path.isfile('sensor_light_mappings.pkl') and os.path.getsize('sensor_light_mappings.pkl') > 0:
+            with open('sensor_light_mappings.pkl', 'rb') as f:
+                self.sensors_to_lights = pickle.load(f)
         else:
             self.state = self.State.CHARACTERIZE
             print("starting characterizing measurements!")
             for light in self.lights:
-                while(1):
-                    try:
-                        label = light.get_label()
-                        break
-                    except:
-                        print('Failed to get light label for:')
-                        print(light)
-                        continue
+                label = light.label
                 if label is None:
                     print('this light is wack!')
                     print(light)
@@ -94,7 +116,7 @@ class LightControl:
                     try:
                         light.set_power(1)
                         break
-                    except:
+                    except lifxlan.errors.WorkflowException:
                         print('Failed to turn on light ' + label)
                 # sweep through brightness
                 for brightness in range(0, 101, 10):
@@ -109,7 +131,7 @@ class LightControl:
                         try:
                             light.set_brightness(brightness/100*65535)
                             break
-                        except:
+                        except lifxlan.errors.WorkflowException:
                             print('Failed to set brightness ' + label)
                     while(1):
                         print(sorted(self.seen_sensors))
@@ -120,7 +142,7 @@ class LightControl:
                         time.sleep(5)
                 try:
                     light.set_power(0)
-                except:
+                except lifxlan.errors.WorkflowException:
                     print('Failed to turn off light' + label)
             for device in self.sensors:
                 baseline_lux = self.sensors[device].baseline
@@ -130,26 +152,31 @@ class LightControl:
                     ind = measurements[:, 1] < 0
                     measurements[:, 1][ind] = 0
                     self.sensors[device].light_char_measurements[light] = measurements
+                # save because why not?
+                with open(device + '_characterization.pkl', 'wb') as output:
+                    pickle.dump(self.sensors[device].light_char_measurements, output, pickle.HIGHEST_PROTOCOL)
 
-        # generate primary light associations
-        # eventually we can do smarter things than 1-to-1 mappings
-        for device in self.sensors:
-            print(self.sensors[device])
-            max_affect_light = ('none', 0)
-            for light in self.sensors[device].light_char_measurements:
-                 max_effect = self.sensors[device].light_char_measurements[light][-1][1]
-                 if max_effect > max_affect_light[1]:
-                     max_affect_light = (light, max_effect)
-            self.sensors_to_lights[device] = max_affect_light[0]
-        print(self.sensors_to_lights)
 
-        # save because why not?
-        with open('sensor_light_characterization.pkl', 'wb') as output:
-            pickle.dump(self.sensors, output, pickle.HIGHEST_PROTOCOL)
+
+            # generate primary light associations
+            # eventually we can do smarter things than 1-to-1 mappings
+            for device in self.sensors:
+                print(self.sensors[device])
+                max_affect_light = ('none', 50)
+                for light in self.sensors[device].light_char_measurements:
+                    max_effect = self.sensors[device].light_char_measurements[light][-1][1]
+                    if max_effect > max_affect_light[1]:
+                        max_affect_light = (light, max_effect)
+                self.sensors_to_lights[device] = max_affect_light[0]
+            print(self.sensors_to_lights)
+            with open('sensor_light_mappings.pkl', 'wb') as output:
+                pickle.dump(self.sensors_to_lights, output, pickle.HIGHEST_PROTOCOL)
+
+        self.state = self.state.CONTROL
 
         self.current_light = None
         self.current_brightness = None
-
+        time.sleep(2)
 
     # mqtt source for sensor data
     def on_connect(self, client, userdata, flags, rc):
@@ -196,19 +223,28 @@ class LightControl:
 
     def update_lights(self):
         for sensor in self.sensors_to_lights:
-            light_label = self.sensors_to_lights[sensor]
+            label = self.sensors_to_lights[sensor]
+            if label == 'none':
+                #print('oh shoot this sensor does not have a light association')
+                continue
+            print('updating ' + sensor)
             light_to_update = None
             for light in self.lights:
-                print(light.label)
-                if light.label == light_label:
+                if light.label == label:
                     light_to_update = light
-
+            if light_to_update.power_level == 0:
+                try:
+                    light_to_update.set_power(1)
+                except lifxlan.errors.WorkflowException:
+                    print('Failed to turn on light ' + label)
             pid = self.pid_controllers[light_to_update.label]
             try:
                 brightness = light.get_color()[2]
-            except:
-                pass
-            pid.update(sensor.lux)
+            except lifxlan.errors.WorkflowException:
+                print('Failed to get brightness')
+                continue
+            pid.update(self.sensors[sensor].lux)
+            print(self.sensors[sensor].lux)
             print(pid.output)
             brightness += pid.output
             if brightness > 65535:
@@ -216,9 +252,9 @@ class LightControl:
             elif brightness < 0:
                 brightness = 0
             try:
-                light_to_update.set_brightness(brightness, 5)
-                print('light brightness set to ' + str(brightness/65535*100) + ' percent at ' + str(datetime.datetime.now()))
-            except:
+                light_to_update.set_brightness(brightness, 5000)
+                print(label + ' brightness set to ' + str(brightness/65535*100) + ' percent at ' + str(datetime.datetime.now()))
+            except lifxlan.errors.WorkflowException:
                 print('failed to set light brightness')
 
 
@@ -227,17 +263,26 @@ class LightControl:
 
 
 shade_list = [
-                "F4:21:20:D9:FA:CD",
-                "DF:93:08:12:38:CF",
-                "FD:97:B5:16:08:4F",
-                "FD:97:B5:16:08:4F",
-                "F0:8A:FB:BC:E9:82",
-             ]
+        "F4:21:20:D9:FA:CD",
+        "DF:93:08:12:38:CF",
+        "FD:97:B5:16:08:4F",
+        "FD:97:B5:16:08:4F",
+        "F0:8A:FB:BC:E9:82",
+        ]
 selected_labels = sorted([s + "'s light" for s in ['Neal', 'Pat', 'Josh', 'Will']])
+#selected_labels = ["Neal's light"]
+
+#lan = LifxLAN()
+#lights = lan.get_lights()
+#for light in lights:
+#    print(light)
+#exit()
 
 lightcontrol = LightControl("128.32.171.51")
 lightcontrol.discover(selected_labels, None, shade_list)
 #print(lightcontrol.lights)
 #print(sorted(lightcontrol.sensors.keys()))
 lightcontrol.characterize()
-update_lights()
+while(1):
+    lightcontrol.update_lights()
+    time.sleep(10)
