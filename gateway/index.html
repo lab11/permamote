@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/lab11/permamote/master/media/permamote.jpg" />
+        <title>Permamote</title>
+        <style>
+          body {margin:0; padding:0; font-family:monospace; text-align:center; overflow-x:hidden; color:rgba(128, 64, 0, 0.9); background:#eee;}
+          h2 {background:rgb(221,136,34); position:sticky; top:0; margin:0; padding:.5em;}
+          table {width:96vw; padding:.25em; margin: .5em auto; background:rgba(221,136,34,.4); font-weight:100; border-radius:.25em;}
+          td {text-align:left; background:rgba(221,136,34,.4); padding:.25em; white-space: nowrap; border-radius:.25em 0 0 .25em;}
+          td:last-child {text-align:right; width:100%; border-radius:0 .25em .25em 0;}
+          td span {border-radius:.25em; border:1px solid rgba(128, 64, 0, 0.9);}
+          #template {display:none;}
+          .update {font-weight:normal}
+        </style>
+    </head>
+    <body>
+        <h2>Permamote</h2>
+
+        <table id="template">
+            <tr>
+                <th colspan=2>
+                    <span class="devtitle">Device ID</span><br/>
+                    <span class="update">Waiting for data...</span>
+                </th>
+            </tr>
+            <tr>
+              <td>Light Color</td>
+              <td class="charValueCell colVal">-</td>
+            </tr>
+            <tr>
+              <td>Light Lux</td>
+              <td class="charValueCell luxVal">-</td>
+            </tr>
+            <tr>
+                <td>V[solar]</td>
+                <td class="charValueCell solVal">-</td>
+            </tr>
+            <tr>
+                <td>V[primary]</td>
+                <td class="charValueCell batVal">-</td>
+            </tr>
+            <tr>
+                <td>V[secondary]</td>
+                <td class="charValueCell secVal">-</td>
+            </tr>
+        </table>
+        
+        <script type="text/javascript">
+          /* JavaScript for ESS Summon UI */
+
+          var last_update = 0;
+
+          var app = {
+            // Application Constructor
+            initialize: function() {
+              app.log("Permamote init");
+              document.addEventListener("deviceready", app.onAppReady, false);
+              document.addEventListener("resume", app.onAppReady, false);
+              document.addEventListener("pause", app.onPause, false);
+              window.addEventListener('beforeunload', app.onPause, false);
+              if (!window.summon && navigator.bluetooth) {
+                document.querySelector("h2").innerHTML += '<br/><a href=\'#\' onclick=\'app.onChoose()\' style="font-size:.5em; color:inherit;">SELECT DEVICES</a>';
+                app.ids = {};
+              }
+            },
+            // App Ready Event Handler
+            onAppReady: function() {
+              app.log("onAppReady");
+              // Setup update for last data time
+              setInterval(app.restart, 5000);
+              app.log("Checking if ble is enabled...");
+              bluetooth.isEnabled(app.onEnable);                                                // if BLE enabled, goto: onEnable
+            },
+            onChoose: () => {
+              navigator.bluetooth.requestDevice({ acceptAllDevices:true }).then(device => {
+                if (device.name === "Permamote") {
+                  var deviceId = app.ids[device.id] = "x" + Object.keys(app.ids).length;
+                  app.log("Found " + device.name + " (" + app.ids[device.id] + ")!");
+                  if (!document.querySelector("#" + deviceId)) {
+                    var node = document.querySelector("#template").cloneNode(true);
+                    node.setAttribute("id",deviceId);
+                    document.body.appendChild(node);
+                    document.querySelector("#"+deviceId+" .devtitle").innerHTML = device.id;
+                  }
+                  // app.onParseAdvData(deviceId,device.advertisement.manufacturerData);
+                } else {
+                  alert("Not Permamote!");
+                }
+              });
+            }, 
+            // App Paused Event Handler
+            onPause: function() {
+              app.log("onPause");                                                           // if user leaves app, stop BLE
+              bluetooth.stopScan();
+            },
+            // Bluetooth Enabled Callback
+            onEnable: function() {
+              app.log("onEnable - Searching");
+              bluetooth.startScan([], app.onDiscover, app.onAppReady);                          // start BLE scan; if device discovered, goto: onDiscover
+            },
+            // BLE Device Discovered Callback
+            onDiscover: function(device) {
+              if (device.name === "Permamote") {
+                var deviceId = "x" + device.id.replace(/[:-]/g,'');
+                app.log("Found " + device.name + " (" + deviceId + ")!");
+                if (!document.querySelector("#" + deviceId)) {
+                  var node = document.querySelector("#template").cloneNode(true);
+                  node.setAttribute("id",deviceId);
+                  document.body.appendChild(node);
+                  document.querySelector("#"+deviceId+" .devtitle").innerHTML = device.id;
+                }
+                app.onParseAdvData(deviceId,device.advertisement.manufacturerData);
+              }
+            },
+          onParseAdvData: function(deviceId, mandata){
+              // Check this is something we can parse
+              if (mandata && mandata.length >= 19) {
+
+                // Save when we got this.
+                last_update = Date.now();
+                
+                var light_exp =   mandata[3];
+                var light_mant =  mandata[4];
+                var light = (1 << light_exp) * light_mant * 0.045;
+                // ISL29125 sensor: 12-bit adc value? -
+                var color_red =   (0 + (mandata[6]).toString(16)).substr(-2) //mandata[6]*256  + mandata[5]; 
+                var color_green = (0 + (mandata[8]).toString(16)).substr(-2) //mandata[8]*256  + mandata[7];
+                var color_blue =  (0 + (mandata[10]).toString(16)).substr(-2) //mandata[10]*256 + mandata[9];
+                var color = "#" + color_red + color_green + color_blue;
+                var vbat = 0.6*6*(mandata[12]*256 + mandata[11]) / ((1 << 10) - 1);
+                var vsol = 0.6*6*(mandata[14]*256 + mandata[13]) / ((1 << 10) - 1);
+                var vsec = 0.6*6*(mandata[16]*256 + mandata[15]) / ((1 << 10) - 1);
+
+                // light_lux: light
+                document.querySelector("#"+deviceId+" .luxVal").innerHTML = light.toFixed(2) + " lx";
+                // light_red: color_red, light_green: color_green, light_blue: color_blue - Interpretation of color value is likely wrong
+                document.querySelector("#"+deviceId+" .colVal").innerHTML = "(uncalibrated) " + color + " <span style='background:"+color+"'>&nbsp;&nbsp;</span>";
+                // primary_voltage: vbat
+                document.querySelector("#"+deviceId+" .batVal").innerHTML = vbat.toFixed(2) + " V";
+                // solar_voltage: vsol,
+                document.querySelector("#"+deviceId+" .solVal").innerHTML = vsol.toFixed(2) + " V";
+                // secondary_voltage: vsec
+                document.querySelector("#"+deviceId+" .secVal").innerHTML = vsec.toFixed(2) + " V";
+
+                document.querySelector("#"+deviceId+" .update").innerHTML = "@ " + new Date(last_update).toLocaleTimeString();
+                
+                app.log("Updated table for " + deviceId);
+
+                app.restart();
+
+                } else {
+                    // Not a Permamote packet...
+                    app.log('Advertisement was not a Permamote data packet.');
+                }
+
+            },
+            restart: function () {
+              bluetooth.stopScan();
+              bluetooth.startScan([], app.onDiscover, app.onAppReady);
+            },
+            // Function to log text
+            log: function(string) {
+                console.log(string);
+            }
+          };
+
+          app.initialize();
+
+        </script>
+    </body>
+</html>
