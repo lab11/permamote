@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.0.0">
+<eagle version="9.0.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -336,21 +336,6 @@ To use, set global attributes TITLE, AUTHOR and REV in your schematic.</descript
 <circle x="-1.7" y="1.7" radius="0.1" width="0.2" layer="21"/>
 <text x="-1.7" y="2.1" size="1.016" layer="25" font="vector" ratio="12">&gt;NAME</text>
 </package>
-<package name="ODFN-6-1.5MMX1.6MM">
-<smd name="1" x="-0.6" y="0.5" dx="0.8" dy="0.25" layer="1"/>
-<smd name="2" x="-0.675" y="0" dx="0.65" dy="0.25" layer="1"/>
-<smd name="3" x="-0.675" y="-0.5" dx="0.65" dy="0.25" layer="1"/>
-<smd name="4" x="0.675" y="-0.5" dx="0.65" dy="0.25" layer="1"/>
-<smd name="5" x="0.675" y="0" dx="0.65" dy="0.25" layer="1"/>
-<smd name="6" x="0.675" y="0.5" dx="0.65" dy="0.25" layer="1"/>
-<wire x1="-0.75" y1="0.8" x2="0.75" y2="0.8" width="0.127" layer="21"/>
-<wire x1="0.75" y1="0.8" x2="0.75" y2="-0.8" width="0.127" layer="21"/>
-<wire x1="0.75" y1="-0.8" x2="-0.75" y2="-0.8" width="0.127" layer="21"/>
-<wire x1="-0.75" y1="-0.8" x2="-0.75" y2="0.8" width="0.127" layer="21"/>
-<text x="0" y="-1.016" size="1.016" layer="25" font="vector" ratio="12" align="top-center">&gt;NAME</text>
-<wire x1="-1.143" y1="1.143" x2="-1.143" y2="0.762" width="0.127" layer="21"/>
-<wire x1="-1.143" y1="1.143" x2="-0.762" y2="1.143" width="0.127" layer="21"/>
-</package>
 <package name="UDFN-6-EXPOSED">
 <smd name="2" x="-0.925" y="0" dx="0.48" dy="0.36" layer="1"/>
 <smd name="1" x="-0.925" y="0.65" dx="0.48" dy="0.36" layer="1"/>
@@ -489,6 +474,19 @@ To use, set global attributes TITLE, AUTHOR and REV in your schematic.</descript
 <rectangle x1="-1" y1="-0.4" x2="-0.6" y2="0.4" layer="31"/>
 <text x="0" y="2.54" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
 </package>
+<package name="FN-6">
+<smd name="1" x="-0.75" y="0.65" dx="1" dy="0.4" layer="1"/>
+<smd name="2" x="-0.75" y="0" dx="1" dy="0.4" layer="1"/>
+<smd name="3" x="-0.75" y="-0.65" dx="1" dy="0.4" layer="1"/>
+<smd name="4" x="0.75" y="-0.65" dx="1" dy="0.4" layer="1"/>
+<smd name="5" x="0.75" y="0" dx="1" dy="0.4" layer="1"/>
+<smd name="6" x="0.75" y="0.65" dx="1" dy="0.4" layer="1"/>
+<wire x1="-1" y1="1.2" x2="1" y2="1.2" width="0.127" layer="23"/>
+<wire x1="1" y1="1.2" x2="1" y2="-1.2" width="0.127" layer="23"/>
+<wire x1="1" y1="-1.2" x2="-1" y2="-1.2" width="0.127" layer="23"/>
+<wire x1="-1" y1="-1.2" x2="-1" y2="1.2" width="0.127" layer="23"/>
+<text x="-1" y="1.4" size="1.016" layer="23" font="vector" ratio="12">&gt;NAME</text>
+</package>
 </packages>
 <symbols>
 <symbol name="NRF52840">
@@ -608,19 +606,6 @@ To use, set global attributes TITLE, AUTHOR and REV in your schematic.</descript
 <text x="0" y="33.782" size="1.778" layer="95">&gt;NAME</text>
 <text x="0" y="-2.54" size="1.778" layer="95">&gt;VALUE</text>
 </symbol>
-<symbol name="ISL29125">
-<wire x1="0" y1="0" x2="0" y2="12.7" width="0.254" layer="94"/>
-<wire x1="0" y1="12.7" x2="15.24" y2="12.7" width="0.254" layer="94"/>
-<wire x1="15.24" y1="12.7" x2="15.24" y2="0" width="0.254" layer="94"/>
-<wire x1="15.24" y1="0" x2="0" y2="0" width="0.254" layer="94"/>
-<pin name="VDD" x="-2.54" y="10.16" length="short"/>
-<pin name="GND" x="-2.54" y="2.54" length="short"/>
-<pin name="SCL" x="17.78" y="10.16" length="short" rot="R180"/>
-<pin name="!INT" x="17.78" y="2.54" length="short" rot="R180"/>
-<pin name="SDA" x="17.78" y="7.62" length="short" rot="R180"/>
-<text x="0" y="13.208" size="1.778" layer="95">&gt;NAME</text>
-<text x="0" y="-2.54" size="1.778" layer="95">&gt;VALUE</text>
-</symbol>
 <symbol name="MAX44009">
 <wire x1="0" y1="0" x2="0" y2="10.16" width="0.254" layer="94"/>
 <wire x1="0" y1="10.16" x2="15.24" y2="10.16" width="0.254" layer="94"/>
@@ -728,6 +713,20 @@ To use, set global attributes TITLE, AUTHOR and REV in your schematic.</descript
 <pin name="!VBAT_PRI_ON" x="27.94" y="5.08" visible="pin" length="middle" rot="R180"/>
 <pin name="!VBAT_SEC_ON" x="27.94" y="15.24" visible="pin" length="middle" rot="R180"/>
 <pin name="!EN" x="27.94" y="-10.16" visible="pin" length="middle" rot="R180"/>
+</symbol>
+<symbol name="TCS3472">
+<description>Color Light-to-Digital Converter with IR Filter</description>
+<wire x1="0" y1="0" x2="15.24" y2="0" width="0.254" layer="94"/>
+<wire x1="15.24" y1="0" x2="15.24" y2="15.24" width="0.254" layer="94"/>
+<wire x1="15.24" y1="15.24" x2="0" y2="15.24" width="0.254" layer="94"/>
+<wire x1="0" y1="15.24" x2="0" y2="0" width="0.254" layer="94"/>
+<pin name="VDD" x="-2.54" y="12.7" length="short"/>
+<pin name="SCL" x="17.78" y="7.62" length="short" rot="R180"/>
+<pin name="GND" x="-2.54" y="2.54" length="short"/>
+<pin name="INT" x="17.78" y="12.7" length="short" rot="R180"/>
+<pin name="SDA" x="17.78" y="2.54" length="short" rot="R180"/>
+<text x="0" y="16.002" size="1.778" layer="95">&gt;NAME</text>
+<text x="0" y="-2.54" size="1.778" layer="96">&gt;VALUE</text>
 </symbol>
 </symbols>
 <devicesets>
@@ -875,30 +874,6 @@ To use, set global attributes TITLE, AUTHOR and REV in your schematic.</descript
 <attribute name="DIGIKEY" value="535-11936-1-ND" constant="no"/>
 <attribute name="MANUFACTURER" value="Abracon" constant="no"/>
 <attribute name="MPN" value="AB1815-T3" constant="no"/>
-</technology>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="ISL29125" prefix="U">
-<description>low power i2c color sensor</description>
-<gates>
-<gate name="G$1" symbol="ISL29125" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="ODFN-6-1.5MMX1.6MM">
-<connects>
-<connect gate="G$1" pin="!INT" pad="5"/>
-<connect gate="G$1" pin="GND" pad="3"/>
-<connect gate="G$1" pin="SCL" pad="6"/>
-<connect gate="G$1" pin="SDA" pad="4"/>
-<connect gate="G$1" pin="VDD" pad="1"/>
-</connects>
-<technologies>
-<technology name="">
-<attribute name="DIGIKEY" value="ISL29125IROZ-T7ACT-ND " constant="no"/>
-<attribute name="MANUFACTURER" value="INTERSIL" constant="no"/>
-<attribute name="MPN" value="ISL29125IROZ-T7A" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -1077,6 +1052,28 @@ Chip Antenna</description>
 <attribute name="DIGIKEY" value="296-37078-1-ND" constant="no"/>
 <attribute name="MANUFACTURER" value="TI" constant="no"/>
 <attribute name="MPN" value="BQ25505RGRR" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="TCS34725" prefix="U">
+<description>Color Light-to-Digital Converter with IR Filter</description>
+<gates>
+<gate name="G$1" symbol="TCS3472" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="FN-6">
+<connects>
+<connect gate="G$1" pin="GND" pad="3"/>
+<connect gate="G$1" pin="INT" pad="5"/>
+<connect gate="G$1" pin="SCL" pad="2"/>
+<connect gate="G$1" pin="SDA" pad="6"/>
+<connect gate="G$1" pin="VDD" pad="1"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="DIGIKEY" value="TCS34725FNCT-ND" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -1798,9 +1795,9 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <wire x1="21.5" y1="-8.89" x2="-21.5" y2="-8.89" width="0.127" layer="21"/>
 <wire x1="-21.5" y1="-8.89" x2="-21.5" y2="8.89" width="0.127" layer="21"/>
 <text x="-21" y="10" size="1.016" layer="21" font="vector" ratio="12">&gt;NAME</text>
-<wire x1="18.5" y1="2" x2="19.5" y2="2" width="0.127" layer="21"/>
-<wire x1="19" y1="2.5" x2="19" y2="1.5" width="0.127" layer="21"/>
-<wire x1="-19" y1="2.5" x2="-19" y2="1.5" width="0.127" layer="21"/>
+<wire x1="-16.38" y1="0" x2="-14.38" y2="0" width="0.127" layer="21"/>
+<wire x1="14.38" y1="0" x2="16.38" y2="0" width="0.127" layer="21"/>
+<wire x1="15.38" y1="1" x2="15.38" y2="-1" width="0.127" layer="21"/>
 </package>
 <package name="BHAA-3">
 <description>footprint for AA battery</description>
@@ -3569,7 +3566,6 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="BT4" library="batteries" deviceset="BAT_PACK" device="CR123A" value="BAT_PACKCR123A"/>
 <part name="P+4" library="mote" deviceset="VBAT" device=""/>
 <part name="FRAME3" library="lab11-frames" deviceset="LETTER_L_BLANK" device=""/>
-<part name="U5" library="chips" deviceset="ISL29125" device=""/>
 <part name="U8" library="chips" deviceset="MAX44009" device=""/>
 <part name="C23" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
 <attribute name="DIGIKEY" value="490-7195-1-ND "/>
@@ -3852,6 +3848,7 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="TP25" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="TP26" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="TP27" library="headers" deviceset="TEST-POINT" device=""/>
+<part name="U12" library="chips" deviceset="TCS34725" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -5179,7 +5176,6 @@ Either populate the NRF52840
 <instances>
 <instance part="FRAME3" gate="G$1" x="0" y="0"/>
 <instance part="FRAME3" gate="G$2" x="152.4" y="0"/>
-<instance part="U5" gate="G$1" x="109.22" y="111.76"/>
 <instance part="U8" gate="G$1" x="195.58" y="111.76"/>
 <instance part="C23" gate="G$1" x="121.92" y="144.78">
 <attribute name="DIGIKEY" x="121.92" y="144.78" size="1.778" layer="96" display="off"/>
@@ -5251,9 +5247,9 @@ Either populate the NRF52840
 <instance part="GND25" gate="1" x="213.36" y="127"/>
 <instance part="GND26" gate="1" x="35.56" y="38.1"/>
 <instance part="GND27" gate="1" x="114.3" y="38.1"/>
-<instance part="R8" gate="G$1" x="132.08" y="132.08" rot="R90">
-<attribute name="DIGIKEY" x="132.08" y="132.08" size="1.778" layer="96" rot="R90" display="off"/>
-<attribute name="MPN" x="132.08" y="132.08" size="1.778" layer="96" rot="R90" display="off"/>
+<instance part="R8" gate="G$1" x="132.08" y="147.32" rot="R90">
+<attribute name="DIGIKEY" x="132.08" y="147.32" size="1.778" layer="96" rot="R90" display="off"/>
+<attribute name="MPN" x="132.08" y="147.32" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="R9" gate="G$1" x="220.98" y="137.16" rot="R90">
 <attribute name="DIGIKEY" x="220.98" y="137.16" size="1.778" layer="96" rot="R90" display="off"/>
@@ -5273,16 +5269,17 @@ Either populate the NRF52840
 <instance part="Q8" gate=".1" x="15.24" y="45.72" rot="MR180"/>
 <instance part="Q8" gate=".2" x="93.98" y="45.72" rot="MR180"/>
 <instance part="Q10" gate=".1" x="180.34" y="50.8" rot="MR180"/>
+<instance part="U12" gate="G$1" x="109.22" y="111.76"/>
 </instances>
 <busses>
 </busses>
 <nets>
 <net name="GND" class="0">
 <segment>
-<pinref part="U5" gate="G$1" pin="GND"/>
-<wire x1="106.68" y1="114.3" x2="104.14" y2="114.3" width="0.1524" layer="91"/>
 <pinref part="GND11" gate="1" pin="GND"/>
 <wire x1="104.14" y1="114.3" x2="104.14" y2="109.22" width="0.1524" layer="91"/>
+<pinref part="U12" gate="G$1" pin="GND"/>
+<wire x1="104.14" y1="114.3" x2="106.68" y2="114.3" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U8" gate="G$1" pin="GND"/>
@@ -5443,7 +5440,7 @@ Either populate the NRF52840
 <wire x1="121.92" y1="152.4" x2="132.08" y2="152.4" width="0.1524" layer="91"/>
 <junction x="121.92" y="152.4"/>
 <pinref part="R8" gate="G$1" pin="2"/>
-<wire x1="132.08" y1="134.62" x2="132.08" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="132.08" y1="149.86" x2="132.08" y2="152.4" width="0.1524" layer="91"/>
 <pinref part="P+6" gate="VCC" pin="VCC"/>
 <wire x1="96.52" y1="154.94" x2="96.52" y2="152.4" width="0.1524" layer="91"/>
 <junction x="96.52" y="152.4"/>
@@ -5498,13 +5495,14 @@ Either populate the NRF52840
 </net>
 <net name="!CLR_INT" class="0">
 <segment>
-<pinref part="U5" gate="G$1" pin="!INT"/>
-<wire x1="127" y1="114.3" x2="132.08" y2="114.3" width="0.1524" layer="91"/>
-<label x="132.08" y="111.76" size="1.27" layer="95" rot="R270" xref="yes"/>
 <pinref part="R8" gate="G$1" pin="1"/>
-<wire x1="132.08" y1="114.3" x2="132.08" y2="111.76" width="0.1524" layer="91"/>
-<wire x1="132.08" y1="127" x2="132.08" y2="114.3" width="0.1524" layer="91"/>
-<junction x="132.08" y="114.3"/>
+<wire x1="132.08" y1="142.24" x2="132.08" y2="137.16" width="0.1524" layer="91"/>
+<pinref part="U12" gate="G$1" pin="INT"/>
+<wire x1="132.08" y1="137.16" x2="132.08" y2="124.46" width="0.1524" layer="91"/>
+<wire x1="127" y1="124.46" x2="132.08" y2="124.46" width="0.1524" layer="91"/>
+<wire x1="132.08" y1="137.16" x2="139.7" y2="137.16" width="0.1524" layer="91"/>
+<junction x="132.08" y="137.16"/>
+<label x="139.7" y="137.16" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="!LT_INT" class="0">
@@ -5563,9 +5561,9 @@ Either populate the NRF52840
 <pinref part="Q4" gate=".2" pin="G"/>
 <wire x1="139.7" y1="129.54" x2="147.32" y2="129.54" width="0.1524" layer="91"/>
 <wire x1="147.32" y1="129.54" x2="147.32" y2="119.38" width="0.1524" layer="91"/>
-<wire x1="139.7" y1="129.54" x2="139.7" y2="132.08" width="0.1524" layer="91"/>
-<junction x="139.7" y="129.54"/>
-<label x="139.7" y="132.08" size="1.27" layer="95" rot="R90" xref="yes"/>
+<label x="149.86" y="129.54" size="1.27" layer="95" xref="yes"/>
+<wire x1="147.32" y1="129.54" x2="149.86" y2="129.54" width="0.1524" layer="91"/>
+<junction x="147.32" y="129.54"/>
 </segment>
 </net>
 <net name="N$21" class="0">
@@ -5675,10 +5673,10 @@ Either populate the NRF52840
 </net>
 <net name="N$31" class="0">
 <segment>
-<pinref part="U5" gate="G$1" pin="VDD"/>
-<wire x1="106.68" y1="121.92" x2="104.14" y2="121.92" width="0.1524" layer="91"/>
-<wire x1="104.14" y1="121.92" x2="104.14" y2="129.54" width="0.1524" layer="91"/>
+<wire x1="104.14" y1="124.46" x2="104.14" y2="129.54" width="0.1524" layer="91"/>
 <pinref part="Q7" gate=".1" pin="D"/>
+<pinref part="U12" gate="G$1" pin="VDD"/>
+<wire x1="104.14" y1="124.46" x2="106.68" y2="124.46" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$20" class="0">
@@ -5738,18 +5736,18 @@ Either populate the NRF52840
 </net>
 <net name="N$54" class="0">
 <segment>
-<wire x1="134.62" y1="119.38" x2="134.62" y2="114.3" width="0.1524" layer="91"/>
 <pinref part="Q4" gate=".2" pin="D"/>
-<wire x1="134.62" y1="114.3" x2="142.24" y2="114.3" width="0.1524" layer="91"/>
-<pinref part="U5" gate="G$1" pin="SDA"/>
-<wire x1="127" y1="119.38" x2="134.62" y2="119.38" width="0.1524" layer="91"/>
+<pinref part="U12" gate="G$1" pin="SDA"/>
+<wire x1="127" y1="114.3" x2="142.24" y2="114.3" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$55" class="0">
 <segment>
 <pinref part="Q4" gate=".1" pin="D"/>
-<pinref part="U5" gate="G$1" pin="SCL"/>
-<wire x1="127" y1="121.92" x2="134.62" y2="121.92" width="0.1524" layer="91"/>
+<pinref part="U12" gate="G$1" pin="SCL"/>
+<wire x1="132.08" y1="121.92" x2="134.62" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="127" y1="119.38" x2="132.08" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="132.08" y1="119.38" x2="132.08" y2="121.92" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="MISO" class="0">
