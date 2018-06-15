@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.0.1">
+<eagle version="9.0.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -1074,6 +1074,7 @@ Chip Antenna</description>
 <technologies>
 <technology name="">
 <attribute name="DIGIKEY" value="TCS34725FNCT-ND" constant="no"/>
+<attribute name="MPN" value="TCS34725FN" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -1795,9 +1796,9 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <wire x1="21.5" y1="-8.89" x2="-21.5" y2="-8.89" width="0.127" layer="21"/>
 <wire x1="-21.5" y1="-8.89" x2="-21.5" y2="8.89" width="0.127" layer="21"/>
 <text x="-21" y="10" size="1.016" layer="21" font="vector" ratio="12">&gt;NAME</text>
-<wire x1="-16.38" y1="0" x2="-14.38" y2="0" width="0.127" layer="21"/>
-<wire x1="14.38" y1="0" x2="16.38" y2="0" width="0.127" layer="21"/>
-<wire x1="15.38" y1="1" x2="15.38" y2="-1" width="0.127" layer="21"/>
+<wire x1="18.5" y1="2" x2="19.5" y2="2" width="0.127" layer="21"/>
+<wire x1="19" y1="2.5" x2="19" y2="1.5" width="0.127" layer="21"/>
+<wire x1="-19" y1="2.5" x2="-19" y2="1.5" width="0.127" layer="21"/>
 </package>
 <package name="BHAA-3">
 <description>footprint for AA battery</description>
@@ -3315,7 +3316,10 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <connect gate="G$1" pin="V-" pad="-"/>
 </connects>
 <technologies>
-<technology name=""/>
+<technology name="">
+<attribute name="DIGIKEY" value="869-1001-ND" constant="no"/>
+<attribute name="MPN" value="AM-1454CA" constant="no"/>
+</technology>
 </technologies>
 </device>
 <device name="SCREW" package="PHEONIX-1935161">
@@ -3471,8 +3475,8 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 </libraries>
 <attributes>
 <attribute name="AUTHOR" value="NEAL JACKSON"/>
-<attribute name="REV" value="A"/>
-<attribute name="TITLE" value="MOTE"/>
+<attribute name="REV" value="B"/>
+<attribute name="TITLE" value="PERMAMOTE"/>
 </attributes>
 <variantdefs>
 </variantdefs>
@@ -3581,13 +3585,13 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <attribute name="MPN" value="GRM155R70G105KA12D "/>
 </part>
 <part name="GND12" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="R6" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
+<part name="R6" library="passives" deviceset="RESISTOR" device="0402_RES" value="DNP">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND "/>
 <attribute name="MPN" value="RC0402JR-0710KL"/>
 </part>
 <part name="P+8" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="P+1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
-<part name="R7" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
+<part name="R7" library="passives" deviceset="RESISTOR" device="0402_RES" value="DNP">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND "/>
 <attribute name="MPN" value="RC0402JR-0710KL"/>
 </part>
@@ -4696,8 +4700,8 @@ Either populate the NRF52840
 <plain>
 <text x="185.42" y="101.6" size="1.778" layer="98">Note: Only populate one type of battery holder</text>
 <text x="2.54" y="182.88" size="5.08" layer="97">Power Supply</text>
-<wire x1="0" y1="68.58" x2="104.14" y2="68.58" width="0.254" layer="94" style="shortdash"/>
-<wire x1="104.14" y1="68.58" x2="104.14" y2="0" width="0.254" layer="94" style="shortdash"/>
+<wire x1="0" y1="71.12" x2="104.14" y2="71.12" width="0.254" layer="94" style="shortdash"/>
+<wire x1="104.14" y1="71.12" x2="104.14" y2="0" width="0.254" layer="94" style="shortdash"/>
 <text x="2.54" y="66.04" size="2.54" layer="97">Boost Regulator</text>
 <text x="124.46" y="53.34" size="1.778" layer="98" rot="R90" align="bottom-center">Divider for Lithium Titanate</text>
 </plain>
