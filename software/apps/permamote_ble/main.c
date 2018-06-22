@@ -29,7 +29,7 @@
 #define LED1 NRF_GPIO_PIN_MAP(0,5)
 #define LED2 NRF_GPIO_PIN_MAP(0,6)
 
-#define APP_ADV_INTERVAL  MSEC_TO_UNITS(10000, UNIT_0_625_MS)
+#define APP_ADV_INTERVAL  MSEC_TO_UNITS(5000, UNIT_0_625_MS)
 #define MIN_CONN_INTERVAL MSEC_TO_UNITS(500, UNIT_1_25_MS)
 #define MAX_CONN_INTERVAL MSEC_TO_UNITS(1000, UNIT_1_25_MS)
 
@@ -40,9 +40,9 @@
 // Maximum size is 17 characters, counting URLEND if used
 // Demo App (using j2x and cdn.rawgit.com)
 #define PHYSWEB_URL     "j2x.us/perm"
-#define ADV_SWITCH_MS 10000
+#define ADV_SWITCH_MS 5000
 
-#define SENSOR_RATE APP_TIMER_TICKS(5000)
+#define SENSOR_RATE APP_TIMER_TICKS(1000)
 APP_TIMER_DEF(sensor_read_timer);
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
