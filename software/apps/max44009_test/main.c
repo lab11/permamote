@@ -27,16 +27,6 @@
 #define SENSOR_RATE APP_TIMER_TICKS(1000)
 APP_TIMER_DEF(sensor_read_timer);
 
-uint8_t enables[7] = {
-   MAX44009_EN,
-   ISL29125_EN,
-   MS5637_EN,
-   SI7021_EN,
-   PIR_EN,
-   I2C_SDA,
-   I2C_SCL
-};
-
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 
 void uart_error_handle (app_uart_evt_t * p_event) {
@@ -46,8 +36,9 @@ void uart_error_handle (app_uart_evt_t * p_event) {
         APP_ERROR_HANDLER(p_event->data.error_code);
     }
 }
-static void sensor_read_callback(float lux, uint8_t mant, uint8_t exp) {
-    printf("lux: %f, exp: %u, mant: %u\n", lux, exp, mant);
+
+static void sensor_read_callback(float lux) {
+    printf("lux: %f\n", lux);
 }
 
 static void read_timer_callback (void* p_context) {
@@ -139,7 +130,8 @@ int main(void) {
     .int_time = 3,
   };
 
-  max44009_init(&twi_mngr_instance, sensor_read_callback);
+  max44009_init(&twi_mngr_instance);
+  max44009_set_read_lux_callback(sensor_read_callback);
   max44009_config(config);
 
   while (1) {
