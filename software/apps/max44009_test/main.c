@@ -24,6 +24,10 @@
 #define LED1 NRF_GPIO_PIN_MAP(0,5)
 #define LED2 NRF_GPIO_PIN_MAP(0,6)
 
+bool update_thresh = false;
+float upper;
+float lower;
+
 #define SENSOR_RATE APP_TIMER_TICKS(1000)
 APP_TIMER_DEF(sensor_read_timer);
 
@@ -38,22 +42,26 @@ void uart_error_handle (app_uart_evt_t * p_event) {
 }
 
 static void sensor_read_callback(float lux) {
-    printf("lux: %f\n", lux);
+    upper = lux + lux* 0.20;
+    lower = lux - lux* 0.20;
+    printf("\n#######\nlux: %f, upper: %f, lower: %f\n", lux, upper, lower);
+
+    update_thresh = true;
 }
 
-static void read_timer_callback (void* p_context) {
+static void interrupt_callback(void) {
     max44009_schedule_read_lux();
 }
 
-static void timer_init(void)
-{
-    uint32_t err_code = app_timer_init();
-    APP_ERROR_CHECK(err_code);
-    err_code = app_timer_create(&sensor_read_timer, APP_TIMER_MODE_REPEATED, read_timer_callback);
-    APP_ERROR_CHECK(err_code);
-    err_code = app_timer_start(sensor_read_timer, SENSOR_RATE, NULL);
-    APP_ERROR_CHECK(err_code);
-}
+//static void timer_init(void)
+//{
+//    uint32_t err_code = app_timer_init();
+//    APP_ERROR_CHECK(err_code);
+//    err_code = app_timer_create(&sensor_read_timer, APP_TIMER_MODE_REPEATED, read_timer_callback);
+//    APP_ERROR_CHECK(err_code);
+//    err_code = app_timer_start(sensor_read_timer, SENSOR_RATE, NULL);
+//    APP_ERROR_CHECK(err_code);
+//}
 
 void uart_init(void) {
   uint32_t err_code;
@@ -111,7 +119,7 @@ int main(void) {
   // Init twi
   twi_init();
 
-  timer_init();
+  //timer_init();
 
   // Turn on power gate
   nrf_gpio_cfg_output(MAX44009_EN);
@@ -133,8 +141,18 @@ int main(void) {
   max44009_init(&twi_mngr_instance);
   max44009_set_read_lux_callback(sensor_read_callback);
   max44009_config(config);
+  max44009_schedule_read_lux();
+
+  max44009_set_interrupt_callback(interrupt_callback);
+  max44009_enable_interrupt();
+
 
   while (1) {
+    if (update_thresh) {
+      max44009_set_upper_threshold(upper);
+      max44009_set_lower_threshold(lower);
+      update_thresh = false;
+    }
     sd_app_evt_wait();
   }
 }
