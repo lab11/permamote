@@ -46,8 +46,8 @@ void uart_error_handle (app_uart_evt_t * p_event) {
         APP_ERROR_HANDLER(p_event->data.error_code);
     }
 }
-static void sensor_read_callback(float lux) {
-    printf("lux: %f\n", lux);
+static void sensor_read_callback(float lux, uint8_t mant, uint8_t exp) {
+    printf("lux: %f, exp: %u, mant: %u\n", lux, exp, mant);
 }
 
 static void read_timer_callback (void* p_context) {
