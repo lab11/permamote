@@ -1,18 +1,16 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+
 #include "nrf_gpio.h"
 #include "nrf_delay.h"
 #include "nrf_twi_mngr.h"
-#include "nrf_drv_gpiote.h"
 #include "app_util_platform.h"
 #include "nordic_common.h"
-#include "nrf_sdh.h"
-#include "nrf_soc.h"
 #include "app_timer.h"
-#include "led.h"
 #include "app_uart.h"
 #include "nrf_drv_clock.h"
+#include "nrf_power.h"
 
 #include "permamote.h"
 #include "max44009.h"
@@ -42,8 +40,8 @@ void uart_error_handle (app_uart_evt_t * p_event) {
 }
 
 static void sensor_read_callback(float lux) {
-    upper = lux + lux* 0.20;
-    lower = lux - lux* 0.20;
+    upper = lux + lux* 0.10;
+    lower = lux - lux* 0.10;
     printf("\n#######\nlux: %f, upper: %f, lower: %f\n", lux, upper, lower);
 
     update_thresh = true;
@@ -104,12 +102,13 @@ void twi_init(void) {
 
 int main(void) {
   // init softdevice
-  nrf_sdh_enable_request();
-  sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
+  //nrf_sdh_enable_request();
+  //sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
+  nrf_power_dcdcen_set(1);
 
   // init led
-  led_init(LED2);
-  led_off(LED2);
+  //led_init(LED2);
+  //led_off(LED2);
 
   // init uart
   uart_init();
@@ -131,6 +130,7 @@ int main(void) {
   nrf_gpio_pin_set(MS5637_EN);
   nrf_gpio_pin_set(SI7021_EN);
 
+
   const max44009_config_t config = {
     .continuous = 0,
     .manual = 0,
@@ -142,7 +142,6 @@ int main(void) {
   max44009_set_read_lux_callback(sensor_read_callback);
   max44009_config(config);
   max44009_schedule_read_lux();
-
   max44009_set_interrupt_callback(interrupt_callback);
   max44009_enable_interrupt();
 
@@ -153,6 +152,6 @@ int main(void) {
       max44009_set_lower_threshold(lower);
       update_thresh = false;
     }
-    sd_app_evt_wait();
+    __WFE();
   }
 }
