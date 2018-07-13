@@ -3,11 +3,12 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "led.h"
 #include "nrf.h"
 #include "nrf_delay.h"
 #include "nrf_sdh.h"
 #include "nrf_soc.h"
+#include "nrf_gpio.h"
+#include "nrf_power.h"
 
 #include "permamote.h"
 
@@ -28,15 +29,18 @@ uint8_t enables[7] = {
 int main(void) {
 
     // Initialize.
-    led_init(LED0);
-    led_init(LED1);
-    led_init(LED2);
-    led_off(LED0);
-    led_off(LED1);
-    led_off(LED2);
-
+    nrf_gpio_cfg_output(LED0);
+    nrf_gpio_cfg_output(LED1);
+    nrf_gpio_cfg_output(LED2);
+    nrf_gpio_pin_set(LED0);
+    nrf_gpio_pin_set(LED1);
+    nrf_gpio_pin_set(LED2);
+#ifdef SOFTDEVICE_PRESENT
     nrf_sdh_enable_request();
     sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
+#else
+    nrf_power_dcdcen_set(1);
+#endif
 
     for (int i = 0; i < 7; i++) {
       nrf_gpio_cfg_output(enables[i]);
@@ -54,7 +58,11 @@ int main(void) {
     while (1) {
       //nrf_delay_ms(500);
       //led_toggle(LED);
+#ifdef SOFTDEVICE_PRESENT
       ret_code_t err_code = sd_app_evt_wait();
       APP_ERROR_CHECK(err_code);
+#endif
+      __WFE();
+
     }
 }
