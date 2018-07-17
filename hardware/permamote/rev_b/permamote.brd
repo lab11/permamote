@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.0.0">
+<eagle version="9.0.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -166,7 +166,7 @@
 <text x="14.351" y="56.261" size="1.016" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center">RESET</text>
 <text x="0.413" y="37.349" size="1.016" layer="25" font="vector" ratio="12" align="top-left">Permamote
 Neal Jackson
-6/18</text>
+7/18</text>
 <polygon width="0.1016" layer="41">
 <vertex x="12.446" y="1.7907"/>
 <vertex x="11.938" y="1.7907"/>
@@ -2112,19 +2112,19 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="MPN" value="GRM1555C1H120GA01D " x="13.208" y="19.685" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="13.208" y="19.304" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="C2" library="passives" package="0402_CAP" value="0.8pF" x="18.732" y="20.793" smashed="yes" rot="R180">
-<attribute name="DIGIKEY" value="490-6269-1-ND" x="18.732" y="20.793" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="MPN" value="GRM1555C1HR80BA01D " x="18.732" y="20.793" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="NAME" x="20.228" y="20.383" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
+<element name="C2" library="passives" package="0402_CAP" value="1pF" x="18.732" y="20.793" smashed="yes" rot="R180">
+<attribute name="DIGIKEY" value="1276-1595-1-ND" x="18.732" y="20.793" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="MPN" value="CL05C010CB5NNNC" x="18.732" y="20.793" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="NAME" x="18.323" y="21.145" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C1" library="passives" package="0402_CAP" value="0.5pF" x="18.732" y="23.333" smashed="yes" rot="R180">
-<attribute name="DIGIKEY" value="490-6264-1-ND" x="18.732" y="23.333" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="MPN" value="GRM1555C1HR50WA01D " x="18.732" y="23.333" size="1.778" layer="27" rot="R180" display="off"/>
+<element name="C1" library="passives" package="0402_CAP" value="1pF" x="18.732" y="23.333" smashed="yes" rot="R180">
+<attribute name="DIGIKEY" value="1276-1595-1-ND" x="18.732" y="23.333" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="MPN" value="CL05C010CB5NNNC" x="18.732" y="23.333" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="18.7574" y="23.714" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="L1" library="passives" package="0402_CAP" value="3.3nH" x="19.24" y="22.063" smashed="yes" rot="R270">
-<attribute name="DIGIKEY" value="535-10426-1-ND" x="19.24" y="22.063" size="1.778" layer="27" rot="R270" display="off"/>
-<attribute name="MPN" value="AISC-0402-3N3J-T " x="19.24" y="22.063" size="1.778" layer="27" rot="R270" display="off"/>
+<element name="L1" library="passives" package="0402_CAP" value="3.9nH" x="19.24" y="22.063" smashed="yes" rot="R270">
+<attribute name="DIGIKEY" value="490-1131-1-ND" x="19.24" y="22.063" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="MPN" value="LQP15MN3N9B02D" x="19.24" y="22.063" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="19.748" y="22.19" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
 <element name="X1" library="crystals" package="TXC-7V" value="32MHz" x="13.684" y="22.186" smashed="yes" rot="R90">
@@ -2622,6 +2622,11 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="MPN" value="TCS34725FN" x="25.146" y="2.159" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="26.654" y="4.315" size="0.8128" layer="23" font="vector" ratio="12" rot="R180"/>
 </element>
+<element name="C34" library="passives" package="0402_CAP" value="820pF" x="20.701" y="21.082" smashed="yes" rot="R90">
+<attribute name="DIGIKEY" value="1276-6535-1-ND" x="20.701" y="21.082" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="MPN" value="CL05B821KO5NNNC" x="20.701" y="21.082" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="NAME" x="21.082" y="21.082" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
+</element>
 </elements>
 <signals>
 <signal name="N$2">
@@ -2845,9 +2850,9 @@ Quickturn PCB 4 Layer .DRU</description>
 <via x="17.526" y="22.606" extent="1-16" drill="0.2032"/>
 <via x="17.526" y="23.622" extent="1-16" drill="0.2032"/>
 <via x="17.526" y="24.384" extent="1-16" drill="0.2032"/>
-<via x="21.082" y="22.606" extent="1-16" drill="0.2032"/>
-<via x="21.082" y="21.717" extent="1-16" drill="0.2032"/>
-<via x="21.082" y="20.828" extent="1-16" drill="0.2032"/>
+<via x="21.082" y="22.86" extent="1-16" drill="0.2032"/>
+<via x="20.066" y="21.717" extent="1-16" drill="0.2032"/>
+<via x="20.066" y="20.955" extent="1-16" drill="0.2032"/>
 <via x="22.352" y="20.828" extent="1-16" drill="0.2032"/>
 <via x="23.622" y="20.828" extent="1-16" drill="0.2032"/>
 <via x="24.892" y="20.828" extent="1-16" drill="0.2032"/>
@@ -2885,7 +2890,6 @@ Quickturn PCB 4 Layer .DRU</description>
 <via x="25.4" y="0.508" extent="1-16" drill="0.2032"/>
 <via x="20.066" y="23.622" extent="1-16" drill="0.2032"/>
 <via x="20.066" y="22.606" extent="1-16" drill="0.2032"/>
-<via x="20.066" y="21.59" extent="1-16" drill="0.2032"/>
 <contactref element="D1" pad="-"/>
 <contactref element="TP27" pad="P$1"/>
 <wire x1="18.492" y1="19.36" x2="18.492" y2="19.57118125" width="0.1016" layer="1"/>
@@ -2941,6 +2945,9 @@ Quickturn PCB 4 Layer .DRU</description>
 <via x="19.812" y="35.528" extent="1-16" drill="0.2032"/>
 <via x="24.511" y="35.528" extent="1-16" drill="0.2032"/>
 <via x="26.416" y="32.099" extent="1-16" drill="0.2032"/>
+<contactref element="C34" pad="2"/>
+<via x="21.336" y="20.828" extent="1-16" drill="0.2032"/>
+<via x="21.082" y="22.098" extent="1-16" drill="0.2032"/>
 </signal>
 <signal name="N$8">
 <contactref element="U10" pad="B24"/>
@@ -4590,6 +4597,12 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="18.034" y1="31.496" x2="18.034" y2="53.467" width="0.1524" layer="2"/>
 <wire x1="18.034" y1="53.467" x2="17.526" y2="53.975" width="0.1524" layer="2"/>
 <wire x1="20.574" y1="20.026" x2="20.574" y2="28.956" width="0.1524" layer="2"/>
+</signal>
+<signal name="N$1">
+<contactref element="U10" pad="N24"/>
+<contactref element="C34" pad="1"/>
+<wire x1="20.242" y1="19.86" x2="20.242" y2="20.18993125" width="0.2032" layer="1"/>
+<wire x1="20.242" y1="20.18993125" x2="20.701" y2="20.64893125" width="0.2032" layer="1"/>
 </signal>
 </signals>
 </board>

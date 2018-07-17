@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.0.0">
+<eagle version="9.0.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -3523,17 +3523,17 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <attribute name="DIGIKEY" value="490-6197-1-ND"/>
 <attribute name="MPN" value="GRM1555C1H120GA01D "/>
 </part>
-<part name="C2" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.8pF">
-<attribute name="DIGIKEY" value="490-6269-1-ND"/>
-<attribute name="MPN" value="GRM1555C1HR80BA01D "/>
+<part name="C2" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1pF">
+<attribute name="DIGIKEY" value="1276-1595-1-ND"/>
+<attribute name="MPN" value="CL05C010CB5NNNC"/>
 </part>
-<part name="C1" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.5pF">
-<attribute name="DIGIKEY" value="490-6264-1-ND"/>
-<attribute name="MPN" value="GRM1555C1HR50WA01D "/>
+<part name="C1" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1pF">
+<attribute name="DIGIKEY" value="1276-1595-1-ND"/>
+<attribute name="MPN" value="CL05C010CB5NNNC"/>
 </part>
-<part name="L1" library="passives" deviceset="INDUCTOR" device="0402" value="3.3nH">
-<attribute name="DIGIKEY" value="535-10426-1-ND"/>
-<attribute name="MPN" value="AISC-0402-3N3J-T "/>
+<part name="L1" library="passives" deviceset="INDUCTOR" device="0402" value="3.9nH">
+<attribute name="DIGIKEY" value="490-1131-1-ND"/>
+<attribute name="MPN" value="LQP15MN3N9B02D"/>
 </part>
 <part name="X1" library="crystals" deviceset="7V" device="-32.000MAHV-T" value="32MHz"/>
 <part name="C22" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
@@ -3853,6 +3853,10 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="TP26" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="TP27" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="U12" library="chips" deviceset="TCS34725" device=""/>
+<part name="C34" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="820pF">
+<attribute name="DIGIKEY" value="1276-6535-1-ND"/>
+<attribute name="MPN" value="CL05B821KO5NNNC"/>
+</part>
 </parts>
 <sheets>
 <sheet>
@@ -3998,6 +4002,10 @@ Either populate the NRF52840
 </instance>
 <instance part="P+16" gate="VCC" x="7.62" y="48.26"/>
 <instance part="P+18" gate="VCC" x="116.84" y="48.26"/>
+<instance part="C34" gate="G$1" x="88.9" y="139.7">
+<attribute name="DIGIKEY" x="88.9" y="139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="88.9" y="139.7" size="1.778" layer="96" display="off"/>
+</instance>
 </instances>
 <busses>
 </busses>
@@ -4119,12 +4127,16 @@ Either populate the NRF52840
 <wire x1="66.04" y1="132.08" x2="66.04" y2="129.54" width="0.1524" layer="91"/>
 <pinref part="GND3" gate="1" pin="GND"/>
 <pinref part="U10" gate="G$1" pin="VBUS"/>
-<wire x1="114.3" y1="132.08" x2="81.28" y2="132.08" width="0.1524" layer="91"/>
+<wire x1="114.3" y1="132.08" x2="88.9" y2="132.08" width="0.1524" layer="91"/>
 <junction x="73.66" y="132.08"/>
 <pinref part="C11" gate="G$1" pin="2"/>
+<wire x1="88.9" y1="132.08" x2="81.28" y2="132.08" width="0.1524" layer="91"/>
 <wire x1="81.28" y1="132.08" x2="73.66" y2="132.08" width="0.1524" layer="91"/>
 <wire x1="81.28" y1="134.62" x2="81.28" y2="132.08" width="0.1524" layer="91"/>
 <junction x="81.28" y="132.08"/>
+<pinref part="C34" gate="G$1" pin="2"/>
+<wire x1="88.9" y1="134.62" x2="88.9" y2="132.08" width="0.1524" layer="91"/>
+<junction x="88.9" y="132.08"/>
 </segment>
 <segment>
 <pinref part="C7" gate="G$1" pin="2"/>
@@ -4692,6 +4704,13 @@ Either populate the NRF52840
 <pinref part="U10" gate="G$1" pin="P1.06"/>
 <wire x1="160.02" y1="121.92" x2="162.56" y2="121.92" width="0.1524" layer="91"/>
 <label x="162.56" y="121.92" size="1.27" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="N$1" class="0">
+<segment>
+<pinref part="U10" gate="G$1" pin="DEC5"/>
+<wire x1="114.3" y1="142.24" x2="88.9" y2="142.24" width="0.1524" layer="91"/>
+<pinref part="C34" gate="G$1" pin="1"/>
 </segment>
 </net>
 </nets>
