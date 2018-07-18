@@ -3487,13 +3487,9 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <parts>
 <part name="FRAME1" library="lab11-frames" deviceset="LETTER_L_BLANK" device=""/>
 <part name="U10" library="chips" deviceset="NRF52840" device=""/>
-<part name="C26" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.7uF">
+<part name="C27" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.7uF">
 <attribute name="DIGIKEY" value="445-5947-1-ND"/>
 <attribute name="MPN" value="C1005X5R0J475K050BC "/>
-</part>
-<part name="C12" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
-<attribute name="DIGIKEY" value="490-6328-1-ND"/>
-<attribute name="MPN" value="GRM155R71C104KA88J "/>
 </part>
 <part name="C13" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
@@ -3507,7 +3503,11 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
 <attribute name="MPN" value="GRM155R71C104KA88J "/>
 </part>
-<part name="C21" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
+<part name="C16" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
+<attribute name="DIGIKEY" value="490-6328-1-ND"/>
+<attribute name="MPN" value="GRM155R71C104KA88J "/>
+</part>
+<part name="C22" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
 <attribute name="DIGIKEY" value="490-7195-1-ND "/>
 <attribute name="MPN" value="GRM155R70G105KA12D "/>
 </part>
@@ -3523,11 +3523,11 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <attribute name="DIGIKEY" value="490-6197-1-ND"/>
 <attribute name="MPN" value="GRM1555C1H120GA01D "/>
 </part>
-<part name="C2" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1pF">
+<part name="C1" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1pF">
 <attribute name="DIGIKEY" value="1276-1595-1-ND"/>
 <attribute name="MPN" value="CL05C010CB5NNNC"/>
 </part>
-<part name="C1" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1pF">
+<part name="C2" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1pF">
 <attribute name="DIGIKEY" value="1276-1595-1-ND"/>
 <attribute name="MPN" value="CL05C010CB5NNNC"/>
 </part>
@@ -3536,7 +3536,7 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <attribute name="MPN" value="LQP15MN3N9B02D"/>
 </part>
 <part name="X1" library="crystals" deviceset="7V" device="-32.000MAHV-T" value="32MHz"/>
-<part name="C22" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
+<part name="C23" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
 <attribute name="DIGIKEY" value="490-7195-1-ND "/>
 <attribute name="MPN" value="GRM155R70G105KA12D "/>
 </part>
@@ -3545,11 +3545,11 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="GND3" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="FRAME2" library="lab11-frames" deviceset="LETTER_L_BLANK" device=""/>
 <part name="U7" library="chips" deviceset="MAX17222" device=""/>
-<part name="C29" library="passives" deviceset="CAPACITOR" device="0603_CAP" value="10uF">
+<part name="C30" library="passives" deviceset="CAPACITOR" device="0603_CAP" value="10uF">
 <attribute name="DIGIKEY" value="490-3896-1-ND"/>
 <attribute name="MPN" value="GRM188R60J106ME47D "/>
 </part>
-<part name="C30" library="passives" deviceset="CAPACITOR" device="0603_CAP" value="10uF">
+<part name="C31" library="passives" deviceset="CAPACITOR" device="0603_CAP" value="10uF">
 <attribute name="DIGIKEY" value="490-3896-1-ND"/>
 <attribute name="MPN" value="GRM188R60J106ME47D "/>
 </part>
@@ -3571,16 +3571,16 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="P+4" library="mote" deviceset="VBAT" device=""/>
 <part name="FRAME3" library="lab11-frames" deviceset="LETTER_L_BLANK" device=""/>
 <part name="U8" library="chips" deviceset="MAX44009" device=""/>
-<part name="C23" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
+<part name="C24" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
 <attribute name="DIGIKEY" value="490-7195-1-ND "/>
 <attribute name="MPN" value="GRM155R70G105KA12D "/>
 </part>
-<part name="C16" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
+<part name="C17" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
 <attribute name="MPN" value="GRM155R71C104KA88J "/>
 </part>
 <part name="GND11" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="C24" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
+<part name="C25" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
 <attribute name="DIGIKEY" value="490-7195-1-ND "/>
 <attribute name="MPN" value="GRM155R70G105KA12D "/>
 </part>
@@ -3604,25 +3604,25 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="GND13" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND14" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="X4" library="crystals" deviceset="ABS07-32.768KHZ" device="-7-T" value="ABS07-32.768KHZ-7-T"/>
-<part name="C32" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="DNP"/>
 <part name="C33" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="DNP"/>
-<part name="C25" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
+<part name="C34" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="DNP"/>
+<part name="C26" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
 <attribute name="DIGIKEY" value="490-7195-1-ND "/>
 <attribute name="MPN" value="GRM155R70G105KA12D "/>
 </part>
-<part name="C17" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
+<part name="C18" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
 <attribute name="MPN" value="GRM155R71C104KA88J "/>
 </part>
 <part name="GND6" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="P+5" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
-<part name="C31" library="passives" deviceset="CAPACITOR" device="0603_CAP" value="10uF">
+<part name="C32" library="passives" deviceset="CAPACITOR" device="0603_CAP" value="10uF">
 <attribute name="DIGIKEY" value="490-3896-1-ND"/>
 <attribute name="MPN" value="GRM188R60J106ME47D "/>
 </part>
 <part name="GND7" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="U9" library="chips" deviceset="MS5637-02BA03" device=""/>
-<part name="C18" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
+<part name="C19" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
 <attribute name="MPN" value="GRM155R71C104KA88J "/>
 </part>
@@ -3630,7 +3630,7 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="U11" library="chips" deviceset="SI7021" device="-A20-GM1">
 <attribute name="MPN" value="SI7021-A20-GM1 "/>
 </part>
-<part name="C19" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
+<part name="C20" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
 <attribute name="MPN" value="GRM155R71C104KA88J "/>
 </part>
@@ -3669,7 +3669,7 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="GND18" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="P+19" library="mote" deviceset="VSW" device=""/>
 <part name="GND20" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="C9" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="10nF">
+<part name="C10" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="10nF">
 <attribute name="DIGIKEY" value="490-4516-1-ND"/>
 <attribute name="MPN" value="GRM155R71H103KA88D "/>
 </part>
@@ -3689,7 +3689,7 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <attribute name="DIGIKEY" value="311-10KJRCT-ND "/>
 <attribute name="MPN" value="RC0402JR-0710KL"/>
 </part>
-<part name="C11" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="47nF">
+<part name="C12" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="47nF">
 <attribute name="DIGIKEY" value="445-1264-1-ND"/>
 <attribute name="MPN" value="C1005X7R1C473K050BC "/>
 </part>
@@ -3778,7 +3778,7 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="U4" library="ftdichip" library_urn="urn:adsk.eagle:library:231" deviceset="FT232R" device="Q" package3d_urn="urn:adsk.eagle:package:14014/1"/>
 <part name="GND32" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND33" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="C20" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
+<part name="C21" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="0.1uF">
 <attribute name="DIGIKEY" value="490-6328-1-ND"/>
 <attribute name="MPN" value="GRM155R71C104KA88J "/>
 </part>
@@ -3793,15 +3793,15 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="P+16" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="P+18" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 <part name="GND4" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="C27" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.7uF">
-<attribute name="DIGIKEY" value="445-5947-1-ND"/>
-<attribute name="MPN" value="C1005X5R0J475K050BC "/>
-</part>
 <part name="C28" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.7uF">
 <attribute name="DIGIKEY" value="445-5947-1-ND"/>
 <attribute name="MPN" value="C1005X5R0J475K050BC "/>
 </part>
-<part name="C10" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="10nF">
+<part name="C29" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.7uF">
+<attribute name="DIGIKEY" value="445-5947-1-ND"/>
+<attribute name="MPN" value="C1005X5R0J475K050BC "/>
+</part>
+<part name="C11" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="10nF">
 <attribute name="DIGIKEY" value="490-4516-1-ND"/>
 <attribute name="MPN" value="GRM155R71H103KA88D "/>
 </part>
@@ -3853,7 +3853,7 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="TP26" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="TP27" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="U12" library="chips" deviceset="TCS34725" device=""/>
-<part name="C34" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="820pF">
+<part name="C9" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="820pF">
 <attribute name="DIGIKEY" value="1276-6535-1-ND"/>
 <attribute name="MPN" value="CL05B821KO5NNNC"/>
 </part>
@@ -3875,27 +3875,27 @@ Either populate the NRF52840
 <instance part="FRAME1" gate="G$1" x="0" y="0"/>
 <instance part="FRAME1" gate="G$2" x="152.4" y="0"/>
 <instance part="U10" gate="G$1" x="116.84" y="63.5"/>
-<instance part="C26" gate="G$1" x="182.88" y="172.72">
+<instance part="C27" gate="G$1" x="182.88" y="172.72">
 <attribute name="DIGIKEY" x="182.88" y="172.72" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="182.88" y="172.72" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="C12" gate="G$1" x="205.74" y="172.72">
+<instance part="C13" gate="G$1" x="205.74" y="172.72">
 <attribute name="DIGIKEY" x="205.74" y="172.72" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="205.74" y="172.72" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="C13" gate="G$1" x="213.36" y="172.72">
+<instance part="C14" gate="G$1" x="213.36" y="172.72">
 <attribute name="DIGIKEY" x="213.36" y="172.72" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="213.36" y="172.72" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="C14" gate="G$1" x="58.42" y="139.7">
+<instance part="C15" gate="G$1" x="58.42" y="139.7">
 <attribute name="DIGIKEY" x="58.42" y="139.7" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="58.42" y="139.7" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="C15" gate="G$1" x="198.12" y="172.72">
+<instance part="C16" gate="G$1" x="198.12" y="172.72">
 <attribute name="DIGIKEY" x="198.12" y="172.72" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="198.12" y="172.72" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="C21" gate="G$1" x="190.5" y="172.72">
+<instance part="C22" gate="G$1" x="190.5" y="172.72">
 <attribute name="DIGIKEY" x="190.5" y="172.72" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="190.5" y="172.72" size="1.778" layer="96" display="off"/>
 </instance>
@@ -3911,11 +3911,11 @@ Either populate the NRF52840
 <attribute name="DIGIKEY" x="198.12" y="83.82" size="1.778" layer="96" rot="R270" display="off"/>
 <attribute name="MPN" x="198.12" y="83.82" size="1.778" layer="96" rot="R270" display="off"/>
 </instance>
-<instance part="C2" gate="G$1" x="185.42" y="63.5">
+<instance part="C1" gate="G$1" x="185.42" y="63.5">
 <attribute name="DIGIKEY" x="185.42" y="63.5" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="185.42" y="63.5" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="C1" gate="G$1" x="215.9" y="63.5">
+<instance part="C2" gate="G$1" x="215.9" y="63.5">
 <attribute name="DIGIKEY" x="215.9" y="63.5" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="215.9" y="63.5" size="1.778" layer="96" display="off"/>
 </instance>
@@ -3924,7 +3924,7 @@ Either populate the NRF52840
 <attribute name="MPN" x="200.66" y="68.58" size="1.778" layer="96" rot="R270" display="off"/>
 </instance>
 <instance part="X1" gate="G$1" x="190.5" y="91.44" rot="R90"/>
-<instance part="C22" gate="G$1" x="73.66" y="139.7">
+<instance part="C23" gate="G$1" x="73.66" y="139.7">
 <attribute name="DIGIKEY" x="73.66" y="139.7" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="73.66" y="139.7" size="1.778" layer="96" display="off"/>
 </instance>
@@ -3949,9 +3949,9 @@ Either populate the NRF52840
 <instance part="GND13" gate="1" x="30.48" y="5.08"/>
 <instance part="GND14" gate="1" x="68.58" y="5.08"/>
 <instance part="X4" gate="G$1" x="17.78" y="30.48"/>
-<instance part="C32" gate="G$1" x="12.7" y="22.86"/>
-<instance part="C33" gate="G$1" x="22.86" y="22.86"/>
-<instance part="C25" gate="G$1" x="7.62" y="38.1">
+<instance part="C33" gate="G$1" x="12.7" y="22.86"/>
+<instance part="C34" gate="G$1" x="22.86" y="22.86"/>
+<instance part="C26" gate="G$1" x="7.62" y="38.1">
 <attribute name="DIGIKEY" x="7.62" y="38.1" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="7.62" y="38.1" size="1.778" layer="96" display="off"/>
 </instance>
@@ -3960,7 +3960,7 @@ Either populate the NRF52840
 <instance part="GND17" gate="1" x="17.78" y="66.04"/>
 <instance part="P+9" gate="VCC" x="17.78" y="86.36"/>
 <instance part="P+14" gate="VCC" x="182.88" y="160.02"/>
-<instance part="C11" gate="G$1" x="81.28" y="139.7">
+<instance part="C12" gate="G$1" x="81.28" y="139.7">
 <attribute name="DIGIKEY" x="81.28" y="139.7" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="81.28" y="139.7" size="1.778" layer="96" display="off"/>
 </instance>
@@ -4002,7 +4002,7 @@ Either populate the NRF52840
 </instance>
 <instance part="P+16" gate="VCC" x="7.62" y="48.26"/>
 <instance part="P+18" gate="VCC" x="116.84" y="48.26"/>
-<instance part="C34" gate="G$1" x="88.9" y="139.7">
+<instance part="C9" gate="G$1" x="88.9" y="139.7">
 <attribute name="DIGIKEY" x="88.9" y="139.7" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="88.9" y="139.7" size="1.778" layer="96" display="off"/>
 </instance>
@@ -4014,14 +4014,14 @@ Either populate the NRF52840
 <segment>
 <pinref part="U10" gate="G$1" pin="DEC1"/>
 <wire x1="114.3" y1="152.4" x2="58.42" y2="152.4" width="0.1524" layer="91"/>
-<pinref part="C14" gate="G$1" pin="1"/>
+<pinref part="C15" gate="G$1" pin="1"/>
 <wire x1="58.42" y1="152.4" x2="58.42" y2="142.24" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$3" class="0">
 <segment>
 <pinref part="U10" gate="G$1" pin="DEC4"/>
-<pinref part="C22" gate="G$1" pin="1"/>
+<pinref part="C23" gate="G$1" pin="1"/>
 <wire x1="114.3" y1="144.78" x2="111.76" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="111.76" y1="144.78" x2="81.28" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="81.28" y1="144.78" x2="73.66" y2="144.78" width="0.1524" layer="91"/>
@@ -4029,7 +4029,7 @@ Either populate the NRF52840
 <wire x1="76.2" y1="157.48" x2="73.66" y2="157.48" width="0.1524" layer="91"/>
 <wire x1="73.66" y1="157.48" x2="73.66" y2="144.78" width="0.1524" layer="91"/>
 <junction x="73.66" y="144.78"/>
-<pinref part="C11" gate="G$1" pin="1"/>
+<pinref part="C12" gate="G$1" pin="1"/>
 <wire x1="81.28" y1="142.24" x2="81.28" y2="144.78" width="0.1524" layer="91"/>
 <junction x="81.28" y="144.78"/>
 <pinref part="U10" gate="G$1" pin="DEC6"/>
@@ -4052,7 +4052,7 @@ Either populate the NRF52840
 <pinref part="U10" gate="G$1" pin="ANT"/>
 <pinref part="L1" gate="G$1" pin="2"/>
 <wire x1="160.02" y1="68.58" x2="185.42" y2="68.58" width="0.1524" layer="91"/>
-<pinref part="C2" gate="G$1" pin="1"/>
+<pinref part="C1" gate="G$1" pin="1"/>
 <wire x1="185.42" y1="68.58" x2="193.04" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="185.42" y1="66.04" x2="185.42" y2="68.58" width="0.1524" layer="91"/>
 <junction x="185.42" y="68.58"/>
@@ -4061,7 +4061,7 @@ Either populate the NRF52840
 <net name="N$6" class="0">
 <segment>
 <pinref part="L1" gate="G$1" pin="1"/>
-<pinref part="C1" gate="G$1" pin="1"/>
+<pinref part="C2" gate="G$1" pin="1"/>
 <wire x1="208.28" y1="68.58" x2="215.9" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="215.9" y1="68.58" x2="215.9" y2="66.04" width="0.1524" layer="91"/>
 <junction x="215.9" y="68.58"/>
@@ -4072,22 +4072,22 @@ Either populate the NRF52840
 </net>
 <net name="GND" class="0">
 <segment>
-<pinref part="C26" gate="G$1" pin="2"/>
+<pinref part="C27" gate="G$1" pin="2"/>
 <wire x1="182.88" y1="167.64" x2="182.88" y2="165.1" width="0.1524" layer="91"/>
-<pinref part="C21" gate="G$1" pin="2"/>
+<pinref part="C22" gate="G$1" pin="2"/>
 <wire x1="182.88" y1="165.1" x2="190.5" y2="165.1" width="0.1524" layer="91"/>
 <wire x1="190.5" y1="165.1" x2="190.5" y2="167.64" width="0.1524" layer="91"/>
-<pinref part="C15" gate="G$1" pin="2"/>
+<pinref part="C16" gate="G$1" pin="2"/>
 <wire x1="190.5" y1="165.1" x2="213.36" y2="165.1" width="0.1524" layer="91"/>
 <wire x1="198.12" y1="165.1" x2="198.12" y2="167.64" width="0.1524" layer="91"/>
 <junction x="190.5" y="165.1"/>
-<pinref part="C12" gate="G$1" pin="2"/>
+<pinref part="C13" gate="G$1" pin="2"/>
 <wire x1="198.12" y1="165.1" x2="213.36" y2="165.1" width="0.1524" layer="91"/>
 <wire x1="205.74" y1="165.1" x2="205.74" y2="167.64" width="0.1524" layer="91"/>
 <junction x="198.12" y="165.1"/>
 <junction x="213.36" y="165.1"/>
 <pinref part="GND1" gate="1" pin="GND"/>
-<pinref part="C13" gate="G$1" pin="2"/>
+<pinref part="C14" gate="G$1" pin="2"/>
 <wire x1="213.36" y1="167.64" x2="213.36" y2="165.1" width="0.1524" layer="91"/>
 <wire x1="213.36" y1="165.1" x2="205.74" y2="165.1" width="0.1524" layer="91"/>
 <junction x="205.74" y="165.1"/>
@@ -4099,13 +4099,13 @@ Either populate the NRF52840
 <wire x1="137.16" y1="53.34" x2="137.16" y2="55.88" width="0.1524" layer="91"/>
 <pinref part="U10" gate="G$1" pin="VSS_PA"/>
 <wire x1="139.7" y1="60.96" x2="139.7" y2="55.88" width="0.1524" layer="91"/>
-<pinref part="C2" gate="G$1" pin="2"/>
+<pinref part="C1" gate="G$1" pin="2"/>
 <wire x1="139.7" y1="55.88" x2="185.42" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="185.42" y1="55.88" x2="185.42" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="139.7" y1="55.88" x2="137.16" y2="55.88" width="0.1524" layer="91"/>
 <junction x="139.7" y="55.88"/>
 <junction x="137.16" y="55.88"/>
-<pinref part="C1" gate="G$1" pin="2"/>
+<pinref part="C2" gate="G$1" pin="2"/>
 <wire x1="215.9" y1="55.88" x2="215.9" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="185.42" y1="55.88" x2="215.9" y2="55.88" width="0.1524" layer="91"/>
 <junction x="185.42" y="55.88"/>
@@ -4115,9 +4115,9 @@ Either populate the NRF52840
 <junction x="215.9" y="55.88"/>
 </segment>
 <segment>
-<pinref part="C14" gate="G$1" pin="2"/>
+<pinref part="C15" gate="G$1" pin="2"/>
 <wire x1="58.42" y1="134.62" x2="58.42" y2="132.08" width="0.1524" layer="91"/>
-<pinref part="C22" gate="G$1" pin="2"/>
+<pinref part="C23" gate="G$1" pin="2"/>
 <wire x1="58.42" y1="132.08" x2="66.04" y2="132.08" width="0.1524" layer="91"/>
 <wire x1="66.04" y1="132.08" x2="73.66" y2="132.08" width="0.1524" layer="91"/>
 <wire x1="73.66" y1="132.08" x2="73.66" y2="134.62" width="0.1524" layer="91"/>
@@ -4129,12 +4129,12 @@ Either populate the NRF52840
 <pinref part="U10" gate="G$1" pin="VBUS"/>
 <wire x1="114.3" y1="132.08" x2="88.9" y2="132.08" width="0.1524" layer="91"/>
 <junction x="73.66" y="132.08"/>
-<pinref part="C11" gate="G$1" pin="2"/>
+<pinref part="C12" gate="G$1" pin="2"/>
 <wire x1="88.9" y1="132.08" x2="81.28" y2="132.08" width="0.1524" layer="91"/>
 <wire x1="81.28" y1="132.08" x2="73.66" y2="132.08" width="0.1524" layer="91"/>
 <wire x1="81.28" y1="134.62" x2="81.28" y2="132.08" width="0.1524" layer="91"/>
 <junction x="81.28" y="132.08"/>
-<pinref part="C34" gate="G$1" pin="2"/>
+<pinref part="C9" gate="G$1" pin="2"/>
 <wire x1="88.9" y1="134.62" x2="88.9" y2="132.08" width="0.1524" layer="91"/>
 <junction x="88.9" y="132.08"/>
 </segment>
@@ -4146,15 +4146,15 @@ Either populate the NRF52840
 <wire x1="7.62" y1="33.02" x2="7.62" y2="15.24" width="0.1524" layer="91"/>
 <wire x1="7.62" y1="15.24" x2="12.7" y2="15.24" width="0.1524" layer="91"/>
 <junction x="30.48" y="15.24"/>
-<pinref part="C32" gate="G$1" pin="2"/>
+<pinref part="C33" gate="G$1" pin="2"/>
 <wire x1="12.7" y1="15.24" x2="22.86" y2="15.24" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="15.24" x2="30.48" y2="15.24" width="0.1524" layer="91"/>
 <wire x1="12.7" y1="17.78" x2="12.7" y2="15.24" width="0.1524" layer="91"/>
 <junction x="12.7" y="15.24"/>
-<pinref part="C33" gate="G$1" pin="2"/>
+<pinref part="C34" gate="G$1" pin="2"/>
 <wire x1="22.86" y1="17.78" x2="22.86" y2="15.24" width="0.1524" layer="91"/>
 <junction x="22.86" y="15.24"/>
-<pinref part="C25" gate="G$1" pin="2"/>
+<pinref part="C26" gate="G$1" pin="2"/>
 </segment>
 <segment>
 <pinref part="U1" gate="G$1" pin="VSS"/>
@@ -4238,22 +4238,22 @@ Either populate the NRF52840
 <junction x="210.82" y="127"/>
 </segment>
 <segment>
-<pinref part="C26" gate="G$1" pin="1"/>
+<pinref part="C27" gate="G$1" pin="1"/>
 <wire x1="137.16" y1="177.8" x2="182.88" y2="177.8" width="0.1524" layer="91"/>
 <wire x1="182.88" y1="177.8" x2="182.88" y2="175.26" width="0.1524" layer="91"/>
 <wire x1="182.88" y1="177.8" x2="190.5" y2="177.8" width="0.1524" layer="91"/>
 <junction x="182.88" y="177.8"/>
-<pinref part="C21" gate="G$1" pin="1"/>
+<pinref part="C22" gate="G$1" pin="1"/>
 <wire x1="190.5" y1="177.8" x2="190.5" y2="175.26" width="0.1524" layer="91"/>
-<pinref part="C15" gate="G$1" pin="1"/>
+<pinref part="C16" gate="G$1" pin="1"/>
 <wire x1="190.5" y1="177.8" x2="198.12" y2="177.8" width="0.1524" layer="91"/>
 <wire x1="198.12" y1="177.8" x2="198.12" y2="175.26" width="0.1524" layer="91"/>
 <junction x="190.5" y="177.8"/>
-<pinref part="C12" gate="G$1" pin="1"/>
+<pinref part="C13" gate="G$1" pin="1"/>
 <wire x1="198.12" y1="177.8" x2="205.74" y2="177.8" width="0.1524" layer="91"/>
 <wire x1="205.74" y1="177.8" x2="205.74" y2="175.26" width="0.1524" layer="91"/>
 <junction x="198.12" y="177.8"/>
-<pinref part="C13" gate="G$1" pin="1"/>
+<pinref part="C14" gate="G$1" pin="1"/>
 <wire x1="205.74" y1="177.8" x2="213.36" y2="177.8" width="0.1524" layer="91"/>
 <wire x1="213.36" y1="177.8" x2="213.36" y2="175.26" width="0.1524" layer="91"/>
 <junction x="205.74" y="177.8"/>
@@ -4270,7 +4270,7 @@ Either populate the NRF52840
 <segment>
 <pinref part="U1" gate="G$1" pin="VCC"/>
 <wire x1="50.8" y1="43.18" x2="7.62" y2="43.18" width="0.1524" layer="91"/>
-<pinref part="C25" gate="G$1" pin="1"/>
+<pinref part="C26" gate="G$1" pin="1"/>
 <wire x1="7.62" y1="43.18" x2="7.62" y2="40.64" width="0.1524" layer="91"/>
 <pinref part="P+16" gate="VCC" pin="VCC"/>
 <wire x1="7.62" y1="45.72" x2="7.62" y2="43.18" width="0.1524" layer="91"/>
@@ -4352,7 +4352,7 @@ Either populate the NRF52840
 <net name="N$26" class="0">
 <segment>
 <pinref part="X4" gate="G$1" pin="1"/>
-<pinref part="C32" gate="G$1" pin="1"/>
+<pinref part="C33" gate="G$1" pin="1"/>
 <wire x1="12.7" y1="30.48" x2="12.7" y2="25.4" width="0.1524" layer="91"/>
 <wire x1="12.7" y1="30.48" x2="12.7" y2="40.64" width="0.1524" layer="91"/>
 <junction x="12.7" y="30.48"/>
@@ -4365,7 +4365,7 @@ Either populate the NRF52840
 <net name="N$27" class="0">
 <segment>
 <pinref part="X4" gate="G$1" pin="2"/>
-<pinref part="C33" gate="G$1" pin="1"/>
+<pinref part="C34" gate="G$1" pin="1"/>
 <wire x1="22.86" y1="30.48" x2="22.86" y2="25.4" width="0.1524" layer="91"/>
 <pinref part="U1" gate="G$1" pin="XO"/>
 <wire x1="50.8" y1="33.02" x2="22.86" y2="33.02" width="0.1524" layer="91"/>
@@ -4710,7 +4710,7 @@ Either populate the NRF52840
 <segment>
 <pinref part="U10" gate="G$1" pin="DEC5"/>
 <wire x1="114.3" y1="142.24" x2="88.9" y2="142.24" width="0.1524" layer="91"/>
-<pinref part="C34" gate="G$1" pin="1"/>
+<pinref part="C9" gate="G$1" pin="1"/>
 </segment>
 </net>
 </nets>
@@ -4728,11 +4728,11 @@ Either populate the NRF52840
 <instance part="FRAME2" gate="G$1" x="0" y="0"/>
 <instance part="FRAME2" gate="G$2" x="152.4" y="0"/>
 <instance part="U7" gate="G$1" x="58.42" y="35.56"/>
-<instance part="C29" gate="G$1" x="12.7" y="45.72">
+<instance part="C30" gate="G$1" x="12.7" y="45.72">
 <attribute name="DIGIKEY" x="12.7" y="45.72" size="1.016" layer="96" align="bottom-center" display="off"/>
 <attribute name="MPN" x="12.7" y="45.72" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="C30" gate="G$1" x="86.36" y="45.72">
+<instance part="C31" gate="G$1" x="86.36" y="45.72">
 <attribute name="DIGIKEY" x="86.36" y="45.72" size="1.016" layer="96" align="bottom-center" display="off"/>
 <attribute name="MPN" x="86.36" y="45.72" size="1.778" layer="96" display="off"/>
 </instance>
@@ -4755,7 +4755,7 @@ Either populate the NRF52840
 <instance part="P+12" gate="G$1" x="7.62" y="60.96"/>
 <instance part="P+19" gate="G$1" x="175.26" y="185.42"/>
 <instance part="GND20" gate="1" x="243.84" y="99.06"/>
-<instance part="C9" gate="G$1" x="81.28" y="134.62">
+<instance part="C10" gate="G$1" x="81.28" y="134.62">
 <attribute name="DIGIKEY" x="81.28" y="134.62" size="1.016" layer="96" align="bottom-center" display="off"/>
 <attribute name="MPN" x="81.28" y="134.62" size="1.778" layer="96" display="off"/>
 </instance>
@@ -4802,15 +4802,15 @@ Either populate the NRF52840
 </instance>
 <instance part="L3" gate="G$1" x="48.26" y="63.5" rot="R90"/>
 <instance part="GND4" gate="1" x="124.46" y="165.1"/>
-<instance part="C27" gate="G$1" x="119.38" y="175.26">
+<instance part="C28" gate="G$1" x="119.38" y="175.26">
 <attribute name="DIGIKEY" x="119.38" y="175.26" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="119.38" y="175.26" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="C28" gate="G$1" x="66.04" y="139.7">
+<instance part="C29" gate="G$1" x="66.04" y="139.7">
 <attribute name="DIGIKEY" x="66.04" y="139.7" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="66.04" y="139.7" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="C10" gate="G$1" x="127" y="175.26">
+<instance part="C11" gate="G$1" x="127" y="175.26">
 <attribute name="DIGIKEY" x="127" y="175.26" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="127" y="175.26" size="1.778" layer="96" display="off"/>
 </instance>
@@ -4822,7 +4822,7 @@ Either populate the NRF52840
 <net name="GND" class="0">
 <segment>
 <pinref part="GND10" gate="1" pin="GND"/>
-<pinref part="C29" gate="G$1" pin="2"/>
+<pinref part="C30" gate="G$1" pin="2"/>
 <wire x1="12.7" y1="33.02" x2="12.7" y2="40.64" width="0.1524" layer="91"/>
 </segment>
 <segment>
@@ -4834,7 +4834,7 @@ Either populate the NRF52840
 <pinref part="U7" gate="G$1" pin="GND"/>
 <pinref part="GND9" gate="1" pin="GND"/>
 <wire x1="71.12" y1="20.32" x2="71.12" y2="17.78" width="0.1524" layer="91"/>
-<pinref part="C30" gate="G$1" pin="2"/>
+<pinref part="C31" gate="G$1" pin="2"/>
 <wire x1="71.12" y1="17.78" x2="71.12" y2="12.7" width="0.1524" layer="91"/>
 <wire x1="71.12" y1="17.78" x2="86.36" y2="17.78" width="0.1524" layer="91"/>
 <wire x1="86.36" y1="17.78" x2="86.36" y2="40.64" width="0.1524" layer="91"/>
@@ -4845,11 +4845,11 @@ Either populate the NRF52840
 <pinref part="GND5" gate="1" pin="GND"/>
 <wire x1="50.8" y1="127" x2="50.8" y2="124.46" width="0.1524" layer="91"/>
 <wire x1="66.04" y1="134.62" x2="66.04" y2="127" width="0.1524" layer="91"/>
-<pinref part="C9" gate="G$1" pin="2"/>
+<pinref part="C10" gate="G$1" pin="2"/>
 <wire x1="81.28" y1="129.54" x2="81.28" y2="127" width="0.1524" layer="91"/>
 <wire x1="66.04" y1="127" x2="81.28" y2="127" width="0.1524" layer="91"/>
 <junction x="66.04" y="127"/>
-<pinref part="C28" gate="G$1" pin="2"/>
+<pinref part="C29" gate="G$1" pin="2"/>
 <pinref part="D1" gate="G$1" pin="V-"/>
 <junction x="50.8" y="127"/>
 </segment>
@@ -4899,8 +4899,8 @@ Either populate the NRF52840
 <wire x1="127" y1="167.64" x2="127" y2="170.18" width="0.1524" layer="91"/>
 <pinref part="GND4" gate="1" pin="GND"/>
 <junction x="124.46" y="167.64"/>
-<pinref part="C27" gate="G$1" pin="2"/>
-<pinref part="C10" gate="G$1" pin="2"/>
+<pinref part="C28" gate="G$1" pin="2"/>
+<pinref part="C11" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="SW" class="0">
@@ -4933,7 +4933,7 @@ Either populate the NRF52840
 <pinref part="U7" gate="G$1" pin="OUT"/>
 <wire x1="71.12" y1="50.8" x2="71.12" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="71.12" y1="55.88" x2="86.36" y2="55.88" width="0.1524" layer="91"/>
-<pinref part="C30" gate="G$1" pin="1"/>
+<pinref part="C31" gate="G$1" pin="1"/>
 <wire x1="86.36" y1="48.26" x2="86.36" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="86.36" y1="55.88" x2="99.06" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="99.06" y1="55.88" x2="99.06" y2="58.42" width="0.1524" layer="91"/>
@@ -4944,7 +4944,7 @@ Either populate the NRF52840
 <net name="VSW" class="0">
 <segment>
 <wire x1="55.88" y1="55.88" x2="40.64" y2="55.88" width="0.1524" layer="91"/>
-<pinref part="C29" gate="G$1" pin="1"/>
+<pinref part="C30" gate="G$1" pin="1"/>
 <wire x1="40.64" y1="55.88" x2="30.48" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="30.48" y1="55.88" x2="12.7" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="12.7" y1="48.26" x2="12.7" y2="55.88" width="0.1524" layer="91"/>
@@ -4974,7 +4974,7 @@ Either populate the NRF52840
 </net>
 <net name="VREF_SAMP" class="0">
 <segment>
-<pinref part="C9" gate="G$1" pin="1"/>
+<pinref part="C10" gate="G$1" pin="1"/>
 <wire x1="81.28" y1="137.16" x2="81.28" y2="139.7" width="0.1524" layer="91"/>
 <pinref part="U2" gate="G$1" pin="VREF_SAMP"/>
 <wire x1="81.28" y1="139.7" x2="106.68" y2="139.7" width="0.1524" layer="91"/>
@@ -5058,8 +5058,8 @@ Either populate the NRF52840
 <junction x="119.38" y="180.34"/>
 <wire x1="127" y1="177.8" x2="127" y2="180.34" width="0.1524" layer="91"/>
 <junction x="127" y="180.34"/>
-<pinref part="C27" gate="G$1" pin="1"/>
-<pinref part="C10" gate="G$1" pin="1"/>
+<pinref part="C28" gate="G$1" pin="1"/>
+<pinref part="C11" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="N$18" class="0">
@@ -5126,7 +5126,7 @@ Either populate the NRF52840
 <wire x1="106.68" y1="144.78" x2="73.66" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="73.66" y1="144.78" x2="73.66" y2="149.86" width="0.1524" layer="91"/>
 <junction x="73.66" y="149.86"/>
-<pinref part="C28" gate="G$1" pin="1"/>
+<pinref part="C29" gate="G$1" pin="1"/>
 <pinref part="D1" gate="G$1" pin="V+"/>
 </segment>
 </net>
@@ -5200,34 +5200,34 @@ Either populate the NRF52840
 <instance part="FRAME3" gate="G$1" x="0" y="0"/>
 <instance part="FRAME3" gate="G$2" x="152.4" y="0"/>
 <instance part="U8" gate="G$1" x="195.58" y="111.76"/>
-<instance part="C23" gate="G$1" x="121.92" y="144.78">
+<instance part="C24" gate="G$1" x="121.92" y="144.78">
 <attribute name="DIGIKEY" x="121.92" y="144.78" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="121.92" y="144.78" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="C16" gate="G$1" x="114.3" y="144.78">
+<instance part="C17" gate="G$1" x="114.3" y="144.78">
 <attribute name="DIGIKEY" x="114.3" y="144.78" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="114.3" y="144.78" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="GND11" gate="1" x="104.14" y="106.68"/>
-<instance part="C24" gate="G$1" x="213.36" y="137.16">
+<instance part="C25" gate="G$1" x="213.36" y="137.16">
 <attribute name="DIGIKEY" x="213.36" y="137.16" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="213.36" y="137.16" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="GND12" gate="1" x="187.96" y="106.68"/>
 <instance part="U6" gate="G$1" x="22.86" y="101.6"/>
-<instance part="C17" gate="G$1" x="33.02" y="139.7">
+<instance part="C18" gate="G$1" x="33.02" y="139.7">
 <attribute name="DIGIKEY" x="33.02" y="139.7" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="33.02" y="139.7" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="GND6" gate="1" x="40.64" y="96.52"/>
 <instance part="P+5" gate="VCC" x="17.78" y="149.86"/>
-<instance part="C31" gate="G$1" x="25.4" y="139.7">
+<instance part="C32" gate="G$1" x="25.4" y="139.7">
 <attribute name="DIGIKEY" x="25.4" y="139.7" size="1.016" layer="96" align="bottom-center" display="off"/>
 <attribute name="MPN" x="25.4" y="139.7" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="GND7" gate="1" x="33.02" y="129.54"/>
 <instance part="U9" gate="G$1" x="20.32" y="22.86"/>
-<instance part="C18" gate="G$1" x="35.56" y="48.26">
+<instance part="C19" gate="G$1" x="35.56" y="48.26">
 <attribute name="DIGIKEY" x="35.56" y="48.26" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="35.56" y="48.26" size="1.778" layer="96" display="off"/>
 </instance>
@@ -5235,7 +5235,7 @@ Either populate the NRF52840
 <instance part="U11" gate="G$1" x="106.68" y="27.94">
 <attribute name="MPN" x="106.68" y="27.94" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="C19" gate="G$1" x="114.3" y="48.26">
+<instance part="C20" gate="G$1" x="114.3" y="48.26">
 <attribute name="DIGIKEY" x="114.3" y="48.26" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="114.3" y="48.26" size="1.778" layer="96" display="off"/>
 </instance>
@@ -5320,9 +5320,9 @@ Either populate the NRF52840
 <wire x1="40.64" y1="99.06" x2="40.64" y2="101.6" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="C17" gate="G$1" pin="2"/>
+<pinref part="C18" gate="G$1" pin="2"/>
 <wire x1="33.02" y1="134.62" x2="33.02" y2="132.08" width="0.1524" layer="91"/>
-<pinref part="C31" gate="G$1" pin="2"/>
+<pinref part="C32" gate="G$1" pin="2"/>
 <wire x1="25.4" y1="134.62" x2="25.4" y2="132.08" width="0.1524" layer="91"/>
 <wire x1="25.4" y1="132.08" x2="33.02" y2="132.08" width="0.1524" layer="91"/>
 <pinref part="GND7" gate="1" pin="GND"/>
@@ -5347,9 +5347,9 @@ Either populate the NRF52840
 <wire x1="180.34" y1="35.56" x2="172.72" y2="35.56" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="C16" gate="G$1" pin="2"/>
+<pinref part="C17" gate="G$1" pin="2"/>
 <wire x1="114.3" y1="139.7" x2="114.3" y2="137.16" width="0.1524" layer="91"/>
-<pinref part="C23" gate="G$1" pin="2"/>
+<pinref part="C24" gate="G$1" pin="2"/>
 <wire x1="114.3" y1="137.16" x2="121.92" y2="137.16" width="0.1524" layer="91"/>
 <wire x1="121.92" y1="137.16" x2="121.92" y2="139.7" width="0.1524" layer="91"/>
 <pinref part="GND24" gate="1" pin="GND"/>
@@ -5357,17 +5357,17 @@ Either populate the NRF52840
 <junction x="121.92" y="137.16"/>
 </segment>
 <segment>
-<pinref part="C24" gate="G$1" pin="2"/>
+<pinref part="C25" gate="G$1" pin="2"/>
 <wire x1="213.36" y1="132.08" x2="213.36" y2="129.54" width="0.1524" layer="91"/>
 <pinref part="GND25" gate="1" pin="GND"/>
 </segment>
 <segment>
-<pinref part="C18" gate="G$1" pin="2"/>
+<pinref part="C19" gate="G$1" pin="2"/>
 <pinref part="GND26" gate="1" pin="GND"/>
 <wire x1="35.56" y1="40.64" x2="35.56" y2="43.18" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="C19" gate="G$1" pin="2"/>
+<pinref part="C20" gate="G$1" pin="2"/>
 <wire x1="114.3" y1="43.18" x2="114.3" y2="40.64" width="0.1524" layer="91"/>
 <pinref part="GND27" gate="1" pin="GND"/>
 </segment>
@@ -5398,7 +5398,7 @@ Either populate the NRF52840
 <segment>
 <pinref part="P+7" gate="VCC" pin="VCC"/>
 <wire x1="185.42" y1="147.32" x2="185.42" y2="149.86" width="0.1524" layer="91"/>
-<pinref part="C24" gate="G$1" pin="1"/>
+<pinref part="C25" gate="G$1" pin="1"/>
 <wire x1="213.36" y1="139.7" x2="213.36" y2="142.24" width="0.1524" layer="91"/>
 <pinref part="R24" gate="G$1" pin="2"/>
 <wire x1="193.04" y1="142.24" x2="193.04" y2="147.32" width="0.1524" layer="91"/>
@@ -5417,7 +5417,7 @@ Either populate the NRF52840
 <segment>
 <pinref part="P+10" gate="VCC" pin="VCC"/>
 <wire x1="7.62" y1="58.42" x2="7.62" y2="60.96" width="0.1524" layer="91"/>
-<pinref part="C18" gate="G$1" pin="1"/>
+<pinref part="C19" gate="G$1" pin="1"/>
 <wire x1="35.56" y1="50.8" x2="35.56" y2="58.42" width="0.1524" layer="91"/>
 <pinref part="R25" gate="G$1" pin="2"/>
 <wire x1="7.62" y1="55.88" x2="7.62" y2="58.42" width="0.1524" layer="91"/>
@@ -5435,8 +5435,8 @@ Either populate the NRF52840
 <wire x1="20.32" y1="119.38" x2="17.78" y2="119.38" width="0.1524" layer="91"/>
 <wire x1="17.78" y1="119.38" x2="17.78" y2="121.92" width="0.1524" layer="91"/>
 <junction x="17.78" y="121.92"/>
-<pinref part="C31" gate="G$1" pin="1"/>
-<pinref part="C17" gate="G$1" pin="1"/>
+<pinref part="C32" gate="G$1" pin="1"/>
+<pinref part="C18" gate="G$1" pin="1"/>
 <wire x1="33.02" y1="142.24" x2="33.02" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="33.02" y1="144.78" x2="25.4" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="25.4" y1="144.78" x2="25.4" y2="142.24" width="0.1524" layer="91"/>
@@ -5451,14 +5451,14 @@ Either populate the NRF52840
 <pinref part="R23" gate="G$1" pin="2"/>
 <wire x1="96.52" y1="144.78" x2="96.52" y2="152.4" width="0.1524" layer="91"/>
 <wire x1="114.3" y1="152.4" x2="121.92" y2="152.4" width="0.1524" layer="91"/>
-<pinref part="C16" gate="G$1" pin="1"/>
+<pinref part="C17" gate="G$1" pin="1"/>
 <wire x1="114.3" y1="147.32" x2="114.3" y2="152.4" width="0.1524" layer="91"/>
 <wire x1="96.52" y1="152.4" x2="104.14" y2="152.4" width="0.1524" layer="91"/>
 <junction x="114.3" y="152.4"/>
 <wire x1="104.14" y1="152.4" x2="114.3" y2="152.4" width="0.1524" layer="91"/>
 <wire x1="104.14" y1="139.7" x2="104.14" y2="152.4" width="0.1524" layer="91"/>
 <junction x="104.14" y="152.4"/>
-<pinref part="C23" gate="G$1" pin="1"/>
+<pinref part="C24" gate="G$1" pin="1"/>
 <wire x1="121.92" y1="147.32" x2="121.92" y2="152.4" width="0.1524" layer="91"/>
 <wire x1="121.92" y1="152.4" x2="132.08" y2="152.4" width="0.1524" layer="91"/>
 <junction x="121.92" y="152.4"/>
@@ -5473,7 +5473,7 @@ Either populate the NRF52840
 <pinref part="R26" gate="G$1" pin="2"/>
 <wire x1="86.36" y1="55.88" x2="86.36" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="86.36" y1="58.42" x2="93.98" y2="58.42" width="0.1524" layer="91"/>
-<pinref part="C19" gate="G$1" pin="1"/>
+<pinref part="C20" gate="G$1" pin="1"/>
 <wire x1="93.98" y1="58.42" x2="114.3" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="114.3" y1="58.42" x2="114.3" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="93.98" y1="50.8" x2="93.98" y2="58.42" width="0.1524" layer="91"/>
@@ -5800,7 +5800,7 @@ Either populate the NRF52840
 <instance part="U4" gate="1" x="86.36" y="93.98"/>
 <instance part="GND32" gate="1" x="106.68" y="63.5"/>
 <instance part="GND33" gate="1" x="60.96" y="63.5"/>
-<instance part="C20" gate="G$1" x="66.04" y="76.2">
+<instance part="C21" gate="G$1" x="66.04" y="76.2">
 <attribute name="DIGIKEY" x="66.04" y="76.2" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="66.04" y="76.2" size="1.778" layer="96" display="off"/>
 </instance>
@@ -5883,7 +5883,7 @@ Either populate the NRF52840
 <wire x1="73.66" y1="76.2" x2="71.12" y2="76.2" width="0.1524" layer="91"/>
 <wire x1="71.12" y1="76.2" x2="71.12" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="71.12" y1="68.58" x2="66.04" y2="68.58" width="0.1524" layer="91"/>
-<pinref part="C20" gate="G$1" pin="2"/>
+<pinref part="C21" gate="G$1" pin="2"/>
 <wire x1="66.04" y1="68.58" x2="60.96" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="66.04" y1="71.12" x2="66.04" y2="68.58" width="0.1524" layer="91"/>
 <junction x="66.04" y="68.58"/>
@@ -6127,7 +6127,7 @@ Either populate the NRF52840
 <segment>
 <pinref part="U4" gate="1" pin="3V3OUT"/>
 <wire x1="73.66" y1="88.9" x2="66.04" y2="88.9" width="0.1524" layer="91"/>
-<pinref part="C20" gate="G$1" pin="1"/>
+<pinref part="C21" gate="G$1" pin="1"/>
 <wire x1="66.04" y1="88.9" x2="66.04" y2="78.74" width="0.1524" layer="91"/>
 </segment>
 </net>
