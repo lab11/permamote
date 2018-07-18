@@ -127,41 +127,17 @@ void  max44009_set_read_lux_callback(max44009_read_lux_callback* callback) {
   lux_read_callback = callback;
 }
 
-//void calc_mant_exp (float lux, bool upper, uint8_t* exp, uint8_t* mant) {
-//  static uint16_t max_mantissa = 128+64+32+16+15;
-//  *mant = 15;
-//  //if(upper) {
-//  //  *mant += 15;
-//  //  max_mantissa += 15;
-//  //}
-//  //if(lux < 11.5) {
-//  //  *exp = 0;
-//  //} else {
-//    float remainder = lux / max_mantissa / 0.045;
-//    *exp = ceil(log2(remainder));
-//    //if (*exp > 0xE) {
-//    //  *exp = 0xE;
-//    //}
-//  //}
-//  *mant = (uint8_t)(lux / 0.045) >> *exp;
-//  printf("\n%d calc_lux: %f\n", upper, *mant*0.45*(1<<*exp));
-//  printf("exp: %x, mant: %x\n", *exp, *mant);
-//  //if(lux >= 11.5) {
-//  //  APP_ERROR_CHECK_BOOL(*mant & 0x8);
-//  //}
-//}
-
 void max44009_set_upper_threshold(float thresh) {
   uint8_t exp, mant = 0;
   //calc_mant_exp(upper_threshold, true, &exp, &mant);
   static const unsigned int max_mantissa = 128+64+32+16+15;
   float remainder = (thresh/ max_mantissa / 0.045);
-  printf("upper\n");
-  printf("remainder: %f\n", remainder);
+  //printf("upper\n");
+  //printf("remainder: %f\n", remainder);
   exp = ceil(log2(remainder));
   mant = 15 + ((unsigned int)(thresh / 0.045) >> exp);
   float calc_lux = 0.045*(mant & 0xF0)*(1 << exp);
-  printf("thresh: %f, exp: %x, mant: %x, calc lux: %f\n", thresh, exp, (mant & 0xF0), calc_lux);
+  //printf("thresh: %f, exp: %x, mant: %x, calc lux: %f\n", thresh, exp, (mant & 0xF0), calc_lux);
 
   thresh_buf[0] = MAX44009_THRESH_HI;
   thresh_buf[1] = (exp << 4) | ((mant & 0xF0) >> 4);
@@ -176,12 +152,12 @@ void max44009_set_lower_threshold(float thresh) {
   //calc_mant_exp(lower_threshold, false, &exp, &mant);
   static const unsigned int max_mantissa = 128+64+32+16;
   float remainder = (thresh/ max_mantissa / 0.045);
-  printf("lower\n");
-  printf("remainder: %f\n", remainder);
+  //printf("lower\n");
+  //printf("remainder: %f\n", remainder);
   exp = ceil(log2(remainder));
   mant = (unsigned int)(thresh/ 0.045) >> exp;
   float calc_lux = 0.045*(mant & 0xF0)*(1 << exp);
-  printf("thresh: %f, exp: %x, mant: %x, calc lux: %f\n", thresh, exp, (mant & 0xF0), calc_lux);
+  //printf("thresh: %f, exp: %x, mant: %x, calc lux: %f\n", thresh, exp, (mant & 0xF0), calc_lux);
 
 
   thresh_buf[0] = MAX44009_THRESH_LO;
