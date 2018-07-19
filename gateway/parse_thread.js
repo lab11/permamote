@@ -1,7 +1,7 @@
 /* Parse Permamote advertisements */
 
 var parse_payload = function (device_id, resource_url, payload, cb) {
-
+  if(device_id != null) {
     if (device_id.slice(6, 8) === '11') {
       var out = {
         device: 'Permamote',
@@ -29,6 +29,7 @@ var parse_payload = function (device_id, resource_url, payload, cb) {
     }
 
     cb(null);
+  }
 }
 
 
