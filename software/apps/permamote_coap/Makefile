@@ -33,6 +33,7 @@ APPLICATION_SRCS += SEGGER_RTT_printf.c
 
 APPLICATION_SRCS += simple_thread.c
 APPLICATION_SRCS += thread_coap.c
+APPLICATION_SRCS += device_id.c
 
 APPLICATION_SRCS += max44009.c
 
