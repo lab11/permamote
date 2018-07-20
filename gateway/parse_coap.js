@@ -6,10 +6,12 @@ var parse_payload = function (device_id, resource_url, payload, cb) {
       var out = {
         device: 'Permamote',
       }
-
       // OK! This looks like a Permamote packet
       if (resource_url === '/light_lux') {
         out.light_lux = payload.readFloatLE();
+      }
+      else if (resource_url === '/motion') {
+        out.motion = payload[0];
       }
 
       //var out = {
