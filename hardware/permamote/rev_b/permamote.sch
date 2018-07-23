@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.0.1">
+<eagle version="9.1.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -481,11 +481,12 @@ To use, set global attributes TITLE, AUTHOR and REV in your schematic.</descript
 <smd name="4" x="0.75" y="-0.65" dx="1" dy="0.4" layer="1"/>
 <smd name="5" x="0.75" y="0" dx="1" dy="0.4" layer="1"/>
 <smd name="6" x="0.75" y="0.65" dx="1" dy="0.4" layer="1"/>
-<wire x1="-1" y1="1.2" x2="1" y2="1.2" width="0.127" layer="23"/>
-<wire x1="1" y1="1.2" x2="1" y2="-1.2" width="0.127" layer="23"/>
-<wire x1="1" y1="-1.2" x2="-1" y2="-1.2" width="0.127" layer="23"/>
-<wire x1="-1" y1="-1.2" x2="-1" y2="1.2" width="0.127" layer="23"/>
-<text x="-1" y="1.4" size="1.016" layer="23" font="vector" ratio="12">&gt;NAME</text>
+<wire x1="-1" y1="1.2" x2="1" y2="1.2" width="0.127" layer="21"/>
+<wire x1="1" y1="1.2" x2="1" y2="-1.2" width="0.127" layer="21"/>
+<wire x1="1" y1="-1.2" x2="-1" y2="-1.2" width="0.127" layer="21"/>
+<wire x1="-1" y1="-1.2" x2="-1" y2="1.2" width="0.127" layer="21"/>
+<text x="-1" y="1.4" size="1.016" layer="25" font="vector" ratio="12">&gt;NAME</text>
+<circle x="-1.27" y="1.397" radius="0.05679375" width="0.127" layer="21"/>
 </package>
 </packages>
 <symbols>
@@ -924,6 +925,7 @@ To use, set global attributes TITLE, AUTHOR and REV in your schematic.</descript
 </connects>
 <technologies>
 <technology name="">
+<attribute name="DIGIKEY" value="497-17718-6-ND" constant="no"/>
 <attribute name="MANUFACTURER" value="STMicroelectronics" constant="no"/>
 <attribute name="MOUSER" value="511-LIS2DW12TR" constant="no"/>
 <attribute name="MPN" value="LIS2DW12TR" constant="no"/>
@@ -1223,6 +1225,32 @@ Chip Antenna</description>
 <text x="-2" y="2.5" size="1.016" layer="25" font="vector" ratio="12">&gt;NAME</text>
 <text x="-2" y="-3.5" size="1.016" layer="27" font="vector" ratio="12">&gt;VALUE</text>
 </package>
+<package name="1206_RES_HIGH_CLEARANCE">
+<smd name="2" x="1.6" y="0" dx="1" dy="1.7" layer="1"/>
+<smd name="1" x="-1.6" y="0" dx="1" dy="1.7" layer="1"/>
+<text x="0" y="0.981" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
+<wire x1="-1.6" y1="0.8" x2="-1.1" y2="0.8" width="0.0508" layer="21"/>
+<wire x1="-1.1" y1="0.8" x2="1.1" y2="0.8" width="0.0508" layer="21"/>
+<wire x1="1.1" y1="0.8" x2="1.6" y2="0.8" width="0.0508" layer="21"/>
+<wire x1="1.6" y1="0.8" x2="1.6" y2="-0.8" width="0.0508" layer="21"/>
+<wire x1="1.6" y1="-0.8" x2="1.1" y2="-0.8" width="0.0508" layer="21"/>
+<wire x1="1.1" y1="-0.8" x2="-1.1" y2="-0.8" width="0.0508" layer="21"/>
+<wire x1="-1.1" y1="-0.8" x2="-1.6" y2="-0.8" width="0.0508" layer="21"/>
+<wire x1="-1.6" y1="-0.8" x2="-1.6" y2="0.8" width="0.0508" layer="21"/>
+<wire x1="-1.1" y1="0.8" x2="-1.1" y2="-0.8" width="0.0508" layer="21"/>
+<wire x1="1.1" y1="0.8" x2="1.1" y2="-0.8" width="0.0508" layer="21"/>
+</package>
+<package name="0201_RES" urn="urn:adsk.eagle:footprint:23101/1" locally_modified="yes">
+<description>&lt;b&gt;RESISTOR&lt;/b&gt; chip&lt;p&gt;
+Source: https://www.ibselectronics.com/pdf/pa/walsin/smt_notes.pdf</description>
+<smd name="1" x="-0.255" y="0" dx="0.28" dy="0.43" layer="1"/>
+<smd name="2" x="0.255" y="0" dx="0.28" dy="0.43" layer="1"/>
+<text x="0" y="0.381" size="1.016" layer="25" align="bottom-center">&gt;NAME</text>
+<text x="0" y="-1.397" size="1.016" layer="27" align="bottom-center">&gt;VALUE</text>
+<rectangle x1="-0.3" y1="-0.15" x2="-0.15" y2="0.15" layer="51"/>
+<rectangle x1="0.15" y1="-0.15" x2="0.3" y2="0.15" layer="51"/>
+<rectangle x1="-0.15" y1="-0.15" x2="0.15" y2="0.15" layer="21"/>
+</package>
 </packages>
 <symbols>
 <symbol name="CAPACITOR">
@@ -1427,7 +1455,7 @@ Chip Antenna</description>
 </deviceset>
 <deviceset name="RESISTOR" prefix="R" uservalue="yes">
 <description>&lt;b&gt;Resistor&lt;/b&gt;
-Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</description>
+Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resistors.</description>
 <gates>
 <gate name="G$1" symbol="RESISTOR" x="0" y="0"/>
 </gates>
@@ -1451,6 +1479,24 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 </technologies>
 </device>
 <device name="0805_RES" package="0805_RES">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="1206_RES_HIGH_CLEARANCE" package="1206_RES_HIGH_CLEARANCE">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="0201_RES" package="0201_RES">
 <connects>
 <connect gate="G$1" pin="1" pad="1"/>
 <connect gate="G$1" pin="2" pad="2"/>

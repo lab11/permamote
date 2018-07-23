@@ -558,11 +558,12 @@ PACK -</text>
 <smd name="4" x="0.75" y="-0.65" dx="1" dy="0.4" layer="1"/>
 <smd name="5" x="0.75" y="0" dx="1" dy="0.4" layer="1"/>
 <smd name="6" x="0.75" y="0.65" dx="1" dy="0.4" layer="1"/>
-<wire x1="-1" y1="1.2" x2="1" y2="1.2" width="0.127" layer="23"/>
-<wire x1="1" y1="1.2" x2="1" y2="-1.2" width="0.127" layer="23"/>
-<wire x1="1" y1="-1.2" x2="-1" y2="-1.2" width="0.127" layer="23"/>
-<wire x1="-1" y1="-1.2" x2="-1" y2="1.2" width="0.127" layer="23"/>
-<text x="-1" y="1.4" size="1.016" layer="23" font="vector" ratio="12">&gt;NAME</text>
+<wire x1="-1" y1="1.2" x2="1" y2="1.2" width="0.127" layer="21"/>
+<wire x1="1" y1="1.2" x2="1" y2="-1.2" width="0.127" layer="21"/>
+<wire x1="1" y1="-1.2" x2="-1" y2="-1.2" width="0.127" layer="21"/>
+<wire x1="-1" y1="-1.2" x2="-1" y2="1.2" width="0.127" layer="21"/>
+<text x="-1" y="1.4" size="1.016" layer="25" font="vector" ratio="12">&gt;NAME</text>
+<circle x="-1.27" y="1.397" radius="0.05679375" width="0.127" layer="21"/>
 </package>
 </packages>
 </library>
@@ -2190,12 +2191,12 @@ Quickturn PCB 4 Layer .DRU</description>
 <element name="C17" library="passives" package="0402_CAP" value="0.1uF" x="23.241" y="4.699" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="23.241" y="4.699" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="GRM155R71C104KA88J " x="23.241" y="4.699" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="NAME" x="23.114" y="3.937" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
+<attribute name="NAME" x="23.622" y="4.826" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
 <element name="C25" library="passives" package="0402_CAP" value="1uF" x="21.209" y="4.699" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="490-7195-1-ND " x="21.209" y="4.699" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="GRM155R70G105KA12D " x="21.209" y="4.699" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="NAME" x="20.193" y="4.318" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
+<attribute name="NAME" x="21.844" y="3.937" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
 <element name="R6" library="passives" package="0402_RES" value="DNP" x="1.207" y="23.232" smashed="yes">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND " x="2.477" y="23.232" size="1.778" layer="27" display="off"/>
@@ -2210,6 +2211,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="VALUE" x="2.985" y="24.629" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
 <element name="U6" library="chips" package="LGA-12" value="LIS2DW12" x="12.954" y="1.778" smashed="yes" rot="R270">
+<attribute name="DIGIKEY" value="497-17718-6-ND" x="12.954" y="1.778" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MANUFACTURER" value="STMicroelectronics" x="12.954" y="1.778" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MOUSER" value="511-LIS2DW12TR" x="12.954" y="1.778" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="LIS2DW12TR" x="12.954" y="1.778" size="1.778" layer="27" rot="R270" display="off"/>
@@ -2281,7 +2283,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <element name="R23" library="passives" package="0402_RES" value="100M" x="23.876" y="6.604" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" value="541-100MAHCT-ND" x="23.876" y="6.604" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="HMC0402JT100M " x="23.876" y="6.604" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="NAME" x="25.654" y="6.35" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
+<attribute name="NAME" x="25.654" y="6.731" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="23.876" y="8.001" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
 <element name="R24" library="passives" package="0402_RES" value="100M" x="17.78" y="3.81" smashed="yes" rot="R270">
@@ -2322,7 +2324,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <element name="R8" library="passives" package="0402_RES" value="10k" x="23.876" y="7.747" smashed="yes" rot="R180">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND " x="23.876" y="7.747" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="RC0402JR-0710KL" x="23.876" y="7.747" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="NAME" x="25.327" y="7.366" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
+<attribute name="NAME" x="25.327" y="7.62" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="23.876" y="9.144" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
 <element name="R9" library="passives" package="0402_RES" value="10k" x="21.336" y="6.604" smashed="yes">
@@ -2417,7 +2419,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="DIGIKEY" value="1727-2601-1-ND" x="25.4" y="2.54" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MANUFACTURER" value="NEXPERIA" x="25.4" y="2.54" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="PMDXB950UPELZ" x="25.4" y="2.54" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="NAME" x="24.638" y="5.08" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
+<attribute name="NAME" x="25.273" y="5.842" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="26.4" y="5.08" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="top-center"/>
 </element>
 <element name="U2" library="chips" package="S-PVQFN-N20-RGR" value="BQ25505" x="20.066" y="55.594" smashed="yes" rot="R90">
@@ -2623,7 +2625,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <element name="U12" library="chips" package="FN-6" value="TCS34725" x="25.146" y="2.159" smashed="yes">
 <attribute name="DIGIKEY" value="TCS34725FNCT-ND" x="25.146" y="2.159" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="TCS34725FN" x="25.146" y="2.159" size="1.778" layer="27" display="off"/>
-<attribute name="NAME" x="26.654" y="4.315" size="0.8128" layer="23" font="vector" ratio="12" rot="R180"/>
+<attribute name="NAME" x="23.873" y="0.524" size="0.8128" layer="25" font="vector" ratio="12" rot="R90"/>
 </element>
 <element name="C9" library="passives" package="0402_CAP" value="820pF" x="20.701" y="21.082" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="1276-6535-1-ND" x="20.701" y="21.082" size="1.778" layer="27" rot="R90" display="off"/>
