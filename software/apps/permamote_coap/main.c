@@ -25,6 +25,7 @@
 
 #include "permamote.h"
 #include "max44009.h"
+#include "ms5637.h"
 
 #define LED0 NRF_GPIO_PIN_MAP(0,4)
 #define LED1 NRF_GPIO_PIN_MAP(0,5)
@@ -50,8 +51,10 @@ static float upper;
 static float lower;
 
 #define DISCOVER_PERIOD     APP_TIMER_TICKS(5*60*1000)
+#define SENSOR_PERIOD       APP_TIMER_TICKS(30*1000)
 #define PIR_BACKOFF_PERIOD  APP_TIMER_TICKS(5*1000)
 APP_TIMER_DEF(discover_send_timer);
+APP_TIMER_DEF(periodic_sensor_timer);
 APP_TIMER_DEF(pir_backoff);
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
@@ -67,7 +70,23 @@ static void discover_send_callback() {
     thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "discovery", data, 2 + 6 + strlen(addr));
 }
 
-static void sensor_read_callback(float lux) {
+static void periodic_sensor_read_callback() {
+  float temperature, pressure;
+  ms5637_get_temperature_and_pressure(&temperature, &pressure);
+  NRF_LOG_INFO("Sensed: temperature: %d, pressure: %d", (int32_t)temperature, (int32_t)pressure);
+
+  uint8_t data[1 + 6 + sizeof(float)];
+  data[0] = 6;
+  memcpy(data+1, device_id, 6);
+  memcpy(data+1+6, &temperature, sizeof(float));
+
+  thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "temperature_c", data, 1+6+sizeof(float));
+  memcpy(data+1+6, &pressure, sizeof(float));
+
+  thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "pressure_mbar", data, 1+6+sizeof(float));
+}
+
+static void light_sensor_read_callback(float lux) {
   upper = lux + lux* 0.1;
   lower = lux - lux* 0.1;
   NRF_LOG_INFO("Sensed: lux: %u, upper: %u, lower: %u", (uint32_t)lux, (uint32_t)upper, (uint32_t)lower);
@@ -120,8 +139,12 @@ static void timer_init(void)
   APP_ERROR_CHECK(err_code);
   err_code = app_timer_create(&pir_backoff, APP_TIMER_MODE_SINGLE_SHOT, pir_backoff_callback);
   APP_ERROR_CHECK(err_code);
+  err_code = app_timer_create(&periodic_sensor_timer, APP_TIMER_MODE_REPEATED, periodic_sensor_read_callback);
+  APP_ERROR_CHECK(err_code);
 
   err_code = app_timer_start(discover_send_timer, DISCOVER_PERIOD, NULL);
+  APP_ERROR_CHECK(err_code);
+  err_code = app_timer_start(periodic_sensor_timer, SENSOR_PERIOD, NULL);
   APP_ERROR_CHECK(err_code);
 }
 
@@ -178,7 +201,7 @@ int main(void) {
   nrf_gpio_pin_clear(MAX44009_EN);
   nrf_gpio_pin_clear(PIR_EN);
   nrf_gpio_pin_set(ISL29125_EN);
-  nrf_gpio_pin_set(MS5637_EN);
+  nrf_gpio_pin_clear(MS5637_EN);
   nrf_gpio_pin_set(SI7021_EN);
 
   // setup light sensor
@@ -203,12 +226,14 @@ int main(void) {
   nrf_drv_gpiote_in_event_enable(PIR_OUT, 1);
 
   max44009_init(&twi_mngr_instance);
-  max44009_set_read_lux_callback(sensor_read_callback);
+  max44009_set_read_lux_callback(light_sensor_read_callback);
   max44009_config(config);
   max44009_schedule_read_lux();
   max44009_set_interrupt_callback(light_interrupt_callback);
   max44009_enable_interrupt();
 
+  ms5637_init(&twi_mngr_instance, osr_8192);
+  ms5637_start();
 
   thread_init(&thread_config);
   otInstance* thread_instance = thread_get_instance();
