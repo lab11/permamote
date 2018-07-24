@@ -1,6 +1,7 @@
 #include <math.h>
 
 #include "nrf_drv_gpiote.h"
+#include "nrf_log.h"
 
 #include "max44009.h"
 #include "permamote.h"
@@ -20,7 +21,7 @@ static max44009_interrupt_callback* interrupt_callback;
 
 static void lux_callback(ret_code_t result, void* p_context);
 
-  static nrf_twi_mngr_transfer_t const int_status_transfer[] = {
+static nrf_twi_mngr_transfer_t const int_status_transfer[] = {
   NRF_TWI_MNGR_WRITE(MAX44009_ADDR, int_status_buf, 1, NRF_TWI_MNGR_NO_STOP),
   NRF_TWI_MNGR_READ(MAX44009_ADDR, int_status_buf+1, 1, 0)
 };
@@ -89,8 +90,8 @@ void max44009_set_interrupt_callback(max44009_interrupt_callback* callback) {
     nrf_drv_gpiote_init();
   }
   nrf_drv_gpiote_in_config_t int_gpio_config = GPIOTE_CONFIG_IN_SENSE_HITOLO(0);
-  int_gpio_config.pull = NRF_GPIO_PIN_NOPULL;
-  nrf_drv_gpiote_in_init(MAX44009_INT, &int_gpio_config, interrupt_handler);
+  int error = nrf_drv_gpiote_in_init(MAX44009_INT, &int_gpio_config, interrupt_handler);
+  APP_ERROR_CHECK(error);
 }
 
 void max44009_enable_interrupt(void) {

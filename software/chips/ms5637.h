@@ -4,9 +4,12 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "nrf_drv_twi.h"
+#include "nrf_twi_mngr.h"
 
 #define MS5637_ADDR 0x76
+
+#define MS5637_RESET  0x1E
+#define MS5637_PROM   0xA2
 
 typedef enum {
   osr_8192,
@@ -15,9 +18,8 @@ typedef enum {
   osr_1024,
   osr_512,
   osr_256
-} OSR;
+} MS5637_OSR;
 
-void ms5637_init(nrf_drv_twi_t* instance);
-void ms5637_start(void);
-float ms5637_get_temperature(OSR osr);
-float ms5637_get_pressure(OSR osr);
+void  ms5637_init(const nrf_twi_mngr_t* instance, MS5637_OSR osr);
+void  ms5637_start(void);
+void  ms5637_get_temperature_and_pressure(float* temp, float* pres);
