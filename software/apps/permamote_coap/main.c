@@ -11,6 +11,7 @@
 #include "nordic_common.h"
 #include "app_timer.h"
 #include "nrf_drv_clock.h"
+#include "nrf_drv_gpiote.h"
 #include "nrf_power.h"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
@@ -48,8 +49,10 @@ static bool update_thresh = false;
 static float upper;
 static float lower;
 
-#define DISCOVER_PERIOD APP_TIMER_TICKS(5*60*1000)
+#define DISCOVER_PERIOD     APP_TIMER_TICKS(5*60*1000)
+#define PIR_BACKOFF_PERIOD  APP_TIMER_TICKS(5*1000)
 APP_TIMER_DEF(discover_send_timer);
+APP_TIMER_DEF(pir_backoff);
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 
@@ -65,12 +68,9 @@ static void discover_send_callback() {
 }
 
 static void sensor_read_callback(float lux) {
-  upper = lux + lux* 0.05;
-  lower = lux - lux* 0.05;
+  upper = lux + lux* 0.1;
+  lower = lux - lux* 0.1;
   NRF_LOG_INFO("Sensed: lux: %u, upper: %u, lower: %u", (uint32_t)lux, (uint32_t)upper, (uint32_t)lower);
-  //NRF_LOG_INFO("ID[0]: %x", ((uint8_t *)(ID_FLASH_LOCATION))[0]);
-  //NRF_LOG_INFO("ADDR[0]: %lx", NRF_FICR->DEVICEADDR[0]);
-  //NRF_LOG_INFO("ADDR[1]: %lx", NRF_FICR->DEVICEADDR[1] & 0xFFFF);
 
   update_thresh = true;
 
@@ -82,7 +82,23 @@ static void sensor_read_callback(float lux) {
   thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "light_lux", data, 1+6+sizeof(float));
 }
 
-static void interrupt_callback(void) {
+static void pir_backoff_callback() {
+  nrf_drv_gpiote_in_event_enable(PIR_OUT, 1);
+}
+
+static void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
+  nrf_drv_gpiote_in_event_disable(PIR_OUT);
+  NRF_LOG_INFO("Saw motion");
+  uint32_t err_code = app_timer_start(pir_backoff, PIR_BACKOFF_PERIOD, NULL);
+  APP_ERROR_CHECK(err_code);
+  uint8_t data[2+6];
+  data[0] = 6;
+  memcpy(data+1, device_id, 6);
+  data[7] = 1;
+  thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "motion", data, 8);
+}
+
+static void light_interrupt_callback(void) {
     max44009_schedule_read_lux();
 }
 
@@ -102,6 +118,9 @@ static void timer_init(void)
   APP_ERROR_CHECK(err_code);
   err_code = app_timer_create(&discover_send_timer, APP_TIMER_MODE_REPEATED, discover_send_callback);
   APP_ERROR_CHECK(err_code);
+  err_code = app_timer_create(&pir_backoff, APP_TIMER_MODE_SINGLE_SHOT, pir_backoff_callback);
+  APP_ERROR_CHECK(err_code);
+
   err_code = app_timer_start(discover_send_timer, DISCOVER_PERIOD, NULL);
   APP_ERROR_CHECK(err_code);
 }
@@ -126,45 +145,21 @@ int main(void) {
   //sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
   nrf_power_dcdcen_set(1);
 
+  // Init log
+  log_init();
+
   // Init twi
   twi_init();
 
   // init periodic timers
   timer_init();
 
-  // Init log
-  log_init();
-
   NRF_LOG_INFO("\nLUX TEST\n");
 
   get_device_id(device_id);
 
-  // Turn on power gate
-  nrf_gpio_cfg_output(MAX44009_EN);
-  nrf_gpio_cfg_output(ISL29125_EN);
-  nrf_gpio_cfg_output(MS5637_EN);
-  nrf_gpio_cfg_output(SI7021_EN);
-  nrf_gpio_pin_clear(MAX44009_EN);
-  nrf_gpio_pin_set(ISL29125_EN);
-  nrf_gpio_pin_set(MS5637_EN);
-  nrf_gpio_pin_set(SI7021_EN);
-
-  const max44009_config_t config = {
-    .continuous = 0,
-    .manual = 0,
-    .cdr = 0,
-    .int_time = 3,
-  };
-
+  // setup thread
   otIp6AddressFromString(COAP_SERVER_ADDR, &m_peer_address);
-
-  max44009_init(&twi_mngr_instance);
-  max44009_set_read_lux_callback(sensor_read_callback);
-  max44009_config(config);
-  max44009_schedule_read_lux();
-  max44009_set_interrupt_callback(interrupt_callback);
-  max44009_enable_interrupt();
-
   thread_config_t thread_config = {
     .channel = 11,
     .panid = 0xFACE,
@@ -173,6 +168,47 @@ int main(void) {
     .child_period = DEFAULT_CHILD_TIMEOUT,
     .autocommission = true,
   };
+
+  // Turn on power gate
+  nrf_gpio_cfg_output(MAX44009_EN);
+  nrf_gpio_cfg_output(ISL29125_EN);
+  nrf_gpio_cfg_output(MS5637_EN);
+  nrf_gpio_cfg_output(SI7021_EN);
+  nrf_gpio_cfg_output(PIR_EN);
+  nrf_gpio_pin_clear(MAX44009_EN);
+  nrf_gpio_pin_clear(PIR_EN);
+  nrf_gpio_pin_set(ISL29125_EN);
+  nrf_gpio_pin_set(MS5637_EN);
+  nrf_gpio_pin_set(SI7021_EN);
+
+  // setup light sensor
+  const max44009_config_t config = {
+    .continuous = 0,
+    .manual = 0,
+    .cdr = 0,
+    .int_time = 3,
+  };
+
+  // setup interrupt for pir
+  if (!nrf_drv_gpiote_is_init()) {
+    nrf_drv_gpiote_init();
+  }
+
+  if (!nrf_drv_gpiote_is_init()) {
+    nrf_drv_gpiote_init();
+  }
+  nrf_drv_gpiote_in_config_t pir_gpio_config = GPIOTE_CONFIG_IN_SENSE_LOTOHI(1);
+  pir_gpio_config.pull = NRF_GPIO_PIN_PULLDOWN;
+  int error = nrf_drv_gpiote_in_init(PIR_OUT, &pir_gpio_config, pir_interrupt_callback);
+  nrf_drv_gpiote_in_event_enable(PIR_OUT, 1);
+
+  max44009_init(&twi_mngr_instance);
+  max44009_set_read_lux_callback(sensor_read_callback);
+  max44009_config(config);
+  max44009_schedule_read_lux();
+  max44009_set_interrupt_callback(light_interrupt_callback);
+  max44009_enable_interrupt();
+
 
   thread_init(&thread_config);
   otInstance* thread_instance = thread_get_instance();
