@@ -13,7 +13,16 @@ var parse_payload = function (device_id, resource_url, payload, cb) {
       else if (resource_url === '/motion') {
         out.motion = payload[0];
       }
-
+      else if (resource_url === '/temperature_c') {
+        out.temperature_c = payload.readFloatLE();
+      }
+      else if (resource_url === '/pressure_mbar') {
+        out.pressure_mbar = payload.readFloatLE();
+      }
+      else {
+        cb(null);
+        return;
+      }
       //var out = {
       //  device: 'Permamote',
       //  light_lux: light,
