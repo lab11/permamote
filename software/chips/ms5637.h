@@ -1,8 +1,8 @@
 // Datasheet: http://www.te.com/commerce/DocumentDelivery/DDEController?Action=srchrtrv&DocNm=MS5637-02BA03&DocType=Data+Sheet&DocLang=English
+#pragma once
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
 
 #include "nrf_twi_mngr.h"
 
