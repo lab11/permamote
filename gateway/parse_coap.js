@@ -19,6 +19,9 @@ var parse_payload = function (device_id, resource_url, payload, cb) {
       else if (resource_url === '/pressure_mbar') {
         out.pressure_mbar = payload.readFloatLE();
       }
+      else if (resource_url === '/humidity_percent') {
+        out.humidity_percent = payload.readFloatLE();
+      }
       else {
         cb(null);
         return;
