@@ -23,9 +23,9 @@ var parse_payload = function (device_id, resource_url, payload, cb) {
         out.humidity_percent = payload.readFloatLE();
       }
       else if (resource_url === '/voltage') {
-        out.vbat = payload.readFloatLE();
-        out.vsol = payload.readFloatLE(4);
-        out.vsec = payload.readFloatLE(8);
+        out.primary_voltage = payload.readFloatLE();
+        out.solar_voltage = payload.readFloatLE(4);
+        out.secondary_voltage = payload.readFloatLE(8);
       }
       else {
         cb(null);
