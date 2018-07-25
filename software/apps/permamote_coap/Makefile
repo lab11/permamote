@@ -11,6 +11,7 @@ APPLICATION_SRCS += nrfx_gpiote.c
 APPLICATION_SRCS += nrfx_power.c
 APPLICATION_SRCS += nrfx_twi.c
 APPLICATION_SRCS += nrfx_clock.c
+APPLICATION_SRCS += nrfx_saadc.c
 APPLICATION_SRCS += nrfx_power_clock.c
 APPLICATION_SRCS += nrf_drv_clock.c
 APPLICATION_SRCS += nrf_twi_mngr.c
@@ -37,6 +38,7 @@ APPLICATION_SRCS += device_id.c
 
 APPLICATION_SRCS += max44009.c
 APPLICATION_SRCS += ms5637.c
+APPLICATION_SRCS += si7021.c
 
 NRF_IC = nrf52840_xxaa
 SDK_VERSION = 15

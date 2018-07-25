@@ -63,8 +63,10 @@ void si7021_config (si7021_meas_res_t res_mode) {
     NRF_TWI_MNGR_WRITE(SI7021_ADDR, command, 2, 0),
   };
 
-  int error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, config_transfer, 1, NULL);
-  APP_ERROR_CHECK(error);
+  int error;
+  do {
+    error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, config_transfer, 1, NULL);
+  } while(error != NRF_SUCCESS);
 
 }
 
@@ -160,9 +162,12 @@ void si7021_read_user_reg (uint8_t* user_reg) {
     NRF_TWI_MNGR_WRITE(SI7021_ADDR, &command, 1, NRF_TWI_MNGR_NO_STOP),
     NRF_TWI_MNGR_READ(SI7021_ADDR, user_reg, 1, 0),
   };
-  int error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, read_user_reg_transfer, 2, NULL);
-  APP_ERROR_CHECK(error);
+  int error;
+  do {
+    error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, read_user_reg_transfer, 2, NULL);
+  } while (error != NRF_SUCCESS);
 }
+
 //
 //void si7021_read_firmware_rev (uint8_t* buf) {
 //
