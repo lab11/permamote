@@ -29,12 +29,6 @@ uint8_t enables[7] = {
 int main(void) {
 
     // Initialize.
-    nrf_gpio_cfg_output(LED0);
-    nrf_gpio_cfg_output(LED1);
-    nrf_gpio_cfg_output(LED2);
-    nrf_gpio_pin_set(LED0);
-    nrf_gpio_pin_set(LED1);
-    nrf_gpio_pin_set(LED2);
 #ifdef SOFTDEVICE_PRESENT
     nrf_sdh_enable_request();
     sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
@@ -42,6 +36,12 @@ int main(void) {
     nrf_power_dcdcen_set(1);
 #endif
 
+    nrf_gpio_cfg_output(LED0);
+    nrf_gpio_cfg_output(LED1);
+    nrf_gpio_cfg_output(LED2);
+    nrf_gpio_pin_set(LED0);
+    nrf_gpio_pin_set(LED1);
+    nrf_gpio_pin_set(LED2);
     for (int i = 0; i < 7; i++) {
       nrf_gpio_cfg_output(enables[i]);
       nrf_gpio_pin_set(enables[i]);

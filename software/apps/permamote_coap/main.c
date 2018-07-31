@@ -264,6 +264,13 @@ int main(void) {
   nrf_gpio_pin_set(MS5637_EN);
   nrf_gpio_pin_set(SI7021_EN);
 
+  nrf_gpio_cfg_output(LI2D_CS);
+  nrf_gpio_cfg_output(SPI_MISO);
+  nrf_gpio_cfg_output(SPI_MOSI);
+  nrf_gpio_pin_set(LI2D_CS);
+  nrf_gpio_pin_set(SPI_MISO);
+  nrf_gpio_pin_set(SPI_MOSI);
+
   thread_init(&thread_config);
   otInstance* thread_instance = thread_get_instance();
   thread_coap_client_init(thread_instance);
