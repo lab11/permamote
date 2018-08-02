@@ -2,6 +2,7 @@
 
 #include "nrf_drv_gpiote.h"
 #include "nrf_log.h"
+#include "nrf_log_ctrl.h"
 
 #include "max44009.h"
 #include "permamote.h"
@@ -130,6 +131,9 @@ void  max44009_set_read_lux_callback(max44009_read_lux_callback* callback) {
 
 void calc_exp_mant(float lux, bool upper, uint8_t* exp, uint8_t* mant){
   uint8_t max_mantissa = 128+64+32+16 + 15*upper;
+  float calc_lux = 0;
+  NRF_LOG_INFO("\ttrying to match: %d", (uint32_t)lux);
+
   // According to datasheet, if lux is less than 11.5, exp must be 0
   if (lux >= 11.5) {
     float remainder = (lux / max_mantissa / 0.045);
@@ -137,29 +141,78 @@ void calc_exp_mant(float lux, bool upper, uint8_t* exp, uint8_t* mant){
   } else {
     *exp = 0;
   }
-  NRF_LOG_INFO("exp: %d", (uint32_t)*exp);
-  *mant = ((unsigned int)(lux / 0.045) >> *exp);
+  *mant = ((unsigned int)(lux / 0.045) >> *exp) & 0xF0;
+  if (upper) {
+    *mant += 15;
+  }
+  NRF_LOG_INFO("\texp pre: %d, %x", *exp, *exp);
+  NRF_LOG_INFO("\tmant pre: %d, 0x%x", *mant, *mant);
   // According to datasheet, if lux is greater than 11.5, the most significant
   // bits of mant must be 0b1MMM
-  if (*mant < 15) {
-    *mant = 15;
+  // if mant does not have most significant bit set, we need to recalculate
+  if (lux >= 11.5 && !(*mant & 0x80)) {
+    uint8_t above_mant, below_mant, above_exp, below_exp;
+    above_mant = 15*upper;
+    below_mant = 15*upper;
+    float above, below = 0;
+    // if looking for upper bound thresh, check numbers directly below and above that match criteria
+    //below
+    below_exp = *exp - 1;
+    below_mant += 0xF0;
+    below = 0.045*(below_mant)*(1 << below_exp);
+    NRF_LOG_INFO("\tcalc lux below: %d", (uint32_t)below);
+    //above
+    above_exp = *exp;
+    above_mant += 0x80;
+    above = 0.045*(above_mant)*(1 << above_exp);
+    NRF_LOG_INFO("\tcalc lux above: %d", (uint32_t)above);
+    if (above - lux < lux - below) {
+      *mant = above_mant;
+      *exp = above_exp;
+    } else {
+      *mant = below_mant;
+      *exp = below_exp;
+    }
   }
-  if (lux >= 11.5) {
-    *mant |= 0x80;
-  }
-  NRF_LOG_INFO("mant: %d", *mant);
-  float calc_lux = 0.045*(*mant & 0xF0)*(1 << *exp);
-  NRF_LOG_INFO("calc lux: %d", (uint32_t)calc_lux);
-
+  calc_lux = 0.045*(*mant)*(1 << *exp);
+  NRF_LOG_INFO("\tcalc lux: %d", (uint32_t)calc_lux);
+  // ensure that the estimation of lux (with the available bits in the
+  // interrupt register) is larger than the threshold we want to set
+  //if (upper && calc_lux < lux) {
+  //  // bump it up by 0x10 if we can
+  //  if ((*mant & 0xF0) < 0xF0) {
+  //    *mant += 0x10;
+  //  }
+  //  // if that's going to overflow, bump up the exponent, set mant to 0x80
+  //  else {
+  //    if (*exp < 14) {
+  //      *exp += 1;
+  //      *mant = 0x80;
+  //    }
+  //    // set to maximum
+  //    else {
+  //      *exp = 14;
+  //      *mant = 0xF0;
+  //    }
+  //  }
+  //}
+  //NRF_LOG_INFO("\texp: %d, %x", *exp, *exp);
+  //NRF_LOG_INFO("\tmant: %d, 0x%x", *mant & 0xF0, *mant & 0xF0);
+  //calc_lux = 0.045*(*mant & 0xF0)*(1 << *exp);
+  //NRF_LOG_INFO("\tcalc lux: %d", (uint32_t)calc_lux);
 }
 
 void max44009_set_upper_threshold(float thresh) {
   uint8_t exp, mant = 0;
+  //NRF_LOG_INFO("test #####");
+  //calc_exp_mant(728, 0, &exp, &mant);
+  //exp = 0;
+  //mant = 0;
   NRF_LOG_INFO("upper #####");
   calc_exp_mant(thresh, 1, &exp, &mant);
 
   thresh_buf[0] = MAX44009_THRESH_HI;
-  thresh_buf[1] = (exp << 4) | ((mant & 0xF0) >> 4);
+  thresh_buf[1] = ((exp & 0x0F) << 4) | ((mant & 0xF0) >> 4);
 
   int error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, threshold_write_transfer, sizeof(threshold_write_transfer)/sizeof(threshold_write_transfer[0]), NULL);
   APP_ERROR_CHECK(error);
