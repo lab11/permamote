@@ -12,7 +12,7 @@
 #define Meas_Temp_Hold_Master    0xE3  // Measure Temperature, Hold Master Mode
 #define Meas_Temp_No_Hold_Master 0xF3  // Measure Temperature, No Hold Master Mode
 #define Read_Temp_From_Prev_RH   0xE0  // Read Temperature Value from Previous RH Measurement
-#define RESET                    0xFE  // Reset
+#define SI7021_RESET                    0xFE  // Reset
 #define Write_User_Reg_1         0xE6  // Write RH/T User Register 1
 #define Read_User_Reg_1          0xE7  // Read RH/T User Register 1
 #define Read_ID_Byte_1           0xFA
@@ -30,7 +30,7 @@
 static const nrf_twi_mngr_t* twi_mngr_instance = NULL;
 
 void si7021_reset(void) {
-  uint8_t rst = RESET;
+  uint8_t rst = SI7021_RESET;
 
   nrf_twi_mngr_transfer_t const reset_transfer[] = {
     NRF_TWI_MNGR_WRITE(SI7021_ADDR, &rst, 1, 0),

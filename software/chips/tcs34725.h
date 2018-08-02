@@ -9,7 +9,7 @@
 
 #define TCS34725_ADDRESS          0x29
 
-#define TCS34725_COMMAND_BIT      0x80
+#define TCS34725_COMMAND_BIT      0x80 | (1 << 5)
 
 #define TCS34725_ENABLE           0x00
 #define TCS34725_ENABLE_AIEN      0x10    /* RGBC Interrupt Enable */
