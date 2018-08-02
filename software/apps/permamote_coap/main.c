@@ -49,6 +49,8 @@ static otIp6Address m_peer_address =
 };
 
 static bool update_thresh = false;
+static bool do_reset= false;
+static uint32_t global_error = false;
 static float upper;
 static float lower;
 
@@ -221,6 +223,18 @@ void adc_init(void) {
   nrf_drv_saadc_calibrate_offset();
 }
 
+void app_error_fault_handler(uint32_t error_code, __attribute__ ((unused)) uint32_t line_num, __attribute__ ((unused)) uint32_t info) {
+  NRF_LOG_INFO("App error: %d", error_code);
+  uint8_t data[1 + 6 + sizeof(uint32_t)];
+  data[0] = 6;
+  memcpy(data+1, device_id, 6);
+  memcpy(data+1+6, &error_code, sizeof(uint32_t));
+
+  thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "error", data, 1+6+sizeof(uint32_t));
+
+  do_reset = true;
+}
+
 int main(void) {
   // init softdevice
   //nrf_sdh_enable_request();
@@ -307,7 +321,7 @@ int main(void) {
 
   si7021_init(&twi_mngr_instance);
 
-
+  int i = 0;
   while (1) {
     thread_process();
     if (update_thresh) {
@@ -317,6 +331,12 @@ int main(void) {
     }
     if (NRF_LOG_PROCESS() == false)
     {
+      if (do_reset) {
+        if (i++ > 100) {
+          NVIC_SystemReset();
+        }
+      }
+
       thread_sleep();
     }
   }
