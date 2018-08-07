@@ -1,4 +1,5 @@
 // Datasheet: http://www.st.com/content/ccc/resource/technical/document/datasheet/group3/30/3a/4e/6b/68/16/4a/35/DM00323179/files/DM00323179.pdf/jcr:content/translations/en.DM00323179.pdf
+#pragma once
 
 #include "nrf_spi_mngr.h"
 
