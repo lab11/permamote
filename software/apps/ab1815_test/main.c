@@ -87,7 +87,7 @@ int main(void) {
   // init uart
   uart_init();
 
-  printf("\nTEMP/HUMIDITY TEST\n");
+  printf("\nRTC TEST\n");
 
   // Init spi
   spi_init();
@@ -125,7 +125,11 @@ int main(void) {
     nrf_delay_ms(5000);
     ab1815_get_time(&time);
     printf("%d:%02d:%02d, %d/%d/20%02d\n", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
-    //si7021_read_temp_and_RH(&temperature, &humidity);
+    //struct timeval tv = {
+    //  .tv_sec = 1533699875,
+    //};
+    //time = unix_to_ab1815(tv);
+    //printf("%d:%02d:%02d, %d/%d/20%02d\n", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
     //__WFE();
   }
 }

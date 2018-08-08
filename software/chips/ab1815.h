@@ -1,5 +1,6 @@
 // Datasheet: https://abracon.com/Support/AppsManuals/Precisiontiming/AB18XX-Application-Manual.pdf
 #pragma once
+#include "time.h"
 
 #include "nrf_spi_mngr.h"
 #include "permamote.h"
@@ -66,7 +67,7 @@ typedef struct {
 } ab1815_int_config_t;
 
 typedef struct {
-  uint8_t hundreths;
+  uint8_t hundredths;
   uint8_t seconds;
   uint8_t minutes;
   uint8_t hours;
@@ -82,5 +83,5 @@ void ab1815_set_config(ab1815_control_t config);
 void ab1815_interrupt_config(ab1815_int_config_t config);
 void ab1815_set_time(ab1815_time_t time);
 void ab1815_get_time(ab1815_time_t* time);
-ab1815_time_t ab1815_unix_to_ab1815(uint32_t unix_time);
+ab1815_time_t unix_to_ab1815(struct timeval tv);
 

@@ -75,7 +75,7 @@ inline uint8_t get_ones(uint8_t x) {
 void ab1815_set_time(ab1815_time_t time) {
   uint8_t write[9];
 
-  APP_ERROR_CHECK_BOOL(time.hundreths < 100 && time.hundreths >= 0);
+  APP_ERROR_CHECK_BOOL(time.hundredths < 100 && time.hundredths >= 0);
   APP_ERROR_CHECK_BOOL(time.seconds < 60 && time.seconds>= 0);
   APP_ERROR_CHECK_BOOL(time.minutes < 60 && time.minutes >= 0);
   APP_ERROR_CHECK_BOOL(time.hours < 24 && time.hours >= 0);
@@ -85,7 +85,7 @@ void ab1815_set_time(ab1815_time_t time) {
   APP_ERROR_CHECK_BOOL(time.weekday < 7 && time.weekday >= 0);
 
   write[0] = AB1815_HUND | 0x80;
-  write[1] = (get_tens(time.hundreths) & 0xF) << 4  | (get_ones(time.hundreths) & 0xF);
+  write[1] = (get_tens(time.hundredths) & 0xF) << 4  | (get_ones(time.hundredths) & 0xF);
   write[2] = (get_tens(time.seconds) & 0x7) << 4    | (get_ones(time.seconds) & 0xF);
   write[3] = (get_tens(time.minutes) & 0x7) << 4    | (get_ones(time.minutes) & 0xF);
   write[4] = (get_tens(time.hours) & 0x3) << 4      | (get_ones(time.hours) & 0xF);
@@ -114,7 +114,7 @@ void ab1815_get_time(ab1815_time_t* time) {
   int error = nrf_spi_mngr_perform(spi_instance, &spi_config, config_transfer, 1, NULL);
   APP_ERROR_CHECK(error);
 
-  time->hundreths = 10 * ((read[1] & 0xF0) >> 4) + (read[1] & 0xF);
+  time->hundredths = 10 * ((read[1] & 0xF0) >> 4) + (read[1] & 0xF);
   time->seconds   = 10 * ((read[2] & 0x70) >> 4) + (read[2] & 0xF);
   time->minutes   = 10 * ((read[3] & 0x70) >> 4) + (read[3] & 0xF);
   // TODO handle 12 hour format
@@ -125,8 +125,18 @@ void ab1815_get_time(ab1815_time_t* time) {
   time->weekday   = read[8] & 0x7;
 }
 
-ab1815_time_t ab1815_unix_to_ab1815(uint32_t unix_time) {
+ab1815_time_t unix_to_ab1815(struct timeval tv) {
   ab1815_time_t time;
+  struct tm * t;
+  t = gmtime((time_t*)&(tv.tv_sec));
+  time.hundredths = tv.tv_usec / 10000;
+  time.seconds  = t->tm_sec;
+  time.minutes  = t->tm_min;
+  time.hours    = t->tm_hour;
+  time.date     = t->tm_mday;
+  time.months   = t->tm_mon + 1;
+  time.years    = t->tm_year - 100;
+  time.weekday  = t->tm_wday;
   return time;
 }
 
