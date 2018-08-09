@@ -23,6 +23,7 @@
 #include "simple_thread.h"
 #include "thread_coap.h"
 #include "device_id.h"
+#include "ntp.h"
 
 #include "permamote.h"
 #include "max44009.h"
@@ -35,11 +36,14 @@
 
 #define COAP_SERVER_ADDR "64:ff9b::22da:2eb5"
 
-#define DEFAULT_CHILD_TIMEOUT    40                                         /**< Thread child timeout [s]. */
-#define DEFAULT_POLL_PERIOD      5000                                       /**< Thread Sleepy End Device polling period when MQTT-SN Asleep. [ms] */
-#define NUM_SLAAC_ADDRESSES      4                                          /**< Number of SLAAC addresses. */
+#define DEFAULT_CHILD_TIMEOUT    40   /**< Thread child timeout [s]. */
+#define DEFAULT_POLL_PERIOD      5000 /**< Thread Sleepy End Device polling period when Asleep. [ms] */
+#define RECV_POLL_PERIOD         100  /**< Thread Sleepy End Device polling period when expecting response. [ms] */
+#define NUM_SLAAC_ADDRESSES      4    /**< Number of SLAAC addresses. */
 
 static uint8_t device_id[6];
+static otNetifAddress m_slaac_addresses[6]; /**< Buffer containing addresses resolved by SLAAC */
+static struct ntp_client_t ntp_client;
 static otIp6Address m_peer_address =
 {
     .mFields =
@@ -57,11 +61,52 @@ static float lower;
 #define DISCOVER_PERIOD     APP_TIMER_TICKS(5*60*1000)
 #define SENSOR_PERIOD       APP_TIMER_TICKS(30*1000)
 #define PIR_BACKOFF_PERIOD  APP_TIMER_TICKS(5*1000)
+#define RTC_UPDATE_PERIOD   APP_TIMER_TICKS(24*60*60*1000)
+#define RTC_UPDATE_FIRST    APP_TIMER_TICKS(5*1000)
+
 APP_TIMER_DEF(discover_send_timer);
 APP_TIMER_DEF(periodic_sensor_timer);
 APP_TIMER_DEF(pir_backoff);
+APP_TIMER_DEF(rtc_update);
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
+
+void ntp_recv_callback(struct ntp_client_t* ntp_client) {
+  NRF_LOG_INFO("time: %lu", ntp_client->tv.tv_sec);
+  otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
+}
+
+static void rtc_update_callback() {
+  NRF_LOG_INFO("RTC UPDATE");
+  NRF_LOG_INFO("sent ntp poll!");
+  int error = ntp_client_begin(thread_get_instance(), &ntp_client, &m_peer_address, 123, 127, ntp_recv_callback, NULL);
+  NRF_LOG_INFO("error: %d", error);
+  if (error) {
+    memset(&ntp_client, 0, sizeof(struct ntp_client_t));
+  }
+}
+
+void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * p_context) {
+    NRF_LOG_INFO("State changed! Flags: 0x%08lx Current role: %d\r\n",
+                 flags, otThreadGetDeviceRole(p_context));
+
+    if (flags & OT_CHANGED_THREAD_NETDATA)
+    {
+        /**
+         * Whenever Thread Network Data is changed, it is necessary to check if generation of global
+         * addresses is needed. This operation is performed internally by the OpenThread CLI module.
+         * To lower power consumption, the examples that implement Thread Sleepy End Device role
+         * don't use the OpenThread CLI module. Therefore otIp6SlaacUpdate util is used to create
+         * IPv6 addresses.
+         */
+         otIp6SlaacUpdate(thread_get_instance(), m_slaac_addresses,
+                          sizeof(m_slaac_addresses) / sizeof(m_slaac_addresses[0]),
+                          otIp6CreateRandomIid, NULL);
+    }
+    if (flags == 0x1 && otThreadGetDeviceRole(p_context) == 2) {
+      NRF_LOG_INFO("We have internet connectivity!");
+    }
+}
 
 static void discover_send_callback() {
   char* addr = "j2x.us/perm";
@@ -77,6 +122,7 @@ static void discover_send_callback() {
 
 static void periodic_sensor_read_callback() {
   float temperature, pressure, humidity;
+  //rtc_update_callback();
 
   // sense temperature and pressure
   nrf_gpio_pin_clear(MS5637_EN);
@@ -179,6 +225,8 @@ static void timer_init(void)
   err_code = app_timer_create(&pir_backoff, APP_TIMER_MODE_SINGLE_SHOT, pir_backoff_callback);
   APP_ERROR_CHECK(err_code);
   err_code = app_timer_create(&periodic_sensor_timer, APP_TIMER_MODE_REPEATED, periodic_sensor_read_callback);
+  APP_ERROR_CHECK(err_code);
+  err_code = app_timer_create(&rtc_update, APP_TIMER_MODE_REPEATED, rtc_update_callback);
   APP_ERROR_CHECK(err_code);
 
   err_code = app_timer_start(discover_send_timer, DISCOVER_PERIOD, NULL);
