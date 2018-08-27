@@ -9,9 +9,6 @@
 
 //#define PLATFORM_ID_BYTE 0x22
 
-// Address is written here in flash if the ID command is used
-//#define ADDRESS_FLASH_LOCATION 0x0003fff8
-
 // DEFINES FOR NRF52840
 #if defined(NRF52840_XXAA) || defined(NRF52)
 
@@ -35,6 +32,8 @@
 // Color Sensor
 #define ISL29125_EN  NRF_GPIO_PIN_MAP(0,25)
 #define ISL29125_INT NRF_GPIO_PIN_MAP(0,23)
+#define TCS34725_EN  ISL29125_EN
+#define TCS34725_INT ISL29125_INT
 
 // Pressure sensor
 #define MS5637_EN   NRF_GPIO_PIN_MAP(1,11)
@@ -59,12 +58,14 @@
 #define RTC_WDI     NRF_GPIO_PIN_MAP(0,2)
 
 //ICOUNT
-#define SWITCH      NRF_GPIO_PIN_MAP(0,28)
+#define SWITCH      NRF_GPIO_PIN_MAP(0,13)
+#define LBST        NRF_GPIO_PIN_MAP(0,19)
 
 //BATTERIES
 #define VSOL        NRF_GPIO_PIN_MAP(0,30)
 #define VPRIMARY    NRF_GPIO_PIN_MAP(0,29)
 #define VSECONDARY  NRF_GPIO_PIN_MAP(0,31)
+#define VBAT_OK     NRF_GPIO_PIN_MAP(1,6)
 
 // DEFINES FOR NRF51822
 #elif defined(NRF51822)
