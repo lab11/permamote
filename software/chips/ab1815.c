@@ -75,6 +75,10 @@ inline uint8_t get_ones(uint8_t x) {
 void ab1815_set_time(ab1815_time_t time) {
   uint8_t write[9];
 
+  // Ensure rtc write bit is enabled
+  ctrl_config.write_rtc = 1;
+  ab1815_set_config(ctrl_config);
+
   APP_ERROR_CHECK_BOOL(time.hundredths < 100 && time.hundredths >= 0);
   APP_ERROR_CHECK_BOOL(time.seconds < 60 && time.seconds>= 0);
   APP_ERROR_CHECK_BOOL(time.minutes < 60 && time.minutes >= 0);
@@ -112,7 +116,6 @@ void ab1815_get_time(ab1815_time_t* time) {
   };
 
   int error = nrf_spi_mngr_perform(spi_instance, &spi_config, config_transfer, 1, NULL);
-  APP_ERROR_CHECK(error);
 
   time->hundredths = 10 * ((read[1] & 0xF0) >> 4) + (read[1] & 0xF);
   time->seconds   = 10 * ((read[2] & 0x70) >> 4) + (read[2] & 0xF);

@@ -26,6 +26,7 @@
 #include "ntp.h"
 
 #include "permamote.h"
+#include "ab1815.h"
 #include "max44009.h"
 #include "ms5637.h"
 #include "si7021.h"
@@ -35,15 +36,24 @@
 #define LED2 NRF_GPIO_PIN_MAP(0,6)
 
 #define COAP_SERVER_ADDR "64:ff9b::22da:2eb5"
+#define NTP_SERVER_ADDR "64:ff9b::8106:f1c"
 
 #define DEFAULT_CHILD_TIMEOUT    40   /**< Thread child timeout [s]. */
 #define DEFAULT_POLL_PERIOD      5000 /**< Thread Sleepy End Device polling period when Asleep. [ms] */
 #define RECV_POLL_PERIOD         100  /**< Thread Sleepy End Device polling period when expecting response. [ms] */
-#define NUM_SLAAC_ADDRESSES      4    /**< Number of SLAAC addresses. */
+#define NUM_SLAAC_ADDRESSES      6    /**< Number of SLAAC addresses. */
 
 static uint8_t device_id[6];
 static otNetifAddress m_slaac_addresses[6]; /**< Buffer containing addresses resolved by SLAAC */
 static struct ntp_client_t ntp_client;
+
+static otIp6Address m_ntp_address =
+{
+    .mFields =
+    {
+        .m8 = {0}
+    }
+};
 static otIp6Address m_peer_address =
 {
     .mFields =
@@ -54,7 +64,6 @@ static otIp6Address m_peer_address =
 
 static bool update_thresh = false;
 static bool do_reset= false;
-static uint32_t global_error = false;
 static float upper;
 static float lower;
 
@@ -67,23 +76,31 @@ static float lower;
 APP_TIMER_DEF(discover_send_timer);
 APP_TIMER_DEF(periodic_sensor_timer);
 APP_TIMER_DEF(pir_backoff);
+APP_TIMER_DEF(rtc_update_first);
 APP_TIMER_DEF(rtc_update);
 
-NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
+NRF_TWI_MNGR_DEF(twi_mngr_instance, 3, 0);
+NRF_SPI_MNGR_DEF(spi_mngr_instance, 3, 1);
 
 void ntp_recv_callback(struct ntp_client_t* ntp_client) {
-  NRF_LOG_INFO("time: %lu", ntp_client->tv.tv_sec);
+  ab1815_set_time(unix_to_ab1815(ntp_client->tv));
+  NRF_LOG_INFO("ntp time: %lu", ntp_client->tv.tv_sec);
+  //ab1815_time_t time = {0};
+  //ab1815_get_time(&time);
+  //NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
   otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
 }
 
 static void rtc_update_callback() {
   NRF_LOG_INFO("RTC UPDATE");
   NRF_LOG_INFO("sent ntp poll!");
-  int error = ntp_client_begin(thread_get_instance(), &ntp_client, &m_peer_address, 123, 127, ntp_recv_callback, NULL);
+  int error = ntp_client_begin(thread_get_instance(), &ntp_client, &m_ntp_address, 123, 127, ntp_recv_callback, NULL);
   NRF_LOG_INFO("error: %d", error);
   if (error) {
     memset(&ntp_client, 0, sizeof(struct ntp_client_t));
+    return;
   }
+  otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
 }
 
 void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * p_context) {
@@ -105,6 +122,8 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
     }
     if (flags == 0x1 && otThreadGetDeviceRole(p_context) == 2) {
       NRF_LOG_INFO("We have internet connectivity!");
+      int err_code = app_timer_start(rtc_update_first, RTC_UPDATE_FIRST, NULL);
+      APP_ERROR_CHECK(err_code);
     }
 }
 
@@ -122,7 +141,9 @@ static void discover_send_callback() {
 
 static void periodic_sensor_read_callback() {
   float temperature, pressure, humidity;
-  //rtc_update_callback();
+  ab1815_time_t time = {0};
+  ab1815_get_time(&time);
+  NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
 
   // sense temperature and pressure
   nrf_gpio_pin_clear(MS5637_EN);
@@ -220,18 +241,26 @@ static void timer_init(void)
 {
   uint32_t err_code = app_timer_init();
   APP_ERROR_CHECK(err_code);
+
   err_code = app_timer_create(&discover_send_timer, APP_TIMER_MODE_REPEATED, discover_send_callback);
   APP_ERROR_CHECK(err_code);
-  err_code = app_timer_create(&pir_backoff, APP_TIMER_MODE_SINGLE_SHOT, pir_backoff_callback);
-  APP_ERROR_CHECK(err_code);
-  err_code = app_timer_create(&periodic_sensor_timer, APP_TIMER_MODE_REPEATED, periodic_sensor_read_callback);
-  APP_ERROR_CHECK(err_code);
-  err_code = app_timer_create(&rtc_update, APP_TIMER_MODE_REPEATED, rtc_update_callback);
-  APP_ERROR_CHECK(err_code);
-
   err_code = app_timer_start(discover_send_timer, DISCOVER_PERIOD, NULL);
   APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&periodic_sensor_timer, APP_TIMER_MODE_REPEATED, periodic_sensor_read_callback);
+  APP_ERROR_CHECK(err_code);
   err_code = app_timer_start(periodic_sensor_timer, SENSOR_PERIOD, NULL);
+  APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&rtc_update_first, APP_TIMER_MODE_SINGLE_SHOT, rtc_update_callback);
+  APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&rtc_update, APP_TIMER_MODE_REPEATED, rtc_update_callback);
+  APP_ERROR_CHECK(err_code);
+  err_code = app_timer_start(rtc_update, RTC_UPDATE_PERIOD, NULL);
+  APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&pir_backoff, APP_TIMER_MODE_SINGLE_SHOT, pir_backoff_callback);
   APP_ERROR_CHECK(err_code);
 }
 
@@ -246,6 +275,20 @@ void twi_init(void) {
   };
 
   err_code = nrf_twi_mngr_init(&twi_mngr_instance, &twi_config);
+  APP_ERROR_CHECK(err_code);
+}
+
+void spi_init(void) {
+  ret_code_t err_code;
+
+  const nrf_drv_spi_config_t spi_config= {
+    .sck_pin            = SPI_SCLK,
+    .miso_pin           = SPI_MISO,
+    .mosi_pin           = SPI_MOSI,
+    .frequency          = NRF_DRV_SPI_FREQ_2M,
+  };
+
+  err_code = nrf_spi_mngr_init(&spi_mngr_instance, &spi_config);
   APP_ERROR_CHECK(err_code);
 }
 
@@ -294,6 +337,7 @@ int main(void) {
 
   // Init twi
   twi_init();
+  spi_init();
   adc_init();
 
   // init periodic timers
@@ -305,6 +349,7 @@ int main(void) {
 
   // setup thread
   otIp6AddressFromString(COAP_SERVER_ADDR, &m_peer_address);
+  otIp6AddressFromString(NTP_SERVER_ADDR, &m_ntp_address);
   thread_config_t thread_config = {
     .channel = 11,
     .panid = 0xFACE,
@@ -327,11 +372,11 @@ int main(void) {
   nrf_gpio_pin_set(SI7021_EN);
 
   nrf_gpio_cfg_output(LI2D_CS);
-  nrf_gpio_cfg_output(SPI_MISO);
-  nrf_gpio_cfg_output(SPI_MOSI);
+  //nrf_gpio_cfg_output(SPI_MISO);
+  //nrf_gpio_cfg_output(SPI_MOSI);
   nrf_gpio_pin_set(LI2D_CS);
-  nrf_gpio_pin_set(SPI_MISO);
-  nrf_gpio_pin_set(SPI_MOSI);
+  //nrf_gpio_pin_set(SPI_MISO);
+  //nrf_gpio_pin_set(SPI_MOSI);
 
   thread_init(&thread_config);
   otInstance* thread_instance = thread_get_instance();
@@ -369,9 +414,16 @@ int main(void) {
 
   si7021_init(&twi_mngr_instance);
 
+  ab1815_init(&spi_mngr_instance);
+  ab1815_control_t ab1815_config;
+  ab1815_get_config(&ab1815_config);
+  ab1815_config.auto_rst = 1;
+  ab1815_set_config(ab1815_config);
+
   int i = 0;
   while (1) {
     thread_process();
+    ntp_client_process(&ntp_client);
     if (update_thresh) {
       max44009_set_upper_threshold(upper);
       max44009_set_lower_threshold(lower);

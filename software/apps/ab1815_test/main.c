@@ -67,7 +67,7 @@ void spi_init(void) {
     .sck_pin            = SPI_SCLK,
     .miso_pin           = SPI_MISO,
     .mosi_pin           = SPI_MOSI,
-    .frequency          = NRF_DRV_SPI_FREQ_2M,
+    .frequency          = NRF_DRV_SPI_FREQ_4M,
   };
 
   err_code = nrf_spi_mngr_init(&spi_mngr_instance, &spi_config);
@@ -104,14 +104,16 @@ int main(void) {
   nrf_gpio_pin_set(SI7021_EN);
 
   ab1815_control_t config;
-  ab1815_time_t    time = {
-    .minutes = 8,
-    .hours = 20,
-    .date = 6,
-    .months = 8,
-    .years = 18,
-    .weekday = 3,
-  };
+  struct timeval tv = {.tv_sec = 1534453449};
+  ab1815_time_t  time = unix_to_ab1815(tv);
+  //{
+  //  .minutes = 8,
+  //  .hours = 20,
+  //  .date = 6,
+  //  .months = 8,
+  //  .years = 18,
+  //  .weekday = 3,
+  //};
 
   ab1815_init(&spi_mngr_instance);
   ab1815_get_config(&config);

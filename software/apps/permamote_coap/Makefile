@@ -6,7 +6,7 @@ APPLICATION_SRCS += app_error_weak.c
 APPLICATION_SRCS += app_timer.c
 APPLICATION_SRCS += app_util_platform.c
 APPLICATION_SRCS += nrf_queue.c
-#APPLICATION_SRCS += nrfx_prs.c
+APPLICATION_SRCS += nrfx_prs.c
 APPLICATION_SRCS += nrfx_gpiote.c
 APPLICATION_SRCS += nrfx_power.c
 APPLICATION_SRCS += nrfx_twi.c
@@ -16,6 +16,10 @@ APPLICATION_SRCS += nrfx_power_clock.c
 APPLICATION_SRCS += nrf_drv_clock.c
 APPLICATION_SRCS += nrf_twi_mngr.c
 APPLICATION_SRCS += nrf_drv_twi.c
+APPLICATION_SRCS += nrfx_spi.c
+APPLICATION_SRCS += nrfx_spim.c
+APPLICATION_SRCS += nrf_spi_mngr.c
+APPLICATION_SRCS += nrf_drv_spi.c
 APPLICATION_SRCS += nrf_nvmc.c
 
 APPLICATION_SRCS += nrf_log_backend_rtt.c
@@ -40,6 +44,7 @@ APPLICATION_SRCS += ntp.c
 APPLICATION_SRCS += max44009.c
 APPLICATION_SRCS += ms5637.c
 APPLICATION_SRCS += si7021.c
+APPLICATION_SRCS += ab1815.c
 
 NRF_IC = nrf52840_xxaa
 SDK_VERSION = 15
