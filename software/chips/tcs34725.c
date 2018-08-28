@@ -1,13 +1,13 @@
 #include <math.h>
 
 #include "nrf_drv_gpiote.h"
-#include "nrf_log.h"
+#include "nrf_delay.h"
 
 #include "permamote.h"
 #include "tcs34725.h"
 
 static const nrf_twi_mngr_t* twi_mngr_instance;
-static tcs34725_config_t tcs34725_config = {
+static tcs34725_config_t config = {
   .int_time = TCS34725_INTEGRATIONTIME_2_4MS,
   .gain     = TCS34725_GAIN_1X
 };
@@ -20,7 +20,7 @@ void tcs34725_config(tcs34725_config_t config) {
   // set gain and integration time
   uint8_t int_time_reg[2] = {TCS34725_ATIME, 0};
   uint8_t gain_reg[2] = {TCS34725_CONTROL, 0};
-  tcs34725_config = config;
+  config = config;
   int_time_reg[1] = config.int_time;
   gain_reg[1] = config.gain;
 
@@ -28,7 +28,7 @@ void tcs34725_config(tcs34725_config_t config) {
     NRF_TWI_MNGR_WRITE(TCS34725_ADDRESS, int_time_reg, 2, 0),
     NRF_TWI_MNGR_WRITE(TCS34725_ADDRESS, &gain_reg, 2, 0),
   };
-  int error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, enable_transfer, 2, NULL);
+  int error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, config_transfer, 2, NULL);
   APP_ERROR_CHECK(error);
 }
 
@@ -43,7 +43,7 @@ void tcs34725_enable(void) {
   APP_ERROR_CHECK(error);
   reg[1] = reg[1] | TCS34725_ENABLE_AEN;
   nrf_delay_ms(3);
-  int error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, enable_transfer, 1, NULL);
+  error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, enable_transfer, 1, NULL);
   APP_ERROR_CHECK(error);
 }
 
@@ -63,7 +63,7 @@ void  tcs34725_disable(void){
 
   reg[1] &= ~(TCS34725_ENABLE_PON | TCS34725_ENABLE_AEN);
 
-  int error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, enable_write_transfer, 1, NULL);
+  error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, enable_write_transfer, 1, NULL);
   APP_ERROR_CHECK(error);
 }
 
@@ -82,7 +82,7 @@ void  tcs34725_read_channels(uint16_t* r, uint16_t* g, uint16_t* b, uint16_t* c)
   };
 
   // Set a delay for the integration time, ensure valid conversion results
-  switch (tcs34725_config.int_time)
+  switch (config.int_time)
   {
     case TCS34725_INTEGRATIONTIME_2_4MS:
       nrf_delay_ms(3);
@@ -104,7 +104,7 @@ void  tcs34725_read_channels(uint16_t* r, uint16_t* g, uint16_t* b, uint16_t* c)
       break;
   }
 
-  int error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, enable_write_transfer, sizeof(channel_read_transfer)/sizeof(channel_read_transfer[0]), NULL);
+  int error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, channel_read_transfer, sizeof(channel_read_transfer)/sizeof(channel_read_transfer[0]), NULL);
   APP_ERROR_CHECK(error);
 }
 

@@ -86,9 +86,9 @@ typedef struct {
 } tcs34725_config_t;
 
 void  tcs34725_init(const nrf_twi_mngr_t* instance);
-void  tcs34725_config(tcs3472_config_t config);
+void  tcs34725_config(tcs34725_config_t config);
 void  tcs34725_enable(void);
 void  tcs34725_disable(void);
 void  tcs34725_read_channels(uint16_t* r, uint16_t* g, uint16_t* b, uint16_t* c);
-uint16_t tcs34725_calculate_cct(uint16_t r, uint16_t g, uint16_t b);
-uint16_t tcs34725_calculate_lux(uint16_t r, uint16_t g, uint16_t b);
+float tcs34725_calculate_cct(uint16_t r, uint16_t g, uint16_t b);
+float tcs34725_calculate_lux(uint16_t r, uint16_t g, uint16_t b);
