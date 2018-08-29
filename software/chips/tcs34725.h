@@ -90,5 +90,6 @@ void  tcs34725_config(tcs34725_config_t config);
 void  tcs34725_enable(void);
 void  tcs34725_disable(void);
 void  tcs34725_read_channels(uint16_t* r, uint16_t* g, uint16_t* b, uint16_t* c);
+void  tcs34725_ir_compensate(uint16_t* r, uint16_t* g, uint16_t* b, uint16_t* c);
 float tcs34725_calculate_cct(uint16_t r, uint16_t g, uint16_t b);
-float tcs34725_calculate_lux(uint16_t r, uint16_t g, uint16_t b);
+//float tcs34725_calculate_lux(uint16_t r, uint16_t g, uint16_t b);

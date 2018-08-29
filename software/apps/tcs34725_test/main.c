@@ -7,7 +7,6 @@
 #include "nrf_twi_mngr.h"
 #include "app_util_platform.h"
 #include "nordic_common.h"
-#include "app_timer.h"
 #include "app_uart.h"
 #include "nrf_drv_clock.h"
 #include "nrf_power.h"
@@ -26,9 +25,6 @@ bool update_thresh = false;
 float upper;
 float lower;
 
-#define SENSOR_RATE APP_TIMER_TICKS(1000)
-APP_TIMER_DEF(sensor_read_timer);
-
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 
 void uart_error_handle (app_uart_evt_t * p_event) {
@@ -38,25 +34,6 @@ void uart_error_handle (app_uart_evt_t * p_event) {
         APP_ERROR_HANDLER(p_event->data.error_code);
     }
 }
-
-static void sensor_read_callback(float lux) {
-    upper = lux + lux* 0.10;
-    lower = lux - lux* 0.10;
-    printf("\n#######\nlux: %f, upper: %f, lower: %f\n", lux, upper, lower);
-
-    update_thresh = true;
-}
-
-
-//static void timer_init(void)
-//{
-//    uint32_t err_code = app_timer_init();
-//    APP_ERROR_CHECK(err_code);
-//    err_code = app_timer_create(&sensor_read_timer, APP_TIMER_MODE_REPEATED, read_timer_callback);
-//    APP_ERROR_CHECK(err_code);
-//    err_code = app_timer_start(sensor_read_timer, SENSOR_RATE, NULL);
-//    APP_ERROR_CHECK(err_code);
-//}
 
 void uart_init(void) {
   uint32_t err_code;
@@ -110,7 +87,7 @@ int main(void) {
   // init uart
   uart_init();
 
-  printf("\nLUX TEST\n");
+  printf("\nCOLOR TEST\n");
 
   // Init twi
   twi_init();
@@ -123,9 +100,11 @@ int main(void) {
   nrf_gpio_cfg_output(MS5637_EN);
   nrf_gpio_cfg_output(SI7021_EN);
   nrf_gpio_pin_set(MAX44009_EN);
-  nrf_gpio_pin_set(TCS34725_EN);
+  nrf_gpio_pin_clear(TCS34725_EN);
   nrf_gpio_pin_set(MS5637_EN);
   nrf_gpio_pin_set(SI7021_EN);
+
+  nrf_delay_ms(3);
 
   tcs34725_config_t config = {
     .int_time = TCS34725_INTEGRATIONTIME_154MS,
@@ -137,10 +116,15 @@ int main(void) {
   tcs34725_enable();
 
   uint16_t red, green, blue, clear;
+  float cct;
 
   while (1) {
-    tcs34725_read_channels(&red, &green, &blue, &clear);
-    printf("raw channels: %d, %d, %d\n", red, green, blue);
     nrf_delay_ms(5000);
+    tcs34725_read_channels(&red, &green, &blue, &clear);
+    tcs34725_ir_compensate(&red, &green, &blue, &clear);
+    cct = tcs34725_calculate_cct(red, green, blue);
+    printf("r: %d, g: %d, b: %d, c: %d\n", red, green, blue, clear);
+    printf("cct: %f\n", cct);
+    tcs34725_read_channels(&red, &green, &blue, &clear);
   }
 }
