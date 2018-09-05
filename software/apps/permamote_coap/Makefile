@@ -1,59 +1,18 @@
 PROJECT_NAME = $(shell basename "$(realpath ./)")
 
-APPLICATION_SRCS = $(notdir $(wildcard ./*.c))
-APPLICATION_SRCS += app_error.c
-APPLICATION_SRCS += app_error_weak.c
-APPLICATION_SRCS += app_timer.c
-APPLICATION_SRCS += app_util_platform.c
-APPLICATION_SRCS += nrf_queue.c
-APPLICATION_SRCS += nrfx_prs.c
-APPLICATION_SRCS += nrfx_gpiote.c
-APPLICATION_SRCS += nrfx_power.c
-APPLICATION_SRCS += nrfx_twi.c
-APPLICATION_SRCS += nrfx_clock.c
-APPLICATION_SRCS += nrfx_saadc.c
-APPLICATION_SRCS += nrfx_power_clock.c
-APPLICATION_SRCS += nrf_drv_clock.c
-APPLICATION_SRCS += nrf_twi_mngr.c
-APPLICATION_SRCS += nrf_drv_twi.c
-APPLICATION_SRCS += nrfx_spi.c
-APPLICATION_SRCS += nrfx_spim.c
-APPLICATION_SRCS += nrf_spi_mngr.c
-APPLICATION_SRCS += nrf_drv_spi.c
-APPLICATION_SRCS += nrf_nvmc.c
-
-APPLICATION_SRCS += nrf_log_backend_rtt.c
-APPLICATION_SRCS += nrf_log_backend_serial.c
-APPLICATION_SRCS += nrf_log_default_backends.c
-APPLICATION_SRCS += nrf_log_frontend.c
-APPLICATION_SRCS += nrf_log_str_formatter.c
-APPLICATION_SRCS += nrf_atomic.c
-APPLICATION_SRCS += nrf_memobj.c
-APPLICATION_SRCS += nrf_balloc.c
-APPLICATION_SRCS += nrf_fprintf.c
-APPLICATION_SRCS += nrf_fprintf_format.c
-APPLICATION_SRCS += SEGGER_RTT.c
-APPLICATION_SRCS += SEGGER_RTT_Syscalls_GCC.c
-APPLICATION_SRCS += SEGGER_RTT_printf.c
-
-APPLICATION_SRCS += simple_thread.c
-APPLICATION_SRCS += thread_coap.c
-APPLICATION_SRCS += device_id.c
-APPLICATION_SRCS += ntp.c
-
-APPLICATION_SRCS += max44009.c
-APPLICATION_SRCS += ms5637.c
-APPLICATION_SRCS += si7021.c
-APPLICATION_SRCS += ab1815.c
-
-NRF_IC = nrf52840_xxaa
+# Configurations
+NRF_IC = nrf52840
 SDK_VERSION = 15
-#SOFTDEVICE_MODEL = s140
+SOFTDEVICE_MODEL = blank
+USE_THREAD = 1
 
-USE_THREAD=1
+# Source and header files
+APP_HEADER_PATHS += .
+APP_SOURCE_PATHS += .
+APP_SOURCES = $(notdir $(wildcard ./*.c))
 
-LIBRARY_PATHS += ./ ../../include/ ../../chips/
-SOURCE_PATHS += ./ ../../chips/
-
-NRF_BASE_PATH ?= ../../nrf5x-base
-include $(NRF_BASE_PATH)/make/Makefile
+NRF_BASE_DIR ?= ../../nrf5x-base
+# Include board Makefile (if any)
+include $(NRF_BASE_DIR)/../boards/permamote/Board.mk
+# Include main Makefile
+include $(NRF_BASE_DIR)/make/AppMakefile.mk

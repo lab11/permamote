@@ -1,30 +1,18 @@
 PROJECT_NAME = $(shell basename "$(realpath ./)")
 
-APPLICATION_SRCS = $(notdir $(wildcard ./*.c))
-APPLICATION_SRCS += app_timer.c
-APPLICATION_SRCS += app_error.c
-APPLICATION_SRCS += app_error_weak.c
-APPLICATION_SRCS += nrf_section_iter.c
-APPLICATION_SRCS += app_util_platform.c
-APPLICATION_SRCS += nrf_pwr_mgmt.c
-APPLICATION_SRCS += nrfx_clock.c
-APPLICATION_SRCS += nrfx_spi.c
-APPLICATION_SRCS += nrfx_uart.c
-APPLICATION_SRCS += nrfx_power.c
-APPLICATION_SRCS += app_fifo.c
-APPLICATION_SRCS += app_uart_fifo.c
-APPLICATION_SRCS += retarget.c
-
-NRF_IC = nrf52840_xxaa
-
+# Configurations
+NRF_IC = nrf52840
 SDK_VERSION = 15
-SOFTDEVICE_MODEL = s140
-ifdef SOFTDEVICE_MODEL
-  APPLICATION_SRCS += nrf_sdh.c
-endif
+SOFTDEVICE_MODEL = blank
+USE_THREAD = 1
 
-LIBRARY_PATHS += ./ ../../include/ ../../chips/
-SOURCE_PATHS += ./ ../../chips/
+# Source and header files
+APP_HEADER_PATHS += .
+APP_SOURCE_PATHS += .
+APP_SOURCES = $(notdir $(wildcard ./*.c))
 
-NRF_BASE_PATH ?= ../../nrf5x-base
-include $(NRF_BASE_PATH)/make/Makefile
+NRF_BASE_DIR ?= ../../nrf5x-base
+# Include board Makefile (if any)
+include $(NRF_BASE_DIR)/../boards/permamote/Board.mk
+# Include main Makefile
+include $(NRF_BASE_DIR)/make/AppMakefile.mk

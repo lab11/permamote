@@ -132,7 +132,7 @@ void  max44009_set_read_lux_callback(max44009_read_lux_callback* callback) {
 void calc_exp_mant(float lux, bool upper, uint8_t* exp, uint8_t* mant){
   uint8_t max_mantissa = 128+64+32+16 + 15*upper;
   float calc_lux = 0;
-  NRF_LOG_INFO("\ttrying to match: %d", (uint32_t)lux);
+  //printf("\ttrying to match: %d\n", (uint32_t)lux);
 
   // According to datasheet, if lux is less than 11.5, exp must be 0
   if (lux >= 11.5) {
@@ -145,8 +145,8 @@ void calc_exp_mant(float lux, bool upper, uint8_t* exp, uint8_t* mant){
   if (upper) {
     *mant += 15;
   }
-  NRF_LOG_INFO("\texp pre: %d, %x", *exp, *exp);
-  NRF_LOG_INFO("\tmant pre: %d, 0x%x", *mant, *mant);
+  //printf("\texp pre: %d, %x\n", *exp, *exp);
+  //printf("\tmant pre: %d, 0x%x\n", *mant, *mant);
   // According to datasheet, if lux is greater than 11.5, the most significant
   // bits of mant must be 0b1MMM
   // if mant does not have most significant bit set, we need to recalculate
@@ -160,12 +160,12 @@ void calc_exp_mant(float lux, bool upper, uint8_t* exp, uint8_t* mant){
     below_exp = *exp - 1;
     below_mant += 0xF0;
     below = 0.045*(below_mant)*(1 << below_exp);
-    NRF_LOG_INFO("\tcalc lux below: %d", (uint32_t)below);
+    //printf("\tcalc lux below: %d\n", (uint32_t)below);
     //above
     above_exp = *exp;
     above_mant += 0x80;
     above = 0.045*(above_mant)*(1 << above_exp);
-    NRF_LOG_INFO("\tcalc lux above: %d", (uint32_t)above);
+    //printf("\tcalc lux above: %d\n", (uint32_t)above);
     if (above - lux < lux - below) {
       *mant = above_mant;
       *exp = above_exp;
@@ -175,7 +175,7 @@ void calc_exp_mant(float lux, bool upper, uint8_t* exp, uint8_t* mant){
     }
   }
   calc_lux = 0.045*(*mant)*(1 << *exp);
-  NRF_LOG_INFO("\tcalc lux: %d", (uint32_t)calc_lux);
+  //printf("\tcalc lux: %d\n", (uint32_t)calc_lux);
   // ensure that the estimation of lux (with the available bits in the
   // interrupt register) is larger than the threshold we want to set
   //if (upper && calc_lux < lux) {
@@ -196,19 +196,19 @@ void calc_exp_mant(float lux, bool upper, uint8_t* exp, uint8_t* mant){
   //    }
   //  }
   //}
-  //NRF_LOG_INFO("\texp: %d, %x", *exp, *exp);
-  //NRF_LOG_INFO("\tmant: %d, 0x%x", *mant & 0xF0, *mant & 0xF0);
+  ////printf("\texp: %d, %x", *exp, *exp);
+  ////printf("\tmant: %d, 0x%x", *mant & 0xF0, *mant & 0xF0);
   //calc_lux = 0.045*(*mant & 0xF0)*(1 << *exp);
-  //NRF_LOG_INFO("\tcalc lux: %d", (uint32_t)calc_lux);
+  ////printf("\tcalc lux: %d", (uint32_t)calc_lux);
 }
 
 void max44009_set_upper_threshold(float thresh) {
   uint8_t exp, mant = 0;
-  //NRF_LOG_INFO("test #####");
+  ////printf("test #####");
   //calc_exp_mant(728, 0, &exp, &mant);
   //exp = 0;
   //mant = 0;
-  NRF_LOG_INFO("upper #####");
+  //printf("upper #####\n");
   calc_exp_mant(thresh, 1, &exp, &mant);
 
   thresh_buf[0] = MAX44009_THRESH_HI;
@@ -221,7 +221,7 @@ void max44009_set_upper_threshold(float thresh) {
 
 void max44009_set_lower_threshold(float thresh) {
   uint8_t exp, mant = 0;
-  NRF_LOG_INFO("lower #####");
+  //printf("lower #####\n");
   calc_exp_mant(thresh, 0, &exp, &mant);
 
 
