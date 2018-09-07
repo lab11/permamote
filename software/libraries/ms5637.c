@@ -50,8 +50,8 @@ static nrf_twi_mngr_transfer_t const read_adc_transfer[] = {
   NRF_TWI_MNGR_READ(MS5637_ADDR, data, 3, 0),
 };
 
-static inline Pressure_OSR ms5637_osr_to_posr(MS5637_OSR osr) {
-  switch(osr) {
+static inline Pressure_OSR ms5637_osr_to_posr(MS5637_OSR osr_config) {
+  switch(osr_config) {
     case osr_8192: return p_osr_8192;
     case osr_4096: return p_osr_4096;
     case osr_2048: return p_osr_2048;
@@ -62,8 +62,8 @@ static inline Pressure_OSR ms5637_osr_to_posr(MS5637_OSR osr) {
   }
 }
 
-static inline Temperature_OSR ms5637_osr_to_tosr(MS5637_OSR osr) {
-  switch(osr) {
+static inline Temperature_OSR ms5637_osr_to_tosr(MS5637_OSR osr_config) {
+  switch(osr_config) {
     case osr_8192: return t_osr_8192;
     case osr_4096: return t_osr_4096;
     case osr_2048: return t_osr_2048;
@@ -74,8 +74,8 @@ static inline Temperature_OSR ms5637_osr_to_tosr(MS5637_OSR osr) {
   }
 }
 
-static inline uint8_t ms5637_osr_to_delay_ms(MS5637_OSR osr) {
-  switch(osr) {
+static inline uint8_t ms5637_osr_to_delay_ms(MS5637_OSR osr_config) {
+  switch(osr_config) {
     case osr_8192: return 17;
     case osr_4096: return 9;
     case osr_2048: return 5;
@@ -86,9 +86,9 @@ static inline uint8_t ms5637_osr_to_delay_ms(MS5637_OSR osr) {
   }
 }
 
-void ms5637_init(const nrf_twi_mngr_t* instance, MS5637_OSR osr) {
+void ms5637_init(const nrf_twi_mngr_t* instance, MS5637_OSR osr_config) {
   twi_mngr_instance = instance;
-  osr = osr;
+  osr = osr_config;
 }
 
 void ms5637_start(void) {
@@ -99,7 +99,7 @@ void ms5637_start(void) {
   // Read PROM configuration
   for(int i = 0; i < 6; ++i) {
     *prom = MS5637_PROM + i*2;
-    int error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, read_prom_transfer, sizeof(read_prom_transfer)/sizeof(read_prom_transfer[0]), NULL);
+    error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, read_prom_transfer, sizeof(read_prom_transfer)/sizeof(read_prom_transfer[0]), NULL);
     APP_ERROR_CHECK(error);
     c[i] = c_buf[0] << 8 | c_buf[1];
   }

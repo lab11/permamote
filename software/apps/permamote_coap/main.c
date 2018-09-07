@@ -31,10 +31,6 @@
 #include "ms5637.h"
 #include "si7021.h"
 
-#define LED0 NRF_GPIO_PIN_MAP(0,4)
-#define LED1 NRF_GPIO_PIN_MAP(0,5)
-#define LED2 NRF_GPIO_PIN_MAP(0,6)
-
 #define COAP_SERVER_ADDR "64:ff9b::22da:2eb5"
 #define NTP_SERVER_ADDR "64:ff9b::8106:f1c"
 
@@ -80,7 +76,7 @@ APP_TIMER_DEF(rtc_update_first);
 APP_TIMER_DEF(rtc_update);
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 3, 0);
-NRF_SPI_MNGR_DEF(spi_mngr_instance, 3, 1);
+static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
 
 void ntp_recv_callback(struct ntp_client_t* ntp_client) {
   ab1815_set_time(unix_to_ab1815(ntp_client->tv));
@@ -288,8 +284,8 @@ void spi_init(void) {
     .frequency          = NRF_DRV_SPI_FREQ_2M,
   };
 
-  err_code = nrf_spi_mngr_init(&spi_mngr_instance, &spi_config);
-  APP_ERROR_CHECK(err_code);
+  //err_code = nrf_spi_mngr_init(&spi_mngr_instance, &spi_config);
+  //APP_ERROR_CHECK(err_code);
 }
 
 void saadc_handler(nrf_drv_saadc_evt_t * p_event) {
@@ -337,13 +333,11 @@ int main(void) {
 
   // Init twi
   twi_init();
-  spi_init();
+  //spi_init();
   adc_init();
 
   // init periodic timers
   timer_init();
-
-  NRF_LOG_INFO("\nLUX TEST\n");
 
   get_device_id(device_id);
 
@@ -414,7 +408,7 @@ int main(void) {
 
   si7021_init(&twi_mngr_instance);
 
-  ab1815_init(&spi_mngr_instance);
+  ab1815_init(&spi_instance);
   ab1815_control_t ab1815_config;
   ab1815_get_config(&ab1815_config);
   ab1815_config.auto_rst = 1;

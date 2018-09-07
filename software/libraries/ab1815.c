@@ -1,15 +1,14 @@
-#include "nrf_spi_mngr.h"
 #include "nrf_drv_spi.h"
 #include "nrf_gpio.h"
 #include "app_error.h"
 
 #include "ab1815.h"
 
-static const nrf_spi_mngr_t* spi_instance;
+static const nrf_drv_spi_t* spi_instance;
 static ab1815_control_t ctrl_config;
 static nrf_drv_spi_config_t spi_config = NRF_DRV_SPI_DEFAULT_CONFIG;
 
-void ab1815_init(const nrf_spi_mngr_t* instance) {
+void ab1815_init(const nrf_drv_spi_t* instance) {
   spi_instance = instance;
 
   spi_config.sck_pin    = SPI_SCLK;
@@ -26,9 +25,9 @@ void  ab1815_read_reg(uint8_t reg, uint8_t* read_buf, size_t len){
   uint8_t readreg = reg;
   uint8_t buf[257];
 
-  nrf_drv_spi_uninit(&(spi_instance->spi));
-  nrf_drv_spi_init(&(spi_instance->spi), &spi_config, NULL, NULL);
-  nrf_drv_spi_transfer(&(spi_instance->spi), &readreg, 1, buf, len+1);
+  nrf_drv_spi_init(spi_instance, &spi_config, NULL, NULL);
+  nrf_drv_spi_transfer(spi_instance, &readreg, 1, buf, len+1);
+  nrf_drv_spi_uninit(spi_instance);
 
   memcpy(read_buf, buf+1, len);
 }
@@ -39,9 +38,9 @@ void ab1815_write_reg(uint8_t reg, uint8_t* write_buf, size_t len){
   buf[0] = 0x80 | reg;
   memcpy(buf+1, write_buf, len);
 
-  nrf_drv_spi_uninit(&(spi_instance->spi));
-  nrf_drv_spi_init(&(spi_instance->spi), &spi_config, NULL, NULL);
-  nrf_drv_spi_transfer(&(spi_instance->spi), buf, len+1, NULL, 0);
+  nrf_drv_spi_init(spi_instance, &spi_config, NULL, NULL);
+  nrf_drv_spi_transfer(spi_instance, buf, len+1, NULL, 0);
+  nrf_drv_spi_uninit(spi_instance);
 }
 
 void ab1815_set_config(ab1815_control_t config) {
@@ -154,6 +153,12 @@ void ab1815_get_time(ab1815_time_t* time) {
   time->weekday   = read[7] & 0x7;
 }
 
+struct timeval ab1815_get_time_unix(void) {
+  ab1815_time_t time;
+  ab1815_get_time(&time);
+  return ab1815_to_unix(time);
+}
+
 ab1815_time_t unix_to_ab1815(struct timeval tv) {
   ab1815_time_t time;
   struct tm * t;
@@ -167,5 +172,21 @@ ab1815_time_t unix_to_ab1815(struct timeval tv) {
   time.years    = t->tm_year - 100;
   time.weekday  = t->tm_wday;
   return time;
+}
+
+struct timeval ab1815_to_unix(ab1815_time_t time) {
+  struct timeval unix_time;
+  struct tm t;
+  t.tm_sec = time.seconds;
+  t.tm_min = time.minutes;
+  t.tm_hour = time.hours;
+  t.tm_mday = time.date;
+  t.tm_mon = time.months - 1;
+  t.tm_year = time.years + 100;
+  t.tm_wday = time.weekday;
+  unix_time.tv_sec = mktime(&t);
+  unix_time.tv_usec = time.hundredths * 10000;
+
+  return unix_time;
 }
 

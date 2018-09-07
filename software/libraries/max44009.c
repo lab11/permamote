@@ -131,7 +131,7 @@ void  max44009_set_read_lux_callback(max44009_read_lux_callback* callback) {
 
 void calc_exp_mant(float lux, bool upper, uint8_t* exp, uint8_t* mant){
   uint8_t max_mantissa = 128+64+32+16 + 15*upper;
-  float calc_lux = 0;
+  //float calc_lux = 0;
   //printf("\ttrying to match: %d\n", (uint32_t)lux);
 
   // According to datasheet, if lux is less than 11.5, exp must be 0
@@ -174,7 +174,7 @@ void calc_exp_mant(float lux, bool upper, uint8_t* exp, uint8_t* mant){
       *exp = below_exp;
     }
   }
-  calc_lux = 0.045*(*mant)*(1 << *exp);
+  //calc_lux = 0.045*(*mant)*(1 << *exp);
   //printf("\tcalc lux: %d\n", (uint32_t)calc_lux);
   // ensure that the estimation of lux (with the available bits in the
   // interrupt register) is larger than the threshold we want to set

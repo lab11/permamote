@@ -9,25 +9,26 @@
 #include "app_uart.h"
 #include "nrf_drv_clock.h"
 #include "nrf_power.h"
+#include "nrf_drv_spi.h"
 
 #include "permamote.h"
 #include "ab1815.h"
 
-NRF_SPI_MNGR_DEF(spi_mngr_instance, 5, 1);
+static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
 
-void spi_init(void) {
-  ret_code_t err_code;
-
-  const nrf_drv_spi_config_t spi_config= {
-    .sck_pin            = SPI_SCLK,
-    .miso_pin           = SPI_MISO,
-    .mosi_pin           = SPI_MOSI,
-    .frequency          = NRF_DRV_SPI_FREQ_4M,
-  };
-
-  err_code = nrf_spi_mngr_init(&spi_mngr_instance, &spi_config);
-  APP_ERROR_CHECK(err_code);
-}
+//void spi_init(void) {
+//  ret_code_t err_code;
+//
+//  const nrf_drv_spi_config_t spi_config= {
+//    .sck_pin            = SPI_SCLK,
+//    .miso_pin           = SPI_MISO,
+//    .mosi_pin           = SPI_MOSI,
+//    .frequency          = NRF_DRV_SPI_FREQ_4M,
+//  };
+//
+//  //err_code = nrf_drv_spi_init(&spi_instance, &spi_config, NULL, NULL);
+//  //APP_ERROR_CHECK(err_code);
+//}
 
 int main(void) {
   // init softdevice
@@ -42,7 +43,7 @@ int main(void) {
   printf("\nRTC TEST\n");
 
   // Init spi
-  spi_init();
+  //spi_init();
 
 
   // Turn on power gate
@@ -67,7 +68,7 @@ int main(void) {
   //  .weekday = 3,
   //};
 
-  ab1815_init(&spi_mngr_instance);
+  ab1815_init(&spi_instance);
   ab1815_get_config(&config);
   config.auto_rst = 1;
   config.write_rtc = 1;

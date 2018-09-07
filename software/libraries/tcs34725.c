@@ -7,7 +7,7 @@
 #include "tcs34725.h"
 
 static const nrf_twi_mngr_t* twi_mngr_instance;
-static tcs34725_config_t config = {
+static tcs34725_config_t tcs_config = {
   .int_time = TCS34725_INTEGRATIONTIME_2_4MS,
   .gain     = TCS34725_GAIN_1X
 };
@@ -20,9 +20,9 @@ void tcs34725_config(tcs34725_config_t config) {
   // set gain and integration time
   uint8_t int_time_reg[2] = {TCS34725_COMMAND_BIT | TCS34725_ATIME, 0};
   uint8_t gain_reg[2] = {TCS34725_COMMAND_BIT | TCS34725_CONTROL, 0};
-  config = config;
-  int_time_reg[1] = config.int_time;
-  gain_reg[1] = config.gain;
+  tcs_config = config;
+  int_time_reg[1] = tcs_config.int_time;
+  gain_reg[1] = tcs_config.gain;
 
   nrf_twi_mngr_transfer_t const config_transfer[] = {
     NRF_TWI_MNGR_WRITE(TCS34725_ADDRESS, int_time_reg, 2, 0),
@@ -82,7 +82,7 @@ void  tcs34725_read_channels(uint16_t* r, uint16_t* g, uint16_t* b, uint16_t* c)
   };
 
   // Set a delay for the integration time, ensure valid conversion results
-  switch (config.int_time)
+  switch (tcs_config.int_time)
   {
     case TCS34725_INTEGRATIONTIME_2_4MS:
       nrf_delay_ms(3);
