@@ -34,6 +34,7 @@
 
 #define COAP_SERVER_ADDR "64:ff9b::22da:2eb5"
 #define NTP_SERVER_ADDR "64:ff9b::8106:f1c"
+#define PARSE_ADDR "j2x.us/perm"
 
 #define DEFAULT_CHILD_TIMEOUT    40   /**< Thread child timeout [s]. */
 #define DEFAULT_POLL_PERIOD      5000 /**< Thread Sleepy End Device polling period when Asleep. [ms] */
@@ -132,7 +133,8 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
 }
 
 static void discover_send_callback() {
-  const char* addr = "j2x.us/perm";
+  const char* addr = PARSE_ADDR;
+  uint8_t addr_len = strlen(addr);
   //uint8_t data[2 + 6 + strlen(addr)];
   //data[0] = 6;
   //memcpy(data+1, device_id, 6);
@@ -140,11 +142,14 @@ static void discover_send_callback() {
   //memcpy(data+1+6+1, addr, strlen(addr));
 
   //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "discovery", data, 2 + 6 + strlen(addr));
+  uint8_t data[addr_len + 1];
+  data[0] = addr_len;
+  memcpy(data+1, addr, addr_len);
   packet.timestamp = ab1815_get_time_unix();
-  packet.data = (uint8_t*)addr;
-  packet.data_len = strlen(addr);
+  packet.data = data;
+  packet.data_len = addr_len + 1;
 
-  //permamote_coap_send(&m_peer_address, "discovery", &packet);
+  permamote_coap_send(&m_peer_address, "discovery", &packet);
   NRF_LOG_INFO("Sent discovery");
 }
 
@@ -152,21 +157,18 @@ static void periodic_sensor_read_callback() {
   float temperature, pressure, humidity;
   packet.data_len = sizeof(temperature);
 
-  ab1815_time_t time;
-  ab1815_get_time(&time);
-  NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
-
   // sense temperature and pressure
   nrf_gpio_pin_clear(MS5637_EN);
   ms5637_start();
   ms5637_get_temperature_and_pressure(&temperature, &pressure);
   nrf_gpio_pin_set(MS5637_EN);
-  NRF_LOG_INFO("Sensed ms5637: temperature: %d, pressure: %d", (int32_t)temperature, (int32_t)pressure);
+  // Prepare temp and pressure packets
   packet.timestamp = ab1815_get_time_unix();
   packet.data = (uint8_t*)&temperature;
-  //permamote_coap_send(&m_peer_address, "temperature_c", &packet);
+  permamote_coap_send(&m_peer_address, "temperature_c", &packet);
   packet.data = (uint8_t*)&pressure;
-  //permamote_coap_send(&m_peer_address, "pressure_mbar", &packet);
+  permamote_coap_send(&m_peer_address, "pressure_mbar", &packet);
+  NRF_LOG_INFO("Sensed ms5637: temperature: %d, pressure: %d", (int32_t)temperature, (int32_t)pressure);
 
   // sense humidity
   nrf_gpio_pin_clear(SI7021_EN);
@@ -174,26 +176,30 @@ static void periodic_sensor_read_callback() {
   si7021_config(si7021_mode0);
   si7021_read_RH_hold(&humidity);
   nrf_gpio_pin_set(SI7021_EN);
-  NRF_LOG_INFO("Sensed si7021: humidity: %d", (int32_t)humidity);
+  // Prepare humidity packet
   packet.timestamp = ab1815_get_time_unix();
+  ab1815_time_t time;
+  time = unix_to_ab1815(packet.timestamp);
+  NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
   packet.data = (uint8_t*)&humidity;
-  //permamote_coap_send(&m_peer_address, "humidity_percent", &packet);
+  permamote_coap_send(&m_peer_address, "humidity_percent", &packet);
+  NRF_LOG_INFO("Sensed si7021: humidity: %d", (int32_t)humidity);
 
   // sense voltage
   nrf_saadc_value_t adc_samples[3];
   nrf_drv_saadc_sample_convert(0, adc_samples);
   nrf_drv_saadc_sample_convert(1, adc_samples+1);
   nrf_drv_saadc_sample_convert(2, adc_samples+2);
-
   float vbat = 0.6 * 6 * (float)adc_samples[0] / ((1 << 10)-1);
   float vsol = 0.6 * 6 * (float)adc_samples[1] / ((1 << 10)-1);
   float vsec = 0.6 * 6 * (float)adc_samples[2] / ((1 << 10)-1);
-  NRF_LOG_INFO("Sensed voltage: vbat*100: %d, vsol*100: %d, vsec*100: %d", (int32_t)(vbat*100), (int32_t)(vsol*100), (int32_t)(vsec*100));
+  // prepare voltage packet
   packet.timestamp = ab1815_get_time_unix();
   float data[3] = {vbat, vsol, vsec};
   packet.data = (uint8_t*)data;
   packet.data_len = 3 * sizeof(vbat);
-  //permamote_coap_send(&m_peer_address, "voltage", &packet);
+  permamote_coap_send(&m_peer_address, "voltage", &packet);
+  NRF_LOG_INFO("Sensed voltage: vbat*100: %d, vsol*100: %d, vsec*100: %d", (int32_t)(vbat*100), (int32_t)(vsol*100), (int32_t)(vsec*100));
 
   //uint8_t data[1 + 6 + 3*sizeof(float)];
   //data[0] = 6;
@@ -232,7 +238,7 @@ static void light_sensor_read_callback(float lux) {
   packet.data = (uint8_t*)&lux;
   packet.data_len = sizeof(lux);
 
-  //permamote_coap_send(&m_peer_address, "light_lux", &packet);
+  permamote_coap_send(&m_peer_address, "light_lux", &packet);
 }
 
 static void pir_backoff_callback() {
@@ -244,11 +250,13 @@ static void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity
   NRF_LOG_INFO("Saw motion");
   uint32_t err_code = app_timer_start(pir_backoff, PIR_BACKOFF_PERIOD, NULL);
   APP_ERROR_CHECK(err_code);
-  uint8_t data[2+6];
-  data[0] = 6;
-  memcpy(data+1, device_id, 6);
-  data[7] = 1;
-  thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "motion", data, 8);
+
+  uint8_t data = 1;
+  packet.timestamp = ab1815_get_time_unix();
+  packet.data = &data;
+  packet.data_len = sizeof(data);
+
+  permamote_coap_send(&m_peer_address, "motion", &packet);
 }
 
 static void light_interrupt_callback(void) {
