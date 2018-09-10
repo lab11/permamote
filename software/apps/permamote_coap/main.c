@@ -21,6 +21,7 @@
 #include <openthread/openthread.h>
 
 #include "simple_thread.h"
+#include "permamote_coap.h"
 #include "thread_coap.h"
 #include "device_id.h"
 #include "ntp.h"
@@ -58,6 +59,13 @@ static otIp6Address m_peer_address =
     }
 };
 
+static permamote_packet_t packet = {
+    .id = NULL,
+    .id_len = 0,
+    .data = NULL,
+    .data_len = 0,
+  };
+
 static bool update_thresh = false;
 static bool do_reset= false;
 static float upper;
@@ -78,9 +86,9 @@ APP_TIMER_DEF(rtc_update);
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 3, 0);
 static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
 
-void ntp_recv_callback(struct ntp_client_t* ntp_client) {
-  ab1815_set_time(unix_to_ab1815(ntp_client->tv));
-  NRF_LOG_INFO("ntp time: %lu", ntp_client->tv.tv_sec);
+void ntp_recv_callback(struct ntp_client_t* client) {
+  ab1815_set_time(unix_to_ab1815(client->tv));
+  NRF_LOG_INFO("ntp time: %lu.%lu", client->tv.tv_sec, client->tv.tv_usec);
   //ab1815_time_t time = {0};
   //ab1815_get_time(&time);
   //NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
@@ -124,20 +132,27 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
 }
 
 static void discover_send_callback() {
-  char* addr = "j2x.us/perm";
-  uint8_t data[2 + 6 + strlen(addr)];
-  data[0] = 6;
-  memcpy(data+1, device_id, 6);
-  data[7] = strlen(addr);
-  memcpy(data+1+6+1, addr, strlen(addr));
+  const char* addr = "j2x.us/perm";
+  //uint8_t data[2 + 6 + strlen(addr)];
+  //data[0] = 6;
+  //memcpy(data+1, device_id, 6);
+  //data[7] = strlen(addr);
+  //memcpy(data+1+6+1, addr, strlen(addr));
 
-  thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "discovery", data, 2 + 6 + strlen(addr));
+  //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "discovery", data, 2 + 6 + strlen(addr));
+  packet.timestamp = ab1815_get_time_unix();
+  packet.data = (uint8_t*)addr;
+  packet.data_len = strlen(addr);
+
+  //permamote_coap_send(&m_peer_address, "discovery", &packet);
   NRF_LOG_INFO("Sent discovery");
 }
 
 static void periodic_sensor_read_callback() {
   float temperature, pressure, humidity;
-  ab1815_time_t time = {0};
+  packet.data_len = sizeof(temperature);
+
+  ab1815_time_t time;
   ab1815_get_time(&time);
   NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
 
@@ -147,6 +162,11 @@ static void periodic_sensor_read_callback() {
   ms5637_get_temperature_and_pressure(&temperature, &pressure);
   nrf_gpio_pin_set(MS5637_EN);
   NRF_LOG_INFO("Sensed ms5637: temperature: %d, pressure: %d", (int32_t)temperature, (int32_t)pressure);
+  packet.timestamp = ab1815_get_time_unix();
+  packet.data = (uint8_t*)&temperature;
+  //permamote_coap_send(&m_peer_address, "temperature_c", &packet);
+  packet.data = (uint8_t*)&pressure;
+  //permamote_coap_send(&m_peer_address, "pressure_mbar", &packet);
 
   // sense humidity
   nrf_gpio_pin_clear(SI7021_EN);
@@ -155,6 +175,9 @@ static void periodic_sensor_read_callback() {
   si7021_read_RH_hold(&humidity);
   nrf_gpio_pin_set(SI7021_EN);
   NRF_LOG_INFO("Sensed si7021: humidity: %d", (int32_t)humidity);
+  packet.timestamp = ab1815_get_time_unix();
+  packet.data = (uint8_t*)&humidity;
+  //permamote_coap_send(&m_peer_address, "humidity_percent", &packet);
 
   // sense voltage
   nrf_saadc_value_t adc_samples[3];
@@ -166,25 +189,29 @@ static void periodic_sensor_read_callback() {
   float vsol = 0.6 * 6 * (float)adc_samples[1] / ((1 << 10)-1);
   float vsec = 0.6 * 6 * (float)adc_samples[2] / ((1 << 10)-1);
   NRF_LOG_INFO("Sensed voltage: vbat*100: %d, vsol*100: %d, vsec*100: %d", (int32_t)(vbat*100), (int32_t)(vsol*100), (int32_t)(vsec*100));
+  packet.timestamp = ab1815_get_time_unix();
+  float data[3] = {vbat, vsol, vsec};
+  packet.data = (uint8_t*)data;
+  packet.data_len = 3 * sizeof(vbat);
+  //permamote_coap_send(&m_peer_address, "voltage", &packet);
 
+  //uint8_t data[1 + 6 + 3*sizeof(float)];
+  //data[0] = 6;
+  //memcpy(data+1, device_id, 6);
+  //memcpy(data+1+6, &temperature, sizeof(float));
 
-  uint8_t data[1 + 6 + 3*sizeof(float)];
-  data[0] = 6;
-  memcpy(data+1, device_id, 6);
-  memcpy(data+1+6, &temperature, sizeof(float));
+  //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "temperature_c", data, 1+6+sizeof(float));
 
-  thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "temperature_c", data, 1+6+sizeof(float));
+  //memcpy(data+1+6, &pressure, sizeof(float));
+  //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "pressure_mbar", data, 1+6+sizeof(float));
 
-  memcpy(data+1+6, &pressure, sizeof(float));
-  thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "pressure_mbar", data, 1+6+sizeof(float));
+  //memcpy(data+1+6, &humidity, sizeof(float));
+  //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "humidity_percent", data, 1+6+sizeof(float));
 
-  memcpy(data+1+6, &humidity, sizeof(float));
-  thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "humidity_percent", data, 1+6+sizeof(float));
-
-  memcpy(data+1+6, &vbat, sizeof(float));
-  memcpy(data+1+6+sizeof(float), &vsol, sizeof(float));
-  memcpy(data+1+6+2*sizeof(float), &vsec, sizeof(float));
-  thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "voltage", data, 1+6+3*sizeof(float));
+  //memcpy(data+1+6, &vbat, sizeof(float));
+  //memcpy(data+1+6+sizeof(float), &vsol, sizeof(float));
+  //memcpy(data+1+6+2*sizeof(float), &vsec, sizeof(float));
+  //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "voltage", data, 1+6+3*sizeof(float));
 
 }
 
@@ -195,12 +222,17 @@ static void light_sensor_read_callback(float lux) {
 
   update_thresh = true;
 
-  uint8_t data[1 + 6 + sizeof(float)];
-  data[0] = 6;
-  memcpy(data+1, device_id, 6);
-  memcpy(data+1+6, &lux, sizeof(float));
+  //uint8_t data[1 + 6 + sizeof(float)];
+  //data[0] = 6;
+  //memcpy(data+1, device_id, 6);
+  //memcpy(data+1+6, &lux, sizeof(float));
 
-  thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "light_lux", data, 1+6+sizeof(float));
+  //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "light_lux", data, 1+6+sizeof(float));
+  packet.timestamp = ab1815_get_time_unix();
+  packet.data = (uint8_t*)&lux;
+  packet.data_len = sizeof(lux);
+
+  //permamote_coap_send(&m_peer_address, "light_lux", &packet);
 }
 
 static void pir_backoff_callback() {
@@ -274,22 +306,9 @@ void twi_init(void) {
   APP_ERROR_CHECK(err_code);
 }
 
-void spi_init(void) {
-  ret_code_t err_code;
-
-  const nrf_drv_spi_config_t spi_config= {
-    .sck_pin            = SPI_SCLK,
-    .miso_pin           = SPI_MISO,
-    .mosi_pin           = SPI_MOSI,
-    .frequency          = NRF_DRV_SPI_FREQ_2M,
-  };
-
-  //err_code = nrf_spi_mngr_init(&spi_mngr_instance, &spi_config);
-  //APP_ERROR_CHECK(err_code);
+void saadc_handler(nrf_drv_saadc_evt_t const * p_event) {
 }
 
-void saadc_handler(nrf_drv_saadc_evt_t * p_event) {
-}
 void adc_init(void) {
   // set up voltage ADC
   nrf_saadc_channel_config_t primary_channel_config =
@@ -310,17 +329,17 @@ void adc_init(void) {
   nrf_drv_saadc_calibrate_offset();
 }
 
-void app_error_fault_handler(uint32_t error_code, __attribute__ ((unused)) uint32_t line_num, __attribute__ ((unused)) uint32_t info) {
-  NRF_LOG_INFO("App error: %d", error_code);
-  uint8_t data[1 + 6 + sizeof(uint32_t)];
-  data[0] = 6;
-  memcpy(data+1, device_id, 6);
-  memcpy(data+1+6, &error_code, sizeof(uint32_t));
-
-  thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "error", data, 1+6+sizeof(uint32_t));
-
-  do_reset = true;
-}
+//void app_error_fault_handler(uint32_t error_code, __attribute__ ((unused)) uint32_t line_num, __attribute__ ((unused)) uint32_t info) {
+//  NRF_LOG_INFO("App error: %d", error_code);
+//  uint8_t data[1 + 6 + sizeof(uint32_t)];
+//  data[0] = 6;
+//  memcpy(data+1, device_id, 6);
+//  memcpy(data+1+6, &error_code, sizeof(uint32_t));
+//
+//  thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "error", data, 1+6+sizeof(uint32_t));
+//
+//  do_reset = true;
+//}
 
 int main(void) {
   // init softdevice
@@ -333,13 +352,14 @@ int main(void) {
 
   // Init twi
   twi_init();
-  //spi_init();
   adc_init();
 
   // init periodic timers
   timer_init();
 
   get_device_id(device_id);
+  packet.id = device_id;
+  packet.id_len = sizeof(device_id);
 
   // setup thread
   otIp6AddressFromString(COAP_SERVER_ADDR, &m_peer_address);
@@ -390,6 +410,13 @@ int main(void) {
   nrf_drv_gpiote_in_init(PIR_OUT, &pir_gpio_config, pir_interrupt_callback);
   nrf_drv_gpiote_in_event_enable(PIR_OUT, 1);
 
+  ab1815_init(&spi_instance);
+  ab1815_control_t ab1815_config;
+  ab1815_get_config(&ab1815_config);
+  ab1815_config.auto_rst = 1;
+  ab1815_set_config(ab1815_config);
+
+
   // setup light sensor
   const max44009_config_t config = {
     .continuous = 0,
@@ -407,12 +434,6 @@ int main(void) {
   ms5637_init(&twi_mngr_instance, osr_8192);
 
   si7021_init(&twi_mngr_instance);
-
-  ab1815_init(&spi_instance);
-  ab1815_control_t ab1815_config;
-  ab1815_get_config(&ab1815_config);
-  ab1815_config.auto_rst = 1;
-  ab1815_set_config(ab1815_config);
 
   int i = 0;
   while (1) {
