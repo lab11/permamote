@@ -23,7 +23,7 @@
 
 // ***** Board Specific Configuration *****
 #include "permamote.h"
-#define LED_COUNT 4
+#define LED_COUNT 3
 static const uint8_t LEDS[LED_COUNT] = {LED1, LED2, LED3};
 // ****************************************
 
