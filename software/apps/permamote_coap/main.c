@@ -31,6 +31,7 @@
 #include "max44009.h"
 #include "ms5637.h"
 #include "si7021.h"
+#include "tcs34725.h"
 
 #define COAP_SERVER_ADDR "64:ff9b::22da:2eb5"
 #define NTP_SERVER_ADDR "64:ff9b::8106:f1c"
@@ -65,7 +66,13 @@ static permamote_packet_t packet = {
     .id_len = 0,
     .data = NULL,
     .data_len = 0,
-  };
+};
+
+static tcs34725_config_t tcs_config = {
+  .int_time = TCS34725_INTEGRATIONTIME_154MS,
+  .gain = TCS34725_GAIN_1X,
+};
+
 
 static bool update_thresh = false;
 static bool do_reset= false;
@@ -84,7 +91,7 @@ APP_TIMER_DEF(pir_backoff);
 APP_TIMER_DEF(rtc_update_first);
 APP_TIMER_DEF(rtc_update);
 
-NRF_TWI_MNGR_DEF(twi_mngr_instance, 3, 0);
+NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
 
 void ntp_recv_callback(struct ntp_client_t* client) {
@@ -195,11 +202,36 @@ static void periodic_sensor_read_callback() {
   float vsec = 0.6 * 6 * (float)adc_samples[2] / ((1 << 10)-1);
   // prepare voltage packet
   packet.timestamp = ab1815_get_time_unix();
-  float data[3] = {vbat, vsol, vsec};
-  packet.data = (uint8_t*)data;
+  float v_data[3] = {vbat, vsol, vsec};
+  packet.data = (uint8_t*)v_data;
   packet.data_len = 3 * sizeof(vbat);
   permamote_coap_send(&m_peer_address, "voltage", &packet);
   NRF_LOG_INFO("Sensed voltage: vbat*100: %d, vsol*100: %d, vsec*100: %d", (int32_t)(vbat*100), (int32_t)(vsol*100), (int32_t)(vsec*100));
+
+  // sense light color
+  uint16_t red, green, blue, clear;
+  float cct;
+
+  nrf_gpio_pin_clear(TCS34725_EN);
+  nrf_delay_ms(3); //TODO make these delays low power
+  tcs34725_config(tcs_config);
+  tcs34725_enable();
+  nrf_delay_ms(152);
+  tcs34725_read_channels(&red, &green, &blue, &clear);
+  tcs34725_ir_compensate(&red, &green, &blue, &clear);
+  cct = tcs34725_calculate_cct(red, green, blue);
+  packet.timestamp = ab1815_get_time_unix();
+  packet.data = (uint8_t*)&cct;
+  packet.data_len = sizeof(cct);
+  permamote_coap_send(&m_peer_address, "light_color_cct_k", &packet);
+
+  uint16_t lraw_data[4] = {red, green, blue, clear};
+  packet.data = (uint8_t*)lraw_data;
+  packet.data_len = 4*sizeof(red);
+  permamote_coap_send(&m_peer_address, "light_color_counts", &packet);
+
+  NRF_LOG_INFO("Sensed light cct: %u", (uint32_t)cct);
+  nrf_gpio_pin_set(TCS34725_EN);
 
   //uint8_t data[1 + 6 + 3*sizeof(float)];
   //data[0] = 6;
@@ -222,6 +254,7 @@ static void periodic_sensor_read_callback() {
 }
 
 static void light_sensor_read_callback(float lux) {
+
   upper = lux + lux* 0.05;
   lower = lux - lux* 0.05;
   NRF_LOG_INFO("Sensed: lux: %u, upper: %u, lower: %u", (uint32_t)lux, (uint32_t)upper, (uint32_t)lower);
@@ -383,13 +416,13 @@ int main(void) {
 
   // Turn on power gate
   nrf_gpio_cfg_output(MAX44009_EN);
-  nrf_gpio_cfg_output(ISL29125_EN);
+  nrf_gpio_cfg_output(TCS34725_EN);
   nrf_gpio_cfg_output(MS5637_EN);
   nrf_gpio_cfg_output(SI7021_EN);
   nrf_gpio_cfg_output(PIR_EN);
   nrf_gpio_pin_clear(MAX44009_EN);
   nrf_gpio_pin_clear(PIR_EN);
-  nrf_gpio_pin_set(ISL29125_EN);
+  nrf_gpio_pin_set(TCS34725_EN);
   nrf_gpio_pin_set(MS5637_EN);
   nrf_gpio_pin_set(SI7021_EN);
 
@@ -432,16 +465,22 @@ int main(void) {
     .cdr = 0,
     .int_time = 3,
   };
+
+  ms5637_init(&twi_mngr_instance, osr_8192);
+
+  si7021_init(&twi_mngr_instance);
+
   max44009_init(&twi_mngr_instance);
+
+  tcs34725_init(&twi_mngr_instance);
+
   max44009_set_read_lux_callback(light_sensor_read_callback);
   max44009_set_interrupt_callback(light_interrupt_callback);
   max44009_config(config);
   max44009_schedule_read_lux();
   max44009_enable_interrupt();
 
-  ms5637_init(&twi_mngr_instance, osr_8192);
 
-  si7021_init(&twi_mngr_instance);
 
   int i = 0;
   while (1) {

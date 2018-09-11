@@ -27,6 +27,15 @@ var parse_payload = function (device_id, resource_url, payload, cb) {
         out.solar_voltage = payload.readFloatLE(4);
         out.secondary_voltage = payload.readFloatLE(8);
       }
+      else if (resource_url == '/light_color_cct_k') {
+        out.cct = payload.readFloatLE();
+      }
+      else if (resource_url === '/light_color_counts') {
+        out.red   = payload.readUInt16LE();
+        out.green = payload.readUInt16LE(2);
+        out.blue  = payload.readUInt16LE(4);
+        out.clear = payload.readUInt16LE(6);
+      }
       else if (resource_url === '/error') {
         out.error = payload.readUInt32LE();
       }
