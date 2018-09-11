@@ -28,13 +28,13 @@ var parse_payload = function (device_id, resource_url, payload, cb) {
         out.secondary_voltage = payload.readFloatLE(8);
       }
       else if (resource_url == '/light_color_cct_k') {
-        out.cct = payload.readFloatLE();
+        out.light_cct_k = payload.readFloatLE();
       }
       else if (resource_url === '/light_color_counts') {
-        out.red   = payload.readUInt16LE();
-        out.green = payload.readUInt16LE(2);
-        out.blue  = payload.readUInt16LE(4);
-        out.clear = payload.readUInt16LE(6);
+        out.light_red   = payload.readUInt16LE();
+        out.light_green = payload.readUInt16LE(2);
+        out.light_blue  = payload.readUInt16LE(4);
+        out.light_clear = payload.readUInt16LE(6);
       }
       else if (resource_url === '/error') {
         out.error = payload.readUInt32LE();
