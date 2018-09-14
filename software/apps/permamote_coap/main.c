@@ -19,6 +19,7 @@
 #include "nrf_log_default_backends.h"
 
 #include <openthread/openthread.h>
+#include <openthread/message.h>
 
 #include "simple_thread.h"
 #include "permamote_coap.h"
@@ -161,6 +162,25 @@ static void discover_send_callback() {
 }
 
 static void periodic_sensor_read_callback() {
+  otBufferInfo buf_info = {0};
+  otMessageGetBufferInfo(thread_get_instance(), &buf_info);
+  char buf_info_string[256];
+  size_t len = 0;
+  printf("Buffer info:\n");
+  //len += sprintf
+  printf("total buffers: %u\n", buf_info.mTotalBuffers);
+  printf("free buffers: %u\n", buf_info.mFreeBuffers);
+  printf("Ip6 buffers: %u\n", buf_info.mIp6Buffers);
+  printf("Ip6 messages: %u\n", buf_info.mIp6Messages);
+  printf("coap buffers: %u\n", buf_info.mCoapBuffers);
+  printf("coap messages: %u\n", buf_info.mCoapMessages);
+  printf("app coap buffers: %u\n", buf_info.mApplicationCoapBuffers);
+  printf("app coap messages: %u\n", buf_info.mApplicationCoapMessages);
+  packet.timestamp = ab1815_get_time_unix();
+  packet.data = (uint16_t*)&buf_info.mFreeBuffers;
+  packet.data_len = sizeof(sizeof(uint16_t));
+  permamote_coap_send(&m_peer_address, "free_ot_buffers", &packet);
+
   float temperature, pressure, humidity;
   packet.data_len = sizeof(temperature);
 
@@ -216,7 +236,7 @@ static void periodic_sensor_read_callback() {
   nrf_delay_ms(3); //TODO make these delays low power
   tcs34725_config(tcs_config);
   tcs34725_enable();
-  nrf_delay_ms(152);
+  nrf_delay_ms(160);
   tcs34725_read_channels(&red, &green, &blue, &clear);
   tcs34725_ir_compensate(&red, &green, &blue, &clear);
   cct = tcs34725_calculate_cct(red, green, blue);
@@ -381,6 +401,51 @@ void adc_init(void) {
 //
 //  do_reset = true;
 //}
+
+void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info) {
+  // halt all existing state
+  __disable_irq();
+  NRF_LOG_FINAL_FLUSH();
+
+  // print banner
+  printf("\n\n***** App Error *****\n");
+
+  // check cause of error
+  switch (id) {
+    case NRF_FAULT_ID_SDK_ASSERT: {
+        assert_info_t * p_info = (assert_info_t *)info;
+        printf("ASSERTION FAILED at %s:%u\n",
+            p_info->p_file_name,
+            p_info->line_num);
+        break;
+      }
+    case NRF_FAULT_ID_SDK_ERROR: {
+        error_info_t * p_info = (error_info_t *)info;
+        printf("ERROR %lu [%s] at %s:%lu\t\tPC at: 0x%08lX\n",
+            p_info->err_code,
+            nrf_strerror_get(p_info->err_code),
+            p_info->p_file_name,
+            p_info->line_num,
+            pc);
+        break;
+      }
+    default: {
+      printf("UNKNOWN FAULT at 0x%08lX\n", pc);
+      break;
+    }
+  }
+
+
+  //uint8_t data[1 + 6 + sizeof(uint32_t)];
+  //data[0] = 6;
+  //memcpy(data+1, device_id, 6);
+  //memcpy(data+1+6, &error_code, sizeof(uint32_t));
+
+  //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "error", data, 1+6+sizeof(uint32_t));
+
+  do_reset = true;
+
+}
 
 int main(void) {
   // init softdevice
