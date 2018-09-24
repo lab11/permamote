@@ -3,8 +3,11 @@
 var parse_payload = function (device_id, resource_url, payload, cb) {
   if(device_id != null) {
     if (device_id.slice(6, 8) === '11') {
+      topic = resource_url.split('/')
+      topic = topic[topic.length - 1]
       var out = {
         device: 'Permamote',
+        topic: topic,
       }
       // OK! This looks like a Permamote packet
       if (resource_url === '/light_lux') {
