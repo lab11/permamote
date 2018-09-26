@@ -32,6 +32,7 @@ var parse_payload = function (device_id, resource_url, payload, cb) {
       }
       else if (resource_url == '/light_color_cct_k') {
         out.light_cct_k = payload.readFloatLE();
+        out.topic = 'light_cct_k'
       }
       else if (resource_url === '/light_color_counts') {
         out.light_red   = payload.readUInt16LE();
