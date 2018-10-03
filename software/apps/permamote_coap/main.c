@@ -471,7 +471,7 @@ int main(void) {
   otIp6AddressFromString(COAP_SERVER_ADDR, &m_peer_address);
   otIp6AddressFromString(NTP_SERVER_ADDR, &m_ntp_address);
   thread_config_t thread_config = {
-    .channel = 11,
+    .channel = 25,
     .panid = 0xFACE,
     .sed = true,
     .poll_period = DEFAULT_POLL_PERIOD,
