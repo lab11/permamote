@@ -44,6 +44,19 @@
 #define AB1815_OSCILLATOR_STATUS  0x1D
 #define AB1815_OSCILLATOR_KEY     0x1F
 
+typedef void ab1815_alarm_callback(void);
+
+typedef enum {
+  HUNDREDTH_MATCH = 0x7,
+  ONCE_PER_MINUTE = 0x6,
+  ONCE_PER_HOUR   = 0x5,
+  ONCE_PER_DAY    = 0x4,
+  ONCE_PER_WEEK   = 0x3,
+  ONCE_PER_MONTH  = 0x2,
+  ONCE_PER_YEAR   = 0x1,
+  DISABLED        = 0x0,
+} ab1815_alarm_repeat;
+
 typedef struct {
   bool stop;
   bool hour_12;
@@ -86,4 +99,4 @@ struct timeval ab1815_to_unix(ab1815_time_t time);
 void ab1815_set_time(ab1815_time_t time);
 void ab1815_get_time(ab1815_time_t* time);
 struct timeval ab1815_get_time_unix(void);
-
+void ab1815_set_alarm(ab1815_time_t time, ab1815_alarm_repeat repeat, ab1815_alarm_callback* cb);

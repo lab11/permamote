@@ -49,9 +49,9 @@
 
 //RTC
 #define RTC_CS      NRF_GPIO_PIN_MAP(1,12)
-#define RTC_INT1    NRF_GPIO_PIN_MAP(1,13)
-#define RTC_INT2    NRF_GPIO_PIN_MAP(1,14)
-#define RTC_INT3    NRF_GPIO_PIN_MAP(1,15)
+#define RTC_IRQ1    NRF_GPIO_PIN_MAP(1,13)
+#define RTC_IRQ2    NRF_GPIO_PIN_MAP(1,14)
+#define RTC_IRQ3    NRF_GPIO_PIN_MAP(1,15)
 #define RTC_WDI     NRF_GPIO_PIN_MAP(0,2)
 
 //ICOUNT

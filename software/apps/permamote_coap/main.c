@@ -83,7 +83,7 @@ static float lower;
 #define DISCOVER_PERIOD     APP_TIMER_TICKS(5*60*1000)
 #define SENSOR_PERIOD       APP_TIMER_TICKS(30*1000)
 #define PIR_BACKOFF_PERIOD  APP_TIMER_TICKS(5*1000)
-#define RTC_UPDATE_PERIOD   APP_TIMER_TICKS(24*60*60*1000)
+#define RTC_UPDATE_PERIOD   24*60*60*1000
 #define RTC_UPDATE_FIRST    APP_TIMER_TICKS(5*1000)
 
 APP_TIMER_DEF(discover_send_timer);
@@ -228,6 +228,13 @@ static void periodic_sensor_read_callback() {
   permamote_coap_send(&m_peer_address, "voltage", &packet);
   NRF_LOG_INFO("Sensed voltage: vbat*100: %d, vsol*100: %d, vsec*100: %d", (int32_t)(vbat*100), (int32_t)(vsol*100), (int32_t)(vsec*100));
 
+  // sense vbat_ok
+  bool vbat_ok = nrf_gpio_pin_read(VBAT_OK);
+  packet.data = &vbat_ok;
+  packet.data_len = sizeof(vbat_ok);
+  permamote_coap_send(&m_peer_address, "vbat_ok", &packet);
+  NRF_LOG_INFO("VBAT_OK: %d", vbat_ok);
+
   // sense light color
   uint16_t red, green, blue, clear;
   float cct;
@@ -342,11 +349,6 @@ static void timer_init(void)
   APP_ERROR_CHECK(err_code);
 
   err_code = app_timer_create(&rtc_update_first, APP_TIMER_MODE_SINGLE_SHOT, rtc_update_callback);
-  APP_ERROR_CHECK(err_code);
-
-  err_code = app_timer_create(&rtc_update, APP_TIMER_MODE_REPEATED, rtc_update_callback);
-  APP_ERROR_CHECK(err_code);
-  err_code = app_timer_start(rtc_update, RTC_UPDATE_PERIOD, NULL);
   APP_ERROR_CHECK(err_code);
 
   err_code = app_timer_create(&pir_backoff, APP_TIMER_MODE_SINGLE_SHOT, pir_backoff_callback);
@@ -516,6 +518,9 @@ int main(void) {
   nrf_drv_gpiote_in_init(PIR_OUT, &pir_gpio_config, pir_interrupt_callback);
   nrf_drv_gpiote_in_event_enable(PIR_OUT, 1);
 
+  // setup vbat sense
+  nrf_gpio_cfg_input(VBAT_OK, NRF_GPIO_PIN_NOPULL);
+
   ab1815_init(&spi_instance);
   ab1815_control_t ab1815_config;
   ab1815_get_config(&ab1815_config);
@@ -545,7 +550,8 @@ int main(void) {
   max44009_schedule_read_lux();
   max44009_enable_interrupt();
 
-
+  ab1815_time_t alarm_time = {0};
+  ab1815_set_alarm(alarm_time, ONCE_PER_DAY, (ab1815_alarm_callback*) rtc_update_callback);
 
   int i = 0;
   while (1) {

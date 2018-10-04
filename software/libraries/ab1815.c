@@ -1,5 +1,5 @@
 #include "nrf_drv_spi.h"
-#include "nrf_gpio.h"
+#include "nrf_drv_gpiote.h"
 #include "app_error.h"
 
 #include "ab1815.h"
@@ -7,6 +7,7 @@
 static const nrf_drv_spi_t* spi_instance;
 static ab1815_control_t ctrl_config;
 static nrf_drv_spi_config_t spi_config = NRF_DRV_SPI_DEFAULT_CONFIG;
+static ab1815_alarm_callback* interrupt_callback;
 
 void ab1815_init(const nrf_drv_spi_t* instance) {
   spi_instance = instance;
@@ -42,6 +43,18 @@ void ab1815_write_reg(uint8_t reg, uint8_t* write_buf, size_t len){
   nrf_drv_spi_transfer(spi_instance, buf, len+1, NULL, 0);
   nrf_drv_spi_uninit(spi_instance);
 }
+
+static void interrupt_handler(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
+  // read and clear interrupts
+  uint8_t status = 0;
+  ab1815_read_reg(AB1815_STATUS, &status, 1);
+
+  if (status & 0x4 && interrupt_callback) {
+    // call user callback
+    interrupt_callback();
+  }
+}
+
 
 void ab1815_set_config(ab1815_control_t config) {
   uint8_t write;
@@ -94,6 +107,28 @@ inline uint8_t get_ones(uint8_t x) {
   return x % 10;
 }
 
+void ab1815_form_time_buffer(ab1815_time_t time, uint8_t* buf) {
+  APP_ERROR_CHECK_BOOL(time.hundredths < 100 && time.hundredths >= 0);
+  APP_ERROR_CHECK_BOOL(time.seconds < 60 && time.seconds>= 0);
+  APP_ERROR_CHECK_BOOL(time.minutes < 60 && time.minutes >= 0);
+  APP_ERROR_CHECK_BOOL(time.hours < 24 && time.hours >= 0);
+  if (time.date == 0) time.date = 1;
+  if (time.months == 0) time.months = 1;
+  APP_ERROR_CHECK_BOOL(time.date <= 31 && time.date >= 1);
+  APP_ERROR_CHECK_BOOL(time.months <= 12 && time.months >= 1);
+  APP_ERROR_CHECK_BOOL(time.years < 100 && time.date >= 0);
+  APP_ERROR_CHECK_BOOL(time.weekday < 7 && time.weekday >= 0);
+
+  buf[0] = (get_tens(time.hundredths) & 0xF) << 4  | (get_ones(time.hundredths) & 0xF);
+  buf[1] = (get_tens(time.seconds) & 0x7) << 4    | (get_ones(time.seconds) & 0xF);
+  buf[2] = (get_tens(time.minutes) & 0x7) << 4    | (get_ones(time.minutes) & 0xF);
+  buf[3] = (get_tens(time.hours) & 0x3) << 4      | (get_ones(time.hours) & 0xF);
+  buf[4] = (get_tens(time.date) & 0x3) << 4       | (get_ones(time.date) & 0xF);
+  buf[5] = (get_tens(time.months) & 0x1) << 4     | (get_ones(time.months) & 0xF);
+  buf[6] = (get_tens(time.years) & 0xF) << 4      | (get_ones(time.years) & 0xF);
+  buf[7] = time.weekday & 0x7;
+}
+
 void ab1815_set_time(ab1815_time_t time) {
   uint8_t write[8];
 
@@ -103,23 +138,7 @@ void ab1815_set_time(ab1815_time_t time) {
     ab1815_set_config(ctrl_config);
   }
 
-  APP_ERROR_CHECK_BOOL(time.hundredths < 100 && time.hundredths >= 0);
-  APP_ERROR_CHECK_BOOL(time.seconds < 60 && time.seconds>= 0);
-  APP_ERROR_CHECK_BOOL(time.minutes < 60 && time.minutes >= 0);
-  APP_ERROR_CHECK_BOOL(time.hours < 24 && time.hours >= 0);
-  APP_ERROR_CHECK_BOOL(time.date <= 31 && time.date >= 1);
-  APP_ERROR_CHECK_BOOL(time.months <= 12 && time.date >= 1);
-  APP_ERROR_CHECK_BOOL(time.years < 100 && time.date >= 0);
-  APP_ERROR_CHECK_BOOL(time.weekday < 7 && time.weekday >= 0);
-
-  write[0] = (get_tens(time.hundredths) & 0xF) << 4  | (get_ones(time.hundredths) & 0xF);
-  write[1] = (get_tens(time.seconds) & 0x7) << 4    | (get_ones(time.seconds) & 0xF);
-  write[2] = (get_tens(time.minutes) & 0x7) << 4    | (get_ones(time.minutes) & 0xF);
-  write[3] = (get_tens(time.hours) & 0x3) << 4      | (get_ones(time.hours) & 0xF);
-  write[4] = (get_tens(time.date) & 0x3) << 4       | (get_ones(time.date) & 0xF);
-  write[5] = (get_tens(time.months) & 0x1) << 4     | (get_ones(time.months) & 0xF);
-  write[6] = (get_tens(time.years) & 0xF) << 4      | (get_ones(time.years) & 0xF);
-  write[7] = time.weekday & 0x7;
+  ab1815_form_time_buffer(time, write);
 
   ab1815_write_reg(AB1815_HUND, write, 8);
 
@@ -190,3 +209,32 @@ struct timeval ab1815_to_unix(ab1815_time_t time) {
   return unix_time;
 }
 
+void ab1815_set_alarm(ab1815_time_t time, ab1815_alarm_repeat repeat, ab1815_alarm_callback* cb) {
+  uint8_t buf[8] = {0};
+  interrupt_callback = cb;
+
+  // clear status
+  ab1815_read_reg(AB1815_STATUS, buf, 1);
+
+  // gpiote listen to irq1 pin
+  if (!nrf_drv_gpiote_is_init()) {
+    nrf_drv_gpiote_init();
+  }
+  nrf_drv_gpiote_in_config_t gpio_config = GPIOTE_CONFIG_IN_SENSE_HITOLO(1);
+  gpio_config.pull = NRF_GPIO_PIN_PULLUP;
+  int error = nrf_drv_gpiote_in_init(RTC_IRQ1, &gpio_config, interrupt_handler);
+  APP_ERROR_CHECK(error);
+  nrf_drv_gpiote_in_event_enable(RTC_IRQ1, 1);
+
+  // configure alarm time and frequency
+  ab1815_form_time_buffer(time, buf);
+  ab1815_write_reg(AB1815_ALARM_HUND, buf, 8);
+  ab1815_read_reg(AB1815_COUNTDOWN_CTRL, buf, 1);
+  buf[0] |= repeat << 2;
+  ab1815_write_reg(AB1815_COUNTDOWN_CTRL, buf, 1);
+
+  // enable alarm interrupt
+  ab1815_read_reg(AB1815_INT_MASK, buf, 1);
+  buf[0] |= 0x4;
+  ab1815_write_reg(AB1815_INT_MASK, buf, 1);
+}
