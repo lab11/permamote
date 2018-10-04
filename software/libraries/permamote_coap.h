@@ -15,4 +15,4 @@ typedef struct {
   uint8_t data_len;
 } permamote_packet_t;
 
-void permamote_coap_send(const otIp6Address* dest, const char* path, const permamote_packet_t* packet);
+void permamote_coap_send(const otIp6Address* dest, const char* path, bool confirmable, const permamote_packet_t* packet);
