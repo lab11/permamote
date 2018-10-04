@@ -74,9 +74,18 @@ static tcs34725_config_t tcs_config = {
   .gain = TCS34725_GAIN_1X,
 };
 
+typedef enum {
+  IDLE = 0,
+  SEND_LIGHT,
+  SEND_MOTION,
+  SEND_PERIODIC,
+  SEND_DISCOVERY,
+  UPDATE_TIME,
+  RESET
+} permamote_state_t;
 
+static permamote_state_t state = IDLE;
 static bool update_thresh = false;
-static bool do_reset= false;
 static float upper;
 static float lower;
 
@@ -441,8 +450,17 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info) {
 
   //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "error", data, 1+6+sizeof(uint32_t));
 
-  do_reset = true;
+  state = RESET;
 
+}
+
+void state_step(void) {
+  if (state == RESET) {
+    static int i = 0;
+    if (i++ > 100) {
+      NVIC_SystemReset();
+    }
+  }
 }
 
 int main(void) {
@@ -549,7 +567,6 @@ int main(void) {
   ab1815_time_t alarm_time = {0};
   ab1815_set_alarm(alarm_time, ONCE_PER_DAY, (ab1815_alarm_callback*) rtc_update_callback);
 
-  int i = 0;
   while (1) {
     thread_process();
     ntp_client_process(&ntp_client);
@@ -560,12 +577,7 @@ int main(void) {
     }
     if (NRF_LOG_PROCESS() == false)
     {
-      if (do_reset) {
-        if (i++ > 100) {
-          NVIC_SystemReset();
-        }
-      }
-
+      state_step();
       thread_sleep();
     }
   }
