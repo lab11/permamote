@@ -230,6 +230,7 @@ void ab1815_set_alarm(ab1815_time_t time, ab1815_alarm_repeat repeat, ab1815_ala
   ab1815_form_time_buffer(time, buf);
   ab1815_write_reg(AB1815_ALARM_HUND, buf, 8);
   ab1815_read_reg(AB1815_COUNTDOWN_CTRL, buf, 1);
+  buf[0] &= 0xE3;
   buf[0] |= repeat << 2;
   ab1815_write_reg(AB1815_COUNTDOWN_CTRL, buf, 1);
 

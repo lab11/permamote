@@ -103,11 +103,13 @@ NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
 
 void ntp_recv_callback(struct ntp_client_t* client) {
-  ab1815_set_time(unix_to_ab1815(client->tv));
-  NRF_LOG_INFO("ntp time: %lu.%lu", client->tv.tv_sec, client->tv.tv_usec);
-  //ab1815_time_t time = {0};
-  //ab1815_get_time(&time);
-  //NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
+  if (client->state == NTP_CLIENT_RECV) {
+    ab1815_set_time(unix_to_ab1815(client->tv));
+    NRF_LOG_INFO("ntp time: %lu.%lu", client->tv.tv_sec, client->tv.tv_usec);
+  }
+  else {
+    NRF_LOG_INFO("ntp error state: 0x%x", client->state);
+  }
   otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
 }
 
@@ -124,7 +126,7 @@ static void rtc_update_callback() {
 }
 
 void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * p_context) {
-    NRF_LOG_INFO("State changed! Flags: 0x%08lx Current role: %d\r\n",
+    NRF_LOG_INFO("State changed! Flags: 0x%08lx Current role: %d",
                  flags, otThreadGetDeviceRole(p_context));
 
     if (flags & OT_CHANGED_THREAD_NETDATA)
@@ -140,7 +142,7 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
                           sizeof(m_slaac_addresses) / sizeof(m_slaac_addresses[0]),
                           otIp6CreateRandomIid, NULL);
     }
-    if (flags == 0x1 && otThreadGetDeviceRole(p_context) == 2) {
+    if (flags & OT_CHANGED_IP6_ADDRESS_ADDED && otThreadGetDeviceRole(p_context) == 2) {
       NRF_LOG_INFO("We have internet connectivity!");
       int err_code = app_timer_start(rtc_update_first, RTC_UPDATE_FIRST, NULL);
       APP_ERROR_CHECK(err_code);
@@ -566,6 +568,8 @@ int main(void) {
 
   ab1815_time_t alarm_time = {0};
   ab1815_set_alarm(alarm_time, ONCE_PER_DAY, (ab1815_alarm_callback*) rtc_update_callback);
+
+  int err_code = app_timer_start(rtc_update_first, RTC_UPDATE_FIRST, NULL);
 
   while (1) {
     thread_process();
