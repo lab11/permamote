@@ -81,11 +81,11 @@ typedef enum {
   SEND_PERIODIC,
   SEND_DISCOVERY,
   UPDATE_TIME,
-  RESET
 } permamote_state_t;
 
 static permamote_state_t state = IDLE;
 static float sensed_lux;
+static bool do_reset = false;
 
 #define DISCOVER_PERIOD     APP_TIMER_TICKS(5*60*1000)
 #define SENSOR_PERIOD       APP_TIMER_TICKS(30*1000)
@@ -399,11 +399,24 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info) {
 
   //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "error", data, 1+6+sizeof(uint32_t));
 
-  state = RESET;
-
+  do_reset = true;
 }
 
 void state_step(void) {
+  static struct timeval last_time_connected;//= ab1815_get_time_unix();
+  uint8_t role = otThreadGetDeviceRole(thread_get_instance());
+  if (state != IDLE && role != 2 && last_time_connected.tv_sec != 0) {
+    struct timeval time_now = ab1815_get_time_unix();
+    int64_t time = time_now.tv_sec;
+    printf("time: %lld, last: %llu, diff: %lld\n", time, last_time_connected.tv_sec, time- last_time_connected.tv_sec);
+    if (time - last_time_connected.tv_sec > 120) {
+      printf("going to reset\n");
+      do_reset = true;
+    }
+  }
+  else if (role == 2 || last_time_connected.tv_sec == 0) {
+    last_time_connected = ab1815_get_time_unix();
+  }
   switch(state) {
     case SEND_LIGHT:{
       float upper = sensed_lux + sensed_lux * 0.05;
@@ -473,15 +486,15 @@ void state_step(void) {
       state = IDLE;
       break;
     }
-    case RESET:{
-      static int i = 0;
-      if (i++ > 100) {
-        NVIC_SystemReset();
-      }
-      break;
-    }
     default:
       break;
+  }
+
+  if (do_reset) {
+    static volatile int i = 0;
+    if (i++ > 100) {
+      NVIC_SystemReset();
+    }
   }
 }
 
