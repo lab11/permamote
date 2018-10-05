@@ -85,9 +85,7 @@ typedef enum {
 } permamote_state_t;
 
 static permamote_state_t state = IDLE;
-static bool update_thresh = false;
-static float upper;
-static float lower;
+static float sensed_lux;
 
 #define DISCOVER_PERIOD     APP_TIMER_TICKS(5*60*1000)
 #define SENSOR_PERIOD       APP_TIMER_TICKS(30*1000)
@@ -113,16 +111,8 @@ void ntp_recv_callback(struct ntp_client_t* client) {
   otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
 }
 
-static void rtc_update_callback() {
-  NRF_LOG_INFO("RTC UPDATE");
-  NRF_LOG_INFO("sent ntp poll!");
-  int error = ntp_client_begin(thread_get_instance(), &ntp_client, &m_ntp_address, 123, 127, ntp_recv_callback, NULL);
-  NRF_LOG_INFO("error: %d", error);
-  if (error) {
-    memset(&ntp_client, 0, sizeof(struct ntp_client_t));
-    return;
-  }
-  otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
+static inline void rtc_update_callback() {
+  state = UPDATE_TIME;
 }
 
 void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * p_context) {
@@ -149,32 +139,14 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
     }
 }
 
-static void discover_send_callback() {
-  const char* addr = PARSE_ADDR;
-  uint8_t addr_len = strlen(addr);
-  //uint8_t data[2 + 6 + strlen(addr)];
-  //data[0] = 6;
-  //memcpy(data+1, device_id, 6);
-  //data[7] = strlen(addr);
-  //memcpy(data+1+6+1, addr, strlen(addr));
-
-  //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "discovery", data, 2 + 6 + strlen(addr));
-  uint8_t data[addr_len + 1];
-  data[0] = addr_len;
-  memcpy(data+1, addr, addr_len);
-  packet.timestamp = ab1815_get_time_unix();
-  packet.data = data;
-  packet.data_len = addr_len + 1;
-
-  permamote_coap_send(&m_peer_address, "discovery", false, &packet);
-  NRF_LOG_INFO("Sent discovery");
+static inline void discover_send_callback() {
+  state = SEND_DISCOVERY;
 }
 
-static void periodic_sensor_read_callback() {
+static void send_free_buffers(void) {
   otBufferInfo buf_info = {0};
   otMessageGetBufferInfo(thread_get_instance(), &buf_info);
   printf("Buffer info:\n");
-  //len += sprintf
   printf("total buffers: %u\n", buf_info.mTotalBuffers);
   printf("free buffers: %u\n", buf_info.mFreeBuffers);
   printf("Ip6 buffers: %u\n", buf_info.mIp6Buffers);
@@ -187,7 +159,9 @@ static void periodic_sensor_read_callback() {
   packet.data = (uint8_t*)&buf_info.mFreeBuffers;
   packet.data_len = sizeof(sizeof(uint16_t));
   permamote_coap_send(&m_peer_address, "free_ot_buffers", false, &packet);
+}
 
+static void send_temp_pres_hum(void) {
   float temperature, pressure, humidity;
   packet.data_len = sizeof(temperature);
 
@@ -212,13 +186,12 @@ static void periodic_sensor_read_callback() {
   nrf_gpio_pin_set(SI7021_EN);
   // Prepare humidity packet
   packet.timestamp = ab1815_get_time_unix();
-  ab1815_time_t time;
-  time = unix_to_ab1815(packet.timestamp);
-  NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
   packet.data = (uint8_t*)&humidity;
   permamote_coap_send(&m_peer_address, "humidity_percent", false, &packet);
   NRF_LOG_INFO("Sensed si7021: humidity: %d", (int32_t)humidity);
+}
 
+static void send_voltage(void) {
   // sense voltage
   nrf_saadc_value_t adc_samples[3];
   nrf_drv_saadc_sample_convert(0, adc_samples);
@@ -241,7 +214,9 @@ static void periodic_sensor_read_callback() {
   packet.data_len = sizeof(vbat_ok);
   permamote_coap_send(&m_peer_address, "vbat_ok", false, &packet);
   NRF_LOG_INFO("VBAT_OK: %d", vbat_ok);
+}
 
+static void send_color(void) {
   // sense light color
   uint16_t red, green, blue, clear;
   float cct;
@@ -266,46 +241,24 @@ static void periodic_sensor_read_callback() {
 
   NRF_LOG_INFO("Sensed light cct: %u", (uint32_t)cct);
   nrf_gpio_pin_set(TCS34725_EN);
-
-  //uint8_t data[1 + 6 + 3*sizeof(float)];
-  //data[0] = 6;
-  //memcpy(data+1, device_id, 6);
-  //memcpy(data+1+6, &temperature, sizeof(float));
-
-  //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "temperature_c", data, 1+6+sizeof(float));
-
-  //memcpy(data+1+6, &pressure, sizeof(float));
-  //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "pressure_mbar", data, 1+6+sizeof(float));
-
-  //memcpy(data+1+6, &humidity, sizeof(float));
-  //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "humidity_percent", data, 1+6+sizeof(float));
-
-  //memcpy(data+1+6, &vbat, sizeof(float));
-  //memcpy(data+1+6+sizeof(float), &vsol, sizeof(float));
-  //memcpy(data+1+6+2*sizeof(float), &vsec, sizeof(float));
-  //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "voltage", data, 1+6+3*sizeof(float));
-
 }
 
-static void light_sensor_read_callback(float lux) {
+static void periodic_sensor_read_callback() {
+  ab1815_time_t time;
+  time = unix_to_ab1815(packet.timestamp);
+  NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
+  if(time.years == 0) {
+    NRF_LOG_INFO("VERY INVALID TIME");
+    int err_code = app_timer_start(rtc_update_first, RTC_UPDATE_FIRST, NULL);
+    APP_ERROR_CHECK(err_code);
+  }
 
-  upper = lux + lux* 0.05;
-  lower = lux - lux* 0.05;
-  NRF_LOG_INFO("Sensed: lux: %u, upper: %u, lower: %u", (uint32_t)lux, (uint32_t)upper, (uint32_t)lower);
+  state = SEND_PERIODIC;
+}
 
-  update_thresh = true;
-
-  //uint8_t data[1 + 6 + sizeof(float)];
-  //data[0] = 6;
-  //memcpy(data+1, device_id, 6);
-  //memcpy(data+1+6, &lux, sizeof(float));
-
-  //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "light_lux", data, 1+6+sizeof(float));
-  packet.timestamp = ab1815_get_time_unix();
-  packet.data = (uint8_t*)&lux;
-  packet.data_len = sizeof(lux);
-
-  permamote_coap_send(&m_peer_address, "light_lux", true, &packet);
+static inline void light_sensor_read_callback(float lux) {
+  sensed_lux = lux;
+  state = SEND_LIGHT;
 }
 
 static void pir_backoff_callback() {
@@ -314,16 +267,10 @@ static void pir_backoff_callback() {
 
 static void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
   nrf_drv_gpiote_in_event_disable(PIR_OUT);
-  NRF_LOG_INFO("Saw motion");
   uint32_t err_code = app_timer_start(pir_backoff, PIR_BACKOFF_PERIOD, NULL);
   APP_ERROR_CHECK(err_code);
 
-  uint8_t data = 1;
-  packet.timestamp = ab1815_get_time_unix();
-  packet.data = &data;
-  packet.data_len = sizeof(data);
-
-  permamote_coap_send(&m_peer_address, "motion", false, &packet);
+  state = SEND_MOTION;
 }
 
 static void light_interrupt_callback(void) {
@@ -457,11 +404,84 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info) {
 }
 
 void state_step(void) {
-  if (state == RESET) {
-    static int i = 0;
-    if (i++ > 100) {
-      NVIC_SystemReset();
+  switch(state) {
+    case SEND_LIGHT:{
+      float upper = sensed_lux + sensed_lux * 0.05;
+      float lower = sensed_lux - sensed_lux * 0.05;
+      NRF_LOG_INFO("Sensed: lux: %u, upper: %u, lower: %u", (uint32_t)sensed_lux, (uint32_t)upper, (uint32_t)lower);
+      max44009_set_upper_threshold(upper);
+      max44009_set_lower_threshold(lower);
+
+      packet.timestamp = ab1815_get_time_unix();
+      packet.data = (uint8_t*)&sensed_lux;
+      packet.data_len = sizeof(sensed_lux);
+      permamote_coap_send(&m_peer_address, "light_lux", true, &packet);
+
+      state = IDLE;
+      break;
     }
+    case SEND_MOTION: {
+      uint8_t data = 1;
+      NRF_LOG_INFO("Saw motion");
+      packet.timestamp = ab1815_get_time_unix();
+      packet.data = &data;
+      packet.data_len = sizeof(data);
+      permamote_coap_send(&m_peer_address, "motion", true, &packet);
+
+      state = IDLE;
+      break;
+    }
+    case SEND_PERIODIC: {
+      send_free_buffers();
+      send_temp_pres_hum();
+      send_voltage();
+      send_color();
+
+      state = IDLE;
+      break;
+    }
+    case UPDATE_TIME: {
+      NRF_LOG_INFO("RTC UPDATE");
+      NRF_LOG_INFO("sent ntp poll!");
+      int error = ntp_client_begin(thread_get_instance(), &ntp_client, &m_ntp_address, 123, 127, ntp_recv_callback, NULL);
+      NRF_LOG_INFO("error: %d", error);
+      if (error) {
+        memset(&ntp_client, 0, sizeof(struct ntp_client_t));
+        otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
+        return;
+      }
+      otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
+
+      state = IDLE;
+      break;
+    }
+    case SEND_DISCOVERY: {
+      const char* addr = PARSE_ADDR;
+      uint8_t addr_len = strlen(addr);
+      uint8_t data[addr_len + 1];
+
+      NRF_LOG_INFO("Sent discovery");
+
+      data[0] = addr_len;
+      memcpy(data+1, addr, addr_len);
+      packet.timestamp = ab1815_get_time_unix();
+      packet.data = data;
+      packet.data_len = addr_len + 1;
+
+      permamote_coap_send(&m_peer_address, "discovery", false, &packet);
+
+      state = IDLE;
+      break;
+    }
+    case RESET:{
+      static int i = 0;
+      if (i++ > 100) {
+        NVIC_SystemReset();
+      }
+      break;
+    }
+    default:
+      break;
   }
 }
 
@@ -574,14 +594,9 @@ int main(void) {
   while (1) {
     thread_process();
     ntp_client_process(&ntp_client);
-    if (update_thresh) {
-      max44009_set_upper_threshold(upper);
-      max44009_set_lower_threshold(lower);
-      update_thresh = false;
-    }
+    state_step();
     if (NRF_LOG_PROCESS() == false)
     {
-      state_step();
       thread_sleep();
     }
   }
