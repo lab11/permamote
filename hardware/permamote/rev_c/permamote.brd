@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.1.1">
+<eagle version="9.2.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -163,10 +163,10 @@
 <wire x1="27" y1="0" x2="27" y2="60" width="0.1524" layer="23"/>
 <wire x1="27" y1="60" x2="0" y2="60" width="0.1524" layer="23"/>
 <wire x1="0" y1="60" x2="0" y2="0" width="0.1524" layer="23"/>
-<text x="14.351" y="56.261" size="1.016" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center">RESET</text>
+<text x="15.113" y="57.15" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center">RESET</text>
 <text x="0.413" y="37.349" size="1.016" layer="25" font="vector" ratio="12" align="top-left">Permamote
 Neal Jackson
-7/18</text>
+9/18</text>
 <polygon width="0.1016" layer="41">
 <vertex x="12.446" y="1.7907"/>
 <vertex x="11.938" y="1.7907"/>
@@ -197,7 +197,7 @@ Neal Jackson
 <vertex x="20.193" y="1.016"/>
 <vertex x="20.193" y="1.524"/>
 </polygon>
-<text x="8.255" y="36.233" size="1.016" layer="25" font="vector" ratio="12">B</text>
+<text x="8.255" y="36.233" size="1.016" layer="25" font="vector" ratio="12">&gt;REV</text>
 <wire x1="9.171" y1="35.979" x2="8.001" y2="35.979" width="0.1524" layer="25"/>
 <wire x1="8.001" y1="35.979" x2="8.001" y2="37.503" width="0.1524" layer="25"/>
 <wire x1="8.001" y1="37.503" x2="9.171" y2="37.503" width="0.1524" layer="25"/>
@@ -789,18 +789,14 @@ Round side is up.</description>
 <library name="switches">
 <description>&lt;b&gt;LAB11&lt;/b&gt; - Switches.</description>
 <packages>
-<package name="EVQP2">
-<wire x1="-2.286" y1="-1.632" x2="2.286" y2="-1.632" width="0.127" layer="21"/>
-<wire x1="2.286" y1="-1.632" x2="2.286" y2="1.67" width="0.127" layer="21"/>
-<wire x1="2.286" y1="1.67" x2="-2.286" y2="1.67" width="0.127" layer="21"/>
-<wire x1="-2.286" y1="1.67" x2="-2.286" y2="-1.632" width="0.127" layer="21"/>
-<circle x="0" y="-0.0572" radius="0.8893" width="0.127" layer="21"/>
-<smd name="P$1" x="-2.54" y="-0.87" dx="1.6764" dy="0.8128" layer="1"/>
-<smd name="P$2" x="-2.54" y="0.908" dx="1.6764" dy="0.8128" layer="1"/>
-<smd name="P$3" x="2.54" y="-0.87" dx="1.6764" dy="0.8128" layer="1"/>
-<smd name="P$4" x="2.54" y="0.908" dx="1.6764" dy="0.8128" layer="1"/>
-<text x="-3.302" y="1.924" size="1.27" layer="25" font="vector" ratio="10">&gt;NAME</text>
-<text x="-3.302" y="-3.156" size="1.27" layer="27" font="vector" ratio="10">&gt;VALUE</text>
+<package name="B3U-1000P">
+<smd name="1" x="-1.7" y="0" dx="0.8" dy="1.7" layer="1"/>
+<smd name="2" x="1.7" y="0" dx="0.8" dy="1.7" layer="1"/>
+<wire x1="-1.5" y1="1.25" x2="-1.5" y2="-1.25" width="0.127" layer="21"/>
+<wire x1="-1.5" y1="-1.25" x2="1.5" y2="-1.25" width="0.127" layer="21"/>
+<wire x1="1.5" y1="-1.25" x2="1.5" y2="1.25" width="0.127" layer="21"/>
+<wire x1="1.5" y1="1.25" x2="-1.5" y2="1.25" width="0.127" layer="21"/>
+<text x="0" y="2.54" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
 </package>
 </packages>
 </library>
@@ -2065,432 +2061,427 @@ Quickturn PCB 4 Layer .DRU</description>
 </pass>
 </autorouter>
 <elements>
-<element name="C27" library="passives" package="0402_CAP" value="4.7uF" x="21.209" y="11.811" smashed="yes" rot="R180">
+<element name="C27" library="passives" package="0402_CAP" value="4.7uF" x="21.209" y="11.811" rot="R180">
 <attribute name="DIGIKEY" value="445-5947-1-ND" x="21.209" y="11.811" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="C1005X5R0J475K050BC " x="21.209" y="11.811" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="22.96" y="11.457" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C13" library="passives" package="0402_CAP" value="0.1uF" x="24.733" y="19.773" smashed="yes">
+<element name="C13" library="passives" package="0402_CAP" value="0.1uF" x="24.733" y="19.773">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="24.733" y="19.773" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="GRM155R71C104KA88J " x="24.733" y="19.773" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="24.765" y="19.304" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="C14" library="passives" package="0402_CAP" value="0.1uF" x="25.146" y="16.002" smashed="yes" rot="R270">
+<element name="C14" library="passives" package="0402_CAP" value="0.1uF" x="25.146" y="16.002" rot="R270">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="25.146" y="16.002" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="GRM155R71C104KA88J " x="25.146" y="16.002" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="25.527" y="16.002" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="C15" library="passives" package="0402_CAP" value="0.1uF" x="16.732" y="11.518" smashed="yes" rot="R270">
+<element name="C15" library="passives" package="0402_CAP" value="0.1uF" x="16.732" y="11.518" rot="R270">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="16.732" y="11.518" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="GRM155R71C104KA88J " x="16.732" y="11.518" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="17.209" y="9.818" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="C16" library="passives" package="0402_CAP" value="0.1uF" x="15.208" y="19.265" smashed="yes" rot="R90">
+<element name="C16" library="passives" package="0402_CAP" value="0.1uF" x="15.208" y="19.265" rot="R90">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="15.208" y="19.265" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="GRM155R71C104KA88J " x="15.208" y="19.265" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="14.827" y="18.884" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="U10" library="chips" package="AQFN73" value="NRF52840" x="19.992" y="16.61" smashed="yes" rot="R90">
+<element name="U10" library="chips" package="AQFN73" value="NRF52840" x="19.992" y="16.61" rot="R90">
 <attribute name="DIGIKEY" value="1490-1071-1-ND" x="19.992" y="16.61" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MANUFACTURER" value="NORIDIC SEMICONDUCTOR" x="19.992" y="16.61" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="NRF52840" x="19.992" y="16.61" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="21.902" y="20.344" size="0.8128" layer="25" font="vector" ratio="12"/>
 </element>
-<element name="C22" library="passives" package="0402_CAP" value="1uF" x="15.716" y="11.518" smashed="yes" rot="R270">
+<element name="C22" library="passives" package="0402_CAP" value="1uF" x="15.716" y="11.518" rot="R270">
 <attribute name="DIGIKEY" value="490-7195-1-ND " x="15.716" y="11.518" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="GRM155R70G105KA12D " x="15.716" y="11.518" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="15.97" y="9.74" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="C8" library="passives" package="0402_CAP" value="100pF" x="16.747" y="21.887" smashed="yes" rot="R90">
+<element name="C8" library="passives" package="0402_CAP" value="100pF" x="16.747" y="21.887" rot="R90">
 <attribute name="DIGIKEY" value="490-5922-1-ND" x="16.747" y="21.887" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="GRM1555C1H101JA01D " x="16.747" y="21.887" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="16.437" y="21.894" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="C3" library="passives" package="0402_CAP" value="12pF" x="11.684" y="22.86" smashed="yes" rot="R90">
+<element name="C3" library="passives" package="0402_CAP" value="12pF" x="11.684" y="22.86" rot="R90">
 <attribute name="DIGIKEY" value="490-6197-1-ND" x="11.684" y="22.86" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="GRM1555C1H120GA01D " x="11.684" y="22.86" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="10.414" y="22.352" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C4" library="passives" package="0402_CAP" value="12pF" x="13.208" y="19.685" smashed="yes">
+<element name="C4" library="passives" package="0402_CAP" value="12pF" x="13.208" y="19.685">
 <attribute name="DIGIKEY" value="490-6197-1-ND" x="13.208" y="19.685" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="GRM1555C1H120GA01D " x="13.208" y="19.685" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="13.208" y="19.304" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="C1" library="passives" package="0402_CAP" value="1pF" x="18.732" y="20.793" smashed="yes" rot="R180">
+<element name="C1" library="passives" package="0402_CAP" value="1pF" x="18.732" y="20.793" rot="R180">
 <attribute name="DIGIKEY" value="1276-1595-1-ND" x="18.732" y="20.793" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="CL05C010CB5NNNC" x="18.732" y="20.793" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="18.323" y="21.145" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C2" library="passives" package="0402_CAP" value="1pF" x="18.732" y="23.333" smashed="yes" rot="R180">
+<element name="C2" library="passives" package="0402_CAP" value="1pF" x="18.732" y="23.333" rot="R180">
 <attribute name="DIGIKEY" value="1276-1595-1-ND" x="18.732" y="23.333" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="CL05C010CB5NNNC" x="18.732" y="23.333" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="18.7574" y="23.714" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="L1" library="passives" package="0402_CAP" value="3.9nH" x="19.24" y="22.063" smashed="yes" rot="R270">
+<element name="L1" library="passives" package="0402_CAP" value="3.9nH" x="19.24" y="22.063" rot="R270">
 <attribute name="DIGIKEY" value="490-1131-1-ND" x="19.24" y="22.063" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="LQP15MN3N9B02D" x="19.24" y="22.063" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="19.748" y="22.19" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="X1" library="crystals" package="TXC-7V" value="32MHz" x="13.684" y="22.186" smashed="yes" rot="R90">
+<element name="X1" library="crystals" package="TXC-7V" value="32MHz" x="13.684" y="22.186" rot="R90">
 <attribute name="DIGIKEY" value="887-2568-1-ND" x="13.684" y="22.186" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MANUFACTURER" value="TXC CORPORATION" x="13.684" y="22.186" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="7M-32.000MAHV-T" x="13.684" y="22.186" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="15.455" y="23.416" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="C23" library="passives" package="0402_CAP" value="1uF" x="15.335" y="14.947" smashed="yes" rot="R90">
+<element name="C23" library="passives" package="0402_CAP" value="1uF" x="15.335" y="14.947" rot="R90">
 <attribute name="DIGIKEY" value="490-7195-1-ND " x="15.335" y="14.947" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="GRM155R70G105KA12D " x="15.335" y="14.947" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="15.646" y="16.733" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="U7" library="chips" package="UDFN-6-MAXIM" value="MAX17222" x="21.844" y="43.815" smashed="yes" rot="R90">
+<element name="U7" library="chips" package="UDFN-6-MAXIM" value="MAX17222" x="21.844" y="43.815" rot="R90">
 <attribute name="DIGIKEY" value="MAX17222ELT+TCT-ND" x="21.844" y="43.815" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="MANUFACTURER" value="MAXIM INTEGRATED" x="21.844" y="43.815" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="MPN" value="MAX17222ELT+T" x="21.844" y="43.815" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="21.955" y="45.707" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C30" library="passives" package="0603_CAP" value="10uF" x="18.796" y="46.99" smashed="yes" rot="R180">
+<element name="C30" library="passives" package="0603_CAP" value="10uF" x="18.796" y="46.99" rot="R180">
 <attribute name="DIGIKEY" value="490-3896-1-ND" x="18.796" y="46.99" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="GRM188R60J106ME47D " x="18.796" y="46.99" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="18.796" y="47.625" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C31" library="passives" package="0603_CAP" value="10uF" x="18.796" y="41.021" smashed="yes" rot="R180">
+<element name="C31" library="passives" package="0603_CAP" value="10uF" x="18.796" y="41.021" rot="R180">
 <attribute name="DIGIKEY" value="490-3896-1-ND" x="18.796" y="41.021" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="GRM188R60J106ME47D " x="18.796" y="41.021" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="18.834" y="40.359" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="R13" library="passives" package="0603-RES" value="80.6k" x="18.796" y="43.815" smashed="yes">
+<element name="R13" library="passives" package="0603-RES" value="80.6k" x="18.796" y="43.815">
 <attribute name="DIGIKEY" value="311-80.6KHRCT-ND" x="18.796" y="43.815" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="RC0603FR-0780K6L " x="18.796" y="43.815" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="18.796" y="43.18" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="R22" library="passives" package="0603-RES" value="33M" x="18.796" y="45.212" smashed="yes" rot="R180">
+<element name="R22" library="passives" package="0603-RES" value="33M" x="18.796" y="45.212" rot="R180">
 <attribute name="DIGIKEY" value="HMC0603JT33M0CT-ND" x="18.796" y="45.212" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="HMC0603JT33M0 " x="18.796" y="45.212" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="17.653" y="45.212" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="BT1" library="batteries" package="1020" value="LTOHTC1020" x="16.002" y="54.705" smashed="yes" rot="MR90">
+<element name="BT1" library="batteries" package="1020" value="LTOHTC1020" x="16.002" y="54.705" rot="MR90">
 <attribute name="NAME" x="10.668" y="54.737" size="0.8128" layer="26" font="vector" ratio="12" rot="MR270" align="bottom-center"/>
 </element>
-<element name="BT4" library="batteries" package="BH123A" value="BAT_PACKCR123A" x="13.97" y="27.432" smashed="yes" rot="MR90">
+<element name="BT4" library="batteries" package="BH123A" value="BAT_PACKCR123A" x="13.97" y="27.432" rot="MR90">
 <attribute name="DIGIKEY" value="BH123A-ND" x="13.97" y="27.432" size="1.778" layer="28" rot="MR90" display="off"/>
 <attribute name="MANUFACTURER" value="MPD" x="13.97" y="27.432" size="1.778" layer="28" rot="MR90" display="off"/>
 <attribute name="MPN" value="BH123A" x="13.97" y="27.432" size="1.778" layer="28" rot="MR90" display="off"/>
 <attribute name="NAME" x="23.114" y="5.842" size="0.8128" layer="26" font="vector" ratio="12" rot="MR90"/>
 </element>
-<element name="U8" library="chips" package="UDFN-6-EXPOSED" value="MAX44009" x="19.812" y="2.159" smashed="yes" rot="R90">
+<element name="U8" library="chips" package="UDFN-6-EXPOSED" value="MAX44009" x="19.812" y="2.159" rot="R90">
 <attribute name="DIGIKEY" value="MAX44009EDT+TCT-ND" x="19.812" y="2.159" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MANUFACTURER" value="MAXIM" x="19.812" y="2.159" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="MAX44009EDT+T" x="19.812" y="2.159" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="18.669" y="2.286" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="C24" library="passives" package="0402_CAP" value="1uF" x="22.225" y="4.699" smashed="yes" rot="R90">
+<element name="C24" library="passives" package="0402_CAP" value="1uF" x="22.225" y="4.699" rot="R90">
 <attribute name="DIGIKEY" value="490-7195-1-ND " x="22.225" y="4.699" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="GRM155R70G105KA12D " x="22.225" y="4.699" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="22.225" y="5.461" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C17" library="passives" package="0402_CAP" value="0.1uF" x="23.241" y="4.699" smashed="yes" rot="R90">
+<element name="C17" library="passives" package="0402_CAP" value="0.1uF" x="23.241" y="4.699" rot="R90">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="23.241" y="4.699" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="GRM155R71C104KA88J " x="23.241" y="4.699" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="23.622" y="4.826" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="C25" library="passives" package="0402_CAP" value="1uF" x="21.209" y="4.699" smashed="yes" rot="R90">
+<element name="C25" library="passives" package="0402_CAP" value="1uF" x="21.209" y="4.699" rot="R90">
 <attribute name="DIGIKEY" value="490-7195-1-ND " x="21.209" y="4.699" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="GRM155R70G105KA12D " x="21.209" y="4.699" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="21.844" y="3.937" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="R6" library="passives" package="0402_RES" value="DNP" x="1.207" y="23.232" smashed="yes">
+<element name="R6" library="passives" package="0402_RES" value="DNP" x="1.207" y="23.232">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND " x="2.477" y="23.232" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="RC0402JR-0710KL" x="1.207" y="23.232" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="1.207" y="23.613" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="1.207" y="21.835" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="R7" library="passives" package="0402_RES" value="DNP" x="2.985" y="23.232" smashed="yes" rot="R180">
+<element name="R7" library="passives" package="0402_RES" value="DNP" x="2.985" y="23.232" rot="R180">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND " x="2.985" y="23.232" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="RC0402JR-0710KL" x="2.985" y="23.232" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="2.985" y="23.613" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="2.985" y="24.629" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="U6" library="chips" package="LGA-12" value="LIS2DW12" x="12.954" y="1.778" smashed="yes" rot="R270">
+<element name="U6" library="chips" package="LGA-12" value="LIS2DW12" x="12.954" y="1.778" rot="R270">
 <attribute name="DIGIKEY" value="497-17718-6-ND" x="12.954" y="1.778" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MANUFACTURER" value="STMicroelectronics" x="12.954" y="1.778" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MOUSER" value="511-LIS2DW12TR" x="12.954" y="1.778" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="LIS2DW12TR" x="12.954" y="1.778" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="11.684" y="1.778" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="U1" library="chips" package="QFN-16-3MM" value="AB1815-T3" x="5.08" y="27.178" smashed="yes">
+<element name="U1" library="chips" package="QFN-16-3MM" value="AB1815-T3" x="5.08" y="27.178">
 <attribute name="DIGIKEY" value="535-11936-1-ND" x="-6.35" y="33.528" size="1.778" layer="27" display="off"/>
 <attribute name="MANUFACTURER" value="Abracon" x="-6.35" y="33.528" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="AB1815-T3" x="-6.35" y="33.528" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="7.063" y="25.595" size="0.8128" layer="25" font="vector" ratio="12"/>
 </element>
-<element name="C7" library="passives" package="0402_CAP" value="47pF" x="7.874" y="29.972" smashed="yes">
+<element name="C7" library="passives" package="0402_CAP" value="47pF" x="7.874" y="29.972">
 <attribute name="DIGIKEY" value="490-5942-1-ND" x="4.064" y="36.322" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="GRM1555C1H470JA01D " x="7.874" y="29.972" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="9.652" y="29.972" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="X4" library="crystals" package="2-SMD" value="ABS07-32.768KHZ-7-T" x="4.572" y="30.734" smashed="yes">
+<element name="X4" library="crystals" package="2-SMD" value="ABS07-32.768KHZ-7-T" x="4.572" y="30.734">
 <attribute name="DIGIKEY" value="535-9543-1-ND" x="-8.128" y="34.544" size="1.778" layer="27" display="off"/>
 <attribute name="MANUFACTURER" value="ABRACON" x="-8.128" y="34.544" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="ABS07-32.768KHZ-7-T " x="-8.128" y="34.544" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="2.286" y="32.258" size="0.8128" layer="21" font="vector" ratio="12"/>
 </element>
-<element name="C33" library="passives" package="0402_CAP" value="DNP" x="1.778" y="31.242" smashed="yes" rot="R90">
+<element name="C33" library="passives" package="0402_CAP" value="DNP" x="1.778" y="31.242" rot="R90">
 <attribute name="NAME" x="1.27" y="31.75" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="C34" library="passives" package="0402_CAP" value="DNP" x="7.366" y="31.242" smashed="yes" rot="R90">
+<element name="C34" library="passives" package="0402_CAP" value="DNP" x="7.366" y="31.242" rot="R90">
 <attribute name="NAME" x="9.144" y="31.496" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C26" library="passives" package="0402_CAP" value="1uF" x="7.62" y="28.702" smashed="yes">
+<element name="C26" library="passives" package="0402_CAP" value="1uF" x="7.62" y="28.702">
 <attribute name="DIGIKEY" value="490-7195-1-ND " x="-2.54" y="27.432" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="GRM155R70G105KA12D " x="7.62" y="28.702" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="9.652" y="29.718" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="C18" library="passives" package="0402_CAP" value="0.1uF" x="16.764" y="2.286" smashed="yes">
+<element name="C18" library="passives" package="0402_CAP" value="0.1uF" x="16.764" y="2.286">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="16.764" y="2.286" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="GRM155R71C104KA88J " x="16.764" y="2.286" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="16.256" y="2.794" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C32" library="passives" package="0603_CAP" value="10uF" x="16.51" y="1.016" smashed="yes">
+<element name="C32" library="passives" package="0603_CAP" value="10uF" x="16.51" y="1.016">
 <attribute name="DIGIKEY" value="490-3896-1-ND" x="17.78" y="1.016" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="GRM188R60J106ME47D " x="16.51" y="1.016" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="15.24" y="1.524" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="U9" library="chips" package="4-SMD" value="MS5637-02BA03" x="2.032" y="13.335" smashed="yes" rot="R90">
+<element name="U9" library="chips" package="4-SMD" value="MS5637-02BA03" x="2.032" y="13.335" rot="R90">
 <attribute name="DIGIKEY" value="223-1199-1-ND" x="2.032" y="13.335" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MANUFACTURER" value="TE CONNECTIVITY" x="2.032" y="13.335" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="MS563702BA03-50" x="2.032" y="13.335" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="2.032" y="15.113" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C19" library="passives" package="0402_CAP" value="0.1uF" x="7.366" y="20.32" smashed="yes">
+<element name="C19" library="passives" package="0402_CAP" value="0.1uF" x="7.366" y="20.32">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="7.366" y="20.32" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="GRM155R71C104KA88J " x="7.366" y="20.32" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="7.366" y="19.939" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="U11" library="chips" package="DFN-6/3MM" value="SI7021-A20-GM1" x="2.023" y="19.875" smashed="yes" rot="R270">
+<element name="U11" library="chips" package="DFN-6/3MM" value="SI7021-A20-GM1" x="2.023" y="19.875" rot="R270">
 <attribute name="DIGIKEY" value="336-3141-ND" x="2.023" y="19.875" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MOUSER" value="634-SI7021-A20-GM1" x="2.023" y="19.875" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="SI7021-A20-GM1 " x="2.023" y="19.875" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="2.023" y="21.907" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C20" library="passives" package="0402_CAP" value="0.1uF" x="7.366" y="21.336" smashed="yes">
+<element name="C20" library="passives" package="0402_CAP" value="0.1uF" x="7.366" y="21.336">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="8.636" y="21.336" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="GRM155R71C104KA88J " x="7.366" y="21.336" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="7.62" y="21.717" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="J1" library="connector" package="TC2030-IDC-NL" value="TC2030-JLINK-NL" x="25.146" y="30.861" smashed="yes" rot="MR90">
-<attribute name="VALUE" x="19.1135" y="30.861" size="1.016" layer="28" font="vector" ratio="12" rot="MR90" align="bottom-center"/>
+<element name="J1" library="connector" package="TC2030-IDC-NL" value="TC2030-JLINK-NL" x="24.892" y="30.861" rot="R90">
+<attribute name="VALUE" x="30.9245" y="30.861" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="R23" library="passives" package="0402_RES" value="100M" x="23.876" y="6.604" smashed="yes" rot="R180">
+<element name="R23" library="passives" package="0402_RES" value="100M" x="23.876" y="6.604" rot="R180">
 <attribute name="DIGIKEY" value="541-100MAHCT-ND" x="23.876" y="6.604" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="HMC0402JT100M " x="23.876" y="6.604" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="25.654" y="6.731" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="23.876" y="8.001" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="R24" library="passives" package="0402_RES" value="100M" x="17.78" y="3.81" smashed="yes" rot="R270">
+<element name="R24" library="passives" package="0402_RES" value="100M" x="17.78" y="3.81" rot="R270">
 <attribute name="DIGIKEY" value="541-100MAHCT-ND" x="17.78" y="3.81" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="HMC0402JT100M " x="17.78" y="3.81" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="17.399" y="4.826" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="16.383" y="3.81" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="R25" library="passives" package="0402_RES" value="100M" x="7.112" y="18.542" smashed="yes" rot="R180">
+<element name="R25" library="passives" package="0402_RES" value="100M" x="7.112" y="18.542" rot="R180">
 <attribute name="DIGIKEY" value="541-100MAHCT-ND" x="7.112" y="18.542" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="HMC0402JT100M " x="7.112" y="18.542" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="8.89" y="18.034" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="7.112" y="19.939" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="R26" library="passives" package="0402_RES" value="100M" x="5.588" y="22.606" smashed="yes">
+<element name="R26" library="passives" package="0402_RES" value="100M" x="5.588" y="22.606">
 <attribute name="DIGIKEY" value="541-100MAHCT-ND" x="5.588" y="22.606" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="HMC0402JT100M " x="5.588" y="22.606" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="5.588" y="23.114" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="5.588" y="21.209" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="R27" library="passives" package="0402_RES" value="100M" x="9.652" y="11.303" smashed="yes" rot="R270">
+<element name="R27" library="passives" package="0402_RES" value="100M" x="9.652" y="11.303" rot="R270">
 <attribute name="DIGIKEY" value="541-100MAHCT-ND" x="35.052" y="11.303" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="HMC0402JT100M " x="9.652" y="11.303" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="10.087" y="11.287" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 <attribute name="VALUE" x="8.255" y="11.303" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="C10" library="passives" package="0402_CAP" value="10nF" x="24.638" y="57.753" smashed="yes">
+<element name="C10" library="passives" package="0402_CAP" value="10nF" x="24.638" y="57.753">
 <attribute name="DIGIKEY" value="490-4516-1-ND" x="24.638" y="57.753" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="GRM155R71H103KA88D " x="24.638" y="57.753" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="26.035" y="57.531" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="L5" library="passives" package="74437324220" value="22uH" x="22.86" y="50.26" smashed="yes" rot="R180">
+<element name="L5" library="passives" package="74437324220" value="22uH" x="22.86" y="50.26" rot="R180">
 <attribute name="DIGIKEY" value="732-3340-1-ND" x="22.86" y="50.26" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="74437324220 " x="22.86" y="50.26" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="21.886" y="48.064" size="0.8128" layer="25" font="vector" ratio="12" rot="R180"/>
 <attribute name="VALUE" x="26.035" y="55.34" size="1.27" layer="27" rot="R180"/>
 </element>
-<element name="R8" library="passives" package="0402_RES" value="10k" x="23.876" y="7.747" smashed="yes" rot="R180">
+<element name="R8" library="passives" package="0402_RES" value="10k" x="23.876" y="7.747" rot="R180">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND " x="23.876" y="7.747" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="RC0402JR-0710KL" x="23.876" y="7.747" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="25.327" y="7.62" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="23.876" y="9.144" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="R9" library="passives" package="0402_RES" value="10k" x="21.336" y="6.604" smashed="yes">
+<element name="R9" library="passives" package="0402_RES" value="10k" x="21.336" y="6.604">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND " x="21.336" y="6.604" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="RC0402JR-0710KL" x="21.336" y="6.604" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="21.336" y="6.985" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="21.336" y="5.207" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C12" library="passives" package="0402_CAP" value="47nF" x="14.065" y="14.947" smashed="yes" rot="R90">
+<element name="C12" library="passives" package="0402_CAP" value="47nF" x="14.065" y="14.947" rot="R90">
 <attribute name="DIGIKEY" value="445-1264-1-ND" x="14.065" y="14.947" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="C1005X7R1C473K050BC " x="14.065" y="14.947" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="13.557" y="15.709" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="L2" library="passives" package="0402_CAP" value="15nH" x="13.303" y="13.931" smashed="yes" rot="R270">
+<element name="L2" library="passives" package="0402_CAP" value="15nH" x="13.303" y="13.931" rot="R270">
 <attribute name="DIGIKEY" value="587-1521-1-ND" x="17.113" y="12.407" size="1.016" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="HK100515NJ-T " x="13.303" y="13.931" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="12.954" y="13.97" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="L4" library="passives" package="0603_CAP" value="10uH" x="14.827" y="13.423" smashed="yes">
+<element name="L4" library="passives" package="0603_CAP" value="10uH" x="14.827" y="13.423">
 <attribute name="DIGIKEY" value="490-4025-1-ND" x="16.351" y="10.375" size="1.016" layer="27" display="off"/>
 <attribute name="MPN" value="LQM18FN100M00D " x="14.827" y="13.423" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="14.732" y="12.7" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="X3" library="crystals" package="ABS05" value="32.768kHz" x="18.034" y="11.176" smashed="yes" rot="R90">
+<element name="X3" library="crystals" package="ABS05" value="32.768kHz" x="18.034" y="11.176" rot="R90">
 <attribute name="DIGIKEY" value="535-11897-1-ND" x="18.034" y="5.334" size="1.016" layer="27" rot="R90" display="off"/>
 <attribute name="MANUFACTURER" value="Abracon" x="18.034" y="11.176" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="ABS05-32.768KHZ-9-T" x="18.034" y="11.176" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="18.034" y="12.065" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="19.734" y="11.176" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="C5" library="passives" package="0402_CAP" value="12pF" x="19.05" y="10.668" smashed="yes" rot="R90">
+<element name="C5" library="passives" package="0402_CAP" value="12pF" x="19.05" y="10.668" rot="R90">
 <attribute name="DIGIKEY" value="490-6197-1-ND" x="19.05" y="6.096" size="1.016" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="GRM1555C1H120GA01D " x="19.05" y="10.668" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="19.558" y="10.668" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="C6" library="passives" package="0402_CAP" value="12pF" x="18.034" y="9.398" smashed="yes" rot="R90">
+<element name="C6" library="passives" package="0402_CAP" value="12pF" x="18.034" y="9.398" rot="R90">
 <attribute name="DIGIKEY" value="490-6197-1-ND" x="21.082" y="1.778" size="1.016" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="GRM1555C1H120GA01D " x="18.034" y="9.398" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="18.399" y="9.287" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="A2" library="chips" package="ANT3216A063R2400A" value="ANT3216A063R2400A" x="25.312" y="23.193" smashed="yes" rot="R270">
+<element name="A2" library="chips" package="ANT3216A063R2400A" value="ANT3216A063R2400A" x="25.312" y="23.193" rot="R270">
 <attribute name="DIGIKEY" value="311-1542-1-ND" x="25.312" y="23.193" size="1.016" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
 <attribute name="MANUFACTURER" value="YAGEO" x="25.312" y="23.193" size="1.016" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
 <attribute name="MPN" value="ANT3216A063R2400A" x="25.312" y="23.193" size="1.016" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
 <attribute name="NAME" x="23.984" y="23.059" size="0.8128" layer="25" font="vector" ratio="12" rot="R90"/>
 </element>
-<element name="S1" library="switches" package="EVQP2" value="EVQP2" x="12.446" y="56.261" smashed="yes" rot="R270">
-<attribute name="DIGIKEY" value="P11084SCT-ND" x="12.446" y="56.261" size="1.778" layer="27" rot="R270" display="off"/>
-<attribute name="MPN" value="EVQ-P2K02Q " x="12.446" y="56.261" size="1.778" layer="27" rot="R270" display="off"/>
-<attribute name="VALUE" x="9.29" y="59.563" size="1.27" layer="27" font="vector" ratio="10" rot="R270"/>
-</element>
-<element name="R10" library="passives" package="0402_RES" value="10k" x="8.89" y="53.975" smashed="yes" rot="R270">
+<element name="R10" library="passives" package="0402_RES" value="10k" x="8.89" y="53.975" rot="R270">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND " x="8.89" y="53.975" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="RC0402JR-0710KL" x="8.89" y="53.975" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="9.398" y="53.975" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 <attribute name="VALUE" x="7.493" y="53.975" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="R11" library="passives" package="0402_RES" value="10k" x="2.032" y="28.956" smashed="yes" rot="R90">
+<element name="R11" library="passives" package="0402_RES" value="10k" x="2.032" y="28.956" rot="R90">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND " x="2.032" y="28.956" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="RC0402JR-0710KL" x="2.032" y="28.956" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="2.54" y="26.924" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="3.429" y="28.956" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="U3" library="chips" package="AMN2" value="EKMB1101111" x="5.496" y="5.558" smashed="yes">
+<element name="U3" library="chips" package="AMN2" value="EKMB1101111" x="5.496" y="5.558">
 <attribute name="DIGIKEY" value="255-3065-ND" x="5.496" y="5.558" size="1.778" layer="27" display="off"/>
 <attribute name="MANUFACTURER" value="PANASONIC" x="5.496" y="5.558" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="EKMB1101111" x="5.496" y="5.558" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="1.016" y="0.508" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="Q1" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="5.334" y="13.843" smashed="yes" rot="R90">
+<element name="Q1" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="5.334" y="13.843" rot="R90">
 <attribute name="DIGIKEY" value="1727-2601-1-ND" x="5.334" y="13.843" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MANUFACTURER" value="NEXPERIA" x="5.334" y="13.843" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="PMDXB950UPELZ" x="5.334" y="13.843" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="5.334" y="12.954" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 <attribute name="VALUE" x="6.334" y="13.843" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="top-center"/>
 </element>
-<element name="Q2" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="5.334" y="19.939" smashed="yes" rot="R270">
+<element name="Q2" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="5.334" y="19.939" rot="R270">
 <attribute name="DIGIKEY" value="1727-2601-1-ND" x="5.334" y="22.479" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MANUFACTURER" value="NEXPERIA" x="5.334" y="22.479" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="PMDXB950UPELZ" x="5.334" y="22.479" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="5.334" y="20.828" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="4.334" y="19.939" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="top-center"/>
 </element>
-<element name="Q3" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="19.558" y="5.08" smashed="yes" rot="R270">
+<element name="Q3" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="19.558" y="5.08" rot="R270">
 <attribute name="DIGIKEY" value="1727-2601-1-ND" x="19.558" y="7.62" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MANUFACTURER" value="NEXPERIA" x="19.558" y="7.62" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="PMDXB950UPELZ" x="19.558" y="7.62" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="19.304" y="6.207" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="18.558" y="5.08" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="top-center"/>
 </element>
-<element name="Q4" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="25.4" y="5.08" smashed="yes" rot="R90">
+<element name="Q4" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="25.4" y="5.08" rot="R90">
 <attribute name="DIGIKEY" value="1727-2601-1-ND" x="25.4" y="2.54" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MANUFACTURER" value="NEXPERIA" x="25.4" y="2.54" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="PMDXB950UPELZ" x="25.4" y="2.54" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="25.273" y="5.842" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="26.4" y="5.08" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="top-center"/>
 </element>
-<element name="U2" library="chips" package="S-PVQFN-N20-RGR" value="BQ25505" x="20.066" y="55.594" smashed="yes" rot="R90">
+<element name="U2" library="chips" package="S-PVQFN-N20-RGR" value="BQ25505" x="20.066" y="55.594" rot="R90">
 <attribute name="DIGIKEY" value="296-37078-1-ND" x="20.066" y="55.594" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="MANUFACTURER" value="TI" x="20.066" y="55.594" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="MPN" value="BQ25505RGRR" x="20.066" y="55.594" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="NAME" x="18.034" y="53.816" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="Q5" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="14.224" y="51.022" smashed="yes">
+<element name="Q5" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="14.224" y="51.022">
 <attribute name="DIGIKEY" value="1727-2601-1-ND" x="14.224" y="51.022" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
 <attribute name="MANUFACTURER" value="NEXPERIA" x="14.224" y="51.022" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
 <attribute name="MPN" value="PMDXB950UPELZ" x="14.224" y="51.022" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
 <attribute name="NAME" x="14.224" y="52.022" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="14.224" y="50.022" size="1.016" layer="27" font="vector" ratio="12" align="top-center"/>
 </element>
-<element name="Q6" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="18.288" y="49.498" smashed="yes">
+<element name="Q6" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="18.288" y="49.498">
 <attribute name="DIGIKEY" value="1727-2601-1-ND" x="18.288" y="49.498" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
 <attribute name="MANUFACTURER" value="NEXPERIA" x="18.288" y="49.498" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
 <attribute name="MPN" value="PMDXB950UPELZ" x="18.288" y="49.498" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
 <attribute name="NAME" x="17.32" y="49.53" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="18.288" y="48.498" size="1.016" layer="27" font="vector" ratio="12" align="top-center"/>
 </element>
-<element name="R14" library="passives" package="0402_RES" value="3.9M" x="22.098" y="59.182" smashed="yes" rot="R180">
+<element name="R14" library="passives" package="0402_RES" value="3.9M" x="22.098" y="59.182" rot="R180">
 <attribute name="DIGIKEY" value="YAG3301CT-ND" x="22.098" y="59.182" size="1.778" layer="27" font="vector" ratio="12" rot="R180" display="off"/>
 <attribute name="MPN" value="RC0402JR-073M9L" x="22.098" y="59.182" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="24.003" y="58.928" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="22.098" y="60.579" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="R21" library="passives" package="0402_RES" value="9.1M" x="22.606" y="57.912" smashed="yes" rot="R90">
+<element name="R21" library="passives" package="0402_RES" value="9.1M" x="22.606" y="57.912" rot="R90">
 <attribute name="DIGIKEY" value="YAG3322CT-ND" x="22.606" y="57.912" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="MPN" value="RC0402JR-079M1L" x="22.606" y="57.912" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="23.114" y="57.785" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 <attribute name="VALUE" x="24.003" y="57.912" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="R4" library="passives" package="0402_RES" value="6.04k" x="19.558" y="59.182" smashed="yes">
+<element name="R4" library="passives" package="0402_RES" value="6.04k" x="19.558" y="59.182">
 <attribute name="DIGIKEY" value="YAG2293CT-ND" x="19.558" y="59.182" size="1.778" layer="27" font="vector" ratio="12" display="off"/>
 <attribute name="MPN" value="RC0402FR-076K04L" x="19.558" y="59.182" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="18.288" y="58.801" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="19.558" y="57.785" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="R17" library="passives" package="0402_RES" value="6.2M" x="17.526" y="56.769" smashed="yes" rot="R90">
+<element name="R17" library="passives" package="0402_RES" value="6.2M" x="17.526" y="56.769" rot="R90">
 <attribute name="DIGIKEY" value="YAG3309CT-ND" x="17.526" y="56.769" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="MPN" value="RC0402JR-076M2L" x="17.526" y="56.769" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="17.907" y="58.674" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="18.923" y="56.769" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="R18" library="passives" package="0402_RES" value="6.8M" x="16.129" y="54.991" smashed="yes" rot="R90">
+<element name="R18" library="passives" package="0402_RES" value="6.8M" x="16.129" y="54.991" rot="R90">
 <attribute name="DIGIKEY" value="YAG3310CT-ND" x="16.129" y="54.991" size="1.778" layer="27" font="vector" ratio="12" rot="R90" display="off"/>
 <attribute name="MPN" value="RC0402JR-076M8L" x="16.129" y="54.991" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="NAME" x="17.399" y="55.372" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
+<attribute name="NAME" x="17.272" y="54.737" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="17.526" y="54.991" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="BT2" library="batteries" package="BAT-HLD-002-THM" value="BAT-HLD-002-THM" x="13.208" y="16.256" smashed="yes" rot="MR270">
+<element name="BT2" library="batteries" package="BAT-HLD-002-THM" value="BAT-HLD-002-THM" x="13.208" y="16.256" rot="MR270">
 <attribute name="DIGIKEY" value="BAT-HLD-001-THM-ND" x="13.208" y="16.256" size="1.778" layer="28" font="vector" ratio="12" rot="MR270" display="off"/>
 <attribute name="MOUSER" value="712-BAT-HLD-001-THM" x="13.208" y="16.256" size="1.778" layer="28" rot="MR270" display="off"/>
 <attribute name="MPN" value="BAT-HLD-001-THM" x="13.208" y="16.256" size="1.778" layer="28" rot="MR270" display="off"/>
 <attribute name="NAME" x="19.05" y="25.4" size="0.8128" layer="26" font="vector" ratio="12" rot="MR0" align="bottom-center"/>
 </element>
-<element name="BT3" library="batteries" package="BAT-HLD-002-THM" value="BAT-HLD-002-THM" x="13.208" y="38.481" smashed="yes" rot="MR270">
+<element name="BT3" library="batteries" package="BAT-HLD-002-THM" value="BAT-HLD-002-THM" x="13.208" y="38.481" rot="MR270">
 <attribute name="DIGIKEY" value="BAT-HLD-001-THM-ND" x="13.208" y="38.481" size="1.778" layer="28" font="vector" ratio="12" rot="MR270" display="off"/>
 <attribute name="MOUSER" value="712-BAT-HLD-001-THM" x="13.208" y="38.481" size="1.778" layer="28" rot="MR270" display="off"/>
 <attribute name="MPN" value="BAT-HLD-001-THM" x="13.208" y="38.481" size="1.778" layer="28" rot="MR270" display="off"/>
 <attribute name="NAME" x="19.05" y="28.321" size="0.8128" layer="26" font="vector" ratio="12" rot="MR0" align="bottom-center"/>
 </element>
-<element name="L3" library="passives" package="IHL-1212BZ-11" value="1uH" x="25.019" y="43.688" smashed="yes" rot="R270">
+<element name="L3" library="passives" package="IHL-1212BZ-11" value="1uH" x="25.019" y="43.688" rot="R270">
 <attribute name="DIGIKEY" value="541-1319-1-ND" x="25.019" y="43.688" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
 <attribute name="MANUFACTURER" value="Vishay Dale" x="25.019" y="43.688" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
 <attribute name="MPN" value="IHLP1212BZER1R0M11" x="25.019" y="43.688" size="1.778" layer="27" font="vector" ratio="12" rot="R270" display="off"/>
 <attribute name="NAME" x="23.381" y="45.996" size="0.8128" layer="25" font="vector" ratio="12"/>
 </element>
-<element name="U4" library="ftdichip" library_urn="urn:adsk.eagle:library:231" package="QFN32" package3d_urn="urn:adsk.eagle:package:14014/1" value="FT232RQ" x="3.43" y="50.467" smashed="yes" rot="R90">
+<element name="U4" library="ftdichip" library_urn="urn:adsk.eagle:library:231" package="QFN32" package3d_urn="urn:adsk.eagle:package:14014/1" value="FT232RQ" x="3.43" y="50.467" rot="R90">
 <attribute name="MF" value="" x="3.43" y="50.467" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="FT232RQ" x="3.43" y="50.467" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="1.143" y="53.34" size="0.8128" layer="25" font="vector" ratio="12"/>
@@ -2498,39 +2489,39 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="OC_NEWARK" value="91K9919" x="3.43" y="50.467" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="VALUE" x="7.78" y="46.417" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="C21" library="passives" package="0402_CAP" value="0.1uF" x="7.003" y="52.714" smashed="yes" rot="R90">
+<element name="C21" library="passives" package="0402_CAP" value="0.1uF" x="7.003" y="52.714" rot="R90">
 <attribute name="DIGIKEY" value="490-6328-1-ND" x="7.003" y="53.714" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="GRM155R71C104KA88J " x="7.003" y="52.714" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="7.602" y="52.696" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="Q7" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="22.352" y="2.032" smashed="yes">
+<element name="Q7" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="22.352" y="2.032">
 <attribute name="DIGIKEY" value="1727-2601-1-ND" x="22.352" y="2.032" size="1.778" layer="27" display="off"/>
 <attribute name="MANUFACTURER" value="NEXPERIA" x="22.352" y="2.032" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="PMDXB950UPELZ" x="22.352" y="2.032" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="22.225" y="1.286" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 <attribute name="VALUE" x="22.352" y="1.032" size="1.016" layer="27" font="vector" ratio="12" align="top-center"/>
 </element>
-<element name="Q8" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="5.334" y="16.383" smashed="yes">
+<element name="Q8" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="5.334" y="16.383">
 <attribute name="DIGIKEY" value="1727-2601-1-ND" x="5.334" y="16.383" size="1.778" layer="27" display="off"/>
 <attribute name="MANUFACTURER" value="NEXPERIA" x="5.334" y="16.383" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="PMDXB950UPELZ" x="5.334" y="16.383" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="5.334" y="17.272" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="5.334" y="15.383" size="1.016" layer="27" font="vector" ratio="12" align="top-center"/>
 </element>
-<element name="Q10" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="8.001" y="11.811" smashed="yes" rot="R180">
+<element name="Q10" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="8.001" y="11.811" rot="R180">
 <attribute name="DIGIKEY" value="1727-2601-1-ND" x="8.001" y="11.811" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MANUFACTURER" value="NEXPERIA" x="8.001" y="11.811" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="PMDXB950UPELZ" x="8.001" y="11.811" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="NAME" x="8.001" y="12.7" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="8.001" y="12.811" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="top-center"/>
 </element>
-<element name="R12" library="passives" package="0402_RES" value="10k" x="0.889" y="28.956" smashed="yes" rot="R90">
+<element name="R12" library="passives" package="0402_RES" value="10k" x="0.889" y="28.956" rot="R90">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND " x="0.889" y="28.956" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="RC0402JR-0710KL" x="0.889" y="28.956" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="1.27" y="26.924" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="2.286" y="28.956" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="J5" library="connector" package="MICRO_USB_B_HIROSE_ZX62R-B-5P(30)" value="MICRO_USB_B_HIROSE_ZX62R-B-5P(30)" x="5.5" y="60" smashed="yes" rot="R180">
+<element name="J5" library="connector" package="MICRO_USB_B_HIROSE_ZX62R-B-5P(30)" value="MICRO_USB_B_HIROSE_ZX62R-B-5P(30)" x="5.5" y="60" rot="R180">
 <attribute name="DIGIKEY" value="H125274CT-ND" x="5.5" y="60" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MOUSER" value="798-ZX62R-B-5P30" x="5.5" y="60" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="ZX62R-B-5P(30)" x="5.5" y="60" size="1.778" layer="27" rot="R180" display="off"/>
@@ -2538,62 +2529,62 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="NEWARK" value="84Y6712" x="5.5" y="60" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="VALUE" x="5.5" y="61.9" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
-<element name="C28" library="passives" package="0402_CAP" value="4.7uF" x="18.288" y="51.816" smashed="yes" rot="R270">
+<element name="C28" library="passives" package="0402_CAP" value="4.7uF" x="18.288" y="51.816" rot="R270">
 <attribute name="DIGIKEY" value="445-5947-1-ND" x="18.288" y="50.292" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="C1005X5R0J475K050BC " x="18.288" y="51.816" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="17.907" y="51.816" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="C29" library="passives" package="0402_CAP" value="4.7uF" x="25.146" y="56.148" smashed="yes">
+<element name="C29" library="passives" package="0402_CAP" value="4.7uF" x="25.146" y="56.148">
 <attribute name="DIGIKEY" value="445-5947-1-ND" x="25.146" y="56.148" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="C1005X5R0J475K050BC " x="25.146" y="56.148" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="25.146" y="56.583" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
-<element name="C11" library="passives" package="0402_CAP" value="10nF" x="19.304" y="51.816" smashed="yes" rot="R270">
+<element name="C11" library="passives" package="0402_CAP" value="10nF" x="19.304" y="51.816" rot="R270">
 <attribute name="DIGIKEY" value="490-4516-1-ND" x="19.304" y="51.816" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="GRM155R71H103KA88D " x="19.304" y="51.816" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="20.066" y="50.038" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="SJ2" library="SparkFun-Passives" package="SJ_2S-NOTRACE" value="SOLDERJUMPERNC2" x="1.27" y="45.974" smashed="yes" rot="R90">
+<element name="SJ2" library="SparkFun-Passives" package="SJ_2S-NOTRACE" value="SOLDERJUMPERNC2" x="1.27" y="45.974" rot="R90">
 <attribute name="VALUE" x="2.921" y="45.0215" size="0.4064" layer="27" rot="R90"/>
 </element>
-<element name="SJ3" library="SparkFun-Passives" package="SJ_2S-NOTRACE" value="SOLDERJUMPERNC2" x="1.27" y="43.688" smashed="yes" rot="R90">
+<element name="SJ3" library="SparkFun-Passives" package="SJ_2S-NOTRACE" value="SOLDERJUMPERNC2" x="1.27" y="43.688" rot="R90">
 <attribute name="VALUE" x="2.921" y="42.7355" size="0.4064" layer="27" rot="R90"/>
 </element>
-<element name="SJ4" library="SparkFun-Passives" package="SJ_2S-NOTRACE" value="SOLDERJUMPERNC2" x="5.334" y="45.974" smashed="yes" rot="R270">
+<element name="SJ4" library="SparkFun-Passives" package="SJ_2S-NOTRACE" value="SOLDERJUMPERNC2" x="5.334" y="45.974" rot="R270">
 <attribute name="VALUE" x="3.683" y="46.9265" size="0.4064" layer="27" rot="R270"/>
 </element>
-<element name="SJ5" library="SparkFun-Passives" package="SJ_2S-NOTRACE" value="SOLDERJUMPERNC2" x="3.302" y="45.974" smashed="yes" rot="R270">
+<element name="SJ5" library="SparkFun-Passives" package="SJ_2S-NOTRACE" value="SOLDERJUMPERNC2" x="3.302" y="45.974" rot="R270">
 <attribute name="VALUE" x="1.651" y="46.9265" size="0.4064" layer="27" rot="R270"/>
 </element>
 <element name="U$2" library="logos" package="UCB_CAL_200MIL" value="" x="0.635" y="37.846"/>
-<element name="D1" library="permamote" package="SOLAR_HOLES" value="SOLARCELLHOLES" x="25.019" y="53.594" smashed="yes" rot="R270">
+<element name="D1" library="permamote" package="SOLAR_HOLES" value="SOLARCELLHOLES" x="25.019" y="53.594" rot="R270">
 <attribute name="DIGIKEY" value="869-1001-ND" x="25.019" y="53.594" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="AM-1454CA" x="25.019" y="53.594" size="1.778" layer="27" rot="R270" display="off"/>
 </element>
-<element name="D2" library="leds" package="1MM_SQ_4PAD" value="SML-LX0404SIUPGUSB" x="15.113" y="58.928" smashed="yes" rot="R90">
-<attribute name="DIGIKEY" value="67-2125-1-ND" x="15.113" y="58.928" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="MANUFACTURER" value="Lumex Opto" x="15.113" y="58.928" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="MPN" value="SML-LX0404SIUPGUSB" x="15.113" y="58.928" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="NAME" x="15.886" y="58.928" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
-<attribute name="VALUE" x="16.913" y="58.928" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
+<element name="D2" library="leds" package="1MM_SQ_4PAD" value="SML-LX0404SIUPGUSB" x="11.684" y="58.547" rot="R90">
+<attribute name="DIGIKEY" value="67-2125-1-ND" x="11.684" y="58.547" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="MANUFACTURER" value="Lumex Opto" x="11.684" y="58.547" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="MPN" value="SML-LX0404SIUPGUSB" x="11.684" y="58.547" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="NAME" x="12.457" y="58.547" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
+<attribute name="VALUE" x="13.484" y="58.547" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="R1" library="passives" package="0402_RES" value="470" x="12.319" y="51.943" smashed="yes" rot="R270">
-<attribute name="DIGIKEY" value="311-470JRCT-ND" x="12.319" y="51.181" size="1.778" layer="27" rot="R270" display="off"/>
-<attribute name="MPN" value="RC0402JR-07470RL " x="12.319" y="51.943" size="1.778" layer="27" rot="R270" display="off"/>
-<attribute name="NAME" x="11.938" y="50.546" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
-<attribute name="VALUE" x="10.922" y="51.943" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
+<element name="R1" library="passives" package="0402_RES" value="470" x="12.7" y="56.261" rot="R270">
+<attribute name="DIGIKEY" value="311-470JRCT-ND" x="12.7" y="55.499" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="MPN" value="RC0402JR-07470RL " x="12.7" y="56.261" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="NAME" x="12.319" y="54.864" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
+<attribute name="VALUE" x="11.303" y="56.261" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="R2" library="passives" package="0402_RES" value="470" x="8.89" y="51.943" smashed="yes" rot="R270">
-<attribute name="DIGIKEY" value="311-470JRCT-ND" x="8.89" y="51.943" size="1.778" layer="27" rot="R270" display="off"/>
-<attribute name="MPN" value="RC0402JR-07470RL " x="8.89" y="51.943" size="1.778" layer="27" rot="R270" display="off"/>
-<attribute name="NAME" x="9.398" y="51.943" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
-<attribute name="VALUE" x="7.493" y="51.943" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
+<element name="R2" library="passives" package="0402_RES" value="470" x="11.43" y="56.261" rot="R270">
+<attribute name="DIGIKEY" value="311-470JRCT-ND" x="11.43" y="56.261" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="MPN" value="RC0402JR-07470RL " x="11.43" y="56.261" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="NAME" x="11.049" y="54.864" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
+<attribute name="VALUE" x="10.033" y="56.261" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
-<element name="R3" library="passives" package="0402_RES" value="470" x="10.541" y="51.943" smashed="yes" rot="R270">
-<attribute name="DIGIKEY" value="311-470JRCT-ND" x="10.541" y="51.943" size="1.778" layer="27" rot="R270" display="off"/>
-<attribute name="MPN" value="RC0402JR-07470RL " x="10.541" y="51.943" size="1.778" layer="27" rot="R270" display="off"/>
-<attribute name="NAME" x="11.049" y="51.943" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
-<attribute name="VALUE" x="9.144" y="51.943" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
+<element name="R3" library="passives" package="0402_RES" value="470" x="12.7" y="53.721" rot="R270">
+<attribute name="DIGIKEY" value="311-470JRCT-ND" x="12.7" y="53.721" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="MPN" value="RC0402JR-07470RL " x="12.7" y="53.721" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="NAME" x="13.208" y="53.721" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
+<attribute name="VALUE" x="11.303" y="53.721" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
 <element name="TP1" library="headers" package="PAD.03X.03" value="TEST-POINT" x="1.016" y="9.906" rot="MR0"/>
 <element name="TP2" library="headers" package="PAD.03X.03" value="TEST-POINT" x="1.016" y="25.146"/>
@@ -2622,15 +2613,21 @@ Quickturn PCB 4 Layer .DRU</description>
 <element name="TP25" library="headers" package="PAD.03X.03" value="TEST-POINT" x="23.241" y="41.148"/>
 <element name="TP26" library="headers" package="PAD.03X.03" value="TEST-POINT" x="26.035" y="39.116"/>
 <element name="TP27" library="headers" package="PAD.03X.03" value="TEST-POINT" x="26.035" y="37.084"/>
-<element name="U12" library="chips" package="FN-6" value="TCS34725" x="25.146" y="2.159" smashed="yes">
+<element name="U12" library="chips" package="FN-6" value="TCS34725" x="25.146" y="2.159">
 <attribute name="DIGIKEY" value="TCS34725FNCT-ND" x="25.146" y="2.159" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="TCS34725FN" x="25.146" y="2.159" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="23.873" y="0.524" size="0.8128" layer="25" font="vector" ratio="12" rot="R90"/>
 </element>
-<element name="C9" library="passives" package="0402_CAP" value="820pF" x="20.701" y="21.082" smashed="yes" rot="R90">
+<element name="C9" library="passives" package="0402_CAP" value="820pF" x="20.701" y="21.082" rot="R90">
 <attribute name="DIGIKEY" value="1276-6535-1-ND" x="20.701" y="21.082" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="CL05B821KO5NNNC" x="20.701" y="21.082" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="21.082" y="21.082" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
+</element>
+<element name="S1" library="switches" package="B3U-1000P" value="B3U-1000P" x="15.494" y="58.674" rot="R180">
+<attribute name="DIGIKEY" value="SW1020CT-ND" x="15.494" y="58.674" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="MANUFACTURER" value="Omron" x="15.494" y="58.674" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="MPN" value="B3U-1000P" x="15.494" y="58.674" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="NAME" x="15.494" y="56.134" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
 </elements>
 <signals>
@@ -2764,8 +2761,6 @@ Quickturn PCB 4 Layer .DRU</description>
 <vertex x="27" y="0"/>
 <vertex x="27" y="60"/>
 </polygon>
-<contactref element="S1" pad="P$3"/>
-<contactref element="S1" pad="P$1"/>
 <contactref element="U3" pad="GND"/>
 <contactref element="R21" pad="1"/>
 <contactref element="R18" pad="1"/>
@@ -2791,7 +2786,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <contactref element="C29" pad="2"/>
 <contactref element="C28" pad="2"/>
 <contactref element="C11" pad="2"/>
-<via x="10.922" y="56.102" extent="1-16" drill="0.2032"/>
+<via x="10.16" y="56.61" extent="1-16" drill="0.2032"/>
 <wire x1="1.032" y1="14.335" x2="1.032" y2="15.129" width="0.4064" layer="1"/>
 <wire x1="1.032" y1="15.129" x2="1.27" y2="15.367" width="0.4064" layer="1"/>
 <wire x1="1.27" y1="15.367" x2="4.572" y2="15.367" width="0.4064" layer="1"/>
@@ -2913,6 +2908,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <via x="24.638" y="58.547" extent="1-16" drill="0.2032"/>
 <wire x1="3.18" y1="47.95599375" x2="3.53639375" y2="47.5996" width="0.2032" layer="1"/>
 <wire x1="3.18" y1="48.167" x2="3.18" y2="47.95599375" width="0.2032" layer="1"/>
+<wire x1="3.53639375" y1="47.5996" x2="4.9733" y2="47.5996" width="0.2032" layer="1"/>
 <via x="11.684" y="21.59" extent="1-16" drill="0.2032"/>
 <via x="11.684" y="20.32" extent="1-16" drill="0.2032"/>
 <via x="14.351" y="19.685" extent="1-16" drill="0.2032"/>
@@ -2933,21 +2929,14 @@ Quickturn PCB 4 Layer .DRU</description>
 <contactref element="U12" pad="3"/>
 <via x="17.399" y="42.005" extent="1-16" drill="0.2032"/>
 <via x="19.812" y="35.528" extent="1-16" drill="0.2032"/>
-<via x="23.622" y="35.655" extent="1-16" drill="0.2032"/>
-<via x="23.495" y="32.353" extent="1-16" drill="0.2032"/>
+<via x="24.511" y="35.528" extent="1-16" drill="0.2032"/>
+<via x="26.416" y="32.099" extent="1-16" drill="0.2032"/>
 <contactref element="C9" pad="2"/>
 <via x="21.336" y="20.828" extent="1-16" drill="0.2032"/>
 <via x="21.082" y="22.098" extent="1-16" drill="0.2032"/>
 <wire x1="17.526" y1="23.622" x2="17.815" y2="23.333" width="0.3048" layer="1"/>
 <wire x1="17.815" y1="23.333" x2="18.29893125" y2="23.333" width="0.3048" layer="1"/>
-<via x="23.495" y="31.464" extent="1-16" drill="0.2032"/>
-<via x="25.146" y="32.988" extent="1-16" drill="0.2032"/>
-<via x="22.352" y="32.353" extent="1-16" drill="0.2032"/>
-<via x="22.352" y="31.464" extent="1-16" drill="0.2032"/>
-<wire x1="3.53639375" y1="47.5996" x2="4.9276" y2="47.5996" width="0.2032" layer="1"/>
-<via x="21.082" y="28.829" extent="1-16" drill="0.2032"/>
-<via x="21.844" y="29.464" extent="1-16" drill="0.2032"/>
-<via x="20.574" y="29.972" extent="1-16" drill="0.2032"/>
+<contactref element="S1" pad="1"/>
 </signal>
 <signal name="N$8">
 <contactref element="U10" pad="B24"/>
@@ -3109,7 +3098,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="6.096" y1="22.606" x2="6.604" y2="22.098" width="0.254" layer="1"/>
 <wire x1="6.93293125" y1="21.336" x2="6.93293125" y2="21.76906875" width="0.254" layer="1"/>
 <wire x1="6.93293125" y1="21.76906875" x2="6.604" y2="22.098" width="0.254" layer="1"/>
-<via x="23.876" y="28.702" extent="1-16" drill="0.2032"/>
+<via x="25.908" y="28.575" extent="1-16" drill="0.2032"/>
 <wire x1="16.129" y1="19.304" x2="16.129" y2="18.86" width="0.254" layer="1"/>
 <wire x1="16.33093125" y1="2.286" x2="16.33093125" y2="2.61493125" width="0.254" layer="1"/>
 <wire x1="17.09293125" y1="3.37693125" x2="17.78" y2="3.37693125" width="0.254" layer="1"/>
@@ -3151,16 +3140,13 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="21.717" y1="12.783425" x2="21.717" y2="12.827" width="0.4064" layer="1"/>
 <wire x1="21.64206875" y1="11.811" x2="21.844" y2="12.01293125" width="0.4064" layer="1"/>
 <wire x1="21.844" y1="12.01293125" x2="21.844" y2="12.656425" width="0.4064" layer="1"/>
-<via x="14.097" y="59.309" extent="1-16" drill="0.2032"/>
 <wire x1="1.27" y1="44.831" x2="1.27" y2="45.5731" width="0.254" layer="1"/>
 <wire x1="16.129" y1="19.304" x2="15.875" y2="19.05" width="0.4064" layer="2"/>
 <wire x1="15.875" y1="19.05" x2="10.16" y2="19.05" width="0.4064" layer="2"/>
 <via x="10.16" y="19.05" extent="1-16" drill="0.2032"/>
-<wire x1="14.097" y1="59.309" x2="14.6304" y2="59.309" width="0.1524" layer="1"/>
-<wire x1="14.6304" y1="59.309" x2="14.6812" y2="59.3598" width="0.1524" layer="1"/>
-<via x="9.525" y="53.721" extent="1-16" drill="0.2032"/>
-<wire x1="8.89" y1="53.54193125" x2="9.34593125" y2="53.54193125" width="0.1524" layer="1"/>
-<wire x1="9.34593125" y1="53.54193125" x2="9.525" y2="53.721" width="0.1524" layer="1"/>
+<wire x1="11.2014" y1="58.928" x2="11.2522" y2="58.9788" width="0.1524" layer="1"/>
+<via x="8.89" y="52.832" extent="1-16" drill="0.2032"/>
+<wire x1="8.89" y1="52.832" x2="8.89" y2="53.54193125" width="0.1524" layer="1"/>
 <via x="16.383" y="42.037" extent="1-16" drill="0.3048"/>
 <wire x1="16.383" y1="42.037" x2="10.16" y2="42.037" width="0.8128" layer="2"/>
 <via x="10.16" y="42.037" extent="1-16" drill="0.3048"/>
@@ -3168,9 +3154,13 @@ Quickturn PCB 4 Layer .DRU</description>
 <via x="13.97" y="34.163" extent="1-16" drill="0.3048"/>
 <wire x1="13.97" y1="34.163" x2="15.748" y2="34.163" width="0.8128" layer="15"/>
 <via x="10.287" y="34.163" extent="1-16" drill="0.3048"/>
+<wire x1="25.908" y1="28.575" x2="25.908" y2="29.21" width="0.3048" layer="1"/>
+<wire x1="25.908" y1="29.21" x2="25.527" y2="29.591" width="0.3048" layer="1"/>
 <wire x1="15.748" y1="34.163" x2="16.383" y2="33.528" width="0.8128" layer="15"/>
-<wire x1="24.511" y1="29.591" x2="23.876" y2="28.956" width="0.4064" layer="16"/>
-<wire x1="23.876" y1="28.956" x2="23.876" y2="28.702" width="0.4064" layer="16"/>
+<wire x1="16.383" y1="33.528" x2="16.4338" y2="33.528" width="0.8128" layer="15"/>
+<wire x1="11.2522" y1="58.9788" x2="11.684" y2="58.547" width="0.1524" layer="1"/>
+<wire x1="11.684" y1="58.547" x2="11.684" y2="57.658" width="0.1524" layer="1"/>
+<via x="11.684" y="57.658" extent="1-16" drill="0.2032"/>
 </signal>
 <signal name="N$12">
 <contactref element="U7" pad="4"/>
@@ -3288,30 +3278,26 @@ Quickturn PCB 4 Layer .DRU</description>
 </signal>
 <signal name="!RTC_EXTR">
 <contactref element="U1" pad="3"/>
-<contactref element="S1" pad="P$4"/>
-<contactref element="S1" pad="P$2"/>
 <contactref element="R10" pad="1"/>
 <wire x1="3.68" y1="26.928" x2="2.798" y2="26.928" width="0.1524" layer="1"/>
 <wire x1="2.798" y1="26.928" x2="2.794" y2="26.924" width="0.1524" layer="1"/>
 <via x="2.794" y="26.924" extent="1-16" drill="0.2032"/>
 <wire x1="2.286" y1="27.432" x2="2.794" y2="26.924" width="0.1524" layer="16"/>
 <via x="8.255" y="54.356" extent="1-16" drill="0.2032"/>
-<via x="13.335" y="54.864" extent="1-16" drill="0.2032"/>
 <wire x1="2.286" y1="28.829" x2="2.286" y2="27.432" width="0.1524" layer="16"/>
-<wire x1="13.335" y1="54.864" x2="13.335" y2="57.658" width="0.1524" layer="16"/>
-<via x="13.335" y="57.658" extent="1-16" drill="0.2032"/>
-<wire x1="13.335" y1="57.658" x2="13.335" y2="58.782" width="0.1524" layer="1"/>
-<wire x1="13.335" y1="58.782" x2="13.354" y2="58.801" width="0.1524" layer="1"/>
-<wire x1="13.335" y1="54.864" x2="13.335" y2="53.74" width="0.1524" layer="1"/>
-<wire x1="13.335" y1="53.74" x2="13.354" y2="53.721" width="0.1524" layer="1"/>
 <wire x1="8.89" y1="54.40806875" x2="8.83793125" y2="54.356" width="0.1524" layer="1"/>
 <wire x1="8.83793125" y1="54.356" x2="8.255" y2="54.356" width="0.1524" layer="1"/>
-<wire x1="8.89" y1="54.40806875" x2="9.83106875" y2="54.40806875" width="0.1524" layer="1"/>
-<wire x1="13.081" y1="57.658" x2="13.335" y2="57.658" width="0.1524" layer="1"/>
-<wire x1="9.83106875" y1="54.40806875" x2="13.081" y2="57.658" width="0.1524" layer="1"/>
+<wire x1="9.83106875" y1="54.40806875" x2="8.89" y2="54.40806875" width="0.1524" layer="1"/>
 <wire x1="8.255" y1="54.356" x2="3.683" y2="49.784" width="0.1524" layer="16"/>
 <wire x1="3.683" y1="30.226" x2="2.286" y2="28.829" width="0.1524" layer="16"/>
 <wire x1="3.683" y1="49.784" x2="3.683" y2="30.226" width="0.1524" layer="16"/>
+<contactref element="S1" pad="2"/>
+<wire x1="13.794" y1="58.674" x2="13.794" y2="58.85" width="0.1524" layer="1"/>
+<wire x1="13.794" y1="58.85" x2="13.081" y2="59.563" width="0.1524" layer="1"/>
+<wire x1="13.081" y1="59.563" x2="10.922" y2="59.563" width="0.1524" layer="1"/>
+<wire x1="10.668" y1="59.309" x2="10.922" y2="59.563" width="0.1524" layer="1"/>
+<wire x1="9.83106875" y1="54.40806875" x2="10.668" y2="55.245" width="0.1524" layer="1"/>
+<wire x1="10.668" y1="55.245" x2="10.668" y2="59.309" width="0.1524" layer="1"/>
 </signal>
 <signal name="!RST">
 <contactref element="U10" pad="AC13"/>
@@ -3320,6 +3306,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <contactref element="R11" pad="1"/>
 <via x="22.742" y="16.61" extent="1-16" drill="0.1524"/>
 <contactref element="SJ3" pad="1"/>
+<via x="26.035" y="30.353" extent="1-16" drill="0.2032"/>
 <wire x1="2.032" y1="28.52293125" x2="2.62693125" y2="27.928" width="0.1524" layer="1"/>
 <wire x1="2.62693125" y1="27.928" x2="3.68" y2="27.928" width="0.1524" layer="1"/>
 <wire x1="2.032" y1="28.52293125" x2="2.61493125" y2="28.52293125" width="0.1524" layer="1"/>
@@ -3340,14 +3327,13 @@ Quickturn PCB 4 Layer .DRU</description>
 <via x="22.352" y="30.734" extent="1-16" drill="0.2032"/>
 <wire x1="1.27" y1="43.2871" x2="8.382" y2="36.1751" width="0.1524" layer="1"/>
 <wire x1="8.382" y1="36.1751" x2="8.382" y2="30.734" width="0.1524" layer="1"/>
+<wire x1="26.035" y1="35.179" x2="25.019" y2="34.163" width="0.1524" layer="16"/>
+<wire x1="25.527" y1="30.861" x2="26.035" y2="30.353" width="0.3048" layer="1"/>
+<wire x1="22.352" y1="30.734" x2="25.019" y2="30.734" width="0.1524" layer="16"/>
+<wire x1="25.019" y1="30.734" x2="25.654" y2="30.734" width="0.1524" layer="16"/>
+<wire x1="25.654" y1="30.734" x2="26.035" y2="30.353" width="0.1524" layer="16"/>
+<wire x1="25.019" y1="34.163" x2="25.019" y2="30.734" width="0.1524" layer="16"/>
 <wire x1="22.742" y1="16.61" x2="22.91" y2="16.61" width="0.1524" layer="15"/>
-<wire x1="22.352" y1="30.734" x2="22.987" y2="30.734" width="0.1524" layer="16"/>
-<wire x1="22.987" y1="30.734" x2="24.384" y2="30.734" width="0.1524" layer="16"/>
-<wire x1="24.384" y1="30.734" x2="24.511" y2="30.861" width="0.1524" layer="16"/>
-<wire x1="22.987" y1="33.6422375" x2="23.6347625" y2="34.29" width="0.1524" layer="16"/>
-<wire x1="22.987" y1="30.734" x2="22.987" y2="33.6422375" width="0.1524" layer="16"/>
-<wire x1="23.6347625" y1="34.29" x2="24.5237625" y2="35.179" width="0.1524" layer="16"/>
-<wire x1="24.5237625" y1="35.179" x2="26.035" y2="35.179" width="0.1524" layer="16"/>
 </signal>
 <signal name="!RTC_IRQ1">
 <contactref element="U1" pad="11"/>
@@ -3788,10 +3774,8 @@ Quickturn PCB 4 Layer .DRU</description>
 <via x="22.86" y="28.956" extent="1-16" drill="0.2032"/>
 <wire x1="20.574" y1="26.67" x2="20.574" y2="20.574" width="0.1524" layer="16"/>
 <wire x1="20.574" y1="20.574" x2="20.828" y2="20.32" width="0.1524" layer="16"/>
-<wire x1="22.86" y1="28.956" x2="24.13" y2="30.226" width="0.1524" layer="1"/>
-<wire x1="24.13" y1="30.226" x2="26.416" y2="30.226" width="0.1524" layer="1"/>
-<via x="26.416" y="30.226" extent="1-16" drill="0.2032"/>
-<wire x1="26.416" y1="30.226" x2="25.781" y2="29.591" width="0.1524" layer="16"/>
+<wire x1="22.86" y1="28.956" x2="23.495" y2="29.591" width="0.1524" layer="1"/>
+<wire x1="23.495" y1="29.591" x2="24.257" y2="29.591" width="0.1524" layer="1"/>
 </signal>
 <signal name="RTC_CS">
 <contactref element="U1" pad="12"/>
@@ -3992,11 +3976,11 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="9.906" y1="20.828" x2="9.906" y2="19.9154875" width="0.1524" layer="1"/>
 <wire x1="9.906" y1="19.9154875" x2="13.716" y2="16.1054875" width="0.1524" layer="1"/>
 <wire x1="9.906" y1="20.828" x2="9.525" y2="21.209" width="0.1524" layer="2"/>
-<wire x1="9.525" y1="21.209" x2="9.525" y2="49.403" width="0.1524" layer="2"/>
+<wire x1="9.525" y1="21.209" x2="9.525" y2="49.53" width="0.1524" layer="2"/>
 <wire x1="16.55" y1="53.054" x2="16.002" y2="52.506" width="0.4064" layer="1"/>
 <wire x1="16.002" y1="52.506" x2="16.002" y2="52.205" width="0.4064" layer="1"/>
-<wire x1="9.525" y1="49.403" x2="12.327" y2="52.205" width="0.1524" layer="2"/>
-<wire x1="12.327" y1="52.205" x2="16.002" y2="52.205" width="0.1524" layer="2"/>
+<wire x1="16.002" y1="52.205" x2="12.2" y2="52.205" width="0.1524" layer="2"/>
+<wire x1="12.2" y1="52.205" x2="9.525" y2="49.53" width="0.1524" layer="2"/>
 </signal>
 <signal name="!CLR_EN">
 <contactref element="R23" pad="1"/>
@@ -4119,10 +4103,8 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="21.813" y1="19.431" x2="20.574" y2="19.431" width="0.1524" layer="16"/>
 <wire x1="19.685" y1="20.32" x2="19.685" y2="26.57126875" width="0.1524" layer="16"/>
 <wire x1="19.685" y1="26.57126875" x2="22.591865625" y2="29.478134375" width="0.1524" layer="16"/>
-<wire x1="22.591865625" y1="29.478134375" x2="24.60973125" y2="31.496" width="0.1524" layer="1"/>
-<wire x1="24.60973125" y1="31.496" x2="26.416" y2="31.496" width="0.1524" layer="1"/>
-<via x="26.416" y="31.496" extent="1-16" drill="0.2032"/>
-<wire x1="26.416" y1="31.496" x2="25.781" y2="30.861" width="0.1524" layer="16"/>
+<wire x1="22.591865625" y1="29.478134375" x2="23.97473125" y2="30.861" width="0.1524" layer="1"/>
+<wire x1="23.97473125" y1="30.861" x2="24.257" y2="30.861" width="0.1524" layer="1"/>
 </signal>
 <signal name="N$41">
 <contactref element="U9" pad="2"/>
@@ -4491,31 +4473,21 @@ Quickturn PCB 4 Layer .DRU</description>
 <signal name="N$15">
 <contactref element="D2" pad="2"/>
 <contactref element="R1" pad="1"/>
-<wire x1="12.319" y1="52.37606875" x2="12.319" y2="54.483" width="0.1524" layer="1"/>
-<wire x1="12.319" y1="54.483" x2="13.97" y2="56.134" width="0.1524" layer="1"/>
-<wire x1="13.97" y1="56.134" x2="16.256" y2="56.134" width="0.1524" layer="1"/>
-<wire x1="16.256" y1="56.134" x2="16.256" y2="56.1468875" width="0.1524" layer="1"/>
-<wire x1="16.256" y1="56.1468875" x2="16.9298" y2="56.8206875" width="0.1524" layer="1"/>
-<wire x1="16.9298" y1="56.8206875" x2="16.9298" y2="57.9748" width="0.1524" layer="1"/>
-<wire x1="16.9298" y1="57.9748" x2="15.5448" y2="59.3598" width="0.1524" layer="1"/>
+<wire x1="12.1158" y1="58.9788" x2="12.5222" y2="58.5724" width="0.1524" layer="1"/>
+<wire x1="12.7" y1="56.69406875" x2="12.5222" y2="56.8718625" width="0.1524" layer="1"/>
+<wire x1="12.5222" y1="58.5724" x2="12.5222" y2="56.8718625" width="0.1524" layer="1"/>
 </signal>
 <signal name="N$17">
 <contactref element="D2" pad="4"/>
 <contactref element="R2" pad="1"/>
-<wire x1="14.6812" y1="58.16726875" x2="14.6812" y2="58.4962" width="0.1524" layer="1"/>
-<wire x1="8.89" y1="52.37606875" x2="10.287" y2="53.77306875" width="0.1524" layer="1"/>
-<wire x1="10.287" y1="53.77306875" x2="10.287" y2="54.2872625" width="0.1524" layer="1"/>
-<wire x1="11.50493125" y1="54.991" x2="14.6812" y2="58.16726875" width="0.1524" layer="1"/>
-<wire x1="10.287" y1="54.2872625" x2="10.9907375" y2="54.991" width="0.1524" layer="1"/>
-<wire x1="10.9907375" y1="54.991" x2="11.50493125" y2="54.991" width="0.1524" layer="1"/>
+<wire x1="11.43" y1="56.69406875" x2="11.2522" y2="56.87186875" width="0.1524" layer="1"/>
+<wire x1="11.2522" y1="56.87186875" x2="11.2522" y2="58.1152" width="0.1524" layer="1"/>
 </signal>
 <signal name="N$19">
 <contactref element="D2" pad="3"/>
 <contactref element="R3" pad="1"/>
-<wire x1="11.09595" y1="54.737" x2="11.7856" y2="54.737" width="0.1524" layer="1"/>
-<wire x1="11.7856" y1="54.737" x2="15.5448" y2="58.4962" width="0.1524" layer="1"/>
-<wire x1="10.541" y1="52.37606875" x2="10.541" y2="54.18205" width="0.1524" layer="1"/>
-<wire x1="10.541" y1="54.18205" x2="11.09595" y2="54.737" width="0.1524" layer="1"/>
+<wire x1="12.1158" y1="54.73826875" x2="12.1158" y2="58.1152" width="0.1524" layer="1"/>
+<wire x1="12.7" y1="54.15406875" x2="12.1158" y2="54.73826875" width="0.1524" layer="1"/>
 </signal>
 <signal name="LED_RED">
 <contactref element="R1" pad="2"/>
@@ -4527,11 +4499,11 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="12.438425" y1="12.284" x2="9.525" y2="15.197425" width="0.1524" layer="16"/>
 <wire x1="12.438425" y1="12.284" x2="16.602" y2="12.284" width="0.1524" layer="16"/>
 <wire x1="16.602" y1="12.284" x2="17.018" y2="12.7" width="0.1524" layer="16"/>
-<via x="12.319" y="50.8" extent="1-16" drill="0.2032"/>
-<wire x1="9.525" y1="49.149" x2="11.176" y2="50.8" width="0.1524" layer="16"/>
-<wire x1="11.176" y1="50.8" x2="12.319" y2="50.8" width="0.1524" layer="16"/>
-<wire x1="9.525" y1="15.197425" x2="9.525" y2="49.149" width="0.1524" layer="16"/>
-<wire x1="12.319" y1="51.50993125" x2="12.319" y2="50.8" width="0.1524" layer="1"/>
+<via x="12.7" y="54.864" extent="1-16" drill="0.2032"/>
+<wire x1="9.525" y1="49.53" x2="12.7" y2="52.705" width="0.1524" layer="16"/>
+<wire x1="12.7" y1="54.864" x2="12.7" y2="52.705" width="0.1524" layer="16"/>
+<wire x1="9.525" y1="15.197425" x2="9.525" y2="49.53" width="0.1524" layer="16"/>
+<wire x1="12.7" y1="55.82793125" x2="12.7" y2="54.864" width="0.1524" layer="1"/>
 </signal>
 <signal name="LED_GREEN">
 <contactref element="R2" pad="2"/>
@@ -4541,10 +4513,10 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="19.742" y1="11.614" x2="19.685" y2="11.557" width="0.1524" layer="1"/>
 <wire x1="12.447" y1="11.557" x2="9.017" y2="14.987" width="0.1524" layer="16"/>
 <wire x1="19.685" y1="11.557" x2="12.447" y2="11.557" width="0.1524" layer="16"/>
-<via x="8.89" y="50.8" extent="1-16" drill="0.2032"/>
-<wire x1="9.017" y1="50.673" x2="8.89" y2="50.8" width="0.1524" layer="16"/>
-<wire x1="9.017" y1="14.987" x2="9.017" y2="50.673" width="0.1524" layer="16"/>
-<wire x1="8.89" y1="51.50993125" x2="8.89" y2="50.8" width="0.1524" layer="1"/>
+<via x="11.43" y="53.848" extent="1-16" drill="0.2032"/>
+<wire x1="11.43" y1="53.848" x2="9.017" y2="51.435" width="0.1524" layer="16"/>
+<wire x1="9.017" y1="14.987" x2="9.017" y2="51.435" width="0.1524" layer="16"/>
+<wire x1="11.43" y1="55.82793125" x2="11.43" y2="53.848" width="0.1524" layer="1"/>
 </signal>
 <signal name="LED_BLUE">
 <contactref element="R3" pad="2"/>
@@ -4555,11 +4527,11 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="12.5522125" y1="11.811" x2="9.271" y2="15.0922125" width="0.1524" layer="16"/>
 <wire x1="19.177" y1="11.811" x2="12.5522125" y2="11.811" width="0.1524" layer="16"/>
 <wire x1="19.812" y1="13.54" x2="19.812" y2="12.446" width="0.1524" layer="16"/>
-<via x="10.033" y="50.8" extent="1-16" drill="0.2032"/>
-<wire x1="9.271" y1="50.038" x2="10.033" y2="50.8" width="0.1524" layer="16"/>
-<wire x1="9.271" y1="15.0922125" x2="9.271" y2="50.038" width="0.1524" layer="16"/>
-<wire x1="10.541" y1="51.50993125" x2="10.541" y2="51.308" width="0.1524" layer="1"/>
-<wire x1="10.541" y1="51.308" x2="10.033" y2="50.8" width="0.1524" layer="1"/>
+<via x="11.43" y="53.213" extent="1-16" drill="0.2032"/>
+<wire x1="9.271" y1="51.054" x2="11.43" y2="53.213" width="0.1524" layer="16"/>
+<wire x1="9.271" y1="15.0922125" x2="9.271" y2="51.054" width="0.1524" layer="16"/>
+<wire x1="12.7" y1="53.28793125" x2="11.50493125" y2="53.28793125" width="0.1524" layer="1"/>
+<wire x1="11.50493125" y1="53.28793125" x2="11.43" y2="53.213" width="0.1524" layer="1"/>
 </signal>
 <signal name="VBAT_OK">
 <contactref element="U2" pad="13"/>

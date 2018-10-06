@@ -2427,18 +2427,29 @@ Rounded side is up.</description>
 <library name="switches">
 <description>&lt;b&gt;LAB11&lt;/b&gt; - Switches.</description>
 <packages>
-<package name="EVQP2">
-<wire x1="-2.286" y1="-1.632" x2="2.286" y2="-1.632" width="0.127" layer="21"/>
-<wire x1="2.286" y1="-1.632" x2="2.286" y2="1.67" width="0.127" layer="21"/>
-<wire x1="2.286" y1="1.67" x2="-2.286" y2="1.67" width="0.127" layer="21"/>
-<wire x1="-2.286" y1="1.67" x2="-2.286" y2="-1.632" width="0.127" layer="21"/>
-<circle x="0" y="-0.0572" radius="0.8893" width="0.127" layer="21"/>
-<smd name="P$1" x="-2.54" y="-0.87" dx="1.6764" dy="0.8128" layer="1"/>
-<smd name="P$2" x="-2.54" y="0.908" dx="1.6764" dy="0.8128" layer="1"/>
-<smd name="P$3" x="2.54" y="-0.87" dx="1.6764" dy="0.8128" layer="1"/>
-<smd name="P$4" x="2.54" y="0.908" dx="1.6764" dy="0.8128" layer="1"/>
-<text x="-3.302" y="1.924" size="1.27" layer="25" font="vector" ratio="10">&gt;NAME</text>
-<text x="-3.302" y="-3.156" size="1.27" layer="27" font="vector" ratio="10">&gt;VALUE</text>
+<package name="B3U-3000P-B">
+<smd name="1" x="-1.7" y="0" dx="0.8" dy="1.7" layer="1"/>
+<smd name="2" x="1.7" y="0" dx="0.8" dy="1.7" layer="1"/>
+<wire x1="-1.5" y1="1.25" x2="-1.5" y2="-1.25" width="0.127" layer="21"/>
+<wire x1="-1.5" y1="-1.25" x2="1.5" y2="-1.25" width="0.127" layer="21"/>
+<wire x1="1.5" y1="-1.25" x2="1.5" y2="1.25" width="0.127" layer="21"/>
+<wire x1="1.5" y1="1.25" x2="-1.5" y2="1.25" width="0.127" layer="21"/>
+<wire x1="-0.85" y1="1.25" x2="-0.85" y2="1.65" width="0.127" layer="51"/>
+<wire x1="-0.85" y1="1.65" x2="-0.55" y2="1.95" width="0.127" layer="51"/>
+<wire x1="-0.55" y1="1.95" x2="0.55" y2="1.95" width="0.127" layer="51"/>
+<wire x1="0.55" y1="1.95" x2="0.85" y2="1.65" width="0.127" layer="51"/>
+<wire x1="0.85" y1="1.65" x2="0.85" y2="1.25" width="0.127" layer="51"/>
+<pad name="P$1" x="0" y="0" drill="0.75"/>
+<text x="0" y="2.54" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
+</package>
+<package name="B3U-1000P">
+<smd name="1" x="-1.7" y="0" dx="0.8" dy="1.7" layer="1"/>
+<smd name="2" x="1.7" y="0" dx="0.8" dy="1.7" layer="1"/>
+<wire x1="-1.5" y1="1.25" x2="-1.5" y2="-1.25" width="0.127" layer="21"/>
+<wire x1="-1.5" y1="-1.25" x2="1.5" y2="-1.25" width="0.127" layer="21"/>
+<wire x1="1.5" y1="-1.25" x2="1.5" y2="1.25" width="0.127" layer="21"/>
+<wire x1="1.5" y1="1.25" x2="-1.5" y2="1.25" width="0.127" layer="21"/>
+<text x="0" y="2.54" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
 </package>
 </packages>
 <symbols>
@@ -2462,20 +2473,33 @@ Rounded side is up.</description>
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="EVQP2" prefix="S">
-<description>SWITCH TACTILE SPST-NO 0.02A 15V</description>
+<deviceset name="B3U" prefix="S">
+<description>Switch</description>
 <gates>
 <gate name="G$1" symbol="PUSH-BUTTON-SWITCH" x="0" y="0"/>
 </gates>
 <devices>
-<device name="" package="EVQP2">
+<device name="-3000P-B" package="B3U-3000P-B">
 <connects>
-<connect gate="G$1" pin="P$1" pad="P$1 P$3"/>
-<connect gate="G$1" pin="P$2" pad="P$2 P$4"/>
+<connect gate="G$1" pin="P$1" pad="1"/>
+<connect gate="G$1" pin="P$2" pad="2"/>
 </connects>
 <technologies>
 <technology name="">
-<attribute name="DIGIKEY" value="P11084SCT-ND"/>
+<attribute name="DIGIKEY" value="SW1256CT-ND" constant="no"/>
+</technology>
+</technologies>
+</device>
+<device name="-1000P" package="B3U-1000P">
+<connects>
+<connect gate="G$1" pin="P$1" pad="1"/>
+<connect gate="G$1" pin="P$2" pad="2"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="DIGIKEY" value="SW1020CT-ND" constant="no"/>
+<attribute name="MANUFACTURER" value="Omron" constant="no"/>
+<attribute name="MPN" value="B3U-1000P" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -3763,9 +3787,6 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="P+23" library="mote" deviceset="VSOL" device=""/>
 <part name="A2" library="chips" deviceset="ANT3216A063R2400A" device=""/>
 <part name="GND30" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="S1" library="switches" deviceset="EVQP2" device="">
-<attribute name="MPN" value="EVQ-P2K02Q "/>
-</part>
 <part name="R10" library="passives" deviceset="RESISTOR" device="0402_RES" value="10k">
 <attribute name="DIGIKEY" value="311-10KJRCT-ND "/>
 <attribute name="MPN" value="RC0402JR-0710KL"/>
@@ -3903,6 +3924,7 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <attribute name="DIGIKEY" value="1276-6535-1-ND"/>
 <attribute name="MPN" value="CL05B821KO5NNNC"/>
 </part>
+<part name="S1" library="switches" deviceset="B3U" device="-1000P"/>
 </parts>
 <sheets>
 <sheet>
@@ -4031,9 +4053,6 @@ Either populate the NRF52840
 <instance part="P+3" gate="G$1" x="198.12" y="160.02"/>
 <instance part="P+23" gate="G$1" x="190.5" y="160.02"/>
 <instance part="A2" gate="G$1" x="238.76" y="76.2"/>
-<instance part="S1" gate="G$1" x="88.9" y="7.62">
-<attribute name="MPN" x="88.9" y="7.62" size="1.778" layer="96" display="off"/>
-</instance>
 <instance part="R10" gate="G$1" x="116.84" y="25.4" rot="R90">
 <attribute name="DIGIKEY" x="116.84" y="25.4" size="1.778" layer="96" rot="R90" display="off"/>
 <attribute name="MPN" x="116.84" y="25.4" size="1.778" layer="96" rot="R90" display="off"/>
@@ -4052,6 +4071,7 @@ Either populate the NRF52840
 <attribute name="DIGIKEY" x="88.9" y="139.7" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="88.9" y="139.7" size="1.778" layer="96" display="off"/>
 </instance>
+<instance part="S1" gate="G$1" x="88.9" y="7.62"/>
 </instances>
 <busses>
 </busses>
@@ -4206,9 +4226,9 @@ Either populate the NRF52840
 <pinref part="U1" gate="G$1" pin="VSS"/>
 <wire x1="68.58" y1="10.16" x2="68.58" y2="7.62" width="0.1524" layer="91"/>
 <pinref part="GND14" gate="1" pin="GND"/>
-<pinref part="S1" gate="G$1" pin="P$1"/>
 <wire x1="68.58" y1="7.62" x2="81.28" y2="7.62" width="0.1524" layer="91"/>
 <junction x="68.58" y="7.62"/>
+<pinref part="S1" gate="G$1" pin="P$1"/>
 </segment>
 <segment>
 <pinref part="J1" gate="G$1" pin="GND"/>
@@ -4423,12 +4443,12 @@ Either populate the NRF52840
 <segment>
 <pinref part="U1" gate="G$1" pin="!EXTR"/>
 <wire x1="83.82" y1="17.78" x2="116.84" y2="17.78" width="0.1524" layer="91"/>
-<pinref part="S1" gate="G$1" pin="P$2"/>
 <wire x1="96.52" y1="7.62" x2="116.84" y2="7.62" width="0.1524" layer="91"/>
 <wire x1="116.84" y1="7.62" x2="116.84" y2="17.78" width="0.1524" layer="91"/>
 <junction x="116.84" y="17.78"/>
 <wire x1="116.84" y1="17.78" x2="116.84" y2="20.32" width="0.1524" layer="91"/>
 <pinref part="R10" gate="G$1" pin="1"/>
+<pinref part="S1" gate="G$1" pin="P$2"/>
 </segment>
 </net>
 <net name="!RST" class="0">
