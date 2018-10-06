@@ -166,7 +166,7 @@
 <text x="15.113" y="57.15" size="1.016" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center">RESET</text>
 <text x="0.413" y="37.349" size="1.016" layer="25" font="vector" ratio="12" align="top-left">Permamote
 Neal Jackson
-9/18</text>
+10/18</text>
 <polygon width="0.1016" layer="41">
 <vertex x="12.446" y="1.7907"/>
 <vertex x="11.938" y="1.7907"/>
@@ -1880,7 +1880,7 @@ We've spent an enormous amount of time creating and checking these footprints an
 </library>
 </libraries>
 <attributes>
-<attribute name="REV" value="B"/>
+<attribute name="REV" value="C"/>
 </attributes>
 <variantdefs>
 </variantdefs>
