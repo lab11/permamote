@@ -71,7 +71,7 @@ static permamote_packet_t packet = {
 
 static tcs34725_config_t tcs_config = {
   .int_time = TCS34725_INTEGRATIONTIME_154MS,
-  .gain = TCS34725_GAIN_1X,
+  .gain = TCS34725_GAIN_16X,
 };
 
 typedef enum {
@@ -89,7 +89,7 @@ static bool do_reset = false;
 
 #define DISCOVER_PERIOD     APP_TIMER_TICKS(5*60*1000)
 #define SENSOR_PERIOD       APP_TIMER_TICKS(30*1000)
-#define PIR_BACKOFF_PERIOD  APP_TIMER_TICKS(5*1000)
+#define PIR_BACKOFF_PERIOD  APP_TIMER_TICKS(25*1000)
 #define RTC_UPDATE_FIRST    APP_TIMER_TICKS(5*1000)
 
 APP_TIMER_DEF(discover_send_timer);
@@ -250,6 +250,7 @@ static void send_color(void) {
   permamote_coap_send(&m_peer_address, "light_color_counts", false, &packet);
 
   NRF_LOG_INFO("Sensed light cct: %u", (uint32_t)cct);
+  NRF_LOG_INFO("Sensed light color:\n\tr: %u\n\tg: %u\n\tb: %u", (uint16_t)red, (uint16_t)green, (uint16_t)blue);
   nrf_gpio_pin_set(TCS34725_EN);
 }
 
