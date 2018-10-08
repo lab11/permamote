@@ -47,6 +47,13 @@
 typedef void ab1815_alarm_callback(void);
 
 typedef enum {
+  _16HZ = 0,
+  _4HZ,
+  _1HZ,
+  _1_4HZ,
+} ab1815_watch_clock_freq;
+
+typedef enum {
   HUNDREDTH_MATCH = 0x7,
   ONCE_PER_MINUTE = 0x6,
   ONCE_PER_HOUR   = 0x5,
@@ -100,3 +107,6 @@ void ab1815_set_time(ab1815_time_t time);
 void ab1815_get_time(ab1815_time_t* time);
 struct timeval ab1815_get_time_unix(void);
 void ab1815_set_alarm(ab1815_time_t time, ab1815_alarm_repeat repeat, ab1815_alarm_callback* cb);
+void ab1815_set_watchdog(bool reset, uint8_t clock_cycles, uint8_t clock_frequency);
+void ab1815_tickle_watchdog(void);
+void ab1815_clear_watchdog(void);

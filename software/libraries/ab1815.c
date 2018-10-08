@@ -19,6 +19,9 @@ void ab1815_init(const nrf_drv_spi_t* instance) {
   spi_config.frequency  = NRF_DRV_SPI_FREQ_2M;
   spi_config.mode       = NRF_DRV_SPI_MODE_0;
   spi_config.bit_order  = NRF_DRV_SPI_BIT_ORDER_MSB_FIRST;
+
+  nrf_gpio_cfg_output(RTC_WDI);
+  nrf_gpio_pin_clear(RTC_WDI);
 }
 
 void  ab1815_read_reg(uint8_t reg, uint8_t* read_buf, size_t len){
@@ -238,4 +241,23 @@ void ab1815_set_alarm(ab1815_time_t time, ab1815_alarm_repeat repeat, ab1815_ala
   ab1815_read_reg(AB1815_INT_MASK, buf, 1);
   buf[0] |= 0x4;
   ab1815_write_reg(AB1815_INT_MASK, buf, 1);
+}
+
+void ab1815_set_watchdog(bool reset, uint8_t clock_cycles, uint8_t clock_frequency) {
+  uint8_t buf = 0;
+
+  buf |= clock_frequency & 0x3;
+  buf |= (clock_cycles << 2) & 0x7C;
+  buf |= reset << 7;
+
+  ab1815_write_reg(AB1815_WATCHDOG_TIMER, &buf, 1);
+}
+
+void ab1815_tickle_watchdog(void) {
+  nrf_gpio_pin_toggle(RTC_WDI);
+  nrf_gpio_pin_toggle(RTC_WDI);
+}
+void ab1815_clear_watchdog(void) {
+  uint8_t buf = 0;
+  ab1815_write_reg(AB1815_WATCHDOG_TIMER, &buf, 1);
 }
