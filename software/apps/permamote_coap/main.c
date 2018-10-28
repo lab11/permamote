@@ -448,6 +448,8 @@ void state_step(void) {
       send_color();
 
       state = IDLE;
+
+      max44009_schedule_read_lux();
       break;
     }
     case UPDATE_TIME: {
