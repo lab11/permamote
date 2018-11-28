@@ -39,7 +39,7 @@
 #define PARSE_ADDR "j2x.us/perm"
 
 #define DEFAULT_CHILD_TIMEOUT    40   /**< Thread child timeout [s]. */
-#define DEFAULT_POLL_PERIOD      5000 /**< Thread Sleepy End Device polling period when Asleep. [ms] */
+#define DEFAULT_POLL_PERIOD      10000 /**< Thread Sleepy End Device polling period when Asleep. [ms] */
 #define RECV_POLL_PERIOD         100  /**< Thread Sleepy End Device polling period when expecting response. [ms] */
 #define NUM_SLAAC_ADDRESSES      6    /**< Number of SLAAC addresses. */
 
@@ -88,13 +88,15 @@ static float sensed_lux;
 static bool do_reset = false;
 
 #define DISCOVER_PERIOD     APP_TIMER_TICKS(5*60*1000)
-#define SENSOR_PERIOD       APP_TIMER_TICKS(30*1000)
-#define PIR_BACKOFF_PERIOD  APP_TIMER_TICKS(25*1000)
+#define SENSOR_PERIOD       APP_TIMER_TICKS(60*1000)
+#define PIR_BACKOFF_PERIOD  APP_TIMER_TICKS(60*1000)
+#define PIR_DELAY           APP_TIMER_TICKS(25*1000)
 #define RTC_UPDATE_FIRST    APP_TIMER_TICKS(5*1000)
 
 APP_TIMER_DEF(discover_send_timer);
 APP_TIMER_DEF(periodic_sensor_timer);
 APP_TIMER_DEF(pir_backoff);
+APP_TIMER_DEF(pir_delay);
 APP_TIMER_DEF(rtc_update_first);
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
@@ -153,14 +155,14 @@ static void send_free_buffers(void) {
   otBufferInfo buf_info = {0};
   otMessageGetBufferInfo(thread_get_instance(), &buf_info);
   printf("Buffer info:\n");
-  printf("total buffers: %u\n", buf_info.mTotalBuffers);
-  printf("free buffers: %u\n", buf_info.mFreeBuffers);
-  printf("Ip6 buffers: %u\n", buf_info.mIp6Buffers);
-  printf("Ip6 messages: %u\n", buf_info.mIp6Messages);
-  printf("coap buffers: %u\n", buf_info.mCoapBuffers);
-  printf("coap messages: %u\n", buf_info.mCoapMessages);
-  printf("app coap buffers: %u\n", buf_info.mApplicationCoapBuffers);
-  printf("app coap messages: %u\n", buf_info.mApplicationCoapMessages);
+  printf("\ttotal buffers: %u\n", buf_info.mTotalBuffers);
+  printf("\tfree buffers: %u\n", buf_info.mFreeBuffers);
+  printf("\tIp6 buffers: %u\n", buf_info.mIp6Buffers);
+  printf("\tIp6 messages: %u\n", buf_info.mIp6Messages);
+  printf("\tcoap buffers: %u\n", buf_info.mCoapBuffers);
+  printf("\tcoap messages: %u\n", buf_info.mCoapMessages);
+  printf("\tapp coap buffers: %u\n", buf_info.mApplicationCoapBuffers);
+  printf("\tapp coap messages: %u\n", buf_info.mApplicationCoapMessages);
   packet.timestamp = ab1815_get_time_unix();
   packet.data = (uint8_t*)&buf_info.mFreeBuffers;
   packet.data_len = sizeof(sizeof(uint16_t));
@@ -273,11 +275,28 @@ static inline void light_sensor_read_callback(float lux) {
 }
 
 static void pir_backoff_callback() {
+  // turn on and wait for stable
+  NRF_LOG_INFO("TURN ON PIR");
+
+  nrf_gpio_pin_clear(PIR_EN);
+  uint32_t err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
+  APP_ERROR_CHECK(err_code);
+
+}
+
+static void pir_enable_callback() {
+  // enable interrupt
+  NRF_LOG_INFO("TURN ON PIR callback");
   nrf_drv_gpiote_in_event_enable(PIR_OUT, 1);
 }
 
 static void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
+  // disable interrupt and turn off PIR
+  NRF_LOG_INFO("TURN off PIR ");
   nrf_drv_gpiote_in_event_disable(PIR_OUT);
+  nrf_drv_gpiote_in_event_enable(PIR_OUT, 0);
+  nrf_gpio_pin_set(PIR_EN);
+
   uint32_t err_code = app_timer_start(pir_backoff, PIR_BACKOFF_PERIOD, NULL);
   APP_ERROR_CHECK(err_code);
 
@@ -317,6 +336,9 @@ static void timer_init(void)
   APP_ERROR_CHECK(err_code);
 
   err_code = app_timer_create(&pir_backoff, APP_TIMER_MODE_SINGLE_SHOT, pir_backoff_callback);
+  APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&pir_delay, APP_TIMER_MODE_SINGLE_SHOT, pir_enable_callback);
   APP_ERROR_CHECK(err_code);
 }
 
@@ -536,7 +558,7 @@ int main(void) {
   nrf_gpio_cfg_output(SI7021_EN);
   nrf_gpio_cfg_output(PIR_EN);
   nrf_gpio_pin_clear(MAX44009_EN);
-  nrf_gpio_pin_clear(PIR_EN);
+  nrf_gpio_pin_set(PIR_EN);
   nrf_gpio_pin_set(TCS34725_EN);
   nrf_gpio_pin_set(MS5637_EN);
   nrf_gpio_pin_set(SI7021_EN);
@@ -564,7 +586,6 @@ int main(void) {
   nrf_drv_gpiote_in_config_t pir_gpio_config = GPIOTE_CONFIG_IN_SENSE_LOTOHI(1);
   pir_gpio_config.pull = NRF_GPIO_PIN_PULLDOWN;
   nrf_drv_gpiote_in_init(PIR_OUT, &pir_gpio_config, pir_interrupt_callback);
-  nrf_drv_gpiote_in_event_enable(PIR_OUT, 1);
 
   // setup vbat sense
   nrf_gpio_cfg_input(VBAT_OK, NRF_GPIO_PIN_NOPULL);
@@ -601,6 +622,10 @@ int main(void) {
   ab1815_time_t alarm_time = {0};
   ab1815_set_alarm(alarm_time, ONCE_PER_DAY, (ab1815_alarm_callback*) rtc_update_callback);
   ab1815_set_watchdog(1, 15, _1_4HZ);
+
+  nrf_gpio_pin_clear(PIR_EN);
+  uint32_t err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
+  APP_ERROR_CHECK(err_code);
 
   while (1) {
     thread_process();
