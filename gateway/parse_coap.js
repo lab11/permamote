@@ -43,6 +43,9 @@ var parse_payload = function (device_id, resource_url, payload, cb) {
       else if (resource_url === '/free_ot_buffers') {
         out.free_ot_buffers = payload.readUInt16LE();
       }
+      else if (resource_url === '/vbat_ok') {
+        out.vbat_ok = payload[0];
+      }
       else if (resource_url === '/error') {
         out.error = payload.readUInt32LE();
       }
