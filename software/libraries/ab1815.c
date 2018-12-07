@@ -21,7 +21,7 @@ void ab1815_init(const nrf_drv_spi_t* instance) {
   spi_config.bit_order  = NRF_DRV_SPI_BIT_ORDER_MSB_FIRST;
 
   nrf_gpio_cfg_output(RTC_WDI);
-  nrf_gpio_pin_clear(RTC_WDI);
+  nrf_gpio_pin_set(RTC_WDI);
 }
 
 void  ab1815_read_reg(uint8_t reg, uint8_t* read_buf, size_t len){
