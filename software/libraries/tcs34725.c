@@ -12,8 +12,33 @@ static tcs34725_config_t tcs_config = {
   .gain     = TCS34725_GAIN_1X
 };
 
+static const tcs34725_agc_t agc_list[] = {
+  { {TCS34725_GAIN_60X, TCS34725_INTEGRATIONTIME_700MS},     0, 20000 },
+  { {TCS34725_GAIN_60X, TCS34725_INTEGRATIONTIME_154MS},  4990, 63000 },
+  { {TCS34725_GAIN_16X, TCS34725_INTEGRATIONTIME_154MS}, 16790, 63000 },
+  { {TCS34725_GAIN_4X,  TCS34725_INTEGRATIONTIME_154MS}, 15740, 63000 },
+  { {TCS34725_GAIN_1X,  TCS34725_INTEGRATIONTIME_154MS}, 15740, 0 }
+};
+
+static uint8_t agc_cur = 0;
+static uint16_t atime_ms = 0;
+
 void tcs34725_init(const nrf_twi_mngr_t* instance) {
   twi_mngr_instance = instance;
+  nrf_gpio_cfg_output(TCS34725_EN);
+  tcs34725_off();
+}
+
+void  tcs34725_on(void){
+  nrf_gpio_pin_clear(TCS34725_EN);
+  nrf_delay_ms(3);
+}
+void  tcs34725_off(void){
+  nrf_gpio_pin_set(TCS34725_EN);
+}
+
+void tcs34725_config_agc() {
+ tcs34725_config(agc_list[agc_cur].config);
 }
 
 void tcs34725_config(tcs34725_config_t config) {
@@ -21,6 +46,7 @@ void tcs34725_config(tcs34725_config_t config) {
   uint8_t int_time_reg[2] = {TCS34725_COMMAND_BIT | TCS34725_ATIME, 0};
   uint8_t gain_reg[2] = {TCS34725_COMMAND_BIT | TCS34725_CONTROL, 0};
   tcs_config = config;
+  atime_ms = (uint16_t)(256 - tcs_config.int_time) * 2.4 * 1.5;
   int_time_reg[1] = tcs_config.int_time;
   gain_reg[1] = tcs_config.gain;
 
@@ -42,9 +68,9 @@ void tcs34725_enable(void) {
   int error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, enable_transfer, 1, NULL);
   APP_ERROR_CHECK(error);
   reg[1] = reg[1] | TCS34725_ENABLE_AEN;
-  nrf_delay_ms(3);
   error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, enable_transfer, 1, NULL);
   APP_ERROR_CHECK(error);
+  nrf_delay_ms(3);
 }
 
 void  tcs34725_disable(void){
@@ -67,42 +93,35 @@ void  tcs34725_disable(void){
   APP_ERROR_CHECK(error);
 }
 
+void  tcs34725_read_channels_agc(uint16_t* r, uint16_t* g, uint16_t* b, uint16_t* c) {
+  uint16_t red,green,blue,clear = 0;
+  while(1) {
+    tcs34725_read_channels(&red, &green, &blue, &clear);
+    if (agc_list[agc_cur].maxcnt && clear > agc_list[agc_cur].maxcnt) {
+        agc_cur++;
+    } else if (agc_list[agc_cur].mincnt && clear < agc_list[agc_cur].mincnt) {
+        agc_cur--;
+    }
+    else break;
+    tcs34725_disable();
+    tcs34725_enable();
+    tcs34725_config(agc_list[agc_cur].config);
+  }
+  *r = red;
+  *g = green;
+  *b = blue;
+  *c = clear;
+}
+
 void  tcs34725_read_channels(uint16_t* r, uint16_t* g, uint16_t* b, uint16_t* c) {
   uint8_t reg[1] = {TCS34725_COMMAND_BIT | TCS34725_CDATAL};
   uint16_t data[4] = {0};
   nrf_twi_mngr_transfer_t const channel_read_transfer[] = {
     NRF_TWI_MNGR_WRITE(TCS34725_ADDRESS, reg, 1, NRF_TWI_MNGR_NO_STOP),
     NRF_TWI_MNGR_READ( TCS34725_ADDRESS, (uint8_t*) data, 8, 0),
-    //NRF_TWI_MNGR_WRITE(TCS34725_ADDRESS, reg+1, 1, NRF_TWI_MNGR_NO_STOP),
-    //NRF_TWI_MNGR_READ( TCS34725_ADDRESS, r, 2, 0),
-    //NRF_TWI_MNGR_WRITE(TCS34725_ADDRESS, reg+2, 1, NRF_TWI_MNGR_NO_STOP),
-    //NRF_TWI_MNGR_READ( TCS34725_ADDRESS, b, 2, 0),
-    //NRF_TWI_MNGR_WRITE(TCS34725_ADDRESS, reg+3, 1, NRF_TWI_MNGR_NO_STOP),
-    //NRF_TWI_MNGR_READ( TCS34725_ADDRESS, g, 2, 0),
   };
 
-  // Set a delay for the integration time, ensure valid conversion results
-  switch (tcs_config.int_time)
-  {
-    case TCS34725_INTEGRATIONTIME_2_4MS:
-      nrf_delay_ms(3);
-      break;
-    case TCS34725_INTEGRATIONTIME_24MS:
-      nrf_delay_ms(24);
-      break;
-    case TCS34725_INTEGRATIONTIME_50MS:
-      nrf_delay_ms(50);
-      break;
-    case TCS34725_INTEGRATIONTIME_101MS:
-      nrf_delay_ms(101);
-      break;
-    case TCS34725_INTEGRATIONTIME_154MS:
-      nrf_delay_ms(154);
-      break;
-    case TCS34725_INTEGRATIONTIME_700MS:
-      nrf_delay_ms(700);
-      break;
-  }
+  nrf_delay_ms(atime_ms);
 
   int error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, channel_read_transfer, sizeof(channel_read_transfer)/sizeof(channel_read_transfer[0]), NULL);
   APP_ERROR_CHECK(error);
@@ -115,11 +134,15 @@ void  tcs34725_read_channels(uint16_t* r, uint16_t* g, uint16_t* b, uint16_t* c)
 }
 
 void tcs34725_ir_compensate(uint16_t* r, uint16_t* g, uint16_t* b, uint16_t* c) {
-  uint32_t IR = (*r + *g + *b - *c) / 2;
+  uint32_t IR = (*r + *g + *b > *c) ? (*r + *g + *b - *c) / 2 : 0;
   *r -= IR;
   *g -= IR;
   *b -= IR;
   *c -= IR;
+}
+
+float tcs34725_calculate_ct(uint16_t r, uint16_t b) {
+  return (3810*(float)b) / (float)r + 1391;
 }
 
 float tcs34725_calculate_cct(uint16_t r, uint16_t g, uint16_t b) {

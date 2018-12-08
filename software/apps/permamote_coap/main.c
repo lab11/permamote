@@ -69,10 +69,10 @@ static permamote_packet_t packet = {
     .data_len = 0,
 };
 
-static tcs34725_config_t tcs_config = {
-  .int_time = TCS34725_INTEGRATIONTIME_154MS,
-  .gain = TCS34725_GAIN_16X,
-};
+//static tcs34725_config_t tcs_config = {
+//  .int_time = TCS34725_INTEGRATIONTIME_154MS,
+//  .gain = TCS34725_GAIN_16X,
+//};
 
 typedef enum {
   IDLE = 0,
@@ -232,14 +232,14 @@ static void send_color(void) {
   uint16_t red, green, blue, clear;
   float cct;
 
-  nrf_gpio_pin_clear(TCS34725_EN);
-  nrf_delay_ms(3); //TODO make these delays low power
-  tcs34725_config(tcs_config);
+  tcs34725_on();
+  tcs34725_config_agc();
   tcs34725_enable();
-  nrf_delay_ms(160);
-  tcs34725_read_channels(&red, &green, &blue, &clear);
+  tcs34725_read_channels_agc(&red, &green, &blue, &clear);
+  tcs34725_off();
   tcs34725_ir_compensate(&red, &green, &blue, &clear);
-  cct = tcs34725_calculate_cct(red, green, blue);
+  //cct = tcs34725_calculate_cct(red, green, blue);
+  cct = tcs34725_calculate_ct(red, blue);
   packet.timestamp = ab1815_get_time_unix();
   packet.data = (uint8_t*)&cct;
   packet.data_len = sizeof(cct);
@@ -253,7 +253,6 @@ static void send_color(void) {
 
   NRF_LOG_INFO("Sensed light cct: %u", (uint32_t)cct);
   NRF_LOG_INFO("Sensed light color:\n\tr: %u\n\tg: %u\n\tb: %u", (uint16_t)red, (uint16_t)green, (uint16_t)blue);
-  nrf_gpio_pin_set(TCS34725_EN);
 }
 
 static void periodic_sensor_read_callback() {
@@ -394,7 +393,6 @@ void adc_init(void) {
 void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info) {
   // halt all existing state
   __disable_irq();
-  NRF_LOG_FINAL_FLUSH();
 
   // print banner
   printf("\n\n***** App Error *****\n");
@@ -431,7 +429,8 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info) {
   //memcpy(data+1+6, &error_code, sizeof(uint32_t));
 
   //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_peer_address, "error", data, 1+6+sizeof(uint32_t));
-
+  NRF_LOG_INFO("GOING FOR RESET");
+  NRF_LOG_FINAL_FLUSH();
   do_reset = true;
 }
 
@@ -553,13 +552,11 @@ int main(void) {
 
   // Turn on power gate
   nrf_gpio_cfg_output(MAX44009_EN);
-  nrf_gpio_cfg_output(TCS34725_EN);
   nrf_gpio_cfg_output(MS5637_EN);
   nrf_gpio_cfg_output(SI7021_EN);
   nrf_gpio_cfg_output(PIR_EN);
   nrf_gpio_pin_clear(MAX44009_EN);
   nrf_gpio_pin_set(PIR_EN);
-  nrf_gpio_pin_set(TCS34725_EN);
   nrf_gpio_pin_set(MS5637_EN);
   nrf_gpio_pin_set(SI7021_EN);
 
@@ -621,7 +618,7 @@ int main(void) {
 
   ab1815_time_t alarm_time = {0};
   ab1815_set_alarm(alarm_time, ONCE_PER_DAY, (ab1815_alarm_callback*) rtc_update_callback);
-  ab1815_set_watchdog(1, 15, _1_4HZ);
+  //ab1815_set_watchdog(1, 15, _1_4HZ);
 
   nrf_gpio_pin_clear(PIR_EN);
   uint32_t err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
