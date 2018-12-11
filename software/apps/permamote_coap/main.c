@@ -24,6 +24,7 @@
 #include "simple_thread.h"
 #include "permamote_coap.h"
 #include "thread_coap.h"
+#include "thread_dns.h"
 #include "device_id.h"
 #include "ntp.h"
 
@@ -34,12 +35,13 @@
 #include "si7021.h"
 #include "tcs34725.h"
 
-#define COAP_SERVER_ADDR "64:ff9b::22da:2eb5"
-#define NTP_SERVER_ADDR "64:ff9b::8106:f1c"
+#define COAP_SERVER_HOSTNAME "coap.permamote.com"
+#define NTP_SERVER_HOSTNAME "time.nist.gov"
+#define DNS_SERVER_ADDR "fdaa:bb:1::2"
 #define PARSE_ADDR "j2x.us/perm"
 
 #define DEFAULT_CHILD_TIMEOUT    40   /**< Thread child timeout [s]. */
-#define DEFAULT_POLL_PERIOD      10000 /**< Thread Sleepy End Device polling period when Asleep. [ms] */
+#define DEFAULT_POLL_PERIOD      5000 /**< Thread Sleepy End Device polling period when Asleep. [ms] */
 #define RECV_POLL_PERIOD         100  /**< Thread Sleepy End Device polling period when expecting response. [ms] */
 #define NUM_SLAAC_ADDRESSES      6    /**< Number of SLAAC addresses. */
 
@@ -91,7 +93,7 @@ static bool do_reset = false;
 #define SENSOR_PERIOD       APP_TIMER_TICKS(60*1000)
 #define PIR_BACKOFF_PERIOD  APP_TIMER_TICKS(60*1000)
 #define PIR_DELAY           APP_TIMER_TICKS(25*1000)
-#define RTC_UPDATE_FIRST    APP_TIMER_TICKS(5*1000)
+#define RTC_UPDATE_FIRST    APP_TIMER_TICKS(10*1000)
 
 APP_TIMER_DEF(discover_send_timer);
 APP_TIMER_DEF(periodic_sensor_timer);
@@ -113,6 +115,22 @@ void ntp_recv_callback(struct ntp_client_t* client) {
   otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
 }
 
+static void dns_response_handler(void         * p_context,
+                                 const char   * p_hostname,
+                                 otIp6Address * p_resolved_address,
+                                 uint32_t       ttl,
+                                 otError        error)
+{
+    if (error != OT_ERROR_NONE)
+    {
+        NRF_LOG_INFO("DNS response error %d.", error);
+        return;
+    }
+
+    NRF_LOG_INFO("Successfully resolved address");
+    memcpy(p_context, p_resolved_address, sizeof(otIp6Address));
+}
+
 static inline void rtc_update_callback() {
   state = UPDATE_TIME;
 }
@@ -130,12 +148,26 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
          * don't use the OpenThread CLI module. Therefore otIp6SlaacUpdate util is used to create
          * IPv6 addresses.
          */
-         otIp6SlaacUpdate(thread_get_instance(), m_slaac_addresses,
+         otIp6SlaacUpdate(p_context, m_slaac_addresses,
                           sizeof(m_slaac_addresses) / sizeof(m_slaac_addresses[0]),
                           otIp6CreateRandomIid, NULL);
     }
     if (flags & OT_CHANGED_IP6_ADDRESS_ADDED && otThreadGetDeviceRole(p_context) == 2) {
       NRF_LOG_INFO("We have internet connectivity!");
+      otLinkSetPollPeriod(p_context, RECV_POLL_PERIOD);
+
+      // resolve dns
+      thread_dns_hostname_resolve(p_context,
+                                  DNS_SERVER_ADDR,
+                                  NTP_SERVER_HOSTNAME,
+                                  dns_response_handler,
+                                  (void*) &m_ntp_address);
+      thread_dns_hostname_resolve(p_context,
+                                  DNS_SERVER_ADDR,
+                                  COAP_SERVER_HOSTNAME,
+                                  dns_response_handler,
+                                  (void*) &m_peer_address);
+
       int err_code = app_timer_start(rtc_update_first, RTC_UPDATE_FIRST, NULL);
       APP_ERROR_CHECK(err_code);
     }
@@ -446,7 +478,7 @@ void state_step(void) {
       packet.timestamp = ab1815_get_time_unix();
       packet.data = (uint8_t*)&sensed_lux;
       packet.data_len = sizeof(sensed_lux);
-      tickle_or_nah(permamote_coap_send(&m_peer_address, "light_lux", true, &packet));
+      tickle_or_nah(permamote_coap_send(&m_peer_address, "light_lux", false, &packet));
 
       state = IDLE;
       break;
@@ -457,12 +489,13 @@ void state_step(void) {
       packet.timestamp = ab1815_get_time_unix();
       packet.data = &data;
       packet.data_len = sizeof(data);
-      tickle_or_nah(permamote_coap_send(&m_peer_address, "motion", true, &packet));
+      tickle_or_nah(permamote_coap_send(&m_peer_address, "motion", false, &packet));
 
       state = IDLE;
       break;
     }
     case SEND_PERIODIC: {
+      NRF_LOG_INFO("poll period: %d", otLinkGetPollPeriod(thread_get_instance()));
       send_free_buffers();
       send_temp_pres_hum();
       send_voltage();
@@ -470,7 +503,7 @@ void state_step(void) {
 
       state = IDLE;
 
-      max44009_schedule_read_lux();
+      //max44009_schedule_read_lux();
       break;
     }
     case UPDATE_TIME: {
@@ -539,8 +572,6 @@ int main(void) {
   packet.id_len = sizeof(device_id);
 
   // setup thread
-  otIp6AddressFromString(COAP_SERVER_ADDR, &m_peer_address);
-  otIp6AddressFromString(NTP_SERVER_ADDR, &m_ntp_address);
   thread_config_t thread_config = {
     .channel = 25,
     .panid = 0xFACE,
@@ -618,7 +649,7 @@ int main(void) {
 
   ab1815_time_t alarm_time = {0};
   ab1815_set_alarm(alarm_time, ONCE_PER_DAY, (ab1815_alarm_callback*) rtc_update_callback);
-  //ab1815_set_watchdog(1, 15, _1_4HZ);
+  ab1815_set_watchdog(1, 31, _1_4HZ);
 
   nrf_gpio_pin_clear(PIR_EN);
   uint32_t err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);

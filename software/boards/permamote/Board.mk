@@ -71,6 +71,7 @@ BOARD_SOURCES += \
 	device_id.c\
 	simple_thread.c\
 	thread_coap.c\
+	thread_dns.c\
 	ntp.c\
 
 endif
