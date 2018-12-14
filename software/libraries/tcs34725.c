@@ -2,6 +2,7 @@
 
 #include "nrf_drv_gpiote.h"
 #include "nrf_delay.h"
+#include "app_timer.h"
 
 #include "permamote.h"
 #include "tcs34725.h"
@@ -20,13 +21,22 @@ static const tcs34725_agc_t agc_list[] = {
   { {TCS34725_GAIN_1X,  TCS34725_INTEGRATIONTIME_154MS}, 15740, 0 }
 };
 
+static tcs34725_read_callback_t* read_callback;
+static uint16_t red, blue, green, clear;
 static uint8_t agc_cur = 0;
 static uint16_t atime_ms = 0;
+
+APP_TIMER_DEF(read_channels_timer);
+
+void tcs34725_agc_callback();
 
 void tcs34725_init(const nrf_twi_mngr_t* instance) {
   twi_mngr_instance = instance;
   nrf_gpio_cfg_output(TCS34725_EN);
   tcs34725_off();
+
+  uint32_t err_code = app_timer_create(&read_channels_timer, APP_TIMER_MODE_SINGLE_SHOT, tcs34725_agc_callback);
+  APP_ERROR_CHECK(err_code);
 }
 
 void  tcs34725_on(void){
@@ -93,44 +103,57 @@ void  tcs34725_disable(void){
   APP_ERROR_CHECK(error);
 }
 
-void  tcs34725_read_channels_agc(uint16_t* r, uint16_t* g, uint16_t* b, uint16_t* c) {
-  uint16_t red,green,blue,clear = 0;
-  while(1) {
-    tcs34725_read_channels(&red, &green, &blue, &clear);
-    if (agc_list[agc_cur].maxcnt && clear > agc_list[agc_cur].maxcnt) {
-        agc_cur++;
-    } else if (agc_list[agc_cur].mincnt && clear < agc_list[agc_cur].mincnt) {
-        agc_cur--;
-    }
-    else break;
-    tcs34725_disable();
-    tcs34725_enable();
-    tcs34725_config(agc_list[agc_cur].config);
-  }
-  *r = red;
-  *g = green;
-  *b = blue;
-  *c = clear;
-}
-
-void  tcs34725_read_channels(uint16_t* r, uint16_t* g, uint16_t* b, uint16_t* c) {
+static void  read_channels() {
   uint8_t reg[1] = {TCS34725_COMMAND_BIT | TCS34725_CDATAL};
   uint16_t data[4] = {0};
+
   nrf_twi_mngr_transfer_t const channel_read_transfer[] = {
     NRF_TWI_MNGR_WRITE(TCS34725_ADDRESS, reg, 1, NRF_TWI_MNGR_NO_STOP),
     NRF_TWI_MNGR_READ( TCS34725_ADDRESS, (uint8_t*) data, 8, 0),
   };
 
-  nrf_delay_ms(atime_ms);
-
   int error = nrf_twi_mngr_perform(twi_mngr_instance, NULL, channel_read_transfer, sizeof(channel_read_transfer)/sizeof(channel_read_transfer[0]), NULL);
   APP_ERROR_CHECK(error);
 
-  *c = data[0];
-  *r = data[1];
-  *b = data[2];
-  *g = data[3];
+  clear = data[0];
+  red   = data[1];
+  blue  = data[2];
+  green = data[3];
 
+}
+
+
+void tcs34725_agc_callback() {
+  read_channels(tcs34725_agc_callback);
+  if (agc_list[agc_cur].maxcnt && clear > agc_list[agc_cur].maxcnt) {
+    agc_cur++;
+  } else if (agc_list[agc_cur].mincnt && clear < agc_list[agc_cur].mincnt) {
+    agc_cur--;
+  } else {
+    read_callback(red, green, blue, clear);
+    return;
+  }
+  tcs34725_disable();
+  tcs34725_enable();
+  tcs34725_config(agc_list[agc_cur].config);
+  uint32_t err_code = app_timer_start(read_channels_timer, APP_TIMER_TICKS(atime_ms), NULL);
+  APP_ERROR_CHECK(err_code);
+}
+
+void  tcs34725_read_channels_agc(tcs34725_read_callback_t * cb) {
+  read_callback = cb;
+
+  uint32_t err_code = app_timer_start(read_channels_timer, APP_TIMER_TICKS(atime_ms), NULL);
+  APP_ERROR_CHECK(err_code);
+}
+
+void  tcs34725_read_channels(uint16_t* r, uint16_t* g, uint16_t* b, uint16_t* c) {
+  nrf_delay_ms(atime_ms);
+  read_channels();
+  *r = red;
+  *g = green;
+  *b = blue;
+  *c = clear;
 }
 
 void tcs34725_ir_compensate(uint16_t* r, uint16_t* g, uint16_t* b, uint16_t* c) {
