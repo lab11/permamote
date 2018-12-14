@@ -18,7 +18,6 @@
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
 
-#include <openthread/openthread.h>
 #include <openthread/message.h>
 
 #include "simple_thread.h"
@@ -41,7 +40,7 @@
 #define PARSE_ADDR "j2x.us/perm"
 
 #define DEFAULT_CHILD_TIMEOUT    40   /**< Thread child timeout [s]. */
-#define DEFAULT_POLL_PERIOD      5000 /**< Thread Sleepy End Device polling period when Asleep. [ms] */
+#define DEFAULT_POLL_PERIOD      10000 /**< Thread Sleepy End Device polling period when Asleep. [ms] */
 #define RECV_POLL_PERIOD         100  /**< Thread Sleepy End Device polling period when expecting response. [ms] */
 #define NUM_SLAAC_ADDRESSES      6    /**< Number of SLAAC addresses. */
 
@@ -91,9 +90,9 @@ static bool do_reset = false;
 
 #define DISCOVER_PERIOD     APP_TIMER_TICKS(5*60*1000)
 #define SENSOR_PERIOD       APP_TIMER_TICKS(60*1000)
-#define PIR_BACKOFF_PERIOD  APP_TIMER_TICKS(60*1000)
-#define PIR_DELAY           APP_TIMER_TICKS(25*1000)
-#define RTC_UPDATE_FIRST    APP_TIMER_TICKS(10*1000)
+#define PIR_BACKOFF_PERIOD  APP_TIMER_TICKS(2*60*1000)
+#define PIR_DELAY           APP_TIMER_TICKS(10*1000)
+#define RTC_UPDATE_FIRST    APP_TIMER_TICKS(4*1000)
 
 APP_TIMER_DEF(discover_send_timer);
 APP_TIMER_DEF(periodic_sensor_timer);
@@ -177,12 +176,6 @@ static inline void discover_send_callback() {
   state = SEND_DISCOVERY;
 }
 
-static void tickle_or_nah(otError error) {
-  if (error == OT_ERROR_NONE && otThreadGetDeviceRole(thread_get_instance()) == 2) {
-    ab1815_tickle_watchdog();
-  }
-}
-
 static void send_free_buffers(void) {
   otBufferInfo buf_info = {0};
   otMessageGetBufferInfo(thread_get_instance(), &buf_info);
@@ -198,7 +191,7 @@ static void send_free_buffers(void) {
   packet.timestamp = ab1815_get_time_unix();
   packet.data = (uint8_t*)&buf_info.mFreeBuffers;
   packet.data_len = sizeof(sizeof(uint16_t));
-  tickle_or_nah(permamote_coap_send(&m_peer_address, "free_ot_buffers", false, &packet));
+  permamote_coap_send(&m_peer_address, "free_ot_buffers", false, &packet);
 }
 
 static void send_temp_pres_hum(void) {
@@ -214,7 +207,7 @@ static void send_temp_pres_hum(void) {
   packet.timestamp = ab1815_get_time_unix();
   packet.data = (uint8_t*)&temperature;
   // send and tickle if success
-  tickle_or_nah(permamote_coap_send(&m_peer_address, "temperature_c", false, &packet));
+  permamote_coap_send(&m_peer_address, "temperature_c", false, &packet);
   packet.data = (uint8_t*)&pressure;
   permamote_coap_send(&m_peer_address, "pressure_mbar", false, &packet);
   NRF_LOG_INFO("Sensed ms5637: temperature: %d, pressure: %d", (int32_t)temperature, (int32_t)pressure);
@@ -229,7 +222,7 @@ static void send_temp_pres_hum(void) {
   packet.timestamp = ab1815_get_time_unix();
   packet.data = (uint8_t*)&humidity;
   // send and tickle if success
-  tickle_or_nah(permamote_coap_send(&m_peer_address, "humidity_percent", false, &packet));
+  permamote_coap_send(&m_peer_address, "humidity_percent", false, &packet);
   NRF_LOG_INFO("Sensed si7021: humidity: %d", (int32_t)humidity);
 }
 
@@ -248,7 +241,7 @@ static void send_voltage(void) {
   packet.data = (uint8_t*)v_data;
   packet.data_len = 3 * sizeof(vbat);
   // send and tickle if success
-  tickle_or_nah(permamote_coap_send(&m_peer_address, "voltage", false, &packet));
+  permamote_coap_send(&m_peer_address, "voltage", false, &packet);
   NRF_LOG_INFO("Sensed voltage: vbat*100: %d, vsol*100: %d, vsec*100: %d", (int32_t)(vbat*100), (int32_t)(vsol*100), (int32_t)(vsec*100));
 
   // sense vbat_ok
@@ -259,15 +252,9 @@ static void send_voltage(void) {
   NRF_LOG_INFO("VBAT_OK: %d", vbat_ok);
 }
 
-static void send_color(void) {
-  // sense light color
-  uint16_t red, green, blue, clear;
+void color_read_callback(uint16_t red, uint16_t green, uint16_t blue, uint16_t clear) {
   float cct;
 
-  tcs34725_on();
-  tcs34725_config_agc();
-  tcs34725_enable();
-  tcs34725_read_channels_agc(&red, &green, &blue, &clear);
   tcs34725_off();
   tcs34725_ir_compensate(&red, &green, &blue, &clear);
   //cct = tcs34725_calculate_cct(red, green, blue);
@@ -275,8 +262,8 @@ static void send_color(void) {
   packet.timestamp = ab1815_get_time_unix();
   packet.data = (uint8_t*)&cct;
   packet.data_len = sizeof(cct);
-  // send and tickle if success
-  tickle_or_nah(permamote_coap_send(&m_peer_address, "light_color_cct_k", false, &packet));
+  // send
+  permamote_coap_send(&m_peer_address, "light_color_cct_k", false, &packet);
 
   uint16_t lraw_data[4] = {red, green, blue, clear};
   packet.data = (uint8_t*)lraw_data;
@@ -287,6 +274,15 @@ static void send_color(void) {
   NRF_LOG_INFO("Sensed light color:\n\tr: %u\n\tg: %u\n\tb: %u", (uint16_t)red, (uint16_t)green, (uint16_t)blue);
 }
 
+static void send_color(void) {
+  // sense light color
+
+  tcs34725_on();
+  tcs34725_config_agc();
+  tcs34725_enable();
+  tcs34725_read_channels_agc(color_read_callback);
+}
+
 static void periodic_sensor_read_callback() {
   ab1815_time_t time;
   time = unix_to_ab1815(packet.timestamp);
@@ -295,6 +291,9 @@ static void periodic_sensor_read_callback() {
     NRF_LOG_INFO("VERY INVALID TIME");
     int err_code = app_timer_start(rtc_update_first, RTC_UPDATE_FIRST, NULL);
     APP_ERROR_CHECK(err_code);
+  }
+  if (otThreadGetDeviceRole(thread_get_instance()) == 2) {
+    ab1815_tickle_watchdog();
   }
 
   state = SEND_PERIODIC;
@@ -478,8 +477,7 @@ void state_step(void) {
       packet.timestamp = ab1815_get_time_unix();
       packet.data = (uint8_t*)&sensed_lux;
       packet.data_len = sizeof(sensed_lux);
-      tickle_or_nah(permamote_coap_send(&m_peer_address, "light_lux", false, &packet));
-
+      permamote_coap_send(&m_peer_address, "light_lux", false, &packet);
       state = IDLE;
       break;
     }
@@ -489,7 +487,7 @@ void state_step(void) {
       packet.timestamp = ab1815_get_time_unix();
       packet.data = &data;
       packet.data_len = sizeof(data);
-      tickle_or_nah(permamote_coap_send(&m_peer_address, "motion", false, &packet));
+      permamote_coap_send(&m_peer_address, "motion", false, &packet);
 
       state = IDLE;
       break;
@@ -534,7 +532,7 @@ void state_step(void) {
       packet.data = data;
       packet.data_len = addr_len + 1;
 
-      tickle_or_nah(permamote_coap_send(&m_peer_address, "discovery", false, &packet));
+      permamote_coap_send(&m_peer_address, "discovery", false, &packet);
 
       state = IDLE;
       break;
@@ -647,7 +645,7 @@ int main(void) {
   max44009_schedule_read_lux();
   max44009_enable_interrupt();
 
-  ab1815_time_t alarm_time = {0};
+  ab1815_time_t alarm_time = {.hours = 8};
   ab1815_set_alarm(alarm_time, ONCE_PER_DAY, (ab1815_alarm_callback*) rtc_update_callback);
   ab1815_set_watchdog(1, 31, _1_4HZ);
 
