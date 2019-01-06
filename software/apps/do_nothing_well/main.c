@@ -12,10 +12,6 @@
 
 #include "permamote.h"
 
-#define LED0 NRF_GPIO_PIN_MAP(0,4)
-#define LED1 NRF_GPIO_PIN_MAP(0,5)
-#define LED2 NRF_GPIO_PIN_MAP(0,6)
-
 uint8_t enables[7] = {
    MAX44009_EN,
    ISL29125_EN,
@@ -36,12 +32,12 @@ int main(void) {
     nrf_power_dcdcen_set(1);
 #endif
 
-    nrf_gpio_cfg_output(LED0);
     nrf_gpio_cfg_output(LED1);
     nrf_gpio_cfg_output(LED2);
-    nrf_gpio_pin_set(LED0);
+    nrf_gpio_cfg_output(LED3);
     nrf_gpio_pin_set(LED1);
     nrf_gpio_pin_set(LED2);
+    nrf_gpio_pin_set(LED3);
     for (int i = 0; i < 7; i++) {
       nrf_gpio_cfg_output(enables[i]);
       nrf_gpio_pin_set(enables[i]);
