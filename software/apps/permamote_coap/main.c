@@ -40,7 +40,7 @@
 #define PARSE_ADDR "j2x.us/perm"
 
 #define DEFAULT_CHILD_TIMEOUT    40   /**< Thread child timeout [s]. */
-#define DEFAULT_POLL_PERIOD      10000 /**< Thread Sleepy End Device polling period when Asleep. [ms] */
+#define DEFAULT_POLL_PERIOD      60000 /**< Thread Sleepy End Device polling period when Asleep. [ms] */
 #define RECV_POLL_PERIOD         100  /**< Thread Sleepy End Device polling period when expecting response. [ms] */
 #define NUM_SLAAC_ADDRESSES      6    /**< Number of SLAAC addresses. */
 
@@ -89,7 +89,7 @@ static float sensed_lux;
 static bool do_reset = false;
 
 #define DISCOVER_PERIOD     APP_TIMER_TICKS(5*60*1000)
-#define SENSOR_PERIOD       APP_TIMER_TICKS(60*1000)
+#define SENSOR_PERIOD       APP_TIMER_TICKS(2*60*1000)
 #define PIR_BACKOFF_PERIOD  APP_TIMER_TICKS(2*60*1000)
 #define PIR_DELAY           APP_TIMER_TICKS(10*1000)
 #define RTC_UPDATE_FIRST    APP_TIMER_TICKS(4*1000)
@@ -215,7 +215,7 @@ static void send_temp_pres_hum(void) {
   // sense humidity
   nrf_gpio_pin_clear(SI7021_EN);
   nrf_delay_ms(20);
-  si7021_config(si7021_mode0);
+  si7021_config(si7021_mode3);
   si7021_read_RH_hold(&humidity);
   nrf_gpio_pin_set(SI7021_EN);
   // Prepare humidity packet
@@ -628,10 +628,10 @@ int main(void) {
     .continuous = 0,
     .manual = 0,
     .cdr = 0,
-    .int_time = 3,
+    .int_time = 10,
   };
 
-  ms5637_init(&twi_mngr_instance, osr_8192);
+  ms5637_init(&twi_mngr_instance, osr_4096);
 
   si7021_init(&twi_mngr_instance);
 
