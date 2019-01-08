@@ -39,10 +39,10 @@
 #define DNS_SERVER_ADDR "fdaa:bb:1::2"
 #define PARSE_ADDR "j2x.us/perm"
 
-#define DEFAULT_CHILD_TIMEOUT    40   /**< Thread child timeout [s]. */
+#define DEFAULT_CHILD_TIMEOUT    2*60  /**< Thread child timeout [s]. */
 #define DEFAULT_POLL_PERIOD      60000 /**< Thread Sleepy End Device polling period when Asleep. [ms] */
-#define RECV_POLL_PERIOD         100  /**< Thread Sleepy End Device polling period when expecting response. [ms] */
-#define NUM_SLAAC_ADDRESSES      6    /**< Number of SLAAC addresses. */
+#define RECV_POLL_PERIOD         100   /**< Thread Sleepy End Device polling period when expecting response. [ms] */
+#define NUM_SLAAC_ADDRESSES      6     /**< Number of SLAAC addresses. */
 
 static uint8_t device_id[6];
 static otNetifAddress m_slaac_addresses[6]; /**< Buffer containing addresses resolved by SLAAC */
