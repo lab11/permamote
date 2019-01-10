@@ -32,12 +32,12 @@ int main(void) {
     nrf_power_dcdcen_set(1);
 #endif
 
-    nrf_gpio_cfg_output(LED1);
-    nrf_gpio_cfg_output(LED2);
-    nrf_gpio_cfg_output(LED3);
-    nrf_gpio_pin_set(LED1);
-    nrf_gpio_pin_set(LED2);
-    nrf_gpio_pin_set(LED3);
+    nrf_gpio_cfg_output(LED_1);
+    nrf_gpio_cfg_output(LED_2);
+    nrf_gpio_cfg_output(LED_3);
+    nrf_gpio_pin_set(LED_1);
+    nrf_gpio_pin_set(LED_2);
+    nrf_gpio_pin_set(LED_3);
     for (int i = 0; i < 7; i++) {
       nrf_gpio_cfg_output(enables[i]);
       nrf_gpio_pin_set(enables[i]);

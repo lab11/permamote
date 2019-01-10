@@ -10,6 +10,7 @@
 #include "app_util_platform.h"
 #include "nordic_common.h"
 #include "app_timer.h"
+#include "mem_manager.h"
 #include "nrf_drv_clock.h"
 #include "nrf_drv_gpiote.h"
 #include "nrf_drv_saadc.h"
@@ -17,6 +18,9 @@
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
+#include "nrf_dfu_utils.h"
+#include "coap_dfu.h"
+#include "background_dfu_state.h"
 
 #include <openthread/message.h>
 
@@ -44,6 +48,7 @@
 #define RECV_POLL_PERIOD         100   /**< Thread Sleepy End Device polling period when expecting response. [ms] */
 #define NUM_SLAAC_ADDRESSES      6     /**< Number of SLAAC addresses. */
 
+static bool trigger = true;
 static uint8_t device_id[6];
 static otNetifAddress m_slaac_addresses[6]; /**< Buffer containing addresses resolved by SLAAC */
 static struct ntp_client_t ntp_client;
@@ -62,6 +67,31 @@ static otIp6Address m_peer_address =
         .m8 = {0}
     }
 };
+
+static void address_print(const otIp6Address *addr)
+{
+    char ipstr[40];
+    snprintf(ipstr, sizeof(ipstr), "%x:%x:%x:%x:%x:%x:%x:%x",
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 0)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 1)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 2)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 3)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 4)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 5)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 6)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 7)));
+
+    NRF_LOG_INFO("%s\r\n", (uint32_t)ipstr);
+}
+
+
+static void addresses_print(otInstance * aInstance)
+{
+    for (const otNetifAddress *addr = otIp6GetUnicastAddresses(aInstance); addr; addr = addr->mNext)
+    {
+        address_print(&addr->mAddress);
+    }
+}
 
 static permamote_packet_t packet = {
     .id = NULL,
@@ -89,7 +119,7 @@ static float sensed_lux;
 static bool do_reset = false;
 
 #define DISCOVER_PERIOD     APP_TIMER_TICKS(5*60*1000)
-#define SENSOR_PERIOD       APP_TIMER_TICKS(2*60*1000)
+#define SENSOR_PERIOD       APP_TIMER_TICKS(10*1000)
 #define PIR_BACKOFF_PERIOD  APP_TIMER_TICKS(2*60*1000)
 #define PIR_DELAY           APP_TIMER_TICKS(10*1000)
 #define RTC_UPDATE_FIRST    APP_TIMER_TICKS(4*1000)
@@ -102,6 +132,11 @@ APP_TIMER_DEF(rtc_update_first);
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
+
+void coap_dfu_handle_error(void)
+{
+    coap_dfu_reset_state();
+}
 
 void ntp_recv_callback(struct ntp_client_t* client) {
   if (client->state == NTP_CLIENT_RECV) {
@@ -169,6 +204,8 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
 
       int err_code = app_timer_start(rtc_update_first, RTC_UPDATE_FIRST, NULL);
       APP_ERROR_CHECK(err_code);
+
+      addresses_print(p_context);
     }
 }
 
@@ -286,7 +323,7 @@ static void send_color(void) {
 static void periodic_sensor_read_callback() {
   ab1815_time_t time;
   time = unix_to_ab1815(packet.timestamp);
-  NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
+  //NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
   if(time.years == 0) {
     NRF_LOG_INFO("VERY INVALID TIME");
     int err_code = app_timer_start(rtc_update_first, RTC_UPDATE_FIRST, NULL);
@@ -493,15 +530,20 @@ void state_step(void) {
       break;
     }
     case SEND_PERIODIC: {
-      NRF_LOG_INFO("poll period: %d", otLinkGetPollPeriod(thread_get_instance()));
-      send_free_buffers();
-      send_temp_pres_hum();
-      send_voltage();
-      send_color();
+      //NRF_LOG_INFO("poll period: %d", otLinkGetPollPeriod(thread_get_instance()));
+      //send_free_buffers();
+      //send_temp_pres_hum();
+      //send_voltage();
+      //send_color();
 
       state = IDLE;
 
       //max44009_schedule_read_lux();
+      if (trigger == true) {
+        trigger = false;
+        otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
+        coap_dfu_trigger(NULL);
+      }
       break;
     }
     case UPDATE_TIME: {
@@ -558,6 +600,8 @@ int main(void) {
   // Init log
   log_init();
 
+  nrf_mem_init();
+
   // Init twi
   twi_init();
   adc_init();
@@ -584,6 +628,12 @@ int main(void) {
   nrf_gpio_cfg_output(MS5637_EN);
   nrf_gpio_cfg_output(SI7021_EN);
   nrf_gpio_cfg_output(PIR_EN);
+  nrf_gpio_cfg_output(LED_1);
+  nrf_gpio_cfg_output(LED_2);
+  nrf_gpio_cfg_output(LED_3);
+  nrf_gpio_pin_set(LED_1);
+  nrf_gpio_pin_set(LED_2);
+  nrf_gpio_pin_set(LED_3);
   nrf_gpio_pin_clear(MAX44009_EN);
   nrf_gpio_pin_set(PIR_EN);
   nrf_gpio_pin_set(MS5637_EN);
@@ -598,8 +648,8 @@ int main(void) {
 
   thread_init(&thread_config);
   otInstance* thread_instance = thread_get_instance();
-  thread_coap_client_init(thread_instance);
-  thread_process();
+  coap_dfu_init(thread_instance);
+  //thread_coap_client_init(thread_instance);
 
   // setup interrupt for pir
   if (!nrf_drv_gpiote_is_init()) {
@@ -654,6 +704,7 @@ int main(void) {
   APP_ERROR_CHECK(err_code);
 
   while (1) {
+    coap_dfu_process();
     thread_process();
     ntp_client_process(&ntp_client);
     state_step();
