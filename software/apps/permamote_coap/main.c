@@ -7,6 +7,7 @@
 #include "nrf_gpio.h"
 #include "nrf_delay.h"
 #include "nrf_twi_mngr.h"
+#include "nrf_drv_spi.h"
 #include "app_util_platform.h"
 #include "nordic_common.h"
 #include "app_timer.h"
@@ -17,7 +18,6 @@
 #include "nrf_power.h"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
-#include "nrf_log_default_backends.h"
 #include "nrf_dfu_utils.h"
 #include "coap_dfu.h"
 #include "background_dfu_state.h"
@@ -38,21 +38,14 @@
 #include "si7021.h"
 #include "tcs34725.h"
 
-#define COAP_SERVER_HOSTNAME "coap.permamote.com"
-#define NTP_SERVER_HOSTNAME "time.nist.gov"
-#define DNS_SERVER_ADDR "fdaa:bb:1::2"
-#define PARSE_ADDR "j2x.us/perm"
+#include "init.h"
+#include "callbacks.h"
+#include "config.h"
 
-#define DEFAULT_CHILD_TIMEOUT    2*60  /**< Thread child timeout [s]. */
-#define DEFAULT_POLL_PERIOD      60000 /**< Thread Sleepy End Device polling period when Asleep. [ms] */
-#define RECV_POLL_PERIOD         100   /**< Thread Sleepy End Device polling period when expecting response. [ms] */
-#define NUM_SLAAC_ADDRESSES      6     /**< Number of SLAAC addresses. */
-
-static bool trigger = true;
-static uint8_t device_id[6];
-static otNetifAddress m_slaac_addresses[6]; /**< Buffer containing addresses resolved by SLAAC */
-static struct ntp_client_t ntp_client;
-
+/*
+ * ntp and coap endpoint addresses, to be populated by DNS
+ * ========================================================
+ * */
 static otIp6Address m_ntp_address =
 {
     .mFields =
@@ -68,6 +61,10 @@ static otIp6Address m_peer_address =
     }
 };
 
+/*
+ * methods to print addresses
+ * ==========================
+ * */
 static void address_print(const otIp6Address *addr)
 {
     char ipstr[40];
@@ -84,7 +81,6 @@ static void address_print(const otIp6Address *addr)
     NRF_LOG_INFO("%s\r\n", (uint32_t)ipstr);
 }
 
-
 static void addresses_print(otInstance * aInstance)
 {
     for (const otNetifAddress *addr = otIp6GetUnicastAddresses(aInstance); addr; addr = addr->mNext)
@@ -93,17 +89,16 @@ static void addresses_print(otInstance * aInstance)
     }
 }
 
+/*
+ * Permamote specific declarations for packet structure, state machine
+ * ==========================
+ * */
 static permamote_packet_t packet = {
     .id = NULL,
     .id_len = 0,
     .data = NULL,
     .data_len = 0,
 };
-
-//static tcs34725_config_t tcs_config = {
-//  .int_time = TCS34725_INTEGRATIONTIME_154MS,
-//  .gain = TCS34725_GAIN_16X,
-//};
 
 typedef enum {
   IDLE = 0,
@@ -114,21 +109,19 @@ typedef enum {
   UPDATE_TIME,
 } permamote_state_t;
 
-static permamote_state_t state = IDLE;
-static float sensed_lux;
-static bool do_reset = false;
-
-#define DISCOVER_PERIOD     APP_TIMER_TICKS(5*60*1000)
-#define SENSOR_PERIOD       APP_TIMER_TICKS(10*1000)
-#define PIR_BACKOFF_PERIOD  APP_TIMER_TICKS(2*60*1000)
-#define PIR_DELAY           APP_TIMER_TICKS(10*1000)
-#define RTC_UPDATE_FIRST    APP_TIMER_TICKS(4*1000)
-
 APP_TIMER_DEF(discover_send_timer);
 APP_TIMER_DEF(periodic_sensor_timer);
 APP_TIMER_DEF(pir_backoff);
 APP_TIMER_DEF(pir_delay);
 APP_TIMER_DEF(rtc_update_first);
+
+static bool trigger = true;
+static uint8_t device_id[6];
+static otNetifAddress m_slaac_addresses[6]; /**< Buffer containing addresses resolved by SLAAC */
+static struct ntp_client_t ntp_client;
+static permamote_state_t state = IDLE;
+static float sensed_lux;
+static bool do_reset = false;
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
@@ -165,7 +158,7 @@ static void dns_response_handler(void         * p_context,
     memcpy(p_context, p_resolved_address, sizeof(otIp6Address));
 }
 
-static inline void rtc_update_callback() {
+void rtc_update_callback() {
   state = UPDATE_TIME;
 }
 
@@ -209,7 +202,7 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
     }
 }
 
-static inline void discover_send_callback() {
+void discover_send_callback(void* m) {
   state = SEND_DISCOVERY;
 }
 
@@ -320,7 +313,7 @@ static void send_color(void) {
   tcs34725_read_channels_agc(color_read_callback);
 }
 
-static void periodic_sensor_read_callback() {
+void periodic_sensor_read_callback(void* m) {
   ab1815_time_t time;
   time = unix_to_ab1815(packet.timestamp);
   //NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
@@ -336,12 +329,12 @@ static void periodic_sensor_read_callback() {
   state = SEND_PERIODIC;
 }
 
-static inline void light_sensor_read_callback(float lux) {
+void light_sensor_read_callback(float lux) {
   sensed_lux = lux;
   state = SEND_LIGHT;
 }
 
-static void pir_backoff_callback() {
+void pir_backoff_callback(void* m) {
   // turn on and wait for stable
   NRF_LOG_INFO("TURN ON PIR");
 
@@ -351,13 +344,13 @@ static void pir_backoff_callback() {
 
 }
 
-static void pir_enable_callback() {
+void pir_enable_callback(void* m) {
   // enable interrupt
   NRF_LOG_INFO("TURN ON PIR callback");
   nrf_drv_gpiote_in_event_enable(PIR_OUT, 1);
 }
 
-static void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
+void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
   // disable interrupt and turn off PIR
   NRF_LOG_INFO("TURN off PIR ");
   nrf_drv_gpiote_in_event_disable(PIR_OUT);
@@ -370,81 +363,12 @@ static void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity
   state = SEND_MOTION;
 }
 
-static void light_interrupt_callback(void) {
+void light_interrupt_callback(void) {
     max44009_schedule_read_lux();
 }
 
 /**@brief Function for initializing the nrf log module.
  */
-static void log_init(void)
-{
-    ret_code_t err_code = NRF_LOG_INIT(NULL);
-    APP_ERROR_CHECK(err_code);
-
-    NRF_LOG_DEFAULT_BACKENDS_INIT();
-}
-
-static void timer_init(void)
-{
-  uint32_t err_code = app_timer_init();
-  APP_ERROR_CHECK(err_code);
-
-  err_code = app_timer_create(&discover_send_timer, APP_TIMER_MODE_REPEATED, discover_send_callback);
-  APP_ERROR_CHECK(err_code);
-  err_code = app_timer_start(discover_send_timer, DISCOVER_PERIOD, NULL);
-  APP_ERROR_CHECK(err_code);
-
-  err_code = app_timer_create(&periodic_sensor_timer, APP_TIMER_MODE_REPEATED, periodic_sensor_read_callback);
-  APP_ERROR_CHECK(err_code);
-  err_code = app_timer_start(periodic_sensor_timer, SENSOR_PERIOD, NULL);
-  APP_ERROR_CHECK(err_code);
-
-  err_code = app_timer_create(&rtc_update_first, APP_TIMER_MODE_SINGLE_SHOT, rtc_update_callback);
-  APP_ERROR_CHECK(err_code);
-
-  err_code = app_timer_create(&pir_backoff, APP_TIMER_MODE_SINGLE_SHOT, pir_backoff_callback);
-  APP_ERROR_CHECK(err_code);
-
-  err_code = app_timer_create(&pir_delay, APP_TIMER_MODE_SINGLE_SHOT, pir_enable_callback);
-  APP_ERROR_CHECK(err_code);
-}
-
-
-void twi_init(void) {
-  ret_code_t err_code;
-
-  const nrf_drv_twi_config_t twi_config = {
-    .scl                = I2C_SCL,
-    .sda                = I2C_SDA,
-    .frequency          = NRF_TWI_FREQ_400K,
-  };
-
-  err_code = nrf_twi_mngr_init(&twi_mngr_instance, &twi_config);
-  APP_ERROR_CHECK(err_code);
-}
-
-void saadc_handler(nrf_drv_saadc_evt_t const * p_event) {
-}
-
-void adc_init(void) {
-  // set up voltage ADC
-  nrf_saadc_channel_config_t primary_channel_config =
-    NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN5);
-  primary_channel_config.burst = NRF_SAADC_BURST_ENABLED;
-
-  nrf_saadc_channel_config_t solar_channel_config =
-    NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN6);
-
-  nrf_saadc_channel_config_t secondary_channel_config =
-    NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN7);
-
-  nrf_drv_saadc_init(NULL, saadc_handler);
-
-  nrf_drv_saadc_channel_init(0, &primary_channel_config);
-  nrf_drv_saadc_channel_init(1, &solar_channel_config);
-  nrf_drv_saadc_channel_init(2, &secondary_channel_config);
-  nrf_drv_saadc_calibrate_offset();
-}
 
 //void app_error_fault_handler(uint32_t error_code, __attribute__ ((unused)) uint32_t line_num, __attribute__ ((unused)) uint32_t info) {
 //  NRF_LOG_INFO("App error: %d", error_code);
@@ -540,9 +464,18 @@ void state_step(void) {
 
       //max44009_schedule_read_lux();
       if (trigger == true) {
-        trigger = false;
+        //trigger = false;
+        background_dfu_diagnostic_t dfu_state;
+        coap_dfu_diagnostic_get(&dfu_state);
+        NRF_LOG_INFO("state: %d", dfu_state.state);
+        NRF_LOG_INFO("prev state: %d", dfu_state.prev_state);
+        NRF_LOG_INFO("trigger: %d", dfu_state.triggers_received);
         otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
-        coap_dfu_trigger(NULL);
+        int result = coap_dfu_trigger(NULL);
+        NRF_LOG_INFO("result: %d", result);
+        //if (result == NRF_ERROR_INVALID_STATE) {
+        //    coap_dfu_reset_state();
+        //}
       }
       break;
     }
@@ -591,6 +524,33 @@ void state_step(void) {
   }
 }
 
+void timer_init(void)
+{
+  uint32_t err_code = app_timer_init();
+  APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&discover_send_timer, APP_TIMER_MODE_REPEATED, discover_send_callback);
+  APP_ERROR_CHECK(err_code);
+  err_code = app_timer_start(discover_send_timer, DISCOVER_PERIOD, NULL);
+  APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&periodic_sensor_timer, APP_TIMER_MODE_REPEATED, periodic_sensor_read_callback);
+  APP_ERROR_CHECK(err_code);
+  err_code = app_timer_start(periodic_sensor_timer, SENSOR_PERIOD, NULL);
+  APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&rtc_update_first, APP_TIMER_MODE_SINGLE_SHOT, rtc_update_callback);
+  APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&pir_backoff, APP_TIMER_MODE_SINGLE_SHOT, pir_backoff_callback);
+  APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&pir_delay, APP_TIMER_MODE_SINGLE_SHOT, pir_enable_callback);
+  APP_ERROR_CHECK(err_code);
+}
+
+
+
 int main(void) {
   // init softdevice
   //nrf_sdh_enable_request();
@@ -603,7 +563,7 @@ int main(void) {
   nrf_mem_init();
 
   // Init twi
-  twi_init();
+  twi_init(&twi_mngr_instance);
   adc_init();
 
   // init periodic timers
@@ -623,83 +583,12 @@ int main(void) {
     .autocommission = true,
   };
 
-  // Turn on power gate
-  nrf_gpio_cfg_output(MAX44009_EN);
-  nrf_gpio_cfg_output(MS5637_EN);
-  nrf_gpio_cfg_output(SI7021_EN);
-  nrf_gpio_cfg_output(PIR_EN);
-  nrf_gpio_cfg_output(LED_1);
-  nrf_gpio_cfg_output(LED_2);
-  nrf_gpio_cfg_output(LED_3);
-  nrf_gpio_pin_set(LED_1);
-  nrf_gpio_pin_set(LED_2);
-  nrf_gpio_pin_set(LED_3);
-  nrf_gpio_pin_clear(MAX44009_EN);
-  nrf_gpio_pin_set(PIR_EN);
-  nrf_gpio_pin_set(MS5637_EN);
-  nrf_gpio_pin_set(SI7021_EN);
-
-  nrf_gpio_cfg_output(LI2D_CS);
-  //nrf_gpio_cfg_output(SPI_MISO);
-  //nrf_gpio_cfg_output(SPI_MOSI);
-  nrf_gpio_pin_set(LI2D_CS);
-  //nrf_gpio_pin_set(SPI_MISO);
-  //nrf_gpio_pin_set(SPI_MOSI);
-
   thread_init(&thread_config);
   otInstance* thread_instance = thread_get_instance();
   coap_dfu_init(thread_instance);
   //thread_coap_client_init(thread_instance);
 
-  // setup interrupt for pir
-  if (!nrf_drv_gpiote_is_init()) {
-    nrf_drv_gpiote_init();
-  }
-
-  if (!nrf_drv_gpiote_is_init()) {
-    nrf_drv_gpiote_init();
-  }
-  nrf_drv_gpiote_in_config_t pir_gpio_config = GPIOTE_CONFIG_IN_SENSE_LOTOHI(1);
-  pir_gpio_config.pull = NRF_GPIO_PIN_PULLDOWN;
-  nrf_drv_gpiote_in_init(PIR_OUT, &pir_gpio_config, pir_interrupt_callback);
-
-  // setup vbat sense
-  nrf_gpio_cfg_input(VBAT_OK, NRF_GPIO_PIN_NOPULL);
-
-  ab1815_init(&spi_instance);
-  ab1815_control_t ab1815_config;
-  ab1815_get_config(&ab1815_config);
-  ab1815_config.auto_rst = 1;
-  ab1815_set_config(ab1815_config);
-
-
-  // setup light sensor
-  const max44009_config_t config = {
-    .continuous = 0,
-    .manual = 0,
-    .cdr = 0,
-    .int_time = 10,
-  };
-
-  ms5637_init(&twi_mngr_instance, osr_4096);
-
-  si7021_init(&twi_mngr_instance);
-
-  max44009_init(&twi_mngr_instance);
-
-  tcs34725_init(&twi_mngr_instance);
-
-  max44009_set_read_lux_callback(light_sensor_read_callback);
-  max44009_set_interrupt_callback(light_interrupt_callback);
-  max44009_config(config);
-  max44009_schedule_read_lux();
-  max44009_enable_interrupt();
-
-  ab1815_time_t alarm_time = {.hours = 8};
-  ab1815_set_alarm(alarm_time, ONCE_PER_DAY, (ab1815_alarm_callback*) rtc_update_callback);
-  ab1815_set_watchdog(1, 31, _1_4HZ);
-
-  nrf_gpio_pin_clear(PIR_EN);
+  sensors_init(&twi_mngr_instance, &spi_instance);
   uint32_t err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
   APP_ERROR_CHECK(err_code);
 
