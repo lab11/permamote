@@ -84,8 +84,6 @@ int sensors_init(const nrf_twi_mngr_t* twi_mngr_instance, const nrf_drv_spi_t* s
   max44009_set_read_lux_callback(light_sensor_read_callback);
   max44009_set_interrupt_callback(light_interrupt_callback);
   max44009_config(config);
-  max44009_schedule_read_lux();
-  max44009_enable_interrupt();
 
   return 0;
 }

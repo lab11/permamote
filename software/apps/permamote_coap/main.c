@@ -46,20 +46,18 @@
  * ntp and coap endpoint addresses, to be populated by DNS
  * ========================================================
  * */
-static otIp6Address m_ntp_address =
+static const otIp6Address m_unspecified_ipv6 =
 {
     .mFields =
     {
         .m8 = {0}
     }
 };
-static otIp6Address m_peer_address =
-{
-    .mFields =
-    {
-        .m8 = {0}
-    }
-};
+
+static otIp6Address m_ntp_address;
+static otIp6Address m_peer_address;
+#define NUM_ADDRESSES 2
+static otIp6Address* addresses[NUM_ADDRESSES] = {&m_ntp_address, &m_peer_address};
 
 /*
  * methods to print addresses
@@ -102,6 +100,8 @@ static permamote_packet_t packet = {
 
 typedef enum {
   IDLE = 0,
+  CONNECTED,
+  ADDRESSES_RESOLVED,
   SEND_LIGHT,
   SEND_MOTION,
   SEND_PERIODIC,
@@ -113,7 +113,6 @@ APP_TIMER_DEF(discover_send_timer);
 APP_TIMER_DEF(periodic_sensor_timer);
 APP_TIMER_DEF(pir_backoff);
 APP_TIMER_DEF(pir_delay);
-APP_TIMER_DEF(rtc_update_first);
 
 static bool trigger = true;
 static uint8_t device_id[6];
@@ -129,6 +128,10 @@ static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
 void coap_dfu_handle_error(void)
 {
     coap_dfu_reset_state();
+}
+
+void rtc_update_callback(void) {
+  state = UPDATE_TIME;
 }
 
 void ntp_recv_callback(struct ntp_client_t* client) {
@@ -156,10 +159,18 @@ static void dns_response_handler(void         * p_context,
 
     NRF_LOG_INFO("Successfully resolved address");
     memcpy(p_context, p_resolved_address, sizeof(otIp6Address));
-}
 
-void rtc_update_callback() {
-  state = UPDATE_TIME;
+    // check to see if all addresses have been resolved
+    bool addresses_resolved = true;
+    for(uint8_t i = 0; i < NUM_ADDRESSES; i++) {
+      if (otIp6IsAddressEqual(addresses[i], &m_unspecified_ipv6)) {
+        addresses_resolved = false;
+        break;
+      }
+    }
+    if(addresses_resolved) {
+      state = ADDRESSES_RESOLVED;
+    }
 }
 
 void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * p_context) {
@@ -181,24 +192,8 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
     }
     if (flags & OT_CHANGED_IP6_ADDRESS_ADDED && otThreadGetDeviceRole(p_context) == 2) {
       NRF_LOG_INFO("We have internet connectivity!");
-      otLinkSetPollPeriod(p_context, RECV_POLL_PERIOD);
-
-      // resolve dns
-      thread_dns_hostname_resolve(p_context,
-                                  DNS_SERVER_ADDR,
-                                  NTP_SERVER_HOSTNAME,
-                                  dns_response_handler,
-                                  (void*) &m_ntp_address);
-      thread_dns_hostname_resolve(p_context,
-                                  DNS_SERVER_ADDR,
-                                  COAP_SERVER_HOSTNAME,
-                                  dns_response_handler,
-                                  (void*) &m_peer_address);
-
-      int err_code = app_timer_start(rtc_update_first, RTC_UPDATE_FIRST, NULL);
-      APP_ERROR_CHECK(err_code);
-
       addresses_print(p_context);
+      state = CONNECTED;
     }
 }
 
@@ -317,13 +312,13 @@ void periodic_sensor_read_callback(void* m) {
   ab1815_time_t time;
   time = unix_to_ab1815(packet.timestamp);
   //NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
-  if(time.years == 0) {
-    NRF_LOG_INFO("VERY INVALID TIME");
-    int err_code = app_timer_start(rtc_update_first, RTC_UPDATE_FIRST, NULL);
-    APP_ERROR_CHECK(err_code);
-  }
   if (otThreadGetDeviceRole(thread_get_instance()) == 2) {
     ab1815_tickle_watchdog();
+  }
+  if(time.years == 0) {
+    NRF_LOG_INFO("VERY INVALID TIME");
+    state = UPDATE_TIME;
+    return;
   }
 
   state = SEND_PERIODIC;
@@ -427,7 +422,35 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info) {
 }
 
 void state_step(void) {
+  otInstance * thread_instance = thread_get_instance();
   switch(state) {
+    case CONNECTED:{
+      otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
+
+      // resolve dns
+      thread_dns_hostname_resolve(thread_instance,
+                                  DNS_SERVER_ADDR,
+                                  NTP_SERVER_HOSTNAME,
+                                  dns_response_handler,
+                                  (void*) &m_ntp_address);
+      thread_dns_hostname_resolve(thread_instance,
+                                  DNS_SERVER_ADDR,
+                                  COAP_SERVER_HOSTNAME,
+                                  dns_response_handler,
+                                  (void*) &m_peer_address);
+      state = IDLE;
+      break;
+    }
+    case ADDRESSES_RESOLVED: {
+      // enable interrupts for pir, light sensor
+      uint32_t err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
+      APP_ERROR_CHECK(err_code);
+      max44009_schedule_read_lux();
+      max44009_enable_interrupt();
+
+      state = UPDATE_TIME;
+      break;
+    }
     case SEND_LIGHT:{
       float upper = sensed_lux + sensed_lux * 0.05;
       float lower = sensed_lux - sensed_lux * 0.05;
@@ -470,7 +493,8 @@ void state_step(void) {
         NRF_LOG_INFO("state: %d", dfu_state.state);
         NRF_LOG_INFO("prev state: %d", dfu_state.prev_state);
         NRF_LOG_INFO("trigger: %d", dfu_state.triggers_received);
-        otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
+
+        otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
         int result = coap_dfu_trigger(NULL);
         NRF_LOG_INFO("result: %d", result);
         //if (result == NRF_ERROR_INVALID_STATE) {
@@ -482,14 +506,14 @@ void state_step(void) {
     case UPDATE_TIME: {
       NRF_LOG_INFO("RTC UPDATE");
       NRF_LOG_INFO("sent ntp poll!");
-      int error = ntp_client_begin(thread_get_instance(), &ntp_client, &m_ntp_address, 123, 127, ntp_recv_callback, NULL);
+      int error = ntp_client_begin(thread_instance, &ntp_client, &m_ntp_address, 123, 127, ntp_recv_callback, NULL);
       NRF_LOG_INFO("error: %d", error);
       if (error) {
         memset(&ntp_client, 0, sizeof(struct ntp_client_t));
-        otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
+        otLinkSetPollPeriod(thread_instance, DEFAULT_POLL_PERIOD);
         return;
       }
-      otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
+      otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
 
       state = IDLE;
       break;
@@ -539,9 +563,6 @@ void timer_init(void)
   err_code = app_timer_start(periodic_sensor_timer, SENSOR_PERIOD, NULL);
   APP_ERROR_CHECK(err_code);
 
-  err_code = app_timer_create(&rtc_update_first, APP_TIMER_MODE_SINGLE_SHOT, rtc_update_callback);
-  APP_ERROR_CHECK(err_code);
-
   err_code = app_timer_create(&pir_backoff, APP_TIMER_MODE_SINGLE_SHOT, pir_backoff_callback);
   APP_ERROR_CHECK(err_code);
 
@@ -587,10 +608,11 @@ int main(void) {
   otInstance* thread_instance = thread_get_instance();
   coap_dfu_init(thread_instance);
   //thread_coap_client_init(thread_instance);
+  for(uint8_t i = 0; i < NUM_ADDRESSES; i++) {
+    *(addresses[i]) = m_unspecified_ipv6;
+  }
 
   sensors_init(&twi_mngr_instance, &spi_instance);
-  uint32_t err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
-  APP_ERROR_CHECK(err_code);
 
   while (1) {
     coap_dfu_process();
