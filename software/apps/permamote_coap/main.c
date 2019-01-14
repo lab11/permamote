@@ -91,6 +91,19 @@ static void addresses_print(otInstance * aInstance)
  * Permamote specific declarations for packet structure, state machine
  * ==========================
  * */
+typedef struct {
+  uint8_t voltage;
+  uint8_t temp_pres_hum;
+  uint8_t color;
+} permamote_sensor_period_t;
+uint32_t period_count = 0;
+
+static permamote_sensor_period_t sensor_period = {
+  .voltage = VOLTAGE_PERIOD,
+  .temp_pres_hum = TPH_PERIOD,
+  .color = COLOR_PERIOD,
+};
+
 static permamote_packet_t packet = {
     .id = NULL,
     .id_len = 0,
@@ -114,7 +127,7 @@ APP_TIMER_DEF(periodic_sensor_timer);
 APP_TIMER_DEF(pir_backoff);
 APP_TIMER_DEF(pir_delay);
 
-static bool trigger = true;
+static bool trigger = false;
 static uint8_t device_id[6];
 static otNetifAddress m_slaac_addresses[6]; /**< Buffer containing addresses resolved by SLAAC */
 static struct ntp_client_t ntp_client;
@@ -311,15 +324,15 @@ static void send_color(void) {
 void periodic_sensor_read_callback(void* m) {
   ab1815_time_t time;
   time = unix_to_ab1815(packet.timestamp);
-  //NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
+  NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
   if (otThreadGetDeviceRole(thread_get_instance()) == 2) {
     ab1815_tickle_watchdog();
   }
-  if(time.years == 0) {
-    NRF_LOG_INFO("VERY INVALID TIME");
-    state = UPDATE_TIME;
-    return;
-  }
+  //if(time.years == 0) {
+  //  NRF_LOG_INFO("VERY INVALID TIME");
+  //  state = UPDATE_TIME;
+  //  return;
+  //}
 
   state = SEND_PERIODIC;
 }
@@ -478,10 +491,17 @@ void state_step(void) {
     }
     case SEND_PERIODIC: {
       //NRF_LOG_INFO("poll period: %d", otLinkGetPollPeriod(thread_get_instance()));
+      period_count ++;
+      if (period_count % sensor_period.voltage == 0) {
+        send_voltage();
+      }
+      if (period_count % sensor_period.temp_pres_hum == 0) {
+        send_temp_pres_hum();
+      }
+      if (period_count % sensor_period.color == 0) {
+        send_color();
+      }
       //send_free_buffers();
-      //send_temp_pres_hum();
-      //send_voltage();
-      //send_color();
 
       state = IDLE;
 
