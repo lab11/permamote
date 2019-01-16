@@ -119,9 +119,9 @@ static void color_sensor_read_callback(uint16_t red, uint16_t green, uint16_t bl
 
 static void read_timer_callback (void* p_context) {
   // turn on and configure color sensor
-  nrf_gpio_pin_clear(ISL29125_EN);
-  isl29125_interrupt_enable();
-  isl29125_power_on();
+  //nrf_gpio_pin_clear(ISL29125_EN);
+  //isl29125_interrupt_enable();
+  //isl29125_power_on();
 
   max44009_schedule_read_lux();
 
@@ -284,7 +284,7 @@ int main(void) {
   const isl29125_int_config_t color_int_config = {
     .int_conversion_done = 1,
   };
-  isl29125_init(&twi_mngr_instance, color_config, color_int_config, color_sensor_read_callback, color_sensor_int_handler);
+  //isl29125_init(&twi_mngr_instance, color_config, color_int_config, color_sensor_read_callback, color_sensor_int_handler);
 
   // set up voltage ADC
   nrf_saadc_channel_config_t primary_channel_config =
