@@ -27,7 +27,7 @@ var parse_advertisement = function (advertisement, cb) {
                         var sequence_num =  sensor_data.readUInt32LE(14);
 
                         var out = {
-                            device: 'Permamote',
+                            device: 'Permamote-ble',
                             light_lux: light,
                             light_red: color_red,
                             light_green: color_green,
