@@ -1,0 +1,4 @@
+dataset:
+  name: SetupA
+  filename: ../enhants/numpy_arrays/SetupA.npy
+  resolution_s: 30
