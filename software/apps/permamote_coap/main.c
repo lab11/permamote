@@ -127,7 +127,7 @@ APP_TIMER_DEF(periodic_sensor_timer);
 APP_TIMER_DEF(pir_backoff);
 APP_TIMER_DEF(pir_delay);
 
-static bool trigger = false;
+static bool trigger = true;
 static uint8_t device_id[6];
 static otNetifAddress m_slaac_addresses[6]; /**< Buffer containing addresses resolved by SLAAC */
 static struct ntp_client_t ntp_client;
@@ -507,7 +507,7 @@ void state_step(void) {
 
       //max44009_schedule_read_lux();
       if (trigger == true) {
-        //trigger = false;
+        trigger = false;
         background_dfu_diagnostic_t dfu_state;
         coap_dfu_diagnostic_get(&dfu_state);
         NRF_LOG_INFO("state: %d", dfu_state.state);
@@ -633,6 +633,10 @@ int main(void) {
   }
 
   sensors_init(&twi_mngr_instance, &spi_instance);
+
+  if(false) { // Toggle green LED
+    nrf_gpio_pin_clear(LED_3);
+  }
 
   while (1) {
     coap_dfu_process();
