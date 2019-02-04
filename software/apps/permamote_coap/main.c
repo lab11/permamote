@@ -328,11 +328,11 @@ void periodic_sensor_read_callback(void* m) {
   if (otThreadGetDeviceRole(thread_get_instance()) == 2) {
     ab1815_tickle_watchdog();
   }
-  //if(time.years == 0) {
-  //  NRF_LOG_INFO("VERY INVALID TIME");
-  //  state = UPDATE_TIME;
-  //  return;
-  //}
+  if(time.years == 0) {
+    NRF_LOG_INFO("VERY INVALID TIME");
+    state = UPDATE_TIME;
+    return;
+  }
 
   state = SEND_PERIODIC;
 }
@@ -461,7 +461,7 @@ void state_step(void) {
       max44009_schedule_read_lux();
       max44009_enable_interrupt();
 
-      state = UPDATE_TIME;
+      //state = UPDATE_TIME;
       break;
     }
     case SEND_LIGHT:{
