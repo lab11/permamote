@@ -127,7 +127,7 @@ APP_TIMER_DEF(periodic_sensor_timer);
 APP_TIMER_DEF(pir_backoff);
 APP_TIMER_DEF(pir_delay);
 
-static bool trigger = false;
+static bool trigger = true;
 static uint8_t device_id[6];
 static otNetifAddress m_slaac_addresses[6]; /**< Buffer containing addresses resolved by SLAAC */
 static struct ntp_client_t ntp_client;
@@ -328,11 +328,11 @@ void periodic_sensor_read_callback(void* m) {
   if (otThreadGetDeviceRole(thread_get_instance()) == 2) {
     ab1815_tickle_watchdog();
   }
-  //if(time.years == 0) {
-  //  NRF_LOG_INFO("VERY INVALID TIME");
-  //  state = UPDATE_TIME;
-  //  return;
-  //}
+  if(time.years == 0) {
+    NRF_LOG_INFO("VERY INVALID TIME");
+    state = UPDATE_TIME;
+    return;
+  }
 
   state = SEND_PERIODIC;
 }
@@ -461,7 +461,7 @@ void state_step(void) {
       max44009_schedule_read_lux();
       max44009_enable_interrupt();
 
-      state = UPDATE_TIME;
+      //state = UPDATE_TIME;
       break;
     }
     case SEND_LIGHT:{
@@ -507,7 +507,7 @@ void state_step(void) {
 
       //max44009_schedule_read_lux();
       if (trigger == true) {
-        //trigger = false;
+        trigger = false;
         background_dfu_diagnostic_t dfu_state;
         coap_dfu_diagnostic_get(&dfu_state);
         NRF_LOG_INFO("state: %d", dfu_state.state);

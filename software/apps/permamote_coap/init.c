@@ -6,6 +6,7 @@
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
+#include "nrf_delay.h"
 
 #include "permamote.h"
 #include "ab1815.h"
@@ -37,6 +38,8 @@ int sensors_init(const nrf_twi_mngr_t* twi_mngr_instance, const nrf_drv_spi_t* s
   nrf_gpio_pin_set(LI2D_CS);
   nrf_gpio_pin_set(SPI_MISO);
   nrf_gpio_pin_set(SPI_MOSI);
+
+  nrf_delay_ms(5);
 
   // setup interrupt for pir
   if (!nrf_drv_gpiote_is_init()) {
