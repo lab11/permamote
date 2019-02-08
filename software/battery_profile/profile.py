@@ -3,12 +3,19 @@ import os
 import time
 from keithley2600 import Keithley2600
 import numpy as np
+import argparse
+import arrow
+
+parser = argparse.ArgumentParser(description="Generate voltage curve for LTO battery")
+parser.add_argument('capacity', metavar='C', type=str, help="Current, in mAh")
+parser.add_argument('current', metavar='I', type=float, help="Current, in amps")
+args = parser.parse_args()
 
 instrument_serial = 'USB0::1510::9746::4309410\x00::0::INSTR'
 battery_capacity_mAh= 10E-3
 upper_voltage = 2.7
 lower_voltage = 1.4
-discharge_current = 1E-3
+discharge_current = args.current
 measurements = []
 
 k = Keithley2600(instrument_serial)
@@ -54,9 +61,9 @@ while disconnect_voltage > lower_voltage:
     current = k.smua.measure.i()
     voltage = k.smua.measure.v()
 
-    measurements.append([time.time(), current, voltage, disconnect_voltage])
+    measurements.append([arrow.format(arrow.utcnow()), current, voltage, disconnect_voltage])
     print(measurements[-1])
     time.sleep(30)
 
 k.smua.source.output = k.smua.OUTPUT_HIGH_Z
-np.save('measurements.npy', np.array(measurements))
+np.save('measurements_' + str(round(float(discharge_current) / args.capacity, 2)) + 'C.npy', np.array(measurements))
