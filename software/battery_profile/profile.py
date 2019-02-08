@@ -20,6 +20,7 @@ measurements = []
 
 k = Keithley2600(instrument_serial)
 k.smua.reset()
+k.smua.sense = k.smua.SENSE_REMOTE
 k.smua.source.func = k.smua.OUTPUT_DCVOLTS
 k.smua.measure.autorangei = k.smua.AUTORANGE_ON
 k.smua.measure.nplc = 5
@@ -54,9 +55,9 @@ k.smua.source.output = k.smua.OUTPUT_ON
 disconnect_voltage = voltage
 while disconnect_voltage > lower_voltage:
     #get OC voltage
-    k.smua.source.leveli = 0
+    k.smua.source.output = k.smua.OUTPUT_HIGH_Z
     disconnect_voltage = k.smua.measure.v()
-    k.smua.source.leveli = -discharge_current
+    k.smua.source.output = k.smua.OUTPUT_ON
     #get connected v/c
     current = k.smua.measure.i()
     voltage = k.smua.measure.v()
