@@ -507,7 +507,7 @@ void state_step(void) {
 
       //max44009_schedule_read_lux();
       if (trigger == true) {
-        trigger = false;
+        //trigger = false;
         background_dfu_diagnostic_t dfu_state;
         coap_dfu_diagnostic_get(&dfu_state);
         NRF_LOG_INFO("state: %d", dfu_state.state);
@@ -517,9 +517,9 @@ void state_step(void) {
         otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
         int result = coap_dfu_trigger(NULL);
         NRF_LOG_INFO("result: %d", result);
-        //if (result == NRF_ERROR_INVALID_STATE) {
-        //    coap_dfu_reset_state();
-        //}
+        if (result == NRF_ERROR_INVALID_STATE) {
+           coap_dfu_reset_state();
+        }
       }
       break;
     }
