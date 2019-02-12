@@ -55,9 +55,9 @@ k.smua.source.output = k.smua.OUTPUT_ON
 disconnect_voltage = voltage
 while disconnect_voltage > lower_voltage:
     #get OC voltage
-    k.smua.source.output = k.smua.OUTPUT_HIGH_Z
+    k.smua.source.leveli = 0
     disconnect_voltage = k.smua.measure.v()
-    k.smua.source.output = k.smua.OUTPUT_ON
+    k.smua.source.leveli = -discharge_current
     #get connected v/c
     current = k.smua.measure.i()
     voltage = k.smua.measure.v()
