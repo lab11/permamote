@@ -10,10 +10,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 
-parser = argparse.ArgumentParser(description="Process and plot voltage curve for LTO battery")
-parser.add_argument('capacity', metavar='C', type=float, help="Battery capacity, in Ah")
-args = parser.parse_args()
-
 fnames = glob.glob('measurements*.npy')#args.fname
 
 plt.figure()
@@ -32,12 +28,13 @@ for fname in fnames:
         last = x
     print(np.array(c_v[-1]))
     c_v = np.array(c_v)
-    plt.plot(100*c_v[:,0]/args.capacity, c_v[:,1], label=fname.split("_")[-1].split(".npy")[0])
+    plt.plot(c_v[:,0] * 1E3, c_v[:,2], label=fname.split("_")[-1].split(".npy")[0])
     #plt.plot(curve[:,3].astype('float'))
 lgd = ax.legend()
 plt.grid(True, 'both', 'both')
-ml = MultipleLocator(5)
+ml = MultipleLocator(1)
 ax.xaxis.set_minor_locator(ml)
+#ax.axhline(y=2.35, color='r')
 plt.ylabel('Cell Voltage')
-plt.xlabel('Depth of Discharge (%)')
+plt.xlabel('Capacity Discharged (mAh)')
 plt.savefig('plot.pdf', format='pdf')
