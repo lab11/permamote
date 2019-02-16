@@ -4,5 +4,10 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"simple_thread.h": "c",
+			"nrf_fstorage.h": "c"
+		}
+	}
 }
