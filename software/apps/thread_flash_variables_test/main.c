@@ -23,45 +23,30 @@
 #define DEFAULT_POLL_PERIOD      1000                                       /**< Thread Sleepy End Device polling period when MQTT-SN Asleep. [ms] */
 #define NUM_SLAAC_ADDRESSES      4                                          /**< Number of SLAAC addresses. */
 
-// typedef int mutable_integer_parameter_t;
-
-// NRF_SECTION_DEF(mutable_flash_section, mutable_integer_parameter_t);
-
 /**@brief Function for initializing the nrf log module.
  */
 static void log_init(void)
 {
     ret_code_t err_code = NRF_LOG_INIT(NULL);
     APP_ERROR_CHECK(err_code);
-
     NRF_LOG_DEFAULT_BACKENDS_INIT();
 }
-
 void callback(nrf_fstorage_evt_t * p_evt) {
     /* do nothing */
 }
+
 NRF_FSTORAGE_DEF(nrf_fstorage_t my_instance) =
 {
     .evt_handler    = callback,
-    .start_addr     = 0xE16C,
-    .end_addr       = 0xE17C, // 0x8000 - 0x10, just to be safe
+    .start_addr     = 0xE4EC,
+    .end_addr       = 0xF4EC,
 };
 
-//const int c_int_outside = 1;
+const uint32_t flash_buffer[4] = {999, 0, 0, 0};
 
 int main(void) {
-
-    int int_inside_main = 1;
-
     nrf_power_dcdcen_set(1);
-
     log_init();
-    
-    NRF_LOG_INFO("int_inside_main address: %x", &int_inside_main);
-    //NRF_LOG_INFO("const int outside main address: %x", &c_int_outside);
-
-    NRF_LOG_INFO("Reading data at location 0x10001014: %x", *((uint16_t*) 0x10001014)); // should be 0x8000
-
     
     nrf_fstorage_init(
         &my_instance,       /* You fstorage instance, previously defined. */
@@ -69,11 +54,16 @@ int main(void) {
         NULL                /* Optional parameter, backend-dependant. */
     );
 
-    static uint32_t number = 123;
+    const uint32_t *buffer_start_address = &(flash_buffer[0]);
+
+    NRF_LOG_INFO("Buffer start address is %x", buffer_start_address);
+    NRF_LOG_INFO("Buffer first element is %u", flash_buffer[0]);
+    NRF_LOG_INFO("Buffer first element is: %u", *buffer_start_address);
+    static uint32_t number = 88;
 
     ret_code_t rc = nrf_fstorage_write(
         &my_instance,   /* The instance to use. */
-        0xE16C,     /* The address in flash where to store the data. */
+        (uint32_t) buffer_start_address,     /* The address in flash where to store the data. */
         &number,        /* A pointer to the data. */
         sizeof(number), /* Lenght of the data, in bytes. */
         NULL            /* Optional parameter, backend-dependent. */
@@ -91,4 +81,34 @@ int main(void) {
         /* Handle error.*/
         NRF_LOG_INFO("Failure");
     }
+
+    NRF_LOG_INFO("Buffer first element is now %u", flash_buffer[0]);
+    NRF_LOG_INFO("Buffer first element is: %u", *buffer_start_address);
+
+    static uint32_t retrieve_number;
+    NRF_LOG_INFO("Retrieval value starts as: %u", retrieve_number);
+
+    rc = nrf_fstorage_read(
+        &my_instance,   /* The instance to use. */
+        (uint32_t) buffer_start_address,     /* The address in flash where to read data from. */
+        &retrieve_number,        /* A buffer to copy the data into. */
+        sizeof(uint32_t)  /* Lenght of the data, in bytes. */
+    );
+
+    if (rc == NRF_SUCCESS)
+    {
+        /* The operation was accepted.
+        Upon completion, the NRF_FSTORAGE_READ_RESULT event
+        is sent to the callback function registered by the instance.
+        Once the event is received, it is possible to read the contents of 'number'. */
+        NRF_LOG_INFO("Success");
+    }
+    else
+    {
+        /* Handle error.*/
+        NRF_LOG_INFO("Failure");
+    }
+
+    NRF_LOG_INFO("Retrieval value is now: %u", retrieve_number);
+    NRF_LOG_INFO("Buffer first element is: %u", buffer_start_address);
 }
