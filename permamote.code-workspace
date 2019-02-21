@@ -7,7 +7,8 @@
 	"settings": {
 		"files.associations": {
 			"simple_thread.h": "c",
-			"nrf_fstorage.h": "c"
+			"nrf_fstorage.h": "c",
+			"nrf_fstorage_nvmc.h": "c"
 		}
 	}
 }

@@ -42,7 +42,7 @@ NRF_FSTORAGE_DEF(nrf_fstorage_t my_instance) =
     .end_addr       = 0xF4EC,
 };
 
-const uint32_t flash_buffer[4] = {999, 0, 0, 0};
+const int32_t flash_buffer[4] = {999, 0, 0, 0};
 
 int main(void) {
     nrf_power_dcdcen_set(1);
@@ -54,12 +54,12 @@ int main(void) {
         NULL                /* Optional parameter, backend-dependant. */
     );
 
-    const uint32_t *buffer_start_address = &(flash_buffer[0]);
+    const int32_t *buffer_start_address = &(flash_buffer[0]);
 
-    NRF_LOG_INFO("Buffer start address is %x", buffer_start_address);
-    NRF_LOG_INFO("Buffer first element is %u", flash_buffer[0]);
-    NRF_LOG_INFO("Buffer first element is: %u", *buffer_start_address);
-    static uint32_t number = 88;
+    NRF_LOG_INFO("Buffer start address is %p", buffer_start_address);
+    NRF_LOG_INFO("Buffer first element is: %d", *buffer_start_address);
+    
+    static int32_t number = 7;
 
     ret_code_t rc = nrf_fstorage_write(
         &my_instance,   /* The instance to use. */
@@ -82,17 +82,16 @@ int main(void) {
         NRF_LOG_INFO("Failure");
     }
 
-    NRF_LOG_INFO("Buffer first element is now %u", flash_buffer[0]);
-    NRF_LOG_INFO("Buffer first element is: %u", *buffer_start_address);
+    NRF_LOG_INFO("Buffer first element is: %d", *buffer_start_address);
 
-    static uint32_t retrieve_number;
-    NRF_LOG_INFO("Retrieval value starts as: %u", retrieve_number);
+    static int32_t retrieve_number;
+    NRF_LOG_INFO("Retrieval value starts as: %d", retrieve_number);
 
     rc = nrf_fstorage_read(
         &my_instance,   /* The instance to use. */
         (uint32_t) buffer_start_address,     /* The address in flash where to read data from. */
         &retrieve_number,        /* A buffer to copy the data into. */
-        sizeof(uint32_t)  /* Lenght of the data, in bytes. */
+        sizeof(retrieve_number)  /* Lenght of the data, in bytes. */
     );
 
     if (rc == NRF_SUCCESS)
@@ -109,6 +108,6 @@ int main(void) {
         NRF_LOG_INFO("Failure");
     }
 
-    NRF_LOG_INFO("Retrieval value is now: %u", retrieve_number);
-    NRF_LOG_INFO("Buffer first element is: %u", buffer_start_address);
+    NRF_LOG_INFO("Buffer first element is: %d", *buffer_start_address);
+    NRF_LOG_INFO("Retrieval value is now: %d", retrieve_number);
 }
