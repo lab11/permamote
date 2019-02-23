@@ -18,6 +18,7 @@
 #include "nrf_power.h"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
+#include "nrf_log_default_backends.h"
 #include "nrf_dfu_utils.h"
 #include "coap_dfu.h"
 #include "background_dfu_state.h"
@@ -323,15 +324,6 @@ void pir_enable_callback(void* m) {
 }
 
 void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
-  // disable interrupt and turn off PIR
-  NRF_LOG_INFO("TURN off PIR ");
-  nrf_drv_gpiote_in_event_disable(PIR_OUT);
-  nrf_drv_gpiote_in_event_enable(PIR_OUT, 0);
-  nrf_gpio_pin_set(PIR_EN);
-
-  uint32_t err_code = app_timer_start(pir_backoff, PIR_BACKOFF_PERIOD, NULL);
-  APP_ERROR_CHECK(err_code);
-
   if (state == IDLE) {
     state = SEND_MOTION;
   }
@@ -427,6 +419,16 @@ void state_step(void) {
     }
     case SEND_MOTION: {
       uint8_t data = 1;
+
+      // disable interrupt and turn off PIR
+      NRF_LOG_INFO("TURN off PIR ");
+      nrf_drv_gpiote_in_event_disable(PIR_OUT);
+      nrf_drv_gpiote_in_event_enable(PIR_OUT, 0);
+      nrf_gpio_pin_set(PIR_EN);
+
+      uint32_t err_code = app_timer_start(pir_backoff, PIR_BACKOFF_PERIOD, NULL);
+      APP_ERROR_CHECK(err_code);
+
       NRF_LOG_INFO("Saw motion");
       packet.timestamp = ab1815_get_time_unix();
       packet.data = &data;
@@ -518,10 +520,11 @@ void state_step(void) {
       break;
     }
     case RESOLVING_ADDR: {
-      if (!otIp6IsAddressEqual(&m_ntp_address, &unspecified_ipv6)) {
+      if (!(otIp6IsAddressEqual(&m_ntp_address, &unspecified_ipv6)
+       || otIp6IsAddressEqual(&m_coap_address, &unspecified_ipv6)))
+      {
          state = UPDATE_TIME;
       }
-
       break;
     }
     case WAIT_TIME: {
@@ -583,8 +586,6 @@ void timer_init(void)
   err_code = app_timer_create(&pir_delay, APP_TIMER_MODE_SINGLE_SHOT, pir_enable_callback);
   APP_ERROR_CHECK(err_code);
 }
-
-
 
 int main(void) {
   // init softdevice

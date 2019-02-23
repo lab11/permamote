@@ -223,7 +223,7 @@ void ab1815_set_alarm(ab1815_time_t time, ab1815_alarm_repeat repeat, ab1815_ala
   if (!nrf_drv_gpiote_is_init()) {
     nrf_drv_gpiote_init();
   }
-  nrf_drv_gpiote_in_config_t gpio_config = GPIOTE_CONFIG_IN_SENSE_HITOLO(1);
+  nrf_drv_gpiote_in_config_t gpio_config = GPIOTE_CONFIG_IN_SENSE_HITOLO(0);
   gpio_config.pull = NRF_GPIO_PIN_PULLUP;
   int error = nrf_drv_gpiote_in_init(RTC_IRQ1, &gpio_config, interrupt_handler);
   APP_ERROR_CHECK(error);

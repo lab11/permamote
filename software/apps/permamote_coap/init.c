@@ -45,11 +45,7 @@ int sensors_init(const nrf_twi_mngr_t* twi_mngr_instance, const nrf_drv_spi_t* s
   if (!nrf_drv_gpiote_is_init()) {
     nrf_drv_gpiote_init();
   }
-
-  if (!nrf_drv_gpiote_is_init()) {
-    nrf_drv_gpiote_init();
-  }
-  nrf_drv_gpiote_in_config_t pir_gpio_config = GPIOTE_CONFIG_IN_SENSE_LOTOHI(1);
+  nrf_drv_gpiote_in_config_t pir_gpio_config = GPIOTE_CONFIG_IN_SENSE_LOTOHI(0);
   pir_gpio_config.pull = NRF_GPIO_PIN_PULLDOWN;
   nrf_drv_gpiote_in_init(PIR_OUT, &pir_gpio_config, pir_interrupt_callback);
 
