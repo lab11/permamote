@@ -128,6 +128,7 @@ static struct ntp_client_t ntp_client;
 static permamote_state_t state = IDLE;
 static float sensed_lux;
 static bool do_reset = false;
+static int dns_error = 0;
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
@@ -141,6 +142,23 @@ void rtc_update_callback(void) {
     if (state == IDLE) {
         state = UPDATE_TIME;
     }
+}
+
+void __attribute__((weak)) dns_response_handler(void         * p_context,
+                                 const char   * p_hostname,
+                                 otIp6Address * p_resolved_address,
+                                 uint32_t       ttl,
+                                 otError        error)
+{
+    dns_error |= error;
+    if (error != OT_ERROR_NONE)
+    {
+        NRF_LOG_INFO("DNS response error %d.", error);
+        return;
+    }
+
+    NRF_LOG_INFO("Successfully resolved address");
+    memcpy(p_context, p_resolved_address, sizeof(otIp6Address));
 }
 
 void ntp_recv_callback(struct ntp_client_t* client) {
@@ -423,7 +441,6 @@ void state_step(void) {
       // disable interrupt and turn off PIR
       NRF_LOG_INFO("TURN off PIR ");
       nrf_drv_gpiote_in_event_disable(PIR_OUT);
-      nrf_drv_gpiote_in_event_enable(PIR_OUT, 0);
       nrf_gpio_pin_set(PIR_EN);
 
       uint32_t err_code = app_timer_start(pir_backoff, PIR_BACKOFF_PERIOD, NULL);
@@ -493,6 +510,7 @@ void state_step(void) {
       if (otIp6IsAddressEqual(&m_ntp_address, &unspecified_ipv6)
        || otIp6IsAddressEqual(&m_coap_address, &unspecified_ipv6)) {
         NRF_LOG_INFO("Resolving Addresses");
+        dns_error = 0;
         thread_dns_hostname_resolve(thread_instance,
                                     DNS_SERVER_ADDR,
                                     NTP_SERVER_HOSTNAME,
@@ -521,7 +539,8 @@ void state_step(void) {
     }
     case RESOLVING_ADDR: {
       if (!(otIp6IsAddressEqual(&m_ntp_address, &unspecified_ipv6)
-       || otIp6IsAddressEqual(&m_coap_address, &unspecified_ipv6)))
+       || otIp6IsAddressEqual(&m_coap_address, &unspecified_ipv6)) ||
+       dns_error != 0)
       {
          state = UPDATE_TIME;
       }
