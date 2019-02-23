@@ -89,6 +89,7 @@ typedef struct {
   uint8_t voltage;
   uint8_t temp_pres_hum;
   uint8_t color;
+  uint8_t discover;
 } permamote_sensor_period_t;
 uint32_t period_count = 0;
 
@@ -96,6 +97,7 @@ static permamote_sensor_period_t sensor_period = {
   .voltage = VOLTAGE_PERIOD,
   .temp_pres_hum = TPH_PERIOD,
   .color = COLOR_PERIOD,
+  .discover = DISCOVER_PERIOD,
 };
 
 static permamote_packet_t packet = {
@@ -110,13 +112,11 @@ typedef enum {
   SEND_LIGHT,
   SEND_MOTION,
   SEND_PERIODIC,
-  SEND_DISCOVERY,
   UPDATE_TIME,
   RESOLVING_ADDR,
   WAIT_TIME,
 } permamote_state_t;
 
-APP_TIMER_DEF(discover_send_timer);
 APP_TIMER_DEF(periodic_sensor_timer);
 APP_TIMER_DEF(pir_backoff);
 APP_TIMER_DEF(pir_delay);
@@ -197,12 +197,6 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
         state = UPDATE_TIME;
       }
     }
-}
-
-void discover_send_callback(void* m) {
-  if (state == IDLE) {
-    state = SEND_DISCOVERY;
-  }
 }
 
 static void send_free_buffers(void) {
@@ -301,6 +295,22 @@ void color_read_callback(uint16_t red, uint16_t green, uint16_t blue, uint16_t c
 
   NRF_LOG_INFO("Sensed light cct: %u", (uint32_t)cct);
   NRF_LOG_INFO("Sensed light color:\n\tr: %u\n\tg: %u\n\tb: %u", (uint16_t)red, (uint16_t)green, (uint16_t)blue);
+}
+
+static void send_discover(void) {
+  const char* addr = PARSE_ADDR;
+  uint8_t addr_len = strlen(addr);
+  uint8_t data[addr_len + 1];
+
+  NRF_LOG_INFO("Sent discovery");
+
+  data[0] = addr_len;
+  memcpy(data+1, addr, addr_len);
+  packet.timestamp = ab1815_get_time_unix();
+  packet.data = data;
+  packet.data_len = addr_len + 1;
+
+  permamote_coap_send(&m_coap_address, "discovery", false, &packet);
 }
 
 static void send_color(void) {
@@ -480,6 +490,9 @@ void state_step(void) {
       if (period_count % sensor_period.color == 0) {
         send_color();
       }
+      if (period_count % sensor_period.discover == 0) {
+        send_discover();
+      }
       //send_free_buffers();
 
       state = IDLE;
@@ -554,24 +567,6 @@ void state_step(void) {
       }
       break;
     }
-    case SEND_DISCOVERY: {
-      const char* addr = PARSE_ADDR;
-      uint8_t addr_len = strlen(addr);
-      uint8_t data[addr_len + 1];
-
-      NRF_LOG_INFO("Sent discovery");
-
-      data[0] = addr_len;
-      memcpy(data+1, addr, addr_len);
-      packet.timestamp = ab1815_get_time_unix();
-      packet.data = data;
-      packet.data_len = addr_len + 1;
-
-      permamote_coap_send(&m_coap_address, "discovery", false, &packet);
-
-      state = IDLE;
-      break;
-    }
     default:
       break;
   }
@@ -587,11 +582,6 @@ void state_step(void) {
 void timer_init(void)
 {
   uint32_t err_code = app_timer_init();
-  APP_ERROR_CHECK(err_code);
-
-  err_code = app_timer_create(&discover_send_timer, APP_TIMER_MODE_REPEATED, discover_send_callback);
-  APP_ERROR_CHECK(err_code);
-  err_code = app_timer_start(discover_send_timer, DISCOVER_PERIOD, NULL);
   APP_ERROR_CHECK(err_code);
 
   err_code = app_timer_create(&periodic_sensor_timer, APP_TIMER_MODE_REPEATED, periodic_sensor_read_callback);
