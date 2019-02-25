@@ -10,41 +10,19 @@
 #include "nrf_drv_clock.h"
 #include "nrf_power.h"
 #include "nrf_drv_spi.h"
+#include "nrf_log.h"
+#include "nrf_log_ctrl.h"
+#include "nrf_log_default_backends.h"
 
 #include "permamote.h"
 #include "ab1815.h"
 
 static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
 
-//void spi_init(void) {
-//  ret_code_t err_code;
-//
-//  const nrf_drv_spi_config_t spi_config= {
-//    .sck_pin            = SPI_SCLK,
-//    .miso_pin           = SPI_MISO,
-//    .mosi_pin           = SPI_MOSI,
-//    .frequency          = NRF_DRV_SPI_FREQ_4M,
-//  };
-//
-//  //err_code = nrf_drv_spi_init(&spi_instance, &spi_config, NULL, NULL);
-//  //APP_ERROR_CHECK(err_code);
-//}
-
 int main(void) {
-  // init softdevice
-  //nrf_sdh_enable_request();
-  //sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
   nrf_power_dcdcen_set(1);
 
-  // init led
-  //led_init(LED2);
-  //led_off(LED2);
-
   printf("\nRTC TEST\n");
-
-  // Init spi
-  //spi_init();
-
 
   // Turn on power gate
   nrf_gpio_cfg_output(MAX44009_EN);
@@ -80,11 +58,5 @@ int main(void) {
     nrf_delay_ms(5000);
     ab1815_get_time(&time);
     printf("%d:%02d:%02d, %d/%d/20%02d\n", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
-    //struct timeval tv = {
-    //  .tv_sec = 1533699875,
-    //};
-    //time = unix_to_ab1815(tv);
-    //printf("%d:%02d:%02d, %d/%d/20%02d\n", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
-    //__WFE();
   }
 }

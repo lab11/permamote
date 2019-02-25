@@ -33,7 +33,10 @@ get your machine set up to build and flash a Permamote.
 The primary application is
 [`software/apps/permamote_coap`](https://github.com/lab11/permamote/tree/master/software/apps/permamote_coap).
 This application samples the
-sensors and sends its data to a server running a [coap-gateway](https://github.com/lab11/gatway/software/packages/coap-gatway) over IP on a [Thread](https://github.com/openthread/openthread) network with a [border router](https://github.com/openthread/borderrouter).
+sensors and sends its data to a server running a
+[coap-gateway](https://github.com/lab11/gatway/software/packages/coap-gatway)
+over IP on a [Thread](https://github.com/openthread/openthread) network with a
+[border router](https://github.com/openthread/borderrouter).
 
 Cloning
 -------

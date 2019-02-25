@@ -27,9 +27,9 @@ class config:
             'boost_efficiency' : 0.8,
             'frontend_efficiency' : 0.8,
             'secondary' : 'LTO_battery',
-            'secondary_start_percent': 70,
-            'secondary_max_percent': 71,
-            'secondary_min_percent': 57,
+            'secondary_start_percent': 50.25,
+            'secondary_max_percent': 50.93,
+            'secondary_min_percent': 43.25,
         }
         self.primary_config= {
             'name' : 'primary',
@@ -53,7 +53,7 @@ class config:
             'name' : 'secondary',
             'type' : 'battery',
             'esr_ohm' : 0.1,
-            'capacity_mAh' : 1.8,
+            'capacity_mAh' : 10,
             'nominal_voltage_V' : 2.4,
             'leakage_constant': 1E5,
         }

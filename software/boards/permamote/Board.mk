@@ -60,6 +60,7 @@ BOARD_SOURCES += \
 	nrf_queue.c\
 	nrf_drv_clock.c\
 	nrf_nvmc.c\
+	nrf_drv_ppi.c\
 	nrfx_gpiote.c\
 	nrfx_saadc.c\
 	nrfx_timer.c\
@@ -68,6 +69,8 @@ BOARD_SOURCES += \
 	nrfx_spi.c\
 	nrfx_spim.c\
 	nrfx_clock.c\
+	nrfx_ppi.c\
+	nrfx_rtc.c\
 	SEGGER_RTT.c\
 	SEGGER_RTT_Syscalls_GCC.c\
 	SEGGER_RTT_printf.c\
