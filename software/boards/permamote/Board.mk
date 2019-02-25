@@ -21,7 +21,8 @@ USE_BLE = 0
 
 # Additional #define's to be added to code by the compiler
 BOARD_VARS = \
-	BOARD_$(BOARD)\
+	NRF_DFU_SETTINGS_VERSION=1\
+	BOARD_CUSTOM\
 	USE_APP_CONFIG\
 	DEBUG\
 	DEBUG_NRF\
@@ -51,6 +52,7 @@ BOARD_SOURCES += \
 	nrf_log_str_formatter.c\
 	nrf_pwr_mgmt.c\
 	nrf_memobj.c\
+	mem_manager.c\
 	nrf_ringbuf.c\
 	nrf_section_iter.c\
 	nrf_sdh.c\
@@ -58,6 +60,7 @@ BOARD_SOURCES += \
 	nrf_queue.c\
 	nrf_drv_clock.c\
 	nrf_nvmc.c\
+	nrf_drv_ppi.c\
 	nrfx_gpiote.c\
 	nrfx_saadc.c\
 	nrfx_timer.c\
@@ -66,6 +69,8 @@ BOARD_SOURCES += \
 	nrfx_spi.c\
 	nrfx_spim.c\
 	nrfx_clock.c\
+	nrfx_ppi.c\
+	nrfx_rtc.c\
 	SEGGER_RTT.c\
 	SEGGER_RTT_Syscalls_GCC.c\
 	SEGGER_RTT_printf.c\
@@ -74,6 +79,40 @@ BOARD_SOURCES += \
 	thread_coap.c\
 	thread_dns.c\
 	ntp.c\
+	nrf_fstorage.c \
+	nrf_fstorage_nvmc.c \
+	nrf_crypto_ecc.c \
+	nrf_crypto_ecdsa.c \
+	nrf_crypto_hash.c \
+	nrf_crypto_init.c \
+	nrf_crypto_shared.c \
+	sha256.c \
+	cc310_bl_backend_hash.c \
+	cc310_bl_backend_ecc.c \
+	cc310_bl_backend_ecdsa.c \
+	cc310_bl_backend_init.c \
+	cc310_bl_backend_shared.c \
+	coap.c\
+	coap_block.c\
+	coap_message.c\
+	coap_option.c\
+	coap_queue.c\
+	coap_resource.c\
+	coap_transport_ot.c\
+	coap_dfu.c\
+	crc32.c \
+	pb_common.c\
+	pb_decode.c\
+	dfu-cc.pb.c \
+	nrf_dfu_flash.c \
+	nrf_dfu_settings.c \
+	nrf_dfu_utils.c \
+	nrf_dfu_req_handler.c \
+	nrf_dfu_handling_error.c \
+	nrf_dfu_validation.c \
+	nrf_dfu_ver_validation.c \
+	background_dfu_block.c \
+	background_dfu_operation.c \
+	background_dfu_state.c \
 
 endif
-

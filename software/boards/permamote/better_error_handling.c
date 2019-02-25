@@ -23,8 +23,7 @@
 
 // ***** Board Specific Configuration *****
 #include "permamote.h"
-#define LED_COUNT 3
-static const uint8_t LEDS[LED_COUNT] = {LED1, LED2, LED3};
+static const uint8_t LEDS[LEDS_NUMBER] = {LED_1, LED_2, LED_3};
 // ****************************************
 
 // app error handler. Overwrites weak definition in app_error_weak.c
@@ -82,28 +81,28 @@ void __attribute__((weak)) app_error_fault_handler(uint32_t id, uint32_t pc, uin
   // configure leds
   // manually-controlled (simple) output, initially set
   nrfx_gpiote_out_config_t out_config = NRFX_GPIOTE_CONFIG_OUT_SIMPLE(true);
-  for (int i=0; i<LED_COUNT; i++) {
+  for (int i=0; i<LEDS_NUMBER; i++) {
     nrfx_gpiote_out_init(LEDS[i], &out_config);
   }
 
   // loop forever blinking LEDs in a particular pattern to attact attention
   while (1) {
-    for (int i=0; i<LED_COUNT; i++) {
+    for (int i=0; i<LEDS_NUMBER; i++) {
       nrfx_gpiote_out_clear(LEDS[i]);
     }
     nrf_delay_ms(500);
 
-    for (int i=0; i<LED_COUNT; i++) {
+    for (int i=0; i<LEDS_NUMBER; i++) {
       nrfx_gpiote_out_set(LEDS[i]);
     }
     nrf_delay_ms(50);
 
-    for (int i=0; i<LED_COUNT; i++) {
+    for (int i=0; i<LEDS_NUMBER; i++) {
       nrfx_gpiote_out_clear(LEDS[i]);
     }
     nrf_delay_ms(500);
 
-    for (int i=0; i<LED_COUNT; i++) {
+    for (int i=0; i<LEDS_NUMBER; i++) {
       nrfx_gpiote_out_set(LEDS[i]);
     }
     nrf_delay_ms(250);
@@ -123,28 +122,28 @@ void HardFault_process(HardFault_stack_t* p_stack) {
   // configure leds
   // manually-controlled (simple) output, initially set
   nrfx_gpiote_out_config_t out_config = NRFX_GPIOTE_CONFIG_OUT_SIMPLE(true);
-  for (int i=0; i<LED_COUNT; i++) {
+  for (int i=0; i<LEDS_NUMBER; i++) {
     nrfx_gpiote_out_init(LEDS[i], &out_config);
   }
 
   // loop forever blinking LEDs in a particular pattern to attact attention
   while (1) {
-    for (int i=0; i<LED_COUNT; i++) {
+    for (int i=0; i<LEDS_NUMBER; i++) {
       nrfx_gpiote_out_clear(LEDS[i]);
     }
     nrf_delay_ms(500);
 
-    for (int i=0; i<LED_COUNT; i++) {
+    for (int i=0; i<LEDS_NUMBER; i++) {
       nrfx_gpiote_out_set(LEDS[i]);
     }
     nrf_delay_ms(50);
 
-    for (int i=0; i<LED_COUNT; i++) {
+    for (int i=0; i<LEDS_NUMBER; i++) {
       nrfx_gpiote_out_clear(LEDS[i]);
     }
     nrf_delay_ms(500);
 
-    for (int i=0; i<LED_COUNT; i++) {
+    for (int i=0; i<LEDS_NUMBER; i++) {
       nrfx_gpiote_out_set(LEDS[i]);
     }
     nrf_delay_ms(250);
