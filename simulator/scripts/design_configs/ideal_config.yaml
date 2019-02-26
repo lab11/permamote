@@ -1,0 +1,30 @@
+design_config:
+  name: "design"
+  using_primary: False
+  using_secondary: True
+  using_harvester: True
+  opportunistic: False
+  operating_voltage_V: 3.3
+  boost_efficiency: 0.8
+  frontend_efficiency: 0.8
+
+secondary_config:
+  type: "capacitor"
+  capacity_J: 1
+  min_capacity_J: 0
+  esr_ohm: 0
+  leakage_power_W: 0
+
+primary_config:
+  name : "primary"
+  #capacity_mAh : 30 #CR927
+  capacity_mAh : 240 #CR2032
+  #capacity_mAh : 1500 #CR123A
+  nominal_voltage_V : 3
+  leakage_percent_year : 1
+
+harvest_config:
+  type: "solar"
+  nominal_voltage: 2.5
+  area_cm2: 8.82 #2.1*4.2
+  efficiency: 0.17

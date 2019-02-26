@@ -1,0 +1,6 @@
+dataset:
+  name: "SetupA"
+  type: "solar"
+  unit: "uW/cm^2"
+  filename: "../enhants/numpy_arrays/SetupA.npy"
+  resolution_s: 30

@@ -1,0 +1,11 @@
+workload:
+  name: 'ota'
+  type: 'random'
+  atomic: False
+  period_s: !!python/object/apply:eval [ 2*7*24*60*60 ]
+  sleep_current_A: 1.5E-6
+  startup_energy_J: 150.E-6
+  startup_period_s: 3.4E-3
+  event_energy_J: 0.09328 # 5.3E-3 (radio current) * 3.3 (voltage) * 50E3 * 8 (kB) / 75E3 (kB/s)
+  event_period_s: 5.33
+  event_period_min_s: 0.028
