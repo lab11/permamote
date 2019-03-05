@@ -23,6 +23,9 @@
 #define DEFAULT_POLL_PERIOD      1000                                       /**< Thread Sleepy End Device polling period when MQTT-SN Asleep. [ms] */
 #define NUM_SLAAC_ADDRESSES      4                                          /**< Number of SLAAC addresses. */
 
+
+#define FLASH_ADDR A18
+
 /**@brief Function for initializing the nrf log module.
  */
 static void log_init(void)
@@ -31,18 +34,31 @@ static void log_init(void)
     APP_ERROR_CHECK(err_code);
     NRF_LOG_DEFAULT_BACKENDS_INIT();
 }
+
+
 void callback(nrf_fstorage_evt_t * p_evt) {
-    /* do nothing */
+    NRF_LOG_INFO("Callback is being called");
+    if (p_evt->id == NRF_FSTORAGE_EVT_WRITE_RESULT) {
+        NRF_LOG_INFO("Write Result");
+    }
+    if (p_evt->result == NRF_SUCCESS) {
+        NRF_LOG_INFO("id: %x", p_evt->id);
+        NRF_LOG_INFO("result: %x", p_evt->result);
+        NRF_LOG_INFO("addr: %x", p_evt->addr);
+        NRF_LOG_INFO("p_src: %x", p_evt->p_src);
+        NRF_LOG_INFO("len: %x", p_evt->len);
+        NRF_LOG_INFO("p_param: %x", p_evt->p_param);
+    }
 }
 
 NRF_FSTORAGE_DEF(nrf_fstorage_t my_instance) =
 {
     .evt_handler    = callback,
-    .start_addr     = 0xE4EC,
-    .end_addr       = 0xF4EC,
+    .start_addr     = 0xA18,
+    .end_addr       = 0xFFC,
 };
 
-//const int32_t flash_buffer[4] = {100, 0, 0, 0};
+//const uint32_t flash_buffer[4] = {555, 0, 0, 0};
 
 
 int main(void) {
@@ -55,65 +71,88 @@ int main(void) {
         NULL                /* Optional parameter, backend-dependant. */
     );
 
-    const int32_t *buffer_start_address = 0xE52C;//&(flash_buffer[0]);
+    p = (uint32_t *) FLASH_ADDR;
 
-    NRF_LOG_INFO("Buffer start address is: %p", buffer_start_address);
-    NRF_LOG_INFO("Buffer first element (hex): %x", *buffer_start_address);
-    NRF_LOG_INFO("Buffer first element (dec): %d", *buffer_start_address);
+    //const uint32_t *buffer_start_address = &(flash_buffer[0]);
+
+    // uint32_t *buffer_start_address = (uint32_t *) 0xFF0;
+
+    // //NRF_LOG_INFO("Buffer start address is: %p", buffer_start_address);
+    // NRF_LOG_INFO("Buffer first element (hex): %x", *buffer_start_address);
+    // NRF_LOG_INFO("Buffer first element (dec): %u", *buffer_start_address);
+
+    NRF_LOG_INFO("Flash Address: %x", p);
+    NRF_LOG_INFO("Flash Address contains: %x", *p)
+
+    // uint32_t *p = (uint32_t *) 0xF0;
+    // while(true) {
+    //     NRF_LOG_INFO("%x: %x", p, *p)
+    //     p++;
+    //     //break;
+    //     nrf_delay_ms(100);
+    // }
+
     
-    static int32_t number = 12345;
+//     uint32_t number = 0xFFF000FF;
+    
+//     ret_code_t rc;
 
-    ret_code_t rc = nrf_fstorage_write(
-        &my_instance,   /* The instance to use. */
-        (uint32_t) buffer_start_address,     /* The address in flash where to store the data. */
-        &number,        /* A pointer to the data. */
-        sizeof(number), /* Lenght of the data, in bytes. */
-        NULL            /* Optional parameter, backend-dependent. */
-    );
+//     rc = nrf_fstorage_write(
+//         &my_instance,   /* The instance to use. */
+//         (uint32_t) buffer_start_address,     /* The address in flash where to store the data. */
+//         &number,        /* A pointer to the data. */
+//         sizeof(number), /* Lenght of the data, in bytes. */
+//         NULL            /* Optional parameter, backend-dependent. */
+//     );
 
-    if (rc == NRF_SUCCESS)
-    {
-        /* The operation was accepted.
-        Upon completion, the NRF_FSTORAGE_WRITE_RESULT event
-        is sent to the callback function registered by the instance. */
-        NRF_LOG_INFO("Success");
-    }
-    else
-    {
-        /* Handle error.*/
-        NRF_LOG_INFO("Failure");
-    }
+//     if (rc == NRF_SUCCESS)
+//     {
+//         /* The operation was accepted.
+//         Upon completion, the NRF_FSTORAGE_WRITE_RESULT event
+//         is sent to the callback function registered by the instance. */
+//         NRF_LOG_INFO("Write Success");
+//     }
+//     else
+//     {
+//         /* Handle error.*/
+//         NRF_LOG_INFO("Write Failure");
+//     }
 
-    NRF_LOG_INFO("Buffer first element (hex): %x", *buffer_start_address);
-    NRF_LOG_INFO("Buffer first element (dec): %d", *buffer_start_address);
+//    //nrf_delay_ms(2000);
 
-    static int32_t retrieve_number;
-    NRF_LOG_INFO("Retrieval value starts as (hex): %x", retrieve_number);
-    NRF_LOG_INFO("Retrieval value starts as (dec): %d", retrieve_number);
+//     NRF_LOG_INFO("Buffer first element (hex): %x", *buffer_start_address);
+//     NRF_LOG_INFO("Buffer first element (dec): %u", *buffer_start_address);
+//     nrf_delay_ms(1000);
 
-    rc = nrf_fstorage_read(
-        &my_instance,   /* The instance to use. */
-        (uint32_t) buffer_start_address,     /* The address in flash where to read data from. */
-        &retrieve_number,        /* A buffer to copy the data into. */
-        sizeof(retrieve_number)  /* Lenght of the data, in bytes. */
-    );
+//     uint32_t retrieve_number = 0;
+//     // NRF_LOG_INFO("Retrieval value starts as (hex): %x", retrieve_number);
+//     // NRF_LOG_INFO("Retrieval value starts as (dec): %u", retrieve_number);
 
-    if (rc == NRF_SUCCESS)
-    {
-        /* The operation was accepted.
-        Upon completion, the NRF_FSTORAGE_READ_RESULT event
-        is sent to the callback function registered by the instance.
-        Once the event is received, it is possible to read the contents of 'number'. */
-        NRF_LOG_INFO("Success");
-    }
-    else
-    {
-        /* Handle error.*/
-        NRF_LOG_INFO("Failure");
-    }
+//     rc = nrf_fstorage_read(
+//         &my_instance,   /* The instance to use. */
+//         (uint32_t) buffer_start_address,     /* The address in flash where to read data from. */
+//         &retrieve_number,        /* A buffer to copy the data into. */
+//         sizeof(number)  /* Lenght of the data, in bytes. */
+//     );
 
-    //NRF_LOG_INFO("Buffer first element is (hex): %x", *buffer_start_address);
-    //NRF_LOG_INFO("Buffer first element is (dec): %d", *buffer_start_address);
-    NRF_LOG_INFO("Retrieval value is now (hex): %x", retrieve_number);
-    NRF_LOG_INFO("Retrieval value is now (dec): %d", retrieve_number);
+//     if (rc == NRF_SUCCESS)
+//     {
+//         /* The operation was accepted.
+//         Upon completion, the NRF_FSTORAGE_READ_RESULT event
+//         is sent to the callback function registered by the instance.
+//         Once the event is received, it is possible to read the contents of 'number'. */
+//         NRF_LOG_INFO("Read Success");
+//     }
+//     else
+//     {
+//         /* Handle error.*/
+//         NRF_LOG_INFO("Read Failure");
+//     }
+
+//     nrf_delay_ms(4000);
+
+//     //NRF_LOG_INFO("Buffer first element is (hex): %x", *buffer_start_address);
+//     //NRF_LOG_INFO("Buffer first element is (dec): %d", *buffer_start_address);
+//     NRF_LOG_INFO("Retrieval value is now (hex): %x", retrieve_number);
+//     NRF_LOG_INFO("Retrieval value is now (dec): %u", retrieve_number);
 }
