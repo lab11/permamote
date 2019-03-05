@@ -14,8 +14,9 @@ HALF_MINUTES_IN_DAY = 24*60*2
 if not os.path.exists('numpy_arrays'):
     os.makedirs('numpy_arrays')
 
-fnames = glob('enhants_data/*')
+fnames = glob('enhants_data/*.txt')
 def parse(fname):
+    print(fname)
     basename = fname.split('/')[1].split('_')[0]
     a = np.loadtxt(fname, delimiter='\t', dtype=str)[:-1]
     # strip header

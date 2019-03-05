@@ -2,6 +2,7 @@
 import yaml
 import numpy as np
 import math
+from pympler import tracker
 from pprint import pprint
 from datetime import datetime
 import matplotlib.pyplot as plt
@@ -13,13 +14,9 @@ SECONDS_IN_DAY = 60*60*24
 SECONDS_IN_HOUR = 60*60
 SECONDS_IN_MINUTE = 60
 
+tr = tracker.SummaryTracker()
+
 class EHSim:
-    def _remaining_secondary_energy(self):
-        return self.secondary_energy - self.secondary_energy_min - self.energy_to_turn_on - self.event_energy_min - self.outgoing_sleep_energy
-
-    def _outgoing_energy(self):
-                return self.energy_turn_on + self.outgoing_event_energy + self.outgoing_sleep_energy
-
     def _is_time_to_transmit(self, second):
         # check if period elapsed for periodic workload
         if self.workload_config['type'] == 'periodic':
@@ -31,12 +28,12 @@ class EHSim:
             # get hour of day from second
             remainder = second % SECONDS_IN_DAY
             hour = int(math.floor(remainder / SECONDS_IN_HOUR))
-            if hour != _reactive_hour:
-                self._reactive_hour = hour
+            if hour != self.reactive_hour:
+                self.reactive_hour = hour
                 # get probability of event happening each second in this hour
-                p = np.random.poisson(self._lambda_set[hour], 1)
-                self._current_hour_P = p / SECONDS_IN_HOUR #np.random.poisson(_lambda_set[hour], 1) / SECONDS_IN_HOUR
-            transmit = np.random.random() <= self._current_hour_P
+                p = np.random.poisson(self.lambda_set[hour], 1)
+                self.current_hour_P = p / SECONDS_IN_HOUR #np.random.poisson(_lambda_set[hour], 1) / SECONDS_IN_HOUR
+            transmit = np.random.random() <= self.current_hour_P
             return transmit
         elif self.workload_config['type'] == 'random':
             return np.random.random() <= (1 / self.workload_config['period_s'])
@@ -71,13 +68,14 @@ class EHSim:
         self.sleep_power = self.workload_config['sleep_current_A'] /\
                 self.design_config['boost_efficiency']* \
                 self.design_config['operating_voltage_V']
+        print(self.workload_config)
         self.event_energy = self.workload_config['event_energy_J'] /\
                 self.design_config['boost_efficiency']
 
 
         self.event_period_full = self.workload_config['event_period_s']
         self.event_period_min = self.workload_config['event_period_min_s']
-        self.energy_turn_on = 0
+        self.energy_to_turn_on = 0
         if self.workload_config['name'] == 'long_running':
             self.event_energy_min = self.event_energy * self.event_period_min / self.event_period_full
             self.energy_to_turn_on = self.workload_config['startup_energy_J'] +\
@@ -90,7 +88,7 @@ class EHSim:
         self.atomic = self.workload_config['atomic']
 
         # initialize energy for primary and secondary
-        if self.primary_config is not None and self.primary_config['using_primary']:
+        if self.primary_config is not None and self.design_config['using_primary']:
             self.primary_energy = self.primary_energy_max =\
                     self.primary_config['capacity_mAh']\
                         * 1E-3 * self.primary_config['nominal_voltage_V'] \
@@ -157,14 +155,18 @@ class EHSim:
 
     def simulate(self):
         currently_performing = False
-        self.used_energy = self.secondary_energy_min - self.secondary_energy     # keep track of amount of energy used by application
+        used_energy = self.secondary_energy_min - self.secondary_energy     # keep track of amount of energy used by application
+        used_energy = 0
         possible_energy = 0                                                 # amount of possible harvestable energy
         actual_period = 0                                                   # the actual amount of time it took to perform an event
+        second = 0#self.trace_start_seconds
+        time_online = 0
+        last_step_online = 0
+        event_energy_remaining = 0
+        event_period_remaining = 0
+        charge_hysteresis = False;
 
-        for second in self.seconds:
-            if (second % SECONDS_IN_DAY == 0):
-                print('simulating day ' + str(second/SECONDS_IN_DAY))
-
+        while second < self.seconds_end:
             ##
             ## INCOMING ENERGY
             ##
@@ -179,120 +181,134 @@ class EHSim:
                 #wasted_energy += self.secondary_energy - self.secondary_energy_max
                 self.secondary_energy = self.secondary_energy_max
             # if charged enough, exit charging hysteresis
-            if self.charge_hysteresis and self.secondary_energy >= self.secondary_energy_up:
-                self.charge_hysteresis = False
+            if charge_hysteresis and self.secondary_energy >= self.secondary_energy_up:
+                charge_hysteresis = False
 
             ###
             ### OUTGOING ENERGY
             ###
             period_sleep = 1
-            self.currently_online = self.online[-1] == 1
+            currently_online = last_step_online == 1
+            outgoing_sleep_energy = 0
+            outgoing_event_energy = 0
+            outgoing_startup_energy = 0
+            def _remaining_secondary_energy():
+                return self.secondary_energy - self.secondary_energy_min - outgoing_startup_energy - outgoing_event_energy - outgoing_sleep_energy
+
+            def _outgoing_energy():
+                return outgoing_startup_energy + outgoing_event_energy + outgoing_sleep_energy
+
 
             # if offline, need to pay startup cost
             # don't go online until we can do useful work
-            if not self.currently_online and not self.charge_hysteresis:
-                if self._remaining_secondary_energy() + self.primary_energy >=\
-                self.energy_turn_on:
+            if not currently_online and not charge_hysteresis:
+                if _remaining_secondary_energy() + self.primary_energy >=\
+                self.energy_to_turn_on:
+                    outgoing_startup_energy = self.workload_config['startup_energy_J']
                     period_sleep -= self.workload_config['startup_period_s']
-                    self.currently_online = 1
+                    currently_online = 1
 
             # if it's time to perform an event
             # if opportunistic, try to send
-            if self.design_config['operating_mode'] == 'opportunistic':
-                if self.currently_online:
+            if self.design_config['opportunistic']:
+                if currently_online:
                     actual_period = 0
-                    currently_performing = 1
-                    self.event_energy_remaining = self.event_energy
-                    self.event_period_remaining = self.event_period_full
+                    currently_performing = True
+                    event_energy_remaining = self.event_energy
+                    event_period_remaining = self.event_period_full
                 else:
-                    self.missed_events.append(np.array([self.trace_start_time+second, 1]))
+                    self.missed_events.append([self.trace_start_time+second, 1])
             elif self._is_time_to_transmit(second + self.trace_start_seconds):
                 # we're already working on an event, or we're not online to do
                 # event, count it as a miss and try next time
-                if currently_performing or not self.currently_online:
-                    self.missed_events.append(np.array([self.trace_start_time+second, 1]))
+                if currently_performing or not currently_online:
+                    self.missed_events.append([self.trace_start_time+second, 1])
                 # reset event energy/period state and start new event
                 else:
                     actual_period = 0
-                    currently_performing = 1
-                    self.event_energy_remaining = self.event_energy
-                    self.event_period_remaining = self.event_period_full
+                    currently_performing = True
+                    event_energy_remaining = self.event_energy
+                    event_period_remaining = self.event_period_full
 
             # if we need to work on an event
-            if currently_performing and self.currently_online:
+            if currently_performing and currently_online:
                 # calculated expected period, energy, and if finished for this cycle
                 if not self.design_config['using_primary']:
-                    used_p, used_e, finished = self._perform_event(period_sleep, self._remaining_secondary_energy(), self.event_period_remaining, self.event_energy_remaining)
+                    used_p, used_e, finished = self._perform_event(period_sleep, _remaining_secondary_energy(), event_period_remaining, event_energy_remaining)
                 else:
-                    used_p, used_e, finished = self._perform_event(period_sleep, self._remaining_secondary_energy() + self.primary_energy, self.event_period_remaining, self.event_energy_remaining)
-                self.outgoing_event_energy = used_e
-                self.event_energy_remaining -= used_e
-                self.event_period_remaining -= used_p
+                    used_p, used_e, finished = self._perform_event(period_sleep, _remaining_secondary_energy() + self.primary_energy, event_period_remaining, event_energy_remaining)
+                outgoing_event_energy = used_e
+                event_energy_remaining -= used_e
+                event_period_remaining -= used_p
                 period_sleep -= used_p
                 # if we finished the event this iteration
                 if finished:
                     #events_completed += 1
                     actual_period += used_p
                     #reset event state variables
-                    currently_perfoming = 0
+                    currently_performing = False
                     # successfully completed event
-                    self.missed_events.append(np.array([self.trace_start_time+second, 0]))
+                    self.missed_events.append([self.trace_start_time+second, 0])
                     #events.append(start_time+second)
                     self.event_ttc.append(actual_period)
                 # if atomic, count not finishing as failure
                 elif self.atomic:
                     currently_perfoming = 0
-                    self.missed_events.append(np.array([self.trace_start_time+second, 1]))
+                    self.missed_events.append([self.trace_start_time+second, 1])
             actual_period += 1
 
-            #print(remaining_secondary_energy())
             ###
             ### UPDATE STATE
             ###
-
             if not self.design_config['using_primary']:
                 # if we couldn't turn on
-                if not self.currently_online:
+                if not currently_online:
                     period_on = 0
                 # any remaining time is spent sleeping
                 # can we sleep the rest of the iteration?
-                elif self._remaining_secondary_energy() > self.sleep_power * period_sleep:
-                    self.outgoing_sleep_energy = self.sleep_power * period_sleep
+                elif _remaining_secondary_energy() > self.sleep_power * period_sleep:
+                    outgoing_sleep_energy = self.sleep_power * period_sleep
                     period_on = 1
+                    #print(incoming_energy)
+                    #print(_remaining_secondary_energy())
+                    #print(_outgoing_energy())
+                    #exit()
                 # if not, how long can we sleep for?
                 else:
-                    self.outgoing_sleep_energy  = self._remaining_secondary_energy()
+                    outgoing_sleep_energy  = _remaining_secondary_energy()
                     period_on = 1 - period_sleep
-                    period_on += self._remaining_secondary_energy() / self.sleep_power
-                    self.currently_online = 0
-                self.online.append(period_on)
+                    period_on += _remaining_secondary_energy() / self.sleep_power
+                    currently_online = 0
+                time_online += period_on
+                last_step_online = period_on
 
-                self.secondary_energy -= self._outgoing_energy()
-                self.used_energy += self._outgoing_energy()
+                self.secondary_energy -= _outgoing_energy()
+                used_energy += _outgoing_energy()
 
                 if self.secondary_energy <= self.secondary_energy_min:
-                    self.charge_hysteresis = True
+                    charge_hysteresis = True
             else:
-                self.online.append(1)
+                time_online += 1
+                last_step_online = 1
 
-                if self.charge_hysteresis:
-                    self.primary_energy -= self._outgoing_energy()
+                if charge_hysteresis:
+                    self.primary_energy -= _outgoing_energy()
                 else:
-                    self.secondary_energy -= self._outgoing_energy()
-                    self.used_energy += self._outgoing_energy()
+                    self.secondary_energy -= _outgoing_energy()
+                    used_energy += _outgoing_energy()
                     # enter hysteresis if under
                     if self.secondary_energy <= self.secondary_energy_min:
                         if self.secondary_energy < 0:
-                            self.used_energy += self.secondary_energy
+                            used_energy += self.secondary_energy
                             # subtract remainder from primary energy
                             self.primary_energy += self.secondary_energy - self.secondary_energy_min
-                            secondary_energy = 0
+                            self.secondary_energy = 0
                         #secondary_energy = secondary_energy_min
-                        self.charge_hysteresis = True
+                        charge_hysteresis = True
 
                 # check if now offline
                 # if primary and secondary are dead, note offline
-                if primary_energy <= 0:
+                if self.primary_energy <= 0:
                     break;
 
             # subtract leakage
@@ -302,41 +318,30 @@ class EHSim:
 
             self.secondary_soc.append(self.secondary_energy)
             self.primary_soc.append(self.primary_energy)
-        #TODO continue from here:
-        # convert to np array
+            second += 1
+
+            if (second % SECONDS_IN_DAY == 0):
+                print('simulating day ' + str(second/SECONDS_IN_DAY))
+                #tr.print_diff()
+                if second/SECONDS_IN_DAY >= 4:
+                    break
+
+
+        # convert arrays to numpy
+        self.secondary_soc = np.asarray(self.secondary_soc)
+        self.primary_soc = np.asarray(self.primary_soc)
         self.missed_events = np.asarray(self.missed_events, dtype='object')
         self.event_ttc = np.asarray(self.event_ttc)
-        #print('Averages:')
-        ##print('  light ' + str(np.mean(lights)) + ' uW/cm^2')
-        #print('  solar ' + str(np.mean(solar_powers)) + ' W')
-        #print('  secondary: ' + str(secondary_leakage_power/60) + ' W')
-        #print('  primary: ' + str(primary_leakage_power/60) + ' W')
-        #print('  out ' + str(np.mean(out_powers)) + ' W')
-        #print('  total ' + str(np.mean(solar_powers) - primary_leakage_power/60 - secondary_leakage_power/60 - np.mean(out_powers)) + ' W')
-        #print('  Wasted ' + str(wasted_energy))
-        #print('  Possibly Collected ' + str(possible_energy))
-        ##print('  minimum primary discharge ' + str(primary_leakage_current))
-
-        #plt.figure()
-        #plt.plot(np.arange(lights.size), [x for x in lights])
-        #print(len(events))
-        #plt.figure()
-        #plt.plot(seconds, [x for x in secondary_soc])
-        #plt.show()
-        #plt.plot(seconds, [x*1E3/2.4/3600 for x in offline[1:]])
-        #plt.plot(missed[:,0], missed[:,1])
-        #plt.figure()
-        #plt.plot(seconds, [x*1E3/2.4/3600 for x in primary_soc])
-        #plt.show()
-        #slope, intercept, _, _, _ = stats.linregress(minutes, primary_soc)
-        if self.primary_config['using_primary']:
-            #lifetime_years = (primary_energy_max/ np.mean(primary_discharges))/(SECONDS_IN_YEAR)
-            #print (primary_discharge, primary_energy_max)
-            lifetime_years = primary_energy_max / (primary_discharge / seconds.size) / SECONDS_IN_YEAR
+        # calculate percent of simulation spent online
+        self.fraction_online = time_online / second
+        self.fraction_energy_utilized = used_energy / possible_energy
+        self.fraction_successful_events =  1.0 - np.sum(self.missed_events[:,1]) / self.missed_events.shape[0]
+        if self.design_config['using_primary']:
+            self.lifetime_estimate_years = self.primary_energy_max / (self.primary_soc[0] - self.primary_soc[-1] / second) / SECONDS_IN_YEAR
         else: lifetime_years = -1
-        #plt.plot([x for x in minutes], [intercept + slope*x*1E3/2.4/3600 for x in minutes])
+        plt.plot(self.secondary_soc)
+        plt.show()
         #lifetime_years = minute/60/24/365
-        self.online = np.asarray(self.online)
 
         #np.save('seq_no-Ligeiro-c098e5d00047_sim', events)
         #return lifetime_years, used_energy, possible_energy, self.missed_events[:,1], online, event_ttc
@@ -352,9 +357,9 @@ class EHSim:
         self.event_energy_min = 0       # minimum amount of energy
         # state for reactive workload
         self.workload_curve = []
-        self._lambda_set = None
-        self._reactive_hour = None
-        self._current_hour_P = None
+        self.lambda_set = None
+        self.reactive_hour = None
+        self.current_hour_P = None
 
         self.primary_energy = 0         # current amount of energy stored in primary
         self.primary_energy_max = 0     # full energy capacity of primary
@@ -366,29 +371,21 @@ class EHSim:
         self.secondary_energy_up  = 0   # upper hysteresis energy capacity
         self.secondary_leakage_power = 0 # secondary leakage power
 
-        self.solar_area = 0             # area of solar panel
-        self.solar_efficiency = 0       # efficiency of solar panel
-
-        self.trace = []                 # harvestable energy trace
+        self.energy_trace = []          # harvested energy trace (after efficiency calculation)
         self.trace_resolution = 0       # resolution of energy trace
         self.trace_start_seconds = 0    # starting seconds offset from midnight
         self.trace_start_time = 0       # date of trace start
-        self.seconds = []               # array of seconds, trace length
+        self.seconds_end = 0            # end of trace in seconds
 
         # simulation generated state
-        self.used_energy = 0
         self.secondary_soc = []
         self.primary_soc = []
-        self.online = [0]
         self.missed_events = []
         self.event_ttc = []
-        self.currently_online = 0
-        self.charge_hysteresis = False;
-        self.event_period_remaining = 0
-        self.event_energy_remaining = 0
-        self.outgoing_event_energy = 0
-        self.outgoing_sleep_energy = 0
-
+        self.fraction_online = 0
+        self.fraction_energy_utilized = 0
+        self.fraction_successful_events = 0
+        self.lifetime_estimate_years = -1
 
         # set config vars
         self.platform_config = platform_config
@@ -405,9 +402,9 @@ class EHSim:
         else:
             self.primary_config = None
         if self.design_config['using_harvester']:
-            self.harvester_config = self.platform_config['harvester_config']
+            self.harvest_config = self.platform_config['harvest_config']
         else:
-            self.harvester_config = None
+            self.harvest_config = None
 
         # initialize workload, secondary, and primary energy storage
         self._init_energy()
@@ -415,36 +412,37 @@ class EHSim:
         self.workload_type = self.workload_config['type']
         # load workload curve if reactive
         if self.workload_config['type'] == 'reactive':
-            self._lambda_set = np.ceil(self.workload_config['lambda'] * np.load(self.workload_config['curve'])).astype(int)
+            self.lambda_set = np.ceil(self.workload_config['lambda'] * np.load(self.workload_config['curve'])).astype(int)
 
         # load energy trace
         trace_fname = self.dataset_config['filename']
-        self.trace = np.load(trace_fname)
+        trace = np.load(trace_fname)
         self.trace_resolution = self.dataset_config['resolution_s']
 
         # prepare dataset
-        self.trace_start_time = self.trace[0].astype('datetime64[s]')
+        self.trace_start_time = trace[0].astype('datetime64[s]')
         self.trace_start_seconds = int((self.trace_start_time - self.trace_start_time.astype('datetime64[D]')) / np.timedelta64(1, 's'))
-        self.trace = self.trace[1:]
-        self.seconds = np.arange(self.trace.size*self.trace_resolution)
+        trace = trace[1:]
+        self.seconds_end = trace.size*self.trace_resolution
 
         # initialize harvester values
-        if self.harvester_config['type'] != self.dataset_config['type']:
-            print("Mismatched trace/harvester config")
-            exit(1)
-        if self.harvester_config['type'] == 'solar' and self.dataset_config['unit'] == 'uW/cm^2':
-            if 'area_cm2' in self.harvester_config:
-                self.solar_area = self.harvester_config['area_cm2']
-                self.energy_trace = self.trace * 1E-6 * self.solar_area * \
-                    self.harvester_config['efficiency'] * \
-                    self.design_config['frontend_efficiency']
-            else:
-                print("Missing solar config(s)")
+        if self.harvest_config is not None:
+            if self.harvest_config['type'] != self.dataset_config['type']:
+                print("Mismatched trace/harvester config")
                 exit(1)
-        # TODO add more harvester options
-        else:
-            print("Currently unsupported energy trace")
-            exit(1)
+            if self.harvest_config['type'] == 'solar' and self.dataset_config['unit'] == 'uW/cm^2':
+                if 'area_cm2' in self.harvest_config:
+                    solar_area = self.harvest_config['area_cm2']
+                    self.energy_trace = trace * 1E-6 * solar_area * \
+                        self.harvest_config['efficiency'] * \
+                        self.design_config['frontend_efficiency']
+                else:
+                    print("Missing solar config(s)")
+                    exit(1)
+            # TODO add more harvester options
+            else:
+                print("Currently unsupported energy trace")
+                exit(1)
 
 if __name__ == "__main__":
     import argparse
@@ -471,20 +469,14 @@ if __name__ == "__main__":
         except yaml.YAMLError as e:
             print(e)
             exit(1)
-    print(config)
-    print(workload)
-    print(dataset)
     simulator = EHSim(config, workload, dataset)
     pprint(vars(simulator))
     simulator.simulate()
+    print('percent energy utilized: \t{0:.2f}%'.format(100 * simulator.fraction_energy_utilized))
+    print('percent online: \t\t{0:.2f}%'.format(100 * simulator.fraction_online))
+    print('percent successful events: \t{0:.2f}%'.format(100 * simulator.fraction_successful_events))
+    print(np.sum(simulator.missed_events[:,1]))
+    print(np.sum(simulator.seconds_end))
+    print(simulator.missed_events.shape[0])
     exit(0)
-
-    lifetime, used, possible, missed, online, event_ttc = simulate(config, workload, trace)
-    print(str(lifetime) + " years")
-    print("%.2f/%.2f Joules used" % (used, possible))
-    print("%.2f%% events successful" % (100 * (missed.size - np.sum(missed))/missed.size))
-    print("%.2f%% of time online" % (100 * np.sum(online) / online.size))
-    #print("%.2f%% x expected event time to completion" % (event_ttc / workload.config['event_period_s']))
-    print("%.2f%% x expected event time to completion" % (np.average(event_ttc) / workload.config['event_period_s']))
-
 
