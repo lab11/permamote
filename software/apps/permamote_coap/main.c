@@ -470,9 +470,9 @@ void state_step(void) {
       //ab1815_time_t time;
       //ab1815_get_time(&time);
       //NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
-      if (otThreadGetDeviceRole(thread_get_instance()) == 2) {
-        ab1815_tickle_watchdog();
-      }
+      //if (otThreadGetDeviceRole(thread_get_instance()) == 2) {
+      //  ab1815_tickle_watchdog();
+      //}
       //if(time.years == 0 && state == IDLE) {
       //  NRF_LOG_INFO("VERY INVALID TIME");
       //  state = UPDATE_TIME;
