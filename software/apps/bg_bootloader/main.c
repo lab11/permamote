@@ -91,6 +91,8 @@ int main(void)
     ret_val = nrf_bootloader_init(dfu_observer);
     APP_ERROR_CHECK(ret_val);
 
+    while(1){}
+
     // Either there was no DFU functionality enabled in this project or the DFU module detected
     // no ongoing DFU operation and found a valid main application.
     // Boot the main application.
@@ -98,6 +100,7 @@ int main(void)
 
     // Should never be reached.
     NRF_LOG_INFO("After main\r\n");
+
 }
 
 /**
