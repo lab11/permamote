@@ -1185,7 +1185,7 @@
 // <i> in the bootloader. NRF_BL_DFU_ALLOW_UPDATE_FROM_APP must be enabled in the bootloader.
 
 #ifndef NRF_DFU_IN_APP
-#define NRF_DFU_IN_APP 1
+#define NRF_DFU_IN_APP 0
 #endif
 
 // <q> NRF_DFU_SAVE_PROGRESS_IN_FLASH  - Save DFU progress in flash.
@@ -1961,7 +1961,7 @@
 // <e> NRF_LOG_ENABLED - nrf_log - Logger
 //==========================================================
 #ifndef NRF_LOG_ENABLED
-#define NRF_LOG_ENABLED 0
+#define NRF_LOG_ENABLED 1
 #endif
 
 #define BACKGROUND_DFU_CONFIG_LOG_ENABLED 1
@@ -2038,7 +2038,7 @@
 // <4=> Debug
 
 #ifndef NRF_LOG_DEFAULT_LEVEL
-#define NRF_LOG_DEFAULT_LEVEL 3
+#define NRF_LOG_DEFAULT_LEVEL 4
 #endif
 
 // <q> NRF_LOG_DEFERRED  - Enable deffered logger.
@@ -2047,7 +2047,7 @@
 // <i> Log data is buffered and can be processed in idle.
 
 #ifndef NRF_LOG_DEFERRED
-#define NRF_LOG_DEFERRED 1
+#define NRF_LOG_DEFERRED 0
 #endif
 
 // <q> NRF_LOG_FILTERS_ENABLED  - Enable dynamic filtering of logs.

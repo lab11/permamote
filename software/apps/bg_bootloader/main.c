@@ -16,6 +16,7 @@
 #include "app_error_weak.h"
 #include "nrf_bootloader_info.h"
 #include "nrf_gpio.h"
+#include "nrf_drv_clock.h"
 
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
@@ -75,6 +76,10 @@ static void dfu_observer(nrf_dfu_evt_type_t evt_type)
 int main(void)
 {
     uint32_t ret_val;
+
+    ret_code_t err_code = nrf_drv_clock_init();
+    APP_ERROR_CHECK(err_code);
+    nrf_drv_clock_lfclk_request(NULL);
 
     log_init();
 
