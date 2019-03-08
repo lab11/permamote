@@ -5,8 +5,8 @@ GROUP(-lgcc -lc -lnosys)
 
 MEMORY
 {
-  /*FLASH (rx) : ORIGIN = 0xf8000, LENGTH = 0x6000*/
-  FLASH (rx) : ORIGIN = 0xEE000, LENGTH = 0x10000
+  FLASH (rx) : ORIGIN = 0xf8000, LENGTH = 0x6000
+  /*FLASH (rx) : ORIGIN = 0xEE000, LENGTH = 0x10000*/
   RAM (rwx) :  ORIGIN = 0x20000008, LENGTH = 0x3fff8
   mbr_params_page (r) : ORIGIN = 0x000FE000, LENGTH = 0x1000
   uicr_mbr_params_page (r) : ORIGIN = 0x10001018, LENGTH = 0x4

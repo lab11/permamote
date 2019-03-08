@@ -77,9 +77,9 @@ int main(void)
 {
     uint32_t ret_val;
 
-    ret_code_t err_code = nrf_drv_clock_init();
-    APP_ERROR_CHECK(err_code);
-    nrf_drv_clock_lfclk_request(NULL);
+    //ret_code_t err_code = nrf_drv_clock_init();
+    //APP_ERROR_CHECK(err_code);
+    //nrf_drv_clock_lfclk_request(NULL);
 
     log_init();
 

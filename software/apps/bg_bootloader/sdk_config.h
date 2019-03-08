@@ -1961,7 +1961,7 @@
 // <e> NRF_LOG_ENABLED - nrf_log - Logger
 //==========================================================
 #ifndef NRF_LOG_ENABLED
-#define NRF_LOG_ENABLED 1
+#define NRF_LOG_ENABLED 0
 #endif
 
 #define BACKGROUND_DFU_CONFIG_LOG_ENABLED 1
