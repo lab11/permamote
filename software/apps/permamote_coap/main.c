@@ -123,7 +123,6 @@ APP_TIMER_DEF(pir_delay);
 
 static bool trigger = false;
 static uint8_t device_id[6];
-static otNetifAddress m_slaac_addresses[6]; /**< Buffer containing addresses resolved by SLAAC */
 static struct ntp_client_t ntp_client;
 static permamote_state_t state = IDLE;
 static float sensed_lux;
@@ -177,19 +176,6 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
     NRF_LOG_INFO("State changed! Flags: 0x%08lx Current role: %d",
                  flags, otThreadGetDeviceRole(p_context));
 
-    if (flags & OT_CHANGED_THREAD_NETDATA)
-    {
-        /**
-         * Whenever Thread Network Data is changed, it is necessary to check if generation of global
-         * addresses is needed. This operation is performed internally by the OpenThread CLI module.
-         * To lower power consumption, the examples that implement Thread Sleepy End Device role
-         * don't use the OpenThread CLI module. Therefore otIp6SlaacUpdate util is used to create
-         * IPv6 addresses.
-         */
-         otIp6SlaacUpdate(p_context, m_slaac_addresses,
-                          sizeof(m_slaac_addresses) / sizeof(m_slaac_addresses[0]),
-                          otIp6CreateRandomIid, NULL);
-    }
     if (flags & OT_CHANGED_IP6_ADDRESS_ADDED && otThreadGetDeviceRole(p_context) == 2) {
       NRF_LOG_INFO("We have internet connectivity!");
       addresses_print(p_context);
