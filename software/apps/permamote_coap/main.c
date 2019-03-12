@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "nrf.h"
 #include "nrf_gpio.h"
@@ -26,11 +27,11 @@
 #include <openthread/message.h>
 
 #include "simple_thread.h"
+#include "thread_ntp.h"
 #include "permamote_coap.h"
 #include "thread_coap.h"
 #include "thread_dns.h"
 #include "device_id.h"
-#include "ntp.h"
 
 #include "permamote.h"
 #include "ab1815.h"
@@ -120,10 +121,11 @@ typedef enum {
 APP_TIMER_DEF(periodic_sensor_timer);
 APP_TIMER_DEF(pir_backoff);
 APP_TIMER_DEF(pir_delay);
+APP_TIMER_DEF(ntp_jitter);
 
 static bool trigger = false;
+static bool seed = false;
 static uint8_t device_id[6];
-static struct ntp_client_t ntp_client;
 static permamote_state_t state = IDLE;
 static float sensed_lux;
 static bool do_reset = false;
@@ -137,7 +139,15 @@ void coap_dfu_handle_error(void)
     coap_dfu_reset_state();
 }
 
-void rtc_update_callback(void) {
+void rtc_callback(void) {
+  uint32_t r = rand();
+  float jitter = r / (float) RAND_MAX * (NTP_UPDATE_MAX - NTP_UPDATE_MIN) + NTP_UPDATE_MIN;
+  NRF_LOG_INFO("jitter: %u", (uint32_t) jitter);
+  uint32_t err_code = app_timer_start(ntp_jitter, APP_TIMER_TICKS(jitter), NULL);
+  APP_ERROR_CHECK(err_code);
+}
+
+void ntp_jitter_callback(void* m) {
     if (state == IDLE) {
         state = UPDATE_TIME;
     }
@@ -160,13 +170,18 @@ void __attribute__((weak)) dns_response_handler(void         * p_context,
     memcpy(p_context, p_resolved_address, sizeof(otIp6Address));
 }
 
-void ntp_recv_callback(struct ntp_client_t* client) {
-  if (client->state == NTP_CLIENT_RECV) {
-    ab1815_set_time(unix_to_ab1815(client->tv));
-    NRF_LOG_INFO("ntp time: %lu.%lu", client->tv.tv_sec, client->tv.tv_usec);
+void ntp_response_handler(void* context, uint64_t time, otError error) {
+  struct timeval tv = {.tv_sec = (uint32_t)time & UINT32_MAX};
+  if (!seed) {
+    srand((uint32_t)time & UINT32_MAX);
+    seed = true;
+  }
+  if (error == OT_ERROR_NONE) {
+    ab1815_set_time(unix_to_ab1815(tv));
+    NRF_LOG_INFO("ntp time: %lu.%lu", (uint32_t)time & UINT32_MAX);
   }
   else {
-    NRF_LOG_INFO("ntp error state: 0x%x", client->state);
+    NRF_LOG_INFO("ntp error: %d", error);
   }
   otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
   state = IDLE;
@@ -524,14 +539,9 @@ void state_step(void) {
         break;
       }
 
-      int error = ntp_client_begin(thread_instance, &ntp_client, &m_ntp_address, 123, 127, ntp_recv_callback, NULL);
+      otError error = thread_ntp_request(thread_instance, &m_ntp_address, NULL, ntp_response_handler);
       NRF_LOG_INFO("sent ntp poll!");
       NRF_LOG_INFO("error: %d", error);
-      if (error) {
-        memset(&ntp_client, 0, sizeof(struct ntp_client_t));
-        state = IDLE;
-        return;
-      }
 
       state = WAIT_TIME;
       break;
@@ -580,6 +590,10 @@ void timer_init(void)
 
   err_code = app_timer_create(&pir_delay, APP_TIMER_MODE_SINGLE_SHOT, pir_enable_callback);
   APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&ntp_jitter, APP_TIMER_MODE_SINGLE_SHOT, ntp_jitter_callback);
+  APP_ERROR_CHECK(err_code);
+
 }
 
 int main(void) {
@@ -635,7 +649,6 @@ int main(void) {
   while (1) {
     coap_dfu_process();
     thread_process();
-    ntp_client_process(&ntp_client);
     state_step();
     if (NRF_LOG_PROCESS() == false)
     {

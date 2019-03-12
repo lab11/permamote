@@ -78,7 +78,7 @@ BOARD_SOURCES += \
 	simple_thread.c\
 	thread_coap.c\
 	thread_dns.c\
-	ntp.c\
+	thread_ntp.c\
 	nrf_fstorage.c \
 	nrf_fstorage_nvmc.c \
 	nrf_crypto_ecc.c \
