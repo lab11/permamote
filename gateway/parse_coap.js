@@ -46,6 +46,9 @@ var parse_payload = function (device_id, resource_url, payload, cb) {
       else if (resource_url === '/vbat_ok') {
         out.vbat_ok = payload[0];
       }
+      else if (resource_url === '/weight_mg') {
+        out.weight_mg = payload.readInt32LE();
+      }
       else if (resource_url === '/error') {
         out.error = payload.readUInt32LE();
       }
