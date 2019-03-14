@@ -182,20 +182,17 @@ int main(void) {
     // }
 
     //-------------------------------------------Continued Testing with new fxns-------------
-    // int data_to_store = -1985;
-    // uint16_t data_file = 0x1235;
-    // uint16_t data_id = 0x5679;
-    // rc = fds_write(data_file, data_id, &data_to_store, sizeof(data_to_store));
-    // if (rc != FDS_SUCCESS) {
-    //     NRF_LOG_INFO("FDS write failed");
-    // } else {
-    //     NRF_LOG_INFO("FDS write OK");
-    // }
+    int data_to_store = -1985;
+    uint16_t data_file = 0x1235;
+    uint16_t data_id = 0x5679;
+    rc = fds_write(data_file, data_id, &data_to_store, sizeof(data_to_store));
+    if (rc != FDS_SUCCESS) {
+        NRF_LOG_INFO("FDS write failed");
+    } else {
+        NRF_LOG_INFO("FDS write OK");
+    }
 
-    // int data_read = (int) fds_read(data_file, data_id);
-    // NRF_LOG_INFO("We read %d", data_read);
-
-    //-------------------------------------------------------------------------------------------
-
+    int data_read = (int) fds_read(data_file, data_id);
+    NRF_LOG_INFO("We read %d", data_read);
 
 }
