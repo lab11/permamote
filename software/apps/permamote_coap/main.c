@@ -51,8 +51,9 @@
 extern otIp6Address unspecified_ipv6;
 static otIp6Address m_ntp_address;
 static otIp6Address m_coap_address;
-#define NUM_ADDRESSES 2
-static otIp6Address* addresses[NUM_ADDRESSES] = {&m_ntp_address, &m_coap_address};
+static otIp6Address m_up_address;
+#define NUM_ADDRESSES 3
+static otIp6Address* addresses[NUM_ADDRESSES] = {&m_ntp_address, &m_coap_address, &m_up_address};
 
 /*
  * methods to print addresses
@@ -508,7 +509,10 @@ void state_step(void) {
         NRF_LOG_INFO("trigger: %d", dfu_state.triggers_received);
 
         otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
-        int result = coap_dfu_trigger(NULL);
+        coap_remote_t remote;
+        memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
+        remote.port_number = OT_DEFAULT_COAP_PORT;
+        int result = coap_dfu_trigger(&remote);
         NRF_LOG_INFO("result: %d", result);
         //if (result == NRF_ERROR_INVALID_STATE) {
         //    coap_dfu_reset_state();
@@ -535,6 +539,11 @@ void state_step(void) {
                                     COAP_SERVER_HOSTNAME,
                                     dns_response_handler,
                                     (void*) &m_coap_address);
+        thread_dns_hostname_resolve(thread_instance,
+                                    DNS_SERVER_ADDR,
+                                    UPDATE_SERVER_HOSTNAME,
+                                    dns_response_handler,
+                                    (void*) &m_up_address);
         state = RESOLVING_ADDR;
         break;
       }
@@ -547,9 +556,11 @@ void state_step(void) {
       break;
     }
     case RESOLVING_ADDR: {
-      if (!(otIp6IsAddressEqual(&m_ntp_address, &unspecified_ipv6)
-       || otIp6IsAddressEqual(&m_coap_address, &unspecified_ipv6)) ||
-       dns_error != 0)
+      bool resolved = true;
+      for (uint8_t i = 0; i < NUM_ADDRESSES; i++) {
+        resolved |= !otIp6IsAddressEqual(addresses[i], &unspecified_ipv6);
+      }
+      if (resolved)
       {
          state = UPDATE_TIME;
       }
