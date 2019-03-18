@@ -1,5 +1,6 @@
 #define COAP_SERVER_HOSTNAME "coap.permamote.com"
 #define NTP_SERVER_HOSTNAME "us.pool.ntp.org"
+#define UPDATE_SERVER_HOSTNAME "lab11-ubuntu.eecs.berkeley.edu"
 #define DNS_SERVER_ADDR "fdaa:bb:1::2"
 #define PARSE_ADDR "j2x.us/perm"
 

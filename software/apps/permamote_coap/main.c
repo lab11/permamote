@@ -558,7 +558,7 @@ void state_step(void) {
     case RESOLVING_ADDR: {
       bool resolved = true;
       for (uint8_t i = 0; i < NUM_ADDRESSES; i++) {
-        resolved |= !otIp6IsAddressEqual(addresses[i], &unspecified_ipv6);
+        resolved &= !otIp6IsAddressEqual(addresses[i], &unspecified_ipv6);
       }
       if (resolved)
       {
