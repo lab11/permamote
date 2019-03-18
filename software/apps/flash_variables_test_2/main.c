@@ -46,6 +46,9 @@ static void fds_evt_handler(fds_evt_t const * p_fds_evt) {
     }
 }
 
+static char *flash_variable_names[20] = {""};
+int next_record_key = 1;
+
 static ret_code_t fds_write(uint16_t file_id, uint16_t record_key, void const *p_data, size_t data_size) {
     fds_record_t record;
     fds_record_desc_t record_desc;
@@ -54,6 +57,23 @@ static ret_code_t fds_write(uint16_t file_id, uint16_t record_key, void const *p
     record.data.p_data = p_data;
     record.data.length_words = (data_size + 3) / 4; // 4 bytes = 1 word; we take the ceiling of the # of words
     return fds_record_write(&record_desc, &record);
+}
+
+static ret_code_t fds_update(uint16_t file_id, uint16_t record_key, void const *p_data, size_t data_size) {
+    // Find the record description for the record we want to update
+    fds_record_desc_t record_desc;
+    fds_find_token_t ftok;
+    memset(&ftok, 0x00, sizeof(fds_find_token_t)); // Zero the token
+    fds_record_find(file_id, record_key, &record_desc, &ftok);
+    // Now record_desc should contain correct description
+    
+    fds_record_t record;
+    record.file_id = file_id;
+    record.key = record_key;
+    record.data.p_data = p_data;
+    record.data.length_words = (data_size + 3) / 4; // 4 bytes = 1 word; we take the ceiling of the # of words
+    return fds_record_update(&record_desc, &record);
+
 }
 
 static uint32_t fds_read(uint16_t file_id, uint16_t record_key) {
@@ -82,13 +102,45 @@ static uint32_t fds_read(uint16_t file_id, uint16_t record_key) {
     return return_value;
 }
 
-static ret_code_t flash_write(char *name, void const *p_data, size_t data_size) {
-
-    return fds_write(0x1111, 0x1111, p_data, data_size);
+static ret_code_t flash_write(uint16_t record_key, void const *p_data, size_t data_size) {
+    return fds_write(0x1111, record_key, p_data, data_size);
 }
 
 static uint32_t flash_read(char *name) {
     return 0;
+}
+
+static ret_code_t flash_update(uint16_t record_key, void const *p_data, size_t data_size) {
+    return fds_update(0x1111, record_key, p_data, data_size);
+}
+
+static uint16_t get_record_key(char* name) {
+    // Returns record_key if "name" is already present in array of flash variable names
+    // Else, returns 0
+    uint16_t record_key;
+    bool found = false;
+    for (record_key = 1; record_key < ARRAY_SIZE(flash_variable_names); record_key++) { // skip 0th entry because 0x0000 can't be used as a record ID
+        if (strcmp(name, flash_variable_names[record_key]) == 0) {
+            found = true;
+            break;
+        }
+    }
+    if (found) {
+        return record_key;
+    }
+    return 0;
+}
+
+static ret_code_t flash_put(char *name, void const *p_data, size_t data_size) {
+    ret_code_t rc;
+    uint16_t record_key = get_record_key(name);
+    if (record_key > 0) { // Variable already exists
+        rc = flash_update(record_key, p_data, data_size);
+    } else {
+        rc = flash_write(next_record_key, p_data, data_size);
+        next_record_key++;
+    }
+    return rc;
 }
 
 
