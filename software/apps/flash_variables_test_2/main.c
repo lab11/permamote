@@ -47,7 +47,7 @@ static void fds_evt_handler(fds_evt_t const * p_fds_evt) {
 }
 
 static char *flash_variable_names[20] = {""};
-int next_record_key = 1;
+static int next_record_key = 1; // this might get reset every time the thing restarts, which we don't want
 
 static ret_code_t fds_write(uint16_t file_id, uint16_t record_key, void const *p_data, size_t data_size) {
     fds_record_t record;
@@ -107,6 +107,11 @@ static ret_code_t flash_write(uint16_t record_key, void const *p_data, size_t da
 }
 
 static uint32_t flash_read(char *name) {
+    uint16_t record_key = get_record_key(name);
+    if (record_key > 0) { // Variable already exists
+        return fds_read(0x1111, record_key);
+    }
+    NRF_LOG_INFO("You tried to read a variable that hasn't been stored in flash");
     return 0;
 }
 
