@@ -494,7 +494,6 @@ void state_step(void) {
       //  return;
       //}
 
-
       period_count ++;
       if (period_count % sensor_period.voltage == 0) {
         send_voltage();
@@ -506,7 +505,7 @@ void state_step(void) {
         send_weight();
       }
       if (period_count % sensor_period.color == 0) {
-        send_color();
+        //send_color();
       }
       if (period_count % sensor_period.discover == 0) {
         send_discover();

@@ -10,7 +10,7 @@
 
 #define VOLTAGE_PERIOD      2
 #define TPH_PERIOD          5
-#define WEIGHT_PERIOD       2
+#define WEIGHT_PERIOD       5
 #define COLOR_PERIOD        10
 #define DISCOVER_PERIOD     5
 #define SENSOR_PERIOD       APP_TIMER_TICKS(60*1000)
