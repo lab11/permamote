@@ -121,11 +121,12 @@ int main(void) {
     // int data_read = (int) fds_read(data_file, data_id);
     // NRF_LOG_INFO("We read %d", data_read);
 
-    // int x1 = 1339;
-    // flash_put("x1", &x1, sizeof(x1));
+    int x3 = 1984;
+    flash_put("x3", &x3, sizeof(x3));
 
-    // int x2 = (int) flash_get("x1");
-    // NRF_LOG_INFO("Retrieved: %d", x2);
+    NRF_LOG_INFO("x1: %d", (int) flash_get("x1"));
+    NRF_LOG_INFO("x3: %d", (int) flash_get("x3"));
 
-    NRF_LOG_INFO("1: %x", (uint16_t) "ab");
+
+    //NRF_LOG_INFO("1: %x", (uint16_t) "ab");
 }

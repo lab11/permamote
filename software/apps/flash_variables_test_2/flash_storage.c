@@ -12,6 +12,11 @@
 static const char *flash_variable_names[20] = {""};
 static int next_record_key = 1; // this might get reset every time the thing restarts, which we don't want
 
+typedef struct {
+    char *name;
+    void *p_value;
+} flash_storage_tag_t;
+
 static void fds_evt_handler(fds_evt_t const * p_fds_evt) {
     switch (p_fds_evt->id) {
         case FDS_EVT_INIT:
@@ -89,8 +94,6 @@ static uint32_t fds_read(uint16_t file_id, uint16_t record_key) {
     memset(&ftok, 0x00, sizeof(fds_find_token_t)); // Zero the token
 
     if (fds_record_find(file_id, record_key, &record_desc, &ftok) == FDS_SUCCESS) {
-        NRF_LOG_INFO("Data Found!");
-
         if (fds_record_open(&record_desc, &flash_record) != FDS_SUCCESS) {
             NRF_LOG_INFO("FDS read open failed");
         } else {
@@ -121,7 +124,7 @@ static uint16_t get_record_key(const char* name) {
 
     bool found = false;
     for (record_key = 1; record_key < NAME_MAP_SIZE; record_key++) { // skip 0th entry because 0x0000 can't be used as a record ID
-        if (strcmp(name, (*((char**)flash_record.p_data))[record_key] == 0)) {
+        if (strcmp(name, (*((char**) flash_record.p_data))[record_key] == 0)) {
             found = true;
             break;
         }
