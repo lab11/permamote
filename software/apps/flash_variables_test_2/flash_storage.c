@@ -127,13 +127,7 @@ static uint32_t fds_read(uint16_t file_id, uint16_t record_key) {
 // }
 
 ret_code_t flash_put(const char *name, void const *p_data, size_t data_size) {
-    flash_storage_tag_t tag = {}
-
-    typedef struct {
-    char *name;
-    void *p_value;
-    } flash_storage_tag_t;
- // make new struct with new data
+    
 
     ret_code_t rc;
     fds_flash_record_t  flash_record;
