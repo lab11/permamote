@@ -94,6 +94,7 @@ typedef struct {
   uint8_t discover;
 } permamote_sensor_period_t;
 uint32_t period_count = 0;
+uint32_t hours_count = 0;
 
 static permamote_sensor_period_t sensor_period = {
   .voltage = VOLTAGE_PERIOD,
@@ -123,8 +124,10 @@ APP_TIMER_DEF(periodic_sensor_timer);
 APP_TIMER_DEF(pir_backoff);
 APP_TIMER_DEF(pir_delay);
 APP_TIMER_DEF(ntp_jitter);
+APP_TIMER_DEF(dfu_monitor);
 
-static bool trigger = false;
+static bool dfu_trigger = true;
+static uint32_t last_block = 0;
 static bool seed = false;
 static uint8_t device_id[6];
 static permamote_state_t state = IDLE;
@@ -140,12 +143,49 @@ void coap_dfu_handle_error(void)
     coap_dfu_reset_state();
 }
 
+void dfu_monitor_callback(void* m) {
+  background_dfu_diagnostic_t dfu_state;
+  coap_dfu_diagnostic_get(&dfu_state);
+  NRF_LOG_INFO("state: %s", background_dfu_state_to_string(dfu_state.state));
+  NRF_LOG_INFO("prev state: %s", background_dfu_state_to_string(dfu_state.prev_state));
+  NRF_LOG_INFO("d blocks: %d", dfu_state.block_num);
+
+  // if this state combination, there isn't a new image for us, or server not
+  // responding, so return to normal operation
+  if (dfu_state.state == BACKGROUND_DFU_IDLE &&
+      dfu_state.prev_state == BACKGROUND_DFU_IDLE) {
+    dfu_trigger = false;
+    coap_dfu_reset_state();
+    otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
+    app_timer_stop(dfu_monitor);
+    NRF_LOG_INFO("Aborted DFU operation: Image already installed or server not responding");
+  }
+  // if we haven't downloaded any new blocks, reset and retrigger dfu
+  else if (last_block == dfu_state.block_num) {
+    coap_dfu_reset_state();
+    coap_remote_t remote;
+    memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
+    remote.port_number = OT_DEFAULT_COAP_PORT;
+    int result = coap_dfu_trigger(&remote);
+    NRF_LOG_INFO("result: %d", result);
+  }
+  else {
+    last_block = dfu_state.block_num;
+  }
+}
+
 void rtc_callback(void) {
-  uint32_t r = rand();
-  float jitter = r / (float) RAND_MAX * (NTP_UPDATE_MAX - NTP_UPDATE_MIN) + NTP_UPDATE_MIN;
-  NRF_LOG_INFO("jitter: %u", (uint32_t) jitter);
-  uint32_t err_code = app_timer_start(ntp_jitter, APP_TIMER_TICKS(jitter), NULL);
-  APP_ERROR_CHECK(err_code);
+  hours_count++;
+  if (hours_count % NTP_UPDATE_HOURS == 0) {
+    uint32_t r = rand();
+    float jitter = r / (float) RAND_MAX * (NTP_UPDATE_MAX - NTP_UPDATE_MIN) + NTP_UPDATE_MIN;
+    NRF_LOG_INFO("jitter: %u", (uint32_t) jitter);
+    uint32_t err_code = app_timer_start(ntp_jitter, APP_TIMER_TICKS(jitter), NULL);
+    APP_ERROR_CHECK(err_code);
+  }
+  if (hours_count % DFU_CHECK_HOURS == 0) {
+    dfu_trigger = true;
+  }
 }
 
 void ntp_jitter_callback(void* m) {
@@ -500,13 +540,8 @@ void state_step(void) {
       state = IDLE;
 
       //max44009_schedule_read_lux();
-      if (trigger == true) {
-        trigger = false;
-        background_dfu_diagnostic_t dfu_state;
-        coap_dfu_diagnostic_get(&dfu_state);
-        NRF_LOG_INFO("state: %d", dfu_state.state);
-        NRF_LOG_INFO("prev state: %d", dfu_state.prev_state);
-        NRF_LOG_INFO("trigger: %d", dfu_state.triggers_received);
+      if (dfu_trigger == true) {
+        dfu_trigger = false;
 
         otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
         coap_remote_t remote;
@@ -514,6 +549,8 @@ void state_step(void) {
         remote.port_number = OT_DEFAULT_COAP_PORT;
         int result = coap_dfu_trigger(&remote);
         NRF_LOG_INFO("result: %d", result);
+        uint32_t err_code = app_timer_start(dfu_monitor, DFU_MONITOR_PERIOD, NULL);
+        APP_ERROR_CHECK(err_code);
         //if (result == NRF_ERROR_INVALID_STATE) {
         //    coap_dfu_reset_state();
         //}
@@ -603,6 +640,9 @@ void timer_init(void)
   APP_ERROR_CHECK(err_code);
 
   err_code = app_timer_create(&ntp_jitter, APP_TIMER_MODE_SINGLE_SHOT, ntp_jitter_callback);
+  APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&dfu_monitor, APP_TIMER_MODE_REPEATED, dfu_monitor_callback);
   APP_ERROR_CHECK(err_code);
 
 }
