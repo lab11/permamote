@@ -152,8 +152,8 @@ void dfu_monitor_callback(void* m) {
 
   // if this state combination, there isn't a new image for us, or server not
   // responding, so return to normal operation
-  if (dfu_state.state == BACKGROUND_DFU_IDLE &&
-      dfu_state.prev_state == BACKGROUND_DFU_IDLE) {
+  if (dfu_state.state == BACKGROUND_DFU_DOWNLOAD_TRIG &&
+      (dfu_state.prev_state == BACKGROUND_DFU_IDLE)) {
     dfu_trigger = false;
     coap_dfu_reset_state();
     otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);

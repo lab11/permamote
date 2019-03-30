@@ -98,6 +98,7 @@ BOARD_SOURCES += \
 	coap_option.c\
 	coap_queue.c\
 	coap_resource.c\
+	coap_observe.c\
 	coap_transport_ot.c\
 	coap_dfu.c\
 	crc32.c \
