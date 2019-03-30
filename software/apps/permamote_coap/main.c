@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "nrf.h"
 #include "nrf_gpio.h"
@@ -26,11 +27,11 @@
 #include <openthread/message.h>
 
 #include "simple_thread.h"
+#include "thread_ntp.h"
 #include "permamote_coap.h"
 #include "thread_coap.h"
 #include "thread_dns.h"
 #include "device_id.h"
-#include "ntp.h"
 
 #include "permamote.h"
 #include "ab1815.h"
@@ -50,8 +51,9 @@
 extern otIp6Address unspecified_ipv6;
 static otIp6Address m_ntp_address;
 static otIp6Address m_coap_address;
-#define NUM_ADDRESSES 2
-static otIp6Address* addresses[NUM_ADDRESSES] = {&m_ntp_address, &m_coap_address};
+static otIp6Address m_up_address;
+#define NUM_ADDRESSES 3
+static otIp6Address* addresses[NUM_ADDRESSES] = {&m_ntp_address, &m_coap_address, &m_up_address};
 
 /*
  * methods to print addresses
@@ -92,6 +94,7 @@ typedef struct {
   uint8_t discover;
 } permamote_sensor_period_t;
 uint32_t period_count = 0;
+uint32_t hours_count = 0;
 
 static permamote_sensor_period_t sensor_period = {
   .voltage = VOLTAGE_PERIOD,
@@ -120,11 +123,13 @@ typedef enum {
 APP_TIMER_DEF(periodic_sensor_timer);
 APP_TIMER_DEF(pir_backoff);
 APP_TIMER_DEF(pir_delay);
+APP_TIMER_DEF(ntp_jitter);
+APP_TIMER_DEF(dfu_monitor);
 
-static bool trigger = false;
+static bool dfu_trigger = true;
+static uint32_t last_block = 0;
+static bool seed = false;
 static uint8_t device_id[6];
-static otNetifAddress m_slaac_addresses[6]; /**< Buffer containing addresses resolved by SLAAC */
-static struct ntp_client_t ntp_client;
 static permamote_state_t state = IDLE;
 static float sensed_lux;
 static bool do_reset = false;
@@ -138,7 +143,52 @@ void coap_dfu_handle_error(void)
     coap_dfu_reset_state();
 }
 
-void rtc_update_callback(void) {
+void dfu_monitor_callback(void* m) {
+  background_dfu_diagnostic_t dfu_state;
+  coap_dfu_diagnostic_get(&dfu_state);
+  NRF_LOG_INFO("state: %s", background_dfu_state_to_string(dfu_state.state));
+  NRF_LOG_INFO("prev state: %s", background_dfu_state_to_string(dfu_state.prev_state));
+  NRF_LOG_INFO("d blocks: %d", dfu_state.block_num);
+
+  // if this state combination, there isn't a new image for us, or server not
+  // responding, so return to normal operation
+  if (dfu_state.state == BACKGROUND_DFU_IDLE &&
+      dfu_state.prev_state == BACKGROUND_DFU_IDLE) {
+    dfu_trigger = false;
+    coap_dfu_reset_state();
+    otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
+    app_timer_stop(dfu_monitor);
+    NRF_LOG_INFO("Aborted DFU operation: Image already installed or server not responding");
+  }
+  // if we haven't downloaded any new blocks, reset and retrigger dfu
+  else if (last_block == dfu_state.block_num) {
+    coap_dfu_reset_state();
+    coap_remote_t remote;
+    memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
+    remote.port_number = OT_DEFAULT_COAP_PORT;
+    int result = coap_dfu_trigger(&remote);
+    NRF_LOG_INFO("result: %d", result);
+  }
+  else {
+    last_block = dfu_state.block_num;
+  }
+}
+
+void rtc_callback(void) {
+  hours_count++;
+  if (hours_count % NTP_UPDATE_HOURS == 0) {
+    uint32_t r = rand();
+    float jitter = r / (float) RAND_MAX * (NTP_UPDATE_MAX - NTP_UPDATE_MIN) + NTP_UPDATE_MIN;
+    NRF_LOG_INFO("jitter: %u", (uint32_t) jitter);
+    uint32_t err_code = app_timer_start(ntp_jitter, APP_TIMER_TICKS(jitter), NULL);
+    APP_ERROR_CHECK(err_code);
+  }
+  if (hours_count % DFU_CHECK_HOURS == 0) {
+    dfu_trigger = true;
+  }
+}
+
+void ntp_jitter_callback(void* m) {
     if (state == IDLE) {
         state = UPDATE_TIME;
     }
@@ -161,13 +211,18 @@ void __attribute__((weak)) dns_response_handler(void         * p_context,
     memcpy(p_context, p_resolved_address, sizeof(otIp6Address));
 }
 
-void ntp_recv_callback(struct ntp_client_t* client) {
-  if (client->state == NTP_CLIENT_RECV) {
-    ab1815_set_time(unix_to_ab1815(client->tv));
-    NRF_LOG_INFO("ntp time: %lu.%lu", client->tv.tv_sec, client->tv.tv_usec);
+void ntp_response_handler(void* context, uint64_t time, otError error) {
+  struct timeval tv = {.tv_sec = (uint32_t)time & UINT32_MAX};
+  if (!seed) {
+    srand((uint32_t)time & UINT32_MAX);
+    seed = true;
+  }
+  if (error == OT_ERROR_NONE) {
+    ab1815_set_time(unix_to_ab1815(tv));
+    NRF_LOG_INFO("ntp time: %lu.%lu", (uint32_t)time & UINT32_MAX);
   }
   else {
-    NRF_LOG_INFO("ntp error state: 0x%x", client->state);
+    NRF_LOG_INFO("ntp error: %d", error);
   }
   otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
   state = IDLE;
@@ -177,19 +232,6 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
     NRF_LOG_INFO("State changed! Flags: 0x%08lx Current role: %d",
                  flags, otThreadGetDeviceRole(p_context));
 
-    if (flags & OT_CHANGED_THREAD_NETDATA)
-    {
-        /**
-         * Whenever Thread Network Data is changed, it is necessary to check if generation of global
-         * addresses is needed. This operation is performed internally by the OpenThread CLI module.
-         * To lower power consumption, the examples that implement Thread Sleepy End Device role
-         * don't use the OpenThread CLI module. Therefore otIp6SlaacUpdate util is used to create
-         * IPv6 addresses.
-         */
-         otIp6SlaacUpdate(p_context, m_slaac_addresses,
-                          sizeof(m_slaac_addresses) / sizeof(m_slaac_addresses[0]),
-                          otIp6CreateRandomIid, NULL);
-    }
     if (flags & OT_CHANGED_IP6_ADDRESS_ADDED && otThreadGetDeviceRole(p_context) == 2) {
       NRF_LOG_INFO("We have internet connectivity!");
       addresses_print(p_context);
@@ -498,17 +540,17 @@ void state_step(void) {
       state = IDLE;
 
       //max44009_schedule_read_lux();
-      if (trigger == true) {
-        trigger = false;
-        background_dfu_diagnostic_t dfu_state;
-        coap_dfu_diagnostic_get(&dfu_state);
-        NRF_LOG_INFO("state: %d", dfu_state.state);
-        NRF_LOG_INFO("prev state: %d", dfu_state.prev_state);
-        NRF_LOG_INFO("trigger: %d", dfu_state.triggers_received);
+      if (dfu_trigger == true) {
+        dfu_trigger = false;
 
         otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
-        int result = coap_dfu_trigger(NULL);
+        coap_remote_t remote;
+        memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
+        remote.port_number = OT_DEFAULT_COAP_PORT;
+        int result = coap_dfu_trigger(&remote);
         NRF_LOG_INFO("result: %d", result);
+        uint32_t err_code = app_timer_start(dfu_monitor, DFU_MONITOR_PERIOD, NULL);
+        APP_ERROR_CHECK(err_code);
         //if (result == NRF_ERROR_INVALID_STATE) {
         //    coap_dfu_reset_state();
         //}
@@ -534,26 +576,28 @@ void state_step(void) {
                                     COAP_SERVER_HOSTNAME,
                                     dns_response_handler,
                                     (void*) &m_coap_address);
+        thread_dns_hostname_resolve(thread_instance,
+                                    DNS_SERVER_ADDR,
+                                    UPDATE_SERVER_HOSTNAME,
+                                    dns_response_handler,
+                                    (void*) &m_up_address);
         state = RESOLVING_ADDR;
         break;
       }
 
-      int error = ntp_client_begin(thread_instance, &ntp_client, &m_ntp_address, 123, 127, ntp_recv_callback, NULL);
+      otError error = thread_ntp_request(thread_instance, &m_ntp_address, NULL, ntp_response_handler);
       NRF_LOG_INFO("sent ntp poll!");
       NRF_LOG_INFO("error: %d", error);
-      if (error) {
-        memset(&ntp_client, 0, sizeof(struct ntp_client_t));
-        state = IDLE;
-        return;
-      }
 
       state = WAIT_TIME;
       break;
     }
     case RESOLVING_ADDR: {
-      if (!(otIp6IsAddressEqual(&m_ntp_address, &unspecified_ipv6)
-       || otIp6IsAddressEqual(&m_coap_address, &unspecified_ipv6)) ||
-       dns_error != 0)
+      bool resolved = true;
+      for (uint8_t i = 0; i < NUM_ADDRESSES; i++) {
+        resolved &= !otIp6IsAddressEqual(addresses[i], &unspecified_ipv6);
+      }
+      if (resolved)
       {
          state = UPDATE_TIME;
       }
@@ -594,6 +638,13 @@ void timer_init(void)
 
   err_code = app_timer_create(&pir_delay, APP_TIMER_MODE_SINGLE_SHOT, pir_enable_callback);
   APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&ntp_jitter, APP_TIMER_MODE_SINGLE_SHOT, ntp_jitter_callback);
+  APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&dfu_monitor, APP_TIMER_MODE_REPEATED, dfu_monitor_callback);
+  APP_ERROR_CHECK(err_code);
+
 }
 
 int main(void) {
@@ -649,7 +700,6 @@ int main(void) {
   while (1) {
     coap_dfu_process();
     thread_process();
-    ntp_client_process(&ntp_client);
     state_step();
     if (NRF_LOG_PROCESS() == false)
     {

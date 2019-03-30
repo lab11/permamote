@@ -16,6 +16,7 @@
 #include "app_error_weak.h"
 #include "nrf_bootloader_info.h"
 #include "nrf_gpio.h"
+#include "nrf_drv_clock.h"
 
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
@@ -76,6 +77,10 @@ int main(void)
 {
     uint32_t ret_val;
 
+    //ret_code_t err_code = nrf_drv_clock_init();
+    //APP_ERROR_CHECK(err_code);
+    //nrf_drv_clock_lfclk_request(NULL);
+
     log_init();
 
     NRF_LOG_INFO("Inside main\r\n");
@@ -86,6 +91,8 @@ int main(void)
     ret_val = nrf_bootloader_init(dfu_observer);
     APP_ERROR_CHECK(ret_val);
 
+    while(1){}
+
     // Either there was no DFU functionality enabled in this project or the DFU module detected
     // no ongoing DFU operation and found a valid main application.
     // Boot the main application.
@@ -93,6 +100,7 @@ int main(void)
 
     // Should never be reached.
     NRF_LOG_INFO("After main\r\n");
+
 }
 
 /**
