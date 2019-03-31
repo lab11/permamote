@@ -677,6 +677,7 @@ int main(void) {
   // init periodic timers
   timer_init();
 
+  NRF_LOG_INFO("GIT Version: %s", GIT_VERSION);
   get_device_id(device_id);
   NRF_LOG_INFO("Device ID: %x:%x:%x:%x:%x:%x", device_id[0], device_id[1],
                 device_id[2], device_id[3], device_id[4], device_id[5]);
