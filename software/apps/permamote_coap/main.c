@@ -22,6 +22,7 @@
 #include "nrf_log_default_backends.h"
 #include "nrf_dfu_utils.h"
 #include "coap_dfu.h"
+#include "coap_api.h"
 #include "background_dfu_state.h"
 
 #include <openthread/message.h>
@@ -125,6 +126,7 @@ APP_TIMER_DEF(pir_backoff);
 APP_TIMER_DEF(pir_delay);
 APP_TIMER_DEF(ntp_jitter);
 APP_TIMER_DEF(dfu_monitor);
+APP_TIMER_DEF(coap_tick);
 
 static bool dfu_trigger = true;
 static uint32_t last_block = 0;
@@ -143,6 +145,13 @@ void coap_dfu_handle_error(void)
     coap_dfu_reset_state();
 }
 
+// Function for handling CoAP periodically time ticks.
+static void app_coap_time_tick(void* m)
+{
+    // Pass a tick to coap in order to re-transmit any pending messages.
+    (void)coap_time_tick();
+}
+
 void dfu_monitor_callback(void* m) {
   background_dfu_diagnostic_t dfu_state;
   coap_dfu_diagnostic_get(&dfu_state);
@@ -152,7 +161,7 @@ void dfu_monitor_callback(void* m) {
 
   // if this state combination, there isn't a new image for us, or server not
   // responding, so return to normal operation
-  if (dfu_state.state == BACKGROUND_DFU_DOWNLOAD_TRIG &&
+  if ((dfu_state.state == BACKGROUND_DFU_DOWNLOAD_TRIG || dfu_state.state == BACKGROUND_DFU_IDLE) &&
       (dfu_state.prev_state == BACKGROUND_DFU_IDLE)) {
     dfu_trigger = false;
     coap_dfu_reset_state();
@@ -645,6 +654,9 @@ void timer_init(void)
   err_code = app_timer_create(&dfu_monitor, APP_TIMER_MODE_REPEATED, dfu_monitor_callback);
   APP_ERROR_CHECK(err_code);
 
+  err_code = app_timer_create(&coap_tick, APP_TIMER_MODE_REPEATED, app_coap_time_tick);
+  APP_ERROR_CHECK(err_code);
+
 }
 
 int main(void) {
@@ -688,11 +700,15 @@ int main(void) {
   for(uint8_t i = 0; i < NUM_ADDRESSES; i++) {
     *(addresses[i]) = unspecified_ipv6;
   }
+  // Start coap timer tick
+  uint32_t err_code = app_timer_start(coap_tick, COAP_TICK_TIME, NULL);
+  APP_ERROR_CHECK(err_code);
+
 
   sensors_init(&twi_mngr_instance, &spi_instance);
 
   // enable interrupts for pir, light sensor
-  uint32_t err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
+  err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
   APP_ERROR_CHECK(err_code);
   max44009_schedule_read_lux();
   max44009_enable_interrupt();
