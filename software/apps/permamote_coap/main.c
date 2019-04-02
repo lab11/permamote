@@ -164,20 +164,21 @@ void dfu_monitor_callback(void* m) {
   if ((dfu_state.state == BACKGROUND_DFU_DOWNLOAD_TRIG || dfu_state.state == BACKGROUND_DFU_IDLE) &&
       (dfu_state.prev_state == BACKGROUND_DFU_IDLE)) {
     dfu_trigger = false;
+    app_timer_stop(coap_tick);
     coap_dfu_reset_state();
     otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
     app_timer_stop(dfu_monitor);
     NRF_LOG_INFO("Aborted DFU operation: Image already installed or server not responding");
   }
   // if we haven't downloaded any new blocks, reset and retrigger dfu
-  else if (last_block == dfu_state.block_num) {
-    coap_dfu_reset_state();
-    coap_remote_t remote;
-    memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
-    remote.port_number = OT_DEFAULT_COAP_PORT;
-    int result = coap_dfu_trigger(&remote);
-    NRF_LOG_INFO("result: %d", result);
-  }
+  //else if (last_block == dfu_state.block_num) {
+  //  coap_dfu_reset_state();
+  //  coap_remote_t remote;
+  //  memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
+  //  remote.port_number = OT_DEFAULT_COAP_PORT;
+  //  int result = coap_dfu_trigger(&remote);
+  //  NRF_LOG_INFO("result: %d", result);
+  //}
   else {
     last_block = dfu_state.block_num;
   }
@@ -189,7 +190,7 @@ void rtc_callback(void) {
     uint32_t r = rand();
     float jitter = r / (float) RAND_MAX * (NTP_UPDATE_MAX - NTP_UPDATE_MIN) + NTP_UPDATE_MIN;
     NRF_LOG_INFO("jitter: %u", (uint32_t) jitter);
-    uint32_t err_code = app_timer_start(ntp_jitter, APP_TIMER_TICKS(jitter), NULL);
+    ret_code_t err_code = app_timer_start(ntp_jitter, APP_TIMER_TICKS(jitter), NULL);
     APP_ERROR_CHECK(err_code);
   }
   if (hours_count % DFU_CHECK_HOURS == 0) {
@@ -391,7 +392,7 @@ void pir_backoff_callback(void* m) {
   NRF_LOG_INFO("TURN ON PIR");
 
   nrf_gpio_pin_clear(PIR_EN);
-  uint32_t err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
+  ret_code_t err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
   APP_ERROR_CHECK(err_code);
 
 }
@@ -504,7 +505,7 @@ void state_step(void) {
       nrf_drv_gpiote_in_event_disable(PIR_OUT);
       nrf_gpio_pin_set(PIR_EN);
 
-      uint32_t err_code = app_timer_start(pir_backoff, PIR_BACKOFF_PERIOD, NULL);
+      ret_code_t err_code = app_timer_start(pir_backoff, PIR_BACKOFF_PERIOD, NULL);
       APP_ERROR_CHECK(err_code);
 
       NRF_LOG_INFO("Saw motion");
@@ -551,14 +552,17 @@ void state_step(void) {
       //max44009_schedule_read_lux();
       if (dfu_trigger == true) {
         dfu_trigger = false;
+        // Start coap timer tick
+        ret_code_t err_code = app_timer_start(coap_tick, COAP_TICK_TIME, NULL);
+        APP_ERROR_CHECK(err_code);
 
-        otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
+        otLinkSetPollPeriod(thread_instance, DFU_POLL_PERIOD);
         coap_remote_t remote;
         memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
         remote.port_number = OT_DEFAULT_COAP_PORT;
         int result = coap_dfu_trigger(&remote);
         NRF_LOG_INFO("result: %d", result);
-        uint32_t err_code = app_timer_start(dfu_monitor, DFU_MONITOR_PERIOD, NULL);
+        err_code = app_timer_start(dfu_monitor, DFU_MONITOR_PERIOD, NULL);
         APP_ERROR_CHECK(err_code);
         //if (result == NRF_ERROR_INVALID_STATE) {
         //    coap_dfu_reset_state();
@@ -634,7 +638,7 @@ void state_step(void) {
 
 void timer_init(void)
 {
-  uint32_t err_code = app_timer_init();
+  ret_code_t err_code = app_timer_init();
   APP_ERROR_CHECK(err_code);
 
   err_code = app_timer_create(&periodic_sensor_timer, APP_TIMER_MODE_REPEATED, periodic_sensor_read_callback);
@@ -701,15 +705,12 @@ int main(void) {
   for(uint8_t i = 0; i < NUM_ADDRESSES; i++) {
     *(addresses[i]) = unspecified_ipv6;
   }
-  // Start coap timer tick
-  uint32_t err_code = app_timer_start(coap_tick, COAP_TICK_TIME, NULL);
-  APP_ERROR_CHECK(err_code);
 
 
   sensors_init(&twi_mngr_instance, &spi_instance);
 
   // enable interrupts for pir, light sensor
-  err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
+  ret_code_t err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
   APP_ERROR_CHECK(err_code);
   max44009_schedule_read_lux();
   max44009_enable_interrupt();

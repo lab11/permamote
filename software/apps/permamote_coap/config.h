@@ -6,6 +6,7 @@
 
 #define DEFAULT_CHILD_TIMEOUT    2*60  /**< Thread child timeout [s]. */
 #define DEFAULT_POLL_PERIOD      60000 /**< Thread Sleepy End Device polling period when Asleep. [ms] */
+#define DFU_POLL_PERIOD          100
 #define RECV_POLL_PERIOD         15    /**< Thread Sleepy End Device polling period when expecting response. [ms] */
 #define NUM_SLAAC_ADDRESSES      6     /**< Number of SLAAC addresses. */
 
