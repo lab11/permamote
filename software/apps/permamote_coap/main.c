@@ -137,6 +137,9 @@ static float sensed_lux;
 static bool do_reset = false;
 static int dns_error = 0;
 
+// forward declaration
+static void send_discover(void);
+
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
 
@@ -230,6 +233,18 @@ void ntp_response_handler(void* context, uint64_t time, otError error) {
   if (error == OT_ERROR_NONE) {
     ab1815_set_time(unix_to_ab1815(tv));
     NRF_LOG_INFO("ntp time: %lu.%lu", (uint32_t)time & UINT32_MAX);
+
+    // now that we are connected and have the time, send our version and a
+    // discovery packet
+    send_discover();
+
+    uint8_t data[32];
+    memcpy(data, GIT_VERSION, strlen(GIT_VERSION));
+    packet.timestamp = tv;
+    packet.data = data;
+    packet.data_len = strlen(GIT_VERSION);
+
+    permamote_coap_send(&m_coap_address, "version", false, &packet);
   }
   else {
     NRF_LOG_INFO("ntp error: %d", error);
