@@ -233,18 +233,6 @@ void ntp_response_handler(void* context, uint64_t time, otError error) {
   if (error == OT_ERROR_NONE) {
     ab1815_set_time(unix_to_ab1815(tv));
     NRF_LOG_INFO("ntp time: %lu.%lu", (uint32_t)time & UINT32_MAX);
-
-    // now that we are connected and have the time, send our version and a
-    // discovery packet
-    send_discover();
-
-    uint8_t data[32];
-    memcpy(data, GIT_VERSION, strlen(GIT_VERSION));
-    packet.timestamp = tv;
-    packet.data = data;
-    packet.data_len = strlen(GIT_VERSION);
-
-    permamote_coap_send(&m_coap_address, "version", false, &packet);
   }
   else {
     NRF_LOG_INFO("ntp error: %d", error);
@@ -266,23 +254,23 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
     }
 }
 
-static void send_free_buffers(void) {
-  otBufferInfo buf_info = {0};
-  otMessageGetBufferInfo(thread_get_instance(), &buf_info);
-  printf("Buffer info:\n");
-  printf("\ttotal buffers: %u\n", buf_info.mTotalBuffers);
-  printf("\tfree buffers: %u\n", buf_info.mFreeBuffers);
-  printf("\tIp6 buffers: %u\n", buf_info.mIp6Buffers);
-  printf("\tIp6 messages: %u\n", buf_info.mIp6Messages);
-  printf("\tcoap buffers: %u\n", buf_info.mCoapBuffers);
-  printf("\tcoap messages: %u\n", buf_info.mCoapMessages);
-  printf("\tapp coap buffers: %u\n", buf_info.mApplicationCoapBuffers);
-  printf("\tapp coap messages: %u\n", buf_info.mApplicationCoapMessages);
-  packet.timestamp = ab1815_get_time_unix();
-  packet.data = (uint8_t*)&buf_info.mFreeBuffers;
-  packet.data_len = sizeof(sizeof(uint16_t));
-  permamote_coap_send(&m_coap_address, "free_ot_buffers", false, &packet);
-}
+//static void send_free_buffers(void) {
+//  otBufferInfo buf_info = {0};
+//  otMessageGetBufferInfo(thread_get_instance(), &buf_info);
+//  printf("Buffer info:\n");
+//  printf("\ttotal buffers: %u\n", buf_info.mTotalBuffers);
+//  printf("\tfree buffers: %u\n", buf_info.mFreeBuffers);
+//  printf("\tIp6 buffers: %u\n", buf_info.mIp6Buffers);
+//  printf("\tIp6 messages: %u\n", buf_info.mIp6Messages);
+//  printf("\tcoap buffers: %u\n", buf_info.mCoapBuffers);
+//  printf("\tcoap messages: %u\n", buf_info.mCoapMessages);
+//  printf("\tapp coap buffers: %u\n", buf_info.mApplicationCoapBuffers);
+//  printf("\tapp coap messages: %u\n", buf_info.mApplicationCoapMessages);
+//  packet.timestamp = ab1815_get_time_unix();
+//  packet.data = (uint8_t*)&buf_info.mFreeBuffers;
+//  packet.data_len = sizeof(sizeof(uint16_t));
+//  permamote_coap_send(&m_coap_address, "free_ot_buffers", false, &packet);
+//}
 
 static void send_temp_pres_hum(void) {
   float temperature, pressure, humidity;
@@ -567,6 +555,18 @@ void state_step(void) {
       //max44009_schedule_read_lux();
       if (dfu_trigger == true) {
         dfu_trigger = false;
+
+        // Send discovery packet and version before updating
+        send_discover();
+
+        uint8_t data[32];
+        memcpy(data, GIT_VERSION, strlen(GIT_VERSION));
+        packet.timestamp = ab1815_get_time_unix();
+        packet.data = data;
+        packet.data_len = strlen(GIT_VERSION);
+
+        permamote_coap_send(&m_coap_address, "version", false, &packet);
+
         // Start coap timer tick
         ret_code_t err_code = app_timer_start(coap_tick, COAP_TICK_TIME, NULL);
         APP_ERROR_CHECK(err_code);
