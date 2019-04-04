@@ -138,4 +138,6 @@ int main(void) {
 
     //-----------------------------More Tests of Stuff------------------------------------------------------
     int x1 = (int) define_flash_variable(25, 0x1234, sizeof(int));
+    printf("x1 = %d\n", x1);
+    flash_update(0x1234, 78, sizeof(int)); // Set x1 to 78
 }

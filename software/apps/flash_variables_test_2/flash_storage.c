@@ -69,7 +69,7 @@ void flash_storage_init() {
 
 } 
 
-static ret_code_t fds_update(uint16_t file_id, uint16_t record_key, void const *p_data, size_t data_size) {
+ret_code_t fds_update(uint16_t file_id, uint16_t record_key, void const *p_data, size_t data_size) {
     // Find the record description for the record we want to update
     fds_record_desc_t record_desc;
     fds_find_token_t ftok;
@@ -185,12 +185,12 @@ uint32_t define_flash_variable(uint32_t initial_value, uint16_t record_key, size
     fds_find_token_t ftok;
 
     memset(&ftok, 0x00, sizeof(fds_find_token_t)); // Zero the token
-    if (fds_record_find(file_id, record_key, &record_desc, &ftok) == FDS_SUCCESS) {
+    if (fds_record_find(DEFAULT_FILE_ID, record_key, &record_desc, &ftok) == FDS_SUCCESS) {
         fds_record_open(&record_desc, &flash_record);
         return_value = *((uint32_t *)flash_record.p_data);
         fds_record_close(&record_desc);
     } else {
-        fds_write(DEFAULT_FILE_ID, record_key, initial_value, size);
+        fds_write(DEFAULT_FILE_ID, record_key, &initial_value, size);
         return_value = initial_value;
     }
     return return_value;
@@ -205,3 +205,9 @@ uint32_t define_flash_variable(uint32_t initial_value, uint16_t record_key, size
 //     NRF_LOG_INFO("You tried to read a variable that hasn't been stored in flash");
 //     return 0;
 // }
+
+
+ret_code_t flash_update(uint16_t record_key, uint32_t value, size_t size) {
+    return fds_update(DEFAULT_FILE_ID, record_key, &value, size);
+}
+

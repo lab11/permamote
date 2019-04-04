@@ -1,8 +1,9 @@
 #include <stddef.h>
+#include <stdint.h>
 #include "nrf.h"
 
 void flash_storage_init();
 
-ret_code_t flash_put(const char *name, void const *p_data, size_t data_size);
+uint32_t define_flash_variable(uint32_t initial_value, uint16_t record_key, size_t size);
 
-uint32_t flash_get(const char *name);
+ret_code_t flash_update(uint16_t record_key, uint32_t value, size_t size);
