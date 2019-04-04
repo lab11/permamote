@@ -121,12 +121,21 @@ int main(void) {
     // int data_read = (int) fds_read(data_file, data_id);
     // NRF_LOG_INFO("We read %d", data_read);
 
-    int x3 = 1984;
-    flash_put("x3", &x3, sizeof(x3));
+    // int x3 = 1984;
+    // flash_put("x3", &x3, sizeof(x3));
 
-    NRF_LOG_INFO("x1: %d", (int) flash_get("x1"));
-    NRF_LOG_INFO("x3: %d", (int) flash_get("x3"));
+    // NRF_LOG_INFO("x1: %d", (int) flash_get("x1"));
+    // NRF_LOG_INFO("x3: %d", (int) flash_get("x3"));
+
+    //int x1 = 10;
+    //define_flash_variable("x1", "int", 10); // TODO: implement this
+    // This should somehow check if x1's value has been changed from 10, and if it has, change x2 to 10
+    // actually, int x1 = (int) define_flash_variable("x1", "int", 10) might work too -- the 10 would just get 
+    // ignored if x1 has a fresher value
 
 
     //NRF_LOG_INFO("1: %x", (uint16_t) "ab");
+
+    //-----------------------------More Tests of Stuff------------------------------------------------------
+    int x1 = (int) define_flash_variable(25, 0x1234, sizeof(int));
 }
