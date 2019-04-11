@@ -177,8 +177,27 @@ ret_code_t fds_update(uint16_t file_id, uint16_t record_key, void const *p_data,
 //     }
 // }
 
-uint32_t define_flash_variable(uint32_t initial_value, uint16_t record_key, size_t size) {
-    uint32_t return_value = 0;
+// uint32_t define_flash_variable(void *p_initial_value, uint16_t record_key, size_t size) {
+//     uint32_t return_value = 0;
+
+//     fds_flash_record_t flash_record;
+//     fds_record_desc_t record_desc;
+//     fds_find_token_t ftok;
+
+//     memset(&ftok, 0x00, sizeof(fds_find_token_t)); // Zero the token
+//     if (fds_record_find(DEFAULT_FILE_ID, record_key, &record_desc, &ftok) == FDS_SUCCESS) {
+//         fds_record_open(&record_desc, &flash_record);
+//         return_value = *((uint32_t *)flash_record.p_data);
+//         fds_record_close(&record_desc);
+//     } else {
+//         fds_write(DEFAULT_FILE_ID, record_key, p_initial_value, size);
+//         return_value = (uint32_t) *((uint32_t *) p_initial_value);
+//     }
+//     return return_value;
+// }
+
+int define_flash_variable_int(int initial_value, uint16_t record_key) {
+    int return_value;
 
     fds_flash_record_t flash_record;
     fds_record_desc_t record_desc;
@@ -187,13 +206,53 @@ uint32_t define_flash_variable(uint32_t initial_value, uint16_t record_key, size
     memset(&ftok, 0x00, sizeof(fds_find_token_t)); // Zero the token
     if (fds_record_find(DEFAULT_FILE_ID, record_key, &record_desc, &ftok) == FDS_SUCCESS) {
         fds_record_open(&record_desc, &flash_record);
-        return_value = *((uint32_t *)flash_record.p_data);
+        return_value = *((int *)flash_record.p_data);
         fds_record_close(&record_desc);
     } else {
-        fds_write(DEFAULT_FILE_ID, record_key, &initial_value, size);
+        fds_write(DEFAULT_FILE_ID, record_key, &initial_value, sizeof(int));
         return_value = initial_value;
     }
     return return_value;
+}
+
+float define_flash_variable_float(float initial_value, uint16_t record_key) {
+    float return_value;
+
+    fds_flash_record_t flash_record;
+    fds_record_desc_t record_desc;
+    fds_find_token_t ftok;
+
+    memset(&ftok, 0x00, sizeof(fds_find_token_t)); // Zero the token
+    if (fds_record_find(DEFAULT_FILE_ID, record_key, &record_desc, &ftok) == FDS_SUCCESS) {
+        fds_record_open(&record_desc, &flash_record);
+        return_value = *((float *)flash_record.p_data);
+        fds_record_close(&record_desc);
+    } else {
+        fds_write(DEFAULT_FILE_ID, record_key, &initial_value, sizeof(float));
+        return_value = initial_value;
+    }
+    return return_value;
+}
+
+void define_flash_variable_string(char *initial_value, char *dest, uint16_t record_key) {
+    fds_flash_record_t flash_record;
+    fds_record_desc_t record_desc;
+    fds_find_token_t ftok;
+
+    memset(&ftok, 0x00, sizeof(fds_find_token_t)); // Zero the token
+    if (fds_record_find(DEFAULT_FILE_ID, record_key, &record_desc, &ftok) == FDS_SUCCESS) {
+        if (fds_record_open(&record_desc, &flash_record) == FDS_SUCCESS) {
+            printf("Open OK\n");
+        }
+        strcpy(dest, *((char **) flash_record.p_data));
+        printf("DEST: %s\n", dest);
+        if (fds_record_close(&record_desc) == FDS_SUCCESS) {
+            printf("Close OK\n");
+        }
+    } else {
+        fds_write(DEFAULT_FILE_ID, record_key, &initial_value, sizeof(initial_value));
+        strcpy(dest, initial_value);
+    }
 }
 
 
@@ -207,7 +266,18 @@ uint32_t define_flash_variable(uint32_t initial_value, uint16_t record_key, size
 // }
 
 
-ret_code_t flash_update(uint16_t record_key, uint32_t value, size_t size) {
-    return fds_update(DEFAULT_FILE_ID, record_key, &value, size);
+// ret_code_t flash_update(uint16_t record_key, void *p_value, size_t size) {
+//     return fds_update(DEFAULT_FILE_ID, record_key, p_value, size);
+// }
+
+ret_code_t flash_update_int(uint16_t record_key, int value) {
+    return fds_update(DEFAULT_FILE_ID, record_key, &value, sizeof(int));
 }
 
+ret_code_t flash_update_float(uint16_t record_key, int value) {
+    return fds_update(DEFAULT_FILE_ID, record_key, &value, sizeof(float));
+}
+
+ret_code_t flash_update_string(uint16_t record_key, char* value) {
+    return fds_update(DEFAULT_FILE_ID, record_key, value, sizeof(value));
+}

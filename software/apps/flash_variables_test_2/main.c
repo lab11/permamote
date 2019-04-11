@@ -23,6 +23,8 @@
 #define DEFAULT_POLL_PERIOD      1000 /**< Thread Sleepy End Device polling period when MQTT-SN Asleep. [ms] */
 #define NUM_SLAAC_ADDRESSES      4 /**< Number of SLAAC addresses. */
 
+#define MAX_STR_LEN 256
+
 /**@brief Function for initializing the nrf log module.
  */
 static void log_init(void) {
@@ -137,7 +139,39 @@ int main(void) {
     //NRF_LOG_INFO("1: %x", (uint16_t) "ab");
 
     //-----------------------------More Tests of Stuff------------------------------------------------------
-    int x1 = (int) define_flash_variable(25, 0x1234, sizeof(int));
-    printf("x1 = %d\n", x1);
-    flash_update(0x1234, 78, sizeof(int)); // Set x1 to 78
+    // int temp = 25;
+    // int x1 = (int) define_flash_variable(&temp, 0x9109, sizeof(int)); // Originally 25 -- will switch to 78 after flash_update and never switch back
+    // printf("x1 = %d\n", x1);
+    // temp = 78;
+    // flash_update(0x9109, &temp, sizeof(int)); // Set x1 to 78
+    // char *s_temp = "abcde";
+    // char *str = (char *) define_flash_variable(&s_temp, 0x9110, strlen(s_temp));
+    // printf("str: %s\n", str);
+    // float temp2 = 3.14;
+    // float x2 = (float) define_flash_variable(&temp2, 0x3140, sizeof(float));
+    // printf("x2 = %f\n", x2);
+    // temp2 = -99.1;
+    // flash_update(0x9109, &temp, sizeof(int)); // change x2 to -99.1
+
+    // char* str = define_flash_variable_string("abcde", 0x1515);
+    // printf("str: %s\n", str);
+
+    // int int1 = define_flash_variable_int(-1017, 0x1616);
+    // printf("int1: %d\n", int1);
+
+    // float float1 = define_flash_variable_float(-3.14, 0x1717);
+    // printf("float1: %f\n", float1);
+
+    // float float2 = define_flash_variable_float(0.1, 0x1718);
+    // printf("float2: %f\n", float2);
+    char str1[MAX_STR_LEN];
+
+    define_flash_variable_string("abcde", str1, 0x1719);
+    printf("str1, 1: %s\n", str1);
+
+    flash_update_string(0x1719, "bepopqbo");
+    printf("str1, 2: %s\n", str1);
+
+    flash_update_string(0x1719, "aaa");
+    printf("str1, 3: %s\n", str1);
 }

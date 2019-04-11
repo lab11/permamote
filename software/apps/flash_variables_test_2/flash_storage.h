@@ -4,6 +4,14 @@
 
 void flash_storage_init();
 
-uint32_t define_flash_variable(uint32_t initial_value, uint16_t record_key, size_t size);
+int define_flash_variable_int(int initial_value, uint16_t record_key);
 
-ret_code_t flash_update(uint16_t record_key, uint32_t value, size_t size);
+float define_flash_variable_float(float initial_value, uint16_t record_key);
+
+void define_flash_variable_string(char *initial_value, char *dest, uint16_t record_key);
+
+ret_code_t flash_update_int(uint16_t record_key, int value);
+
+ret_code_t flash_update_float(uint16_t record_key, int value);
+
+ret_code_t flash_update_string(uint16_t record_key, char* value);
