@@ -12,6 +12,6 @@ void define_flash_variable_string(char *initial_value, char *dest, uint16_t reco
 
 ret_code_t flash_update_int(uint16_t record_key, int value);
 
-ret_code_t flash_update_float(uint16_t record_key, int value);
+ret_code_t flash_update_float(uint16_t record_key, float value);
 
 ret_code_t flash_update_string(uint16_t record_key, char* value);

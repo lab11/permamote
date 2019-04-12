@@ -164,14 +164,24 @@ int main(void) {
 
     // float float2 = define_flash_variable_float(0.1, 0x1718);
     // printf("float2: %f\n", float2);
-    char str1[MAX_STR_LEN];
+    // char str1[5];
 
-    define_flash_variable_string("abcde", str1, 0x1719);
-    printf("str1, 1: %s\n", str1);
+    // define_flash_variable_string("abcde", str1, 0x1720);
+    // printf("str1, 1: %s\n", str1);
 
-    flash_update_string(0x1719, "bepopqbo");
-    printf("str1, 2: %s\n", str1);
+    // flash_update_string(0x1720, "qwert");
+    // printf("str1, 2: %s\n", str1);
 
-    flash_update_string(0x1719, "aaa");
-    printf("str1, 3: %s\n", str1);
+    // int x1 = define_flash_variable_int(105, 0x1721);
+
+    // flash_update_int(0x1721, 1206);
+
+    // printf("x1: %d\n", x1);
+
+    uint16_t x1_id = 0x1727;
+    float x1 = define_flash_variable_float(105.0F, x1_id);
+
+    flash_update_float(x1_id, 1206.1F);
+
+    printf("x1: %f\n", x1);
 }
