@@ -241,17 +241,12 @@ void define_flash_variable_string(char *initial_value, char *dest, uint16_t reco
 
     memset(&ftok, 0x00, sizeof(fds_find_token_t)); // Zero the token
     if (fds_record_find(DEFAULT_FILE_ID, record_key, &record_desc, &ftok) == FDS_SUCCESS) {
-        if (fds_record_open(&record_desc, &flash_record) == FDS_SUCCESS) {
-            printf("Success\n");
-        }
-        printf("fds contains: %s\n", *((char **) flash_record.p_data));
+        printf("Record already found, copying result out of flash\n");
+        fds_record_open(&record_desc, &flash_record);
         strcpy(dest, *((char **) flash_record.p_data));
-
-        if (fds_record_close(&record_desc) == FDS_SUCCESS) {
-            printf("Success\n");
-        }
-        printf("fds contains: %s\n", *((char **) flash_record.p_data));
+        fds_record_close(&record_desc);
     } else {
+        printf("Record not found, writing result to flash\n");
         fds_write(DEFAULT_FILE_ID, record_key, &initial_value, sizeof(initial_value));
         strcpy(dest, initial_value);
     }
@@ -281,5 +276,5 @@ ret_code_t flash_update_float(uint16_t record_key, float value) {
 }
 
 ret_code_t flash_update_string(uint16_t record_key, char* value) {
-    return fds_update(DEFAULT_FILE_ID, record_key, value, sizeof(value));
+    return fds_update(DEFAULT_FILE_ID, record_key, &value, strlen(value));
 }

@@ -178,10 +178,29 @@ int main(void) {
 
     // printf("x1: %d\n", x1);
 
-    uint16_t x1_id = 0x1727;
-    float x1 = define_flash_variable_float(105.0F, x1_id);
+    // uint16_t x1_id = 0x1727;
+    // float x1 = define_flash_variable_float(105.0F, x1_id);
 
-    flash_update_float(x1_id, 1206.1F);
+    // flash_update_float(x1_id, 1206.1F);
 
-    printf("x1: %f\n", x1);
+    // printf("x1: %f\n", x1);
+
+    // uint16_t s1_id = 0x1728;
+    // char s1[MAX_STR_LEN] = "";
+    // flash_update_string(s1_id, "Replacement string");
+    // define_flash_variable_string("This is a string", s1, s1_id);
+    // printf("s1: %s\n", s1);
+
+    // uint16_t s2_id = 0x1828;
+    // char s2[MAX_STR_LEN] = "";
+    // define_flash_variable_string("First string", s2, s2_id);
+    // //flash_update_string(s2_id, "Replacement string, designed to be a lot longer than the first string");
+    // printf("s2: %s\n", s2);
+
+    uint16_t s3_id = 0x1829;
+    char s3[MAX_STR_LEN] = "";
+    define_flash_variable_string("First string -- S3", s3, s3_id);
+    printf("s3: %s\n", s3);
+    flash_update_string(s3_id, "Second changed version of first string");
+
 }
