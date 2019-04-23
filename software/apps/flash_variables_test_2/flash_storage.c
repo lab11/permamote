@@ -241,12 +241,12 @@ void define_flash_variable_string(char *initial_value, char *dest, uint16_t reco
 
     memset(&ftok, 0x00, sizeof(fds_find_token_t)); // Zero the token
     if (fds_record_find(DEFAULT_FILE_ID, record_key, &record_desc, &ftok) == FDS_SUCCESS) {
-        //printf("Record already found, copying result out of flash\n");
+        //NRF_LOG_INFO("Record already found, copying result out of flash\n");
         fds_record_open(&record_desc, &flash_record);
         strcpy(dest, *((char **) flash_record.p_data));
         fds_record_close(&record_desc);
     } else {
-        //printf("Record not found, writing result to flash\n");
+        //NRF_LOG_INFO("Record not found, writing result to flash\n");
         fds_write(DEFAULT_FILE_ID, record_key, &initial_value, sizeof(initial_value));
         strcpy(dest, initial_value);
     }

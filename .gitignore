@@ -4,4 +4,4 @@ _build/
 .gdbinit
 *.swp
 *.DS_Store
-.vscode
+**/.vscode
