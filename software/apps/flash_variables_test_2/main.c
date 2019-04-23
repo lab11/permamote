@@ -197,10 +197,28 @@ int main(void) {
     // //flash_update_string(s2_id, "Replacement string, designed to be a lot longer than the first string");
     // printf("s2: %s\n", s2);
 
-    uint16_t s3_id = 0x1829;
-    char s3[MAX_STR_LEN] = "";
-    define_flash_variable_string("First string -- S3", s3, s3_id);
-    printf("s3: %s\n", s3);
-    flash_update_string(s3_id, "Second changed version of first string");
+    // uint16_t s3_id = 0x1829;
+    // char s3[MAX_STR_LEN] = "";
+    // define_flash_variable_string("First string -- S3", s3, s3_id);
+    // printf("s3: %s\n", s3);
+    // flash_update_string(s3_id, "New version of first string");
+
+    // uint16_t s1_id = 0x1830;
+    // uint16_t s2_id = 0x1831;
+    // char s1[MAX_STR_LEN] = "";
+    // char s2[MAX_STR_LEN] = "";
+    // define_flash_variable_string("abcdefghijklmnop", s1, s1_id);
+    // define_flash_variable_string("qwertyuiopasdf");
+
+    // uint16_t int1_id = 0x1832;
+    // int int1 = define_flash_variable_int(-1017, int1_id);
+    // printf("int1: %d\n", int1);
+    // flash_update_int(int1_id, 1206);
+
+    uint16_t float1_id = 0x1833;
+    float float1 = define_flash_variable_float(1011.12F, float1_id);
+    printf("float1: %f\n", float1);
+    flash_update_float(float1_id, 1206.2);
+
 
 }
