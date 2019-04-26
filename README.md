@@ -35,7 +35,7 @@ The primary application is
 [`software/apps/permamote_coap`](https://github.com/lab11/permamote/tree/master/software/apps/permamote_coap).
 This application samples the
 sensors and sends its data to a server running a
-[coap-gateway](https://github.com/lab11/gatway/software/packages/coap-gatway)
+[coap-gateway](https://github.com/lab11/gateway/tree/thread/software/coap-gateway-mqtt)
 over IP on a [Thread](https://github.com/openthread/openthread) network with a
 [border router](https://github.com/openthread/borderrouter).
 See the
