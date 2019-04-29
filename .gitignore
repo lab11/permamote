@@ -4,3 +4,5 @@ _build/
 .gdbinit
 *.swp
 *.DS_Store
+*.ipch
+*.code_workspace
