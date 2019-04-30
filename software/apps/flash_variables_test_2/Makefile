@@ -12,7 +12,6 @@ APP_SOURCE_PATHS += .
 APP_SOURCES = $(notdir $(wildcard ./*.c))
 
 NRF_BASE_DIR ?= ../../nrf5x-base
-LINKER_SCRIPT = $(NRF_BASE_DIR)/make/ld/gcc_nrf52840_dfu_blank_0_256_1024.ld
 # Include board Makefile (if any)
 include $(NRF_BASE_DIR)/../boards/permamote/Board.mk
 # Include main Makefile
