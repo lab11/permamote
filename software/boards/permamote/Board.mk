@@ -115,5 +115,7 @@ BOARD_SOURCES += \
 	background_dfu_block.c \
 	background_dfu_operation.c \
 	background_dfu_state.c \
+	fds.c \
+	nrf_atfifo.c \
 
 endif
