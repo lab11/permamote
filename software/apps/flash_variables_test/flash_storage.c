@@ -67,7 +67,7 @@ void flash_storage_init() {
     //     set_flash_storage_flag();
     // }
 
-} 
+}
 
 ret_code_t fds_update(uint16_t file_id, uint16_t record_key, void const *p_data, size_t data_size) {
     // Find the record description for the record we want to update
@@ -76,7 +76,7 @@ ret_code_t fds_update(uint16_t file_id, uint16_t record_key, void const *p_data,
     memset(&ftok, 0x00, sizeof(fds_find_token_t)); // Zero the token
     fds_record_find(file_id, record_key, &record_desc, &ftok);
     // Now record_desc should contain correct description
-    
+
     fds_record_t record;
     record.file_id = file_id;
     record.key = record_key;
@@ -116,7 +116,7 @@ ret_code_t fds_update(uint16_t file_id, uint16_t record_key, void const *p_data,
 //     fds_record_desc_t record_desc;
 //     fds_find_token_t ftok;
 //     memset(&ftok, 0x00, sizeof(fds_find_token_t)); // Zero the token
-    
+
 //     // TODO: change this back to a while loop thing because we aren't going to vary record IDs anymore
 //     if (fds_record_find(file_id, record_key, &record_desc, &ftok) == FDS_SUCCESS) {
 //         fds_record_open(&record_desc, &flash_record);
@@ -234,7 +234,7 @@ float define_flash_variable_float(float initial_value, uint16_t record_key) {
     return return_value;
 }
 
-void define_flash_variable_string(char *initial_value, char *dest, uint16_t record_key) {
+void define_flash_variable_array(const uint8_t *initial_value, uint8_t *dest, size_t length, uint16_t record_key) {
     fds_flash_record_t flash_record;
     fds_record_desc_t record_desc;
     fds_find_token_t ftok;
@@ -243,13 +243,18 @@ void define_flash_variable_string(char *initial_value, char *dest, uint16_t reco
     if (fds_record_find(DEFAULT_FILE_ID, record_key, &record_desc, &ftok) == FDS_SUCCESS) {
         //NRF_LOG_INFO("Record already found, copying result out of flash\n");
         fds_record_open(&record_desc, &flash_record);
-        strcpy(dest, *((char **) flash_record.p_data));
+        memcpy(dest, *((uint8_t**)flash_record.p_data), length);
         fds_record_close(&record_desc);
     } else {
         //NRF_LOG_INFO("Record not found, writing result to flash\n");
-        fds_write(DEFAULT_FILE_ID, record_key, &initial_value, sizeof(initial_value));
-        strcpy(dest, initial_value);
+        fds_write(DEFAULT_FILE_ID, record_key, &initial_value, length);
+        memcpy(dest, initial_value, length);
     }
+}
+
+void define_flash_variable_string(const char *initial_value, char *dest, uint16_t record_key) {
+    size_t length = strlen(initial_value);
+    define_flash_variable_array((uint8_t*) initial_value, (uint8_t*) dest, length, record_key);
 }
 
 
@@ -267,14 +272,14 @@ void define_flash_variable_string(char *initial_value, char *dest, uint16_t reco
 //     return fds_update(DEFAULT_FILE_ID, record_key, p_value, size);
 // }
 
-ret_code_t flash_update_int(uint16_t record_key, int value) {
+ret_code_t flash_update_int(const uint16_t record_key, const int value) {
     return fds_update(DEFAULT_FILE_ID, record_key, &value, sizeof(int));
 }
 
-ret_code_t flash_update_float(uint16_t record_key, float value) {
+ret_code_t flash_update_float(const uint16_t record_key, const float value) {
     return fds_update(DEFAULT_FILE_ID, record_key, &value, sizeof(float));
 }
 
-ret_code_t flash_update_string(uint16_t record_key, char* value) {
+ret_code_t flash_update_string(const uint16_t record_key, const char* value) {
     return fds_update(DEFAULT_FILE_ID, record_key, &value, strlen(value));
 }
