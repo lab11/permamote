@@ -1,8 +1,7 @@
 Permamote
 =========
-<img src="https://raw.githubusercontent.com/lab11/permamote/master/media/permamote.jpg" alt="Permamote"  align="center">
-
-Permamote: An energy harvesting sensor mote with backing primary store and a lifetime of >=10 years
+<img src="media/permamote_iso.jpg" alt="Permamote"  align="right" width="50%">
+An energy harvesting sensor mote with backing primary store and a lifetime of ≥10 years.
 Permamote monitors temperature, humidity, pressure, light, light color, motion
 (both PIR and with an accelerometer) and reports readings over BLE and
 802.15.4/Thread.
@@ -26,14 +25,22 @@ the Eagle design files and case files.
 
 Software
 --------
-The Permamote uses software
-located in the `software` directory. Follow the directions in the [nrf5x-base Readme](https://github.com/lab11/nrf5x-base/tree/nrf52832#flash-an-application) to
-get your machine set up to build and flash a Permamote.
+The Permamote uses software located in the
+[`software`](https://github.com/lab11/permamote/tree/master/software/).
+directory. Follow the directions in the [nrf5x-base
+Readme](https://github.com/lab11/nrf5x-base/tree/nrf52832#flash-an-application)
+to get your machine set up to build and flash a Permamote.
 
 The primary application is
 [`software/apps/permamote_coap`](https://github.com/lab11/permamote/tree/master/software/apps/permamote_coap).
 This application samples the
-sensors and sends its data to a server running a [coap-gateway](https://github.com/lab11/gatway/software/packages/coap-gatway) over IP on a [Thread](https://github.com/openthread/openthread) network with a [border router](https://github.com/openthread/borderrouter).
+sensors and sends its data to a server running a
+[coap-gateway](https://github.com/lab11/gateway/tree/thread/software/coap-gateway-mqtt)
+over IP on a [Thread](https://github.com/openthread/openthread) network with a
+[border router](https://github.com/openthread/borderrouter).
+See the
+[tutorial](https://github.com/lab11/permamote/tree/master/tutorial) to set up
+your own OpenThread network.
 
 Cloning
 -------

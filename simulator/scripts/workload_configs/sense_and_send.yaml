@@ -1,0 +1,11 @@
+workload:
+  name: 'sense_and_send'
+  type: 'periodic'
+  atomic: True
+  period_s: 30
+  sleep_current_A: 1.5e-6
+  startup_energy_J: 150.e-6
+  startup_period_s: 3.4e-3
+  event_energy_J: 5.862e-4
+  event_period_s: 510.0e-3
+  event_period_min_s: 510.0e-3

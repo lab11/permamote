@@ -1,0 +1,31 @@
+design_config:
+  name: "design"
+  using_primary: False
+  using_secondary: True
+  using_harvester: True
+  opportunistic: True
+  operating_voltage_V: 3.3
+  boost_efficiency: 0.8
+  frontend_efficiency: 0.8
+
+# ceramic/tantalum cap:
+secondary_config:
+  type: "capacitor"
+  esr_ohm: 0.1
+  leakage_power_W: 30.E-9
+  capacity_J': !!python/object/apply:eval [ .5 * 500E-6 * (2.4**2) ]
+  min_capacity_J': !!python/object/apply:eval [ .5 * 500E-6 * (0.4**2) ]
+
+# supercap:
+secondary_config:
+  type: "capacitor"
+  esr_ohm: 25
+  leakage_power_W: 30.E-9
+  capacity_J':     !!python/object/apply:eval [ .5 * (300E-6 + 1100E-6 + 7.5E-3) * (2.7**2) ]
+  min_capacity_J': !!python/object/apply:eval [ .5 * (300E-6 + 1100E-6 + 7.5E-3) * (0.4**2) ]
+
+harvest_config:
+  type: "solar"
+  nominal_voltage: 2.5
+  area_cm2: 8.82
+  efficiency: 0.17

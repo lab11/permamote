@@ -60,6 +60,7 @@ BOARD_SOURCES += \
 	nrf_queue.c\
 	nrf_drv_clock.c\
 	nrf_nvmc.c\
+	nrf_drv_ppi.c\
 	nrfx_gpiote.c\
 	nrfx_saadc.c\
 	nrfx_timer.c\
@@ -68,6 +69,8 @@ BOARD_SOURCES += \
 	nrfx_spi.c\
 	nrfx_spim.c\
 	nrfx_clock.c\
+	nrfx_ppi.c\
+	nrfx_rtc.c\
 	SEGGER_RTT.c\
 	SEGGER_RTT_Syscalls_GCC.c\
 	SEGGER_RTT_printf.c\
@@ -75,7 +78,7 @@ BOARD_SOURCES += \
 	simple_thread.c\
 	thread_coap.c\
 	thread_dns.c\
-	ntp.c\
+	thread_ntp.c\
 	nrf_fstorage.c \
 	nrf_fstorage_nvmc.c \
 	nrf_crypto_ecc.c \
@@ -95,6 +98,7 @@ BOARD_SOURCES += \
 	coap_option.c\
 	coap_queue.c\
 	coap_resource.c\
+	coap_observe.c\
 	coap_transport_ot.c\
 	coap_dfu.c\
 	crc32.c \

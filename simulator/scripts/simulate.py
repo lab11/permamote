@@ -1,6 +1,9 @@
 #! /usr/bin/env python3
+import yaml
 import numpy as np
 import math
+from pympler import tracker
+from pprint import pprint
 from datetime import datetime
 import matplotlib.pyplot as plt
 
@@ -11,371 +14,435 @@ SECONDS_IN_DAY = 60*60*24
 SECONDS_IN_HOUR = 60*60
 SECONDS_IN_MINUTE = 60
 
-# state for reactive workload
-_lambda_set = None
-_reactive_hour = None
-_current_hour_P = None
-transmits = 0
+tr = tracker.SummaryTracker()
 
-def is_time_to_transmit(workload, second):
-    global _lambda_set
-    global _reactive_hour
-    global _current_hour_P
-    global transmits
-    if workload['type'] == 'periodic':
-        if int(second) % int(workload['period_s']) == 0:
-            return 1
-        return 0
-    elif workload['type'] == 'reactive':
-        if _lambda_set is None or _lambda_set.size == 0:
-            # not initialized yet!
-            _lambda_set = np.ceil(workload['lambda'] * np.load(workload['curve'])).astype(int)
-        # get hour of day from second
-        remainder = second % SECONDS_IN_DAY
-        hour = int(math.floor(remainder / SECONDS_IN_HOUR))
-        if hour != _reactive_hour:
-            transmits = 0
-            _reactive_hour = hour
-            # get probability of event happening each second in this hour
-            p = np.random.poisson(_lambda_set[hour], 1)
-            _current_hour_P = p / SECONDS_IN_HOUR #np.random.poisson(_lambda_set[hour], 1) / SECONDS_IN_HOUR
-        transmit = np.random.random() <= _current_hour_P
-        transmits += transmit
-        return transmit
-    elif workload['type'] == 'random':
-        return np.random.random() <= (1 / workload['period_s'])
-
-# for a given remaining event period and energy,
-# return period, energy consumed, and if finished on this cycle
-def perform_event(available_time, available_energy, period_remaining, energy_remaining):
-    if energy_remaining <= available_energy:
-        # if energy store has enough energy
-        if period_remaining <= available_time:
-            # and we can do the operation in the available period
-            return period_remaining, energy_remaining, 1
+class EHSim:
+    def _is_time_to_transmit(self, second):
+        # check if period elapsed for periodic workload
+        if self.workload_config['type'] == 'periodic':
+            if int(second) % int(self.workload_config['period_s']) == 0:
+                return 1
+            return 0
+        # if reactive, use lambda parameter and workload curve
+        elif self.workload_config['type'] == 'reactive':
+            # get hour of day from second
+            remainder = second % SECONDS_IN_DAY
+            hour = int(math.floor(remainder / SECONDS_IN_HOUR))
+            if hour != self.reactive_hour:
+                self.reactive_hour = hour
+                # get probability of event happening each second in this hour
+                p = np.random.poisson(self.lambda_set[hour], 1)
+                self.current_hour_P = p / SECONDS_IN_HOUR #np.random.poisson(_lambda_set[hour], 1) / SECONDS_IN_HOUR
+            transmit = np.random.random() <= self.current_hour_P
+            return transmit
+        elif self.workload_config['type'] == 'random':
+            return np.random.random() <= (1 / self.workload_config['period_s'])
         else:
-            # we can't, so do some amount of work
-            e = available_time * (energy_remaining/period_remaining)
-            return available_time, e, 0
+            print("Unsupported workload type")
+            exit(1)
 
-    else:
-        t = available_energy / (energy_remaining/period_remaining)
-        if t <= available_time:
-            return t, t * energy_remaining / period_remaining, 0
+    # Calculate energy used and if event finished for a given simulation period,
+    # where the device has some amount of time and energy available to do work, and
+    # remaining event period and energy,
+    def _perform_event(self, available_time, available_energy, period_remaining, energy_remaining):
+        if energy_remaining <= available_energy:
+            # if energy store has enough energy
+            if period_remaining <= available_time:
+                # and we can do the operation in the available period
+                return period_remaining, energy_remaining, 1
+            else:
+                # we can't, so do some amount of work
+                e = available_time * (energy_remaining/period_remaining)
+                return available_time, e, 0
+
         else:
-            return available_time, available_time * energy_remaining / period_remaining, 0
+            t = available_energy / (energy_remaining/period_remaining)
+            if t <= available_time:
+                return t, t * energy_remaining / period_remaining, 0
+            else:
+                return available_time, available_time * energy_remaining / period_remaining, 0
 
 
-
-def simulate(config, workload, lights):
-    # load configs
-    design_config = config.design_config
-    workload_config = workload.config
-    dataset_config = workload.dataset
-    if 'secondary' in design_config:
-        secondary_config = config.secondary_configs[design_config['secondary']]
-    else:
-        secondary_config = 0
-
-    # initialize energy for sleep and active
-    sleep_current = workload_config['sleep_current_A'] /\
-            design_config['boost_efficiency']
-    sleep_power = sleep_current * design_config['operating_voltage_V']
-    event_energy = workload_config['event_energy_J'] /\
-            design_config['boost_efficiency']
+    def _init_energy(self):
+        # initialize energy for sleep and active
+        self.sleep_power = self.workload_config['sleep_current_A'] /\
+                self.design_config['boost_efficiency']* \
+                self.design_config['operating_voltage_V']
+        print(self.workload_config)
+        self.event_energy = self.workload_config['event_energy_J'] /\
+                self.design_config['boost_efficiency']
 
 
-    event_period = workload_config['event_period_s']
-    event_period_min = workload_config['event_period_min_s']
-
-    atomic = workload_config['atomic']
-
-    # initialize energy for primary and secondary
-    if not design_config['intermittent']:
-        has_primary = True
-        primary_config = config.primary_config
-        if 'volume_L' in primary_config and 'density_Whpl' in primary_config:
-            primary_volume = primary_config['volume_L']
-            primary_density = primary_config['density_WhpL']
-            primary_energy = primary_energy_max = primary_volume * primary_density * SECONDS_IN_HOUR
-            primary_leakage_energy = primary_energy * primary_config['leakage_percent_year']/100/SECONDS_IN_YEAR
+        self.event_period_full = self.workload_config['event_period_s']
+        self.event_period_min = self.workload_config['event_period_min_s']
+        self.energy_to_turn_on = 0
+        if self.workload_config['name'] == 'long_running':
+            self.event_energy_min = self.event_energy * self.event_period_min / self.event_period_full
+            self.energy_to_turn_on = self.workload_config['startup_energy_J'] +\
+            self.event_energy_min
         else:
-            primary_energy = primary_energy_max = primary_config['capacity_mAh'] *\
-                    1E-3 * primary_config['nominal_voltage_V'] * SECONDS_IN_HOUR
-            primary_leakage_energy = primary_energy * primary_config['leakage_percent_year']/100/SECONDS_IN_YEAR
-    else:
-        has_primary = False
-        primary_energy = 0
-        primary_energy_max = 0
-        primary_leakage_energy = 0
+            self.event_energy_min = self.event_energy
+            self.energy_to_turn_on = self.workload_config['startup_energy_J'] +\
+                self.event_energy
 
-    solar_config = config.solar_config
-    if 'area_cm2' in solar_config:
-        solar_area = solar_config['area_cm2']
-    else: solar_area = 2 * 100 * primary_volume ** (2.0/3.0)
+        self.atomic = self.workload_config['atomic']
 
-    if secondary_config:
-        # using a battery:
-        if secondary_config['type'] == 'battery':
-            secondary_energy_max = secondary_config['capacity_mAh']*1E-3*secondary_config['nominal_voltage_V']*SECONDS_IN_HOUR
-            if 'leakage_power_W' in secondary_config:
-                secondary_leakage_energy = secondary_config['leakage_power_W'] * 1
-            else:
-                secondary_leakage_energy= secondary_config['capacity_mAh'] * 1E-3 / secondary_config['leakage_constant'] * secondary_config['nominal_voltage_V']
-            secondary_energy_up = design_config['secondary_max_percent'] / 100 * secondary_energy_max
-            secondary_energy_min = design_config['secondary_min_percent'] / 100 * secondary_energy_max
-        # using a capacitor:
-        elif secondary_config['type'] == 'capacitor':
-            secondary_energy_max = secondary_config['capacity_J']
-            secondary_leakage_energy = secondary_config['leakage_power_W'] * 1
-            secondary_energy_up = secondary_energy_min = secondary_config['min_capacity_J']
-
-        if 'secondary_start_percent' in design_config:
-            secondary_energy = secondary_energy_max * design_config['secondary_start_percent']/100
-        # start at empty
+        # initialize energy for primary and secondary
+        if self.primary_config is not None and self.design_config['using_primary']:
+            self.primary_energy = self.primary_energy_max =\
+                    self.primary_config['capacity_mAh']\
+                        * 1E-3 * self.primary_config['nominal_voltage_V'] \
+                        * SECONDS_IN_HOUR
+            self.primary_leakage_power = self.primary_energy *\
+                    self.primary_config['leakage_percent_year']\
+                        / 100 / SECONDS_IN_YEAR
         else:
-            secondary_energy = secondary_energy_min
+            self.primary_energy = 0
+            self.primary_energy_max = 0
+            self.primary_leakage_power = 0
 
-        # ESR losses
-        event_current = event_energy / event_period / design_config['operating_voltage_V']
-        esr_power = event_current**2 * secondary_config['esr_ohm']
-        event_energy += esr_power * event_period
-    else:
-        secondary_leakage_energy = secondary_energy = secondary_energy_max = secondary_energy_up = secondary_energy_min = 0
+        if self.secondary_config is not None:
+            # using a battery:
+            if self.secondary_config['type'] == 'battery':
+                self.secondary_energy_max = \
+                        self.secondary_config['capacity_mAh'] * 1E-3 *\
+                        self.secondary_config['nominal_voltage_V'] * SECONDS_IN_HOUR
+                if 'leakage_power_W' in self.secondary_config:
+                    # second level simulation, so multiply by 1
+                    self.secondary_leakage_power = self.secondary_config['leakage_power_W'] * 1
+                else:
+                    self.secondary_leakage_power = self.secondary_config['capacity_mAh'] *\
+                    1E-3 / self.secondary_config['leakage_constant'] *\
+                    self.secondary_config['nominal_voltage_V']
+                self.secondary_energy_up = self.secondary_config['secondary_max_percent'] \
+                        / 100 * self.secondary_energy_max
+                self.secondary_energy_min = self.secondary_config['secondary_min_percent'] \
+                        / 100 * self.secondary_energy_max
+                assert(self.secondary_energy_max >= self.secondary_energy_up)
+                assert(self.secondary_energy_up >= self.secondary_energy_min)
+            # using a capacitor:
+            elif self.secondary_config['type'] == 'capacitor':
+                self.secondary_energy_max = self.secondary_config['capacity_J']
+                self.secondary_leakage_power = self.secondary_config['leakage_power_W'] * 1
+                self.secondary_energy_up = self.secondary_energy_min = self.secondary_config['min_capacity_J']
 
-    actual_secondary_energy = (secondary_energy_max - secondary_energy_min)
-
-    # if we couldn't possibly ever perform any work throw an error
-    if (atomic and (event_energy > primary_energy_max + secondary_energy_max - secondary_energy_min)\
-            or event_period_min > 1)\
-            or primary_energy_max + secondary_energy_max <= workload_config['startup_energy_J']:
-        print(atomic and event_energy > secondary_energy_max - secondary_energy_min)
-        print(event_energy, secondary_energy_max - secondary_energy_min)
-        print(event_period_min > 1)
-        print(secondary_energy_max <= workload_config['startup_energy_J'])
-        print('ERROR: event either takes too long or takes too much energy with this config to be performed in one step')
-        exit()
-
-
-    # prepare light dataset
-    start_time = lights[0].astype('datetime64[s]')
-    start_seconds = int((start_time - start_time.astype('datetime64[D]')) / np.timedelta64(1, 's'))
-    lights = lights[1:]
-    seconds = np.arange(lights.size*dataset_config['resolution_s'])
-
-    # begin simulation
-    secondary_soc = []
-    primary_soc = []
-    primary_discharge = 0
-    solar_powers = []
-    out_powers = []
-    online = [0]
-    missed = []
-    #events = []
-    #wasted_energy = 0
-    used_energy = secondary_energy_min - secondary_energy
-    possible_energy = 0
-    # state to keep track of ongoing events
-    currently_performing = False
-    event_period_remaining = 0
-    event_energy_remaining = 0
-    event_started_second = 0
-    actual_period = 0
-    #events_completed = 0
-    event_ttc = []
-    # wait for secondary to charge
-    charge_hysteresis = False;
-    for second in seconds:
-
-        ##
-        ## INCOMING ENERGY
-        ##
-        # energy from solar panel:
-        incoming_energy = lights[math.floor(second / dataset_config['resolution_s'])] * 1E-6 * solar_area \
-            * solar_config['efficiency'] * design_config['frontend_efficiency']
-        #solar_powers.append(incoming_energy)
-        possible_energy += incoming_energy
-
-        # charge secondary if possible
-        secondary_energy += incoming_energy
-
-        # reset secondary to max if full
-        if secondary_energy > secondary_energy_max:
-            #wasted_energy += secondary_energy - secondary_energy_max
-            secondary_energy = secondary_energy_max
-        # if charged enough
-        if charge_hysteresis and secondary_energy >= secondary_energy_up:
-            charge_hysteresis = False
-
-        ###
-        ### OUTGOING ENERGY
-        ###
-        outgoing_startup_energy = 0
-        outgoing_event_energy = 0
-        outgoing_sleep_energy = 0
-        def remaining_secondary_energy():
-            return secondary_energy - secondary_energy_min - outgoing_startup_energy - outgoing_event_energy - outgoing_sleep_energy
-        def outgoing_energy():
-            return outgoing_startup_energy + outgoing_event_energy + outgoing_sleep_energy
-        period_sleep = 1
-        currently_online = online[-1] == 1
-
-        # if offline, need to pay startup cost
-        # don't go online until we can do useful work
-        if not currently_online and not charge_hysteresis:
-            if workload_config['name'] == 'ota_update':
-                energy_to_turn_on = workload_config['startup_energy_J'] + event_energy/event_period * event_period_min
+            # either start at defined percent, or start bottom hysteresis
+            if 'secondary_start_percent' in self.secondary_config:
+                self.secondary_energy = self.secondary_energy_max * \
+                    self.secondary_config['secondary_start_percent']/100
             else:
-                energy_to_turn_on = workload_config['startup_energy_J'] + event_energy
-            if remaining_secondary_energy() + primary_energy >= energy_to_turn_on:
-                outgoing_startup_energy = workload_config['startup_energy_J']
-                period_sleep -= workload_config['startup_period_s']
-                currently_online = 1
-
-        # if it's time to perform an event
-        # if opportunistic, try to send
-        if design_config['intermittent_mode'] == 'opportunistic':
-            if currently_online:
-                actual_period = 0
-                currently_performing = 1
-                event_energy_remaining = event_energy
-                event_period_remaining = event_period
-            else:
-                missed.append(np.array([start_time+second, 1]))
-        elif is_time_to_transmit(workload_config, second + start_seconds):
-            # we're already working on an event, or we're not online to do
-            # event, count it as a miss and try next time
-            if currently_performing or not currently_online:
-                missed.append(np.array([start_time+second, 1]))
-            # reset event energy/period state and start new event
-            else:
-                actual_period = 0
-                currently_performing = 1
-                event_energy_remaining = event_energy
-                event_period_remaining = event_period
-
-        # if we need to work on an event
-        if currently_performing and currently_online:
-            # calculated expected period, energy, and if finished for this cycle
-            if not has_primary:
-                used_p, used_e, finished = perform_event(period_sleep, remaining_secondary_energy(), event_period_remaining, event_energy_remaining)
-            else:
-                used_p, used_e, finished = perform_event(period_sleep, remaining_secondary_energy() + primary_energy, event_period_remaining, event_energy_remaining)
-            outgoing_event_energy = used_e
-            event_energy_remaining -= used_e
-            event_period_remaining -= used_p
-            period_sleep -= used_p
-            # if we finished the event this iteration
-            if finished:
-                #events_completed += 1
-                actual_period += used_p
-                #reset event state variables
-                currently_performing = 0
-                # successfully completed event
-                missed.append(np.array([start_time+second, 0]))
-                #events.append(start_time+second)
-                event_ttc.append(actual_period)
-            # if atomic, count not finishing as failure
-            elif atomic:
-                currently_performing = 0
-                missed.append(np.array([start_time+second, 1]))
-        actual_period += 1
-
-        #print(remaining_secondary_energy())
-        ###
-        ### UPDATE STATE
-        ###
-
-        if not has_primary:
-            # if we couldn't turn on
-            if not currently_online:
-                period_on = 0
-            # any remaining time is spent sleeping
-            # can we sleep the rest of the iteration?
-            elif remaining_secondary_energy() > sleep_power * period_sleep:
-                outgoing_sleep_energy = sleep_power * period_sleep
-                period_on = 1
-            # if not, how long can we sleep for?
-            else:
-                outgoing_sleep_energy  = remaining_secondary_energy()
-                period_on = 1 - period_sleep
-                period_on += remaining_secondary_energy() / sleep_power
-                currently_online = 0
-            online.append(period_on)
-
-            secondary_energy -= outgoing_energy()
-            used_energy += outgoing_energy()
-
-            if secondary_energy <= secondary_energy_min:
-                charge_hysteresis = True
+                self.secondary_energy = self.secondary_energy_min
+        # secondary_config is None
         else:
-            online.append(1)
+            self.secondary_leakage_power = self.secondary_energy = \
+                    self.secondary_energy_max = self.secondary_energy_up = \
+                    self.secondary_energy_min = 0
 
-            if charge_hysteresis:
-                primary_energy -= outgoing_energy()
-                primary_discharge += outgoing_energy()
-            else:
-                secondary_energy -= outgoing_energy()
-                used_energy += outgoing_energy()
-                # enter hysteresis if under
-                if secondary_energy <= secondary_energy_min:
-                    if secondary_energy < 0:
-                        used_energy += secondary_energy
-                        primary_energy + secondary_energy
-                        primary_discharge += abs(secondary_energy)
-                    secondary_energy = secondary_energy_min
+        # ESR loss estimation
+        event_current = self.event_energy / self.event_period_full / self.design_config['operating_voltage_V']
+        esr_power = event_current**2 * self.secondary_config['esr_ohm']
+        self.event_energy += esr_power * self.event_period_full
+        # if we couldn't possibly ever perform any work throw an error
+        if (self.atomic and (self.event_energy > self.primary_energy_max + self.secondary_energy_max - self.secondary_energy_min)\
+                or self.event_period_min > 1)\
+                or self.primary_energy_max + self.secondary_energy_max <= self.workload_config['startup_energy_J']:
+            #print(self.atomic and self.event_energy > self.secondary_energy_max - self.secondary_energy_min)
+            #print(self.event_energy, self.secondary_energy_max - self.secondary_energy_min)
+            #print(self.event_period_min > 1)
+            #print(self.secondary_energy_max <= self.workload_config['startup_energy_J'])
+            print('ERROR: event either takes too long or takes too much energy with this config to be performed in one step')
+            exit(1)
+
+    def simulate(self):
+        currently_performing = False
+        used_energy = self.secondary_energy_min - self.secondary_energy     # keep track of amount of energy used by application
+        used_energy = 0
+        possible_energy = 0                                                 # amount of possible harvestable energy
+        actual_period = 0                                                   # the actual amount of time it took to perform an event
+        second = 0#self.trace_start_seconds
+        time_online = 0
+        last_step_online = 0
+        event_energy_remaining = 0
+        event_period_remaining = 0
+        charge_hysteresis = False;
+
+        while second < self.seconds_end:
+            ##
+            ## INCOMING ENERGY
+            ##
+            incoming_energy = self.energy_trace[math.floor(second/self.dataset_config['resolution_s'])]
+            possible_energy += incoming_energy
+
+            # charge secondary if possible
+            self.secondary_energy += incoming_energy
+
+            # reset secondary to max if full
+            if self.secondary_energy > self.secondary_energy_max:
+                #wasted_energy += self.secondary_energy - self.secondary_energy_max
+                self.secondary_energy = self.secondary_energy_max
+            # if charged enough, exit charging hysteresis
+            if charge_hysteresis and self.secondary_energy >= self.secondary_energy_up:
+                charge_hysteresis = False
+
+            ###
+            ### OUTGOING ENERGY
+            ###
+            period_sleep = 1
+            currently_online = last_step_online == 1
+            outgoing_sleep_energy = 0
+            outgoing_event_energy = 0
+            outgoing_startup_energy = 0
+            def _remaining_secondary_energy():
+                return self.secondary_energy - self.secondary_energy_min - outgoing_startup_energy - outgoing_event_energy - outgoing_sleep_energy
+
+            def _outgoing_energy():
+                return outgoing_startup_energy + outgoing_event_energy + outgoing_sleep_energy
+
+
+            # if offline, need to pay startup cost
+            # don't go online until we can do useful work
+            if not currently_online and not charge_hysteresis:
+                if _remaining_secondary_energy() + self.primary_energy >=\
+                self.energy_to_turn_on:
+                    outgoing_startup_energy = self.workload_config['startup_energy_J']
+                    period_sleep -= self.workload_config['startup_period_s']
+                    currently_online = 1
+
+            # if it's time to perform an event
+            # if opportunistic, try to send
+            if self.design_config['opportunistic']:
+                if currently_online:
+                    actual_period = 0
+                    currently_performing = True
+                    event_energy_remaining = self.event_energy
+                    event_period_remaining = self.event_period_full
+                else:
+                    self.missed_events.append([self.trace_start_time+second, 1])
+            elif self._is_time_to_transmit(second + self.trace_start_seconds):
+                # we're already working on an event, or we're not online to do
+                # event, count it as a miss and try next time
+                if currently_performing or not currently_online:
+                    self.missed_events.append([self.trace_start_time+second, 1])
+                # reset event energy/period state and start new event
+                else:
+                    actual_period = 0
+                    currently_performing = True
+                    event_energy_remaining = self.event_energy
+                    event_period_remaining = self.event_period_full
+
+            # if we need to work on an event
+            if currently_performing and currently_online:
+                # calculated expected period, energy, and if finished for this cycle
+                if not self.design_config['using_primary']:
+                    used_p, used_e, finished = self._perform_event(period_sleep, _remaining_secondary_energy(), event_period_remaining, event_energy_remaining)
+                else:
+                    used_p, used_e, finished = self._perform_event(period_sleep, _remaining_secondary_energy() + self.primary_energy, event_period_remaining, event_energy_remaining)
+                outgoing_event_energy = used_e
+                event_energy_remaining -= used_e
+                event_period_remaining -= used_p
+                period_sleep -= used_p
+                # if we finished the event this iteration
+                if finished:
+                    #events_completed += 1
+                    actual_period += used_p
+                    #reset event state variables
+                    currently_performing = False
+                    # successfully completed event
+                    self.missed_events.append([self.trace_start_time+second, 0])
+                    #events.append(start_time+second)
+                    self.event_ttc.append(actual_period)
+                # if atomic, count not finishing as failure
+                elif self.atomic:
+                    currently_perfoming = 0
+                    self.missed_events.append([self.trace_start_time+second, 1])
+            actual_period += 1
+
+            ###
+            ### UPDATE STATE
+            ###
+            if not self.design_config['using_primary']:
+                # if we couldn't turn on
+                if not currently_online:
+                    period_on = 0
+                # any remaining time is spent sleeping
+                # can we sleep the rest of the iteration?
+                elif _remaining_secondary_energy() > self.sleep_power * period_sleep:
+                    outgoing_sleep_energy = self.sleep_power * period_sleep
+                    period_on = 1
+                    #print(incoming_energy)
+                    #print(_remaining_secondary_energy())
+                    #print(_outgoing_energy())
+                    #exit()
+                # if not, how long can we sleep for?
+                else:
+                    outgoing_sleep_energy  = _remaining_secondary_energy()
+                    period_on = 1 - period_sleep
+                    period_on += _remaining_secondary_energy() / self.sleep_power
+                    currently_online = 0
+                time_online += period_on
+                last_step_online = period_on
+
+                self.secondary_energy -= _outgoing_energy()
+                used_energy += _outgoing_energy()
+
+                if self.secondary_energy <= self.secondary_energy_min:
                     charge_hysteresis = True
+            else:
+                time_online += 1
+                last_step_online = 1
 
-            # check if now offline
-            # if primary and secondary are dead, note offline
-            if primary_energy <= 0:
-                break;
+                if charge_hysteresis:
+                    self.primary_energy -= _outgoing_energy()
+                else:
+                    self.secondary_energy -= _outgoing_energy()
+                    used_energy += _outgoing_energy()
+                    # enter hysteresis if under
+                    if self.secondary_energy <= self.secondary_energy_min:
+                        if self.secondary_energy < 0:
+                            used_energy += self.secondary_energy
+                            # subtract remainder from primary energy
+                            self.primary_energy += self.secondary_energy - self.secondary_energy_min
+                            self.secondary_energy = 0
+                        #secondary_energy = secondary_energy_min
+                        charge_hysteresis = True
 
-        # subtract leakage
-        primary_energy -= primary_leakage_energy
-        primary_discharge += primary_leakage_energy
-        secondary_energy -= secondary_leakage_energy
+                # check if now offline
+                # if primary and secondary are dead, note offline
+                if self.primary_energy <= 0:
+                    break;
 
-        secondary_soc.append(secondary_energy)
-        primary_soc.append(primary_energy)
+            # subtract leakage
+            self.primary_energy -= self.primary_leakage_power
+            #self.primary_discharge += self.primary_leakage_power
+            self.secondary_energy -= self.secondary_leakage_power
 
-    # convert to np array
-    missed = np.asarray(missed, dtype='object')
-    event_ttc = np.asarray(event_ttc)
-    #print('Averages:')
-    ##print('  light ' + str(np.mean(lights)) + ' uW/cm^2')
-    #print('  solar ' + str(np.mean(solar_powers)) + ' W')
-    #print('  secondary: ' + str(secondary_leakage_energy/60) + ' W')
-    #print('  primary: ' + str(primary_leakage_energy/60) + ' W')
-    #print('  out ' + str(np.mean(out_powers)) + ' W')
-    #print('  total ' + str(np.mean(solar_powers) - primary_leakage_energy/60 - secondary_leakage_energy/60 - np.mean(out_powers)) + ' W')
-    #print('  Wasted ' + str(wasted_energy))
-    #print('  Possibly Collected ' + str(possible_energy))
-    ##print('  minimum primary discharge ' + str(primary_leakage_current))
+            self.secondary_soc.append(self.secondary_energy)
+            self.primary_soc.append(self.primary_energy)
+            second += 1
 
-    #plt.figure()
-    #plt.plot(np.arange(lights.size), [x for x in lights])
-    #print(len(events))
-    #plt.figure()
-    #plt.plot(seconds, [x for x in secondary_soc])
-    #plt.show()
-    #plt.plot(seconds, [x*1E3/2.4/3600 for x in offline[1:]])
-    #plt.plot(missed[:,0], missed[:,1])
-    #plt.figure()
-    #plt.plot(seconds, [x*1E3/2.4/3600 for x in primary_soc])
-    #plt.show()
-    #slope, intercept, _, _, _ = stats.linregress(minutes, primary_soc)
-    if has_primary:
-        #lifetime_years = (primary_energy_max/ np.mean(primary_discharges))/(SECONDS_IN_YEAR)
-        #print (primary_discharge, primary_energy_max)
-        lifetime_years = primary_energy_max / (primary_discharge / seconds.size) / SECONDS_IN_YEAR
-    else: lifetime_years = -1
-    #plt.plot([x for x in minutes], [intercept + slope*x*1E3/2.4/3600 for x in minutes])
-    #lifetime_years = minute/60/24/365
-    online = np.asarray(online)
+            if (second % SECONDS_IN_DAY == 0):
+                print('simulating day ' + str(second/SECONDS_IN_DAY))
+                #tr.print_diff()
+                if second/SECONDS_IN_DAY >= 4:
+                    break
 
-    #np.save('seq_no-Ligeiro-c098e5d00047_sim', events)
-    return lifetime_years, used_energy, possible_energy, missed[:,1], online, event_ttc
+
+        # convert arrays to numpy
+        self.secondary_soc = np.asarray(self.secondary_soc)
+        self.primary_soc = np.asarray(self.primary_soc)
+        self.missed_events = np.asarray(self.missed_events, dtype='object')
+        self.event_ttc = np.asarray(self.event_ttc)
+        # calculate percent of simulation spent online
+        self.fraction_online = time_online / second
+        self.fraction_energy_utilized = used_energy / possible_energy
+        self.fraction_successful_events =  1.0 - np.sum(self.missed_events[:,1]) / self.missed_events.shape[0]
+        if self.design_config['using_primary']:
+            self.lifetime_estimate_years = self.primary_energy_max / (self.primary_soc[0] - self.primary_soc[-1] / second) / SECONDS_IN_YEAR
+        else: lifetime_years = -1
+        plt.plot(self.secondary_soc)
+        plt.show()
+        #lifetime_years = minute/60/24/365
+
+        #np.save('seq_no-Ligeiro-c098e5d00047_sim', events)
+        #return lifetime_years, used_energy, possible_energy, self.missed_events[:,1], online, event_ttc
+
+    def __init__(self, platform_config, workload_config, dataset_config):
+        # declare class vars
+        self.sleep_power = 0            # sleep power of the system
+
+        self.workload_type = ''
+        self.event_energy = 0           # total amount of energy required for workload event
+        self.event_period_full = 0      # total amount of time required for event
+        self.event_period_min = 0       # minimum amount of 'atomic' time required for event
+        self.event_energy_min = 0       # minimum amount of energy
+        # state for reactive workload
+        self.workload_curve = []
+        self.lambda_set = None
+        self.reactive_hour = None
+        self.current_hour_P = None
+
+        self.primary_energy = 0         # current amount of energy stored in primary
+        self.primary_energy_max = 0     # full energy capacity of primary
+        self.primary_leakage_power = 0  # leakage power of primary cell
+
+        self.secondary_energy     = 0   # current amount of energy stored in secondary
+        self.secondary_energy_max = 0   # full energy capacity of secondary
+        self.secondary_energy_min = 0   # min hysteresis energy capacity
+        self.secondary_energy_up  = 0   # upper hysteresis energy capacity
+        self.secondary_leakage_power = 0 # secondary leakage power
+
+        self.energy_trace = []          # harvested energy trace (after efficiency calculation)
+        self.trace_resolution = 0       # resolution of energy trace
+        self.trace_start_seconds = 0    # starting seconds offset from midnight
+        self.trace_start_time = 0       # date of trace start
+        self.seconds_end = 0            # end of trace in seconds
+
+        # simulation generated state
+        self.secondary_soc = []
+        self.primary_soc = []
+        self.missed_events = []
+        self.event_ttc = []
+        self.fraction_online = 0
+        self.fraction_energy_utilized = 0
+        self.fraction_successful_events = 0
+        self.lifetime_estimate_years = -1
+
+        # set config vars
+        self.platform_config = platform_config
+        self.workload_config = workload_config
+        self.dataset_config = dataset_config
+        self.design_config = platform_config['design_config']
+        # load secondary/primary/harvester configs, if they exist
+        if self.design_config['using_secondary']:
+            self.secondary_config = self.platform_config['secondary_config']
+        else:
+            self.secondary_config = None
+        if self.design_config['using_primary']:
+            self.primary_config = self.platform_config['primary_config']
+        else:
+            self.primary_config = None
+        if self.design_config['using_harvester']:
+            self.harvest_config = self.platform_config['harvest_config']
+        else:
+            self.harvest_config = None
+
+        # initialize workload, secondary, and primary energy storage
+        self._init_energy()
+
+        self.workload_type = self.workload_config['type']
+        # load workload curve if reactive
+        if self.workload_config['type'] == 'reactive':
+            self.lambda_set = np.ceil(self.workload_config['lambda'] * np.load(self.workload_config['curve'])).astype(int)
+
+        # load energy trace
+        trace_fname = self.dataset_config['filename']
+        trace = np.load(trace_fname)
+        self.trace_resolution = self.dataset_config['resolution_s']
+
+        # prepare dataset
+        self.trace_start_time = trace[0].astype('datetime64[s]')
+        self.trace_start_seconds = int((self.trace_start_time - self.trace_start_time.astype('datetime64[D]')) / np.timedelta64(1, 's'))
+        trace = trace[1:]
+        self.seconds_end = trace.size*self.trace_resolution
+
+        # initialize harvester values
+        if self.harvest_config is not None:
+            if self.harvest_config['type'] != self.dataset_config['type']:
+                print("Mismatched trace/harvester config")
+                exit(1)
+            if self.harvest_config['type'] == 'solar' and self.dataset_config['unit'] == 'uW/cm^2':
+                if 'area_cm2' in self.harvest_config:
+                    solar_area = self.harvest_config['area_cm2']
+                    self.energy_trace = trace * 1E-6 * solar_area * \
+                        self.harvest_config['efficiency'] * \
+                        self.design_config['frontend_efficiency']
+                else:
+                    print("Missing solar config(s)")
+                    exit(1)
+            # TODO add more harvester options
+            else:
+                print("Currently unsupported energy trace")
+                exit(1)
 
 if __name__ == "__main__":
     import argparse
@@ -384,23 +451,32 @@ if __name__ == "__main__":
 
     # Input files for simulation
     parser = argparse.ArgumentParser(description='Energy Harvesting Simulation.')
-    parser.add_argument('-c', dest='config', default='permamote_config.py', help='input config file e.g. `permamote_config.py`')
-    parser.add_argument('-w', dest='workload', default='sense_and_send_workload.py', help='input workload config file e.g. `sense_and_send_workload.py`')
+    parser.add_argument('-c', dest='config_file', default='config.yaml', help='input config file e.g. `config.yaml`')
+    parser.add_argument('-w', dest='workload_file', default='workload.yaml', help='input workload config file e.g. `workload.yaml`')
+    parser.add_argument('-d', dest='dataset_file', default='dataset.yaml', help='input dataset config file e.g. `dataset.yaml`')
     args = parser.parse_args()
 
-    imported_config = importlib.import_module(args.config.split('.')[0])
-    imported_workload = importlib.import_module(args.workload.split('.')[0])
-    config = imported_config.config()
-    workload = imported_workload.workload()
-    trace_fname = workload.dataset['filename']
-    trace = np.load(trace_fname)
-
-    lifetime, used, possible, missed, online, event_ttc = simulate(config, workload, trace)
-    print(str(lifetime) + " years")
-    print("%.2f/%.2f Joules used" % (used, possible))
-    print("%.2f%% events successful" % (100 * (missed.size - np.sum(missed))/missed.size))
-    print("%.2f%% of time online" % (100 * np.sum(online) / online.size))
-    #print("%.2f%% x expected event time to completion" % (event_ttc / workload.config['event_period_s']))
-    print("%.2f%% x expected event time to completion" % (np.average(event_ttc) / workload.config['event_period_s']))
-
+    config = {}
+    workload = {}
+    dataset = {}
+    with open(args.config_file, 'r') as c_file, \
+         open(args.workload_file, 'r') as wl_file, \
+         open(args.dataset_file, 'r') as d_file:
+        try:
+            config = yaml.safe_load(c_file)
+            workload = yaml.safe_load(wl_file)['workload']
+            dataset = yaml.safe_load(d_file)['dataset']
+        except yaml.YAMLError as e:
+            print(e)
+            exit(1)
+    simulator = EHSim(config, workload, dataset)
+    pprint(vars(simulator))
+    simulator.simulate()
+    print('percent energy utilized: \t{0:.2f}%'.format(100 * simulator.fraction_energy_utilized))
+    print('percent online: \t\t{0:.2f}%'.format(100 * simulator.fraction_online))
+    print('percent successful events: \t{0:.2f}%'.format(100 * simulator.fraction_successful_events))
+    print(np.sum(simulator.missed_events[:,1]))
+    print(np.sum(simulator.seconds_end))
+    print(simulator.missed_events.shape[0])
+    exit(0)
 

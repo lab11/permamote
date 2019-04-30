@@ -1,0 +1,11 @@
+workload:
+  name: 'ota'
+  type: 'random'
+  atomic: False
+  period_s: 1209600 # 2*7*24*60*60
+  sleep_current_A: 1.5e-6
+  startup_energy_J: 150.0e-6
+  startup_period_s: 3.4e-3
+  event_energy_J: 0.09328 # 5.3e-3 (radio current) * 3.3 (voltage) * 50e3 * 8 (kB) / 75e3 (kB/s)
+  event_period_s: 5.33
+  event_period_min_s: 0.028

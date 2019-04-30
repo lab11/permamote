@@ -45,11 +45,7 @@ int sensors_init(const nrf_twi_mngr_t* twi_mngr_instance, const nrf_drv_spi_t* s
   if (!nrf_drv_gpiote_is_init()) {
     nrf_drv_gpiote_init();
   }
-
-  if (!nrf_drv_gpiote_is_init()) {
-    nrf_drv_gpiote_init();
-  }
-  nrf_drv_gpiote_in_config_t pir_gpio_config = GPIOTE_CONFIG_IN_SENSE_LOTOHI(1);
+  nrf_drv_gpiote_in_config_t pir_gpio_config = GPIOTE_CONFIG_IN_SENSE_LOTOHI(0);
   pir_gpio_config.pull = NRF_GPIO_PIN_PULLDOWN;
   nrf_drv_gpiote_in_init(PIR_OUT, &pir_gpio_config, pir_interrupt_callback);
 
@@ -63,8 +59,9 @@ int sensors_init(const nrf_twi_mngr_t* twi_mngr_instance, const nrf_drv_spi_t* s
   ab1815_config.auto_rst = 1;
   ab1815_set_config(ab1815_config);
   ab1815_time_t alarm_time = {.hours = 8};
-  ab1815_set_alarm(alarm_time, ONCE_PER_DAY, (ab1815_alarm_callback*) rtc_update_callback);
-  ab1815_set_watchdog(1, 31, _1_4HZ);
+  ab1815_set_alarm(alarm_time, ONCE_PER_HOUR, (ab1815_alarm_callback*) rtc_callback);
+  ab1815_clear_watchdog();
+  //ab1815_set_watchdog(1, 31, _1_4HZ);
 
 
   // init sensors

@@ -4,7 +4,7 @@
 #include "thread_coap.h"
 #include "app_error.h"
 
-#define PERMAMOTE_PACKET_VERSION 0
+#define PERMAMOTE_PACKET_VERSION 1
 
 typedef struct {
   char* path;
@@ -15,4 +15,4 @@ typedef struct {
   uint8_t data_len;
 } permamote_packet_t;
 
-otError permamote_coap_send(const otIp6Address* dest, const char* path, bool confirmable, const permamote_packet_t* packet);
+otError permamote_coap_send(otIp6Address* dest, const char* path, bool confirmable, const permamote_packet_t* packet);

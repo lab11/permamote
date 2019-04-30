@@ -1,0 +1,11 @@
+workload:
+  name: 'ligeiro_sense_and_send'
+  type: 'periodic'
+  atomic: True
+  period_s: 10
+  sleep_current_A: 1.0e+3
+  startup_energy_J: 0
+  startup_period_s: 0
+  event_energy_J: 0.00105 # .5 * 500E-6 * (2.2**2 - 0.8**2)
+  event_period_s: 50.0e-3
+  event_period_min_s: 50.0E-3

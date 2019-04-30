@@ -5,3 +5,5 @@ _build/
 *.swp
 *.DS_Store
 **/.vscode
+*.ipch
+*.code_workspace
