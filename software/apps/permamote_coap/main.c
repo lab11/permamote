@@ -24,6 +24,7 @@
 #include "coap_dfu.h"
 #include "coap_api.h"
 #include "background_dfu_state.h"
+#include "fds.h"
 
 #include <openthread/message.h>
 
@@ -33,6 +34,7 @@
 #include "thread_coap.h"
 #include "thread_dns.h"
 #include "device_id.h"
+#include "flash_storage.h"
 
 #include "permamote.h"
 #include "ab1815.h"
@@ -697,7 +699,11 @@ int main(void) {
   timer_init();
 
   NRF_LOG_INFO("GIT Version: %s", GIT_VERSION);
-  get_device_id(device_id);
+  uint8_t id[6];
+  get_device_id(id);
+  // store ID with fds
+  uint16_t locator = 0x1897;
+  define_flash_variable_array(id, device_id, 6, locator);
   NRF_LOG_INFO("Device ID: %x:%x:%x:%x:%x:%x", device_id[0], device_id[1],
                 device_id[2], device_id[3], device_id[4], device_id[5]);
   packet.id = device_id;
