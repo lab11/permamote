@@ -130,7 +130,8 @@ APP_TIMER_DEF(ntp_jitter);
 APP_TIMER_DEF(dfu_monitor);
 APP_TIMER_DEF(coap_tick);
 
-static bool dfu_trigger = true;
+static bool dfu_trigger = false;
+static uint8_t dfu_jitter_hours = 0;
 static uint32_t last_block = 0;
 static bool seed = false;
 static uint8_t device_id[6];
@@ -141,6 +142,7 @@ static int dns_error = 0;
 
 // forward declaration
 static void send_discover(void);
+static void send_version(void);
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
@@ -198,7 +200,8 @@ void rtc_callback(void) {
     ret_code_t err_code = app_timer_start(ntp_jitter, APP_TIMER_TICKS(jitter), NULL);
     APP_ERROR_CHECK(err_code);
   }
-  if (hours_count % DFU_CHECK_HOURS == 0) {
+  if (hours_count % (DFU_CHECK_HOURS + dfu_jitter_hours) == 0) {
+    dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * 24);
     dfu_trigger = true;
   }
 }
@@ -230,6 +233,11 @@ void ntp_response_handler(void* context, uint64_t time, otError error) {
   struct timeval tv = {.tv_sec = (uint32_t)time & UINT32_MAX};
   if (!seed) {
     srand((uint32_t)time & UINT32_MAX);
+    // set jitter for next dfu check
+    dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * 24);
+    NRF_LOG_INFO("JITTER: %u", dfu_jitter_hours);
+    // send version because why not
+    send_version();
     seed = true;
   }
   if (error == OT_ERROR_NONE) {
@@ -369,6 +377,20 @@ static void send_discover(void) {
 
   permamote_coap_send(&m_coap_address, "discovery", false, &packet);
 }
+
+static void send_version(void) {
+    uint8_t data[32];
+
+    NRF_LOG_INFO("Sent version");
+
+    memcpy(data, GIT_VERSION, strlen(GIT_VERSION));
+    packet.timestamp = ab1815_get_time_unix();
+    packet.data = data;
+    packet.data_len = strlen(GIT_VERSION);
+
+    permamote_coap_send(&m_coap_address, "version", false, &packet);
+}
+
 
 static void send_color(void) {
   // sense light color
@@ -560,14 +582,7 @@ void state_step(void) {
 
         // Send discovery packet and version before updating
         send_discover();
-
-        uint8_t data[32];
-        memcpy(data, GIT_VERSION, strlen(GIT_VERSION));
-        packet.timestamp = ab1815_get_time_unix();
-        packet.data = data;
-        packet.data_len = strlen(GIT_VERSION);
-
-        permamote_coap_send(&m_coap_address, "version", false, &packet);
+        send_version();
 
         // Start coap timer tick
         ret_code_t err_code = app_timer_start(coap_tick, COAP_TICK_TIME, NULL);
@@ -615,6 +630,8 @@ void state_step(void) {
         break;
       }
 
+      // dns is resolved!
+      // request ntp time update
       otError error = thread_ntp_request(thread_instance, &m_ntp_address, NULL, ntp_response_handler);
       NRF_LOG_INFO("sent ntp poll!");
       NRF_LOG_INFO("error: %d", error);
