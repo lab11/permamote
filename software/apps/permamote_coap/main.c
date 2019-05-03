@@ -688,7 +688,8 @@ int main(void) {
 
   // Init log
   log_init();
-
+  NRF_LOG_INFO("\n");
+  flash_storage_init();
   nrf_mem_init();
 
   // Init twi
@@ -699,13 +700,14 @@ int main(void) {
   timer_init();
 
   NRF_LOG_INFO("GIT Version: %s", GIT_VERSION);
-  uint8_t id[6];
+  uint8_t id[6] = {0};
   get_device_id(id);
   // store ID with fds
-  uint16_t locator = 0x1897;
-  define_flash_variable_array(id, device_id, 6, locator);
+  uint16_t locator = 0x1000;
+  define_flash_variable_array(id, device_id, sizeof(id), locator);
   NRF_LOG_INFO("Device ID: %x:%x:%x:%x:%x:%x", device_id[0], device_id[1],
                 device_id[2], device_id[3], device_id[4], device_id[5]);
+
   packet.id = device_id;
   packet.id_len = sizeof(device_id);
 
