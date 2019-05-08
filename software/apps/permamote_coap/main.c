@@ -200,7 +200,7 @@ void rtc_callback(void) {
     ret_code_t err_code = app_timer_start(ntp_jitter, APP_TIMER_TICKS(jitter), NULL);
     APP_ERROR_CHECK(err_code);
   }
-  if (hours_count % (DFU_CHECK_HOURS + dfu_jitter_hours) == 0) {
+  if (hours_count % DFU_CHECK_HOURS == dfu_jitter_hours) {
     dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * 24);
     dfu_trigger = true;
   }
