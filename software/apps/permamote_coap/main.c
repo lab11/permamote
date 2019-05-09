@@ -519,7 +519,7 @@ void state_step(void) {
       packet.timestamp = ab1815_get_time_unix();
       packet.data = (uint8_t*)&sensed_lux;
       packet.data_len = sizeof(sensed_lux);
-      permamote_coap_send(&m_coap_address, "light_lux", false, &packet);
+      permamote_coap_send(&m_coap_address, "light_lux", true, &packet);
       state = IDLE;
 
       break;
@@ -539,7 +539,7 @@ void state_step(void) {
       packet.timestamp = ab1815_get_time_unix();
       packet.data = &data;
       packet.data_len = sizeof(data);
-      permamote_coap_send(&m_coap_address, "motion", false, &packet);
+      permamote_coap_send(&m_coap_address, "motion", true, &packet);
       state = IDLE;
 
       break;
