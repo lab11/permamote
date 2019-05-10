@@ -59,34 +59,6 @@ static otIp6Address m_up_address;
 static otIp6Address* addresses[NUM_ADDRESSES] = {&m_ntp_address, &m_coap_address, &m_up_address};
 
 /*
- * methods to print addresses
- * ==========================
- * */
-static void address_print(const otIp6Address *addr)
-{
-    char ipstr[40];
-    snprintf(ipstr, sizeof(ipstr), "%x:%x:%x:%x:%x:%x:%x:%x",
-             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 0)),
-             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 1)),
-             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 2)),
-             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 3)),
-             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 4)),
-             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 5)),
-             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 6)),
-             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 7)));
-
-    NRF_LOG_INFO("%s\r\n", (uint32_t)ipstr);
-}
-
-static void addresses_print(otInstance * aInstance)
-{
-    for (const otNetifAddress *addr = otIp6GetUnicastAddresses(aInstance); addr; addr = addr->mNext)
-    {
-        address_print(&addr->mAddress);
-    }
-}
-
-/*
  * Permamote specific declarations for packet structure, state machine
  * ==========================
  * */
@@ -113,14 +85,16 @@ static permamote_packet_t packet = {
     .data_len = 0,
 };
 
-typedef enum {
-  IDLE = 0,
-  SEND_LIGHT,
-  SEND_MOTION,
-  SEND_PERIODIC,
-  UPDATE_TIME,
-  RESOLVING_ADDR,
-  WAIT_TIME,
+typedef struct{
+  bool send_light;
+  bool send_motion;
+  bool send_periodic;
+  bool update_time;
+  bool wait_time;
+  bool resolve_addr;
+  bool resolve_wait;
+  bool dfu_trigger;
+  bool do_reset;
 } permamote_state_t;
 
 APP_TIMER_DEF(periodic_sensor_timer);
@@ -130,15 +104,12 @@ APP_TIMER_DEF(ntp_jitter);
 APP_TIMER_DEF(dfu_monitor);
 APP_TIMER_DEF(coap_tick);
 
-static bool dfu_trigger = false;
 static uint8_t dfu_jitter_hours = 0;
 static uint32_t last_block = 0;
 static bool seed = false;
 static uint8_t device_id[6];
-static permamote_state_t state = IDLE;
+static permamote_state_t state = {0};
 static float sensed_lux;
-static bool do_reset = false;
-static int dns_error = 0;
 
 // forward declaration
 static void send_discover(void);
@@ -146,6 +117,42 @@ static void send_version(void);
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
+
+/*
+ * methods to manage addresses
+ * ==========================
+ * */
+static bool are_addresses_resolved(void) {
+  bool resolved = true;
+  for (size_t i = 0; i < NUM_ADDRESSES; i++) {
+    resolved &= !otIp6IsAddressEqual(addresses[i], &unspecified_ipv6);
+  }
+  return resolved;
+}
+
+static void address_print(const otIp6Address *addr)
+{
+    char ipstr[40];
+    snprintf(ipstr, sizeof(ipstr), "%x:%x:%x:%x:%x:%x:%x:%x",
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 0)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 1)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 2)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 3)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 4)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 5)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 6)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 7)));
+
+    NRF_LOG_INFO("%s\r\n", (uint32_t)ipstr);
+}
+
+static void addresses_print(otInstance * aInstance)
+{
+    for (const otNetifAddress *addr = otIp6GetUnicastAddresses(aInstance); addr; addr = addr->mNext)
+    {
+        address_print(&addr->mAddress);
+    }
+}
 
 void coap_dfu_handle_error(void)
 {
@@ -170,7 +177,7 @@ void dfu_monitor_callback(void* m) {
   // responding, so return to normal operation
   if ((dfu_state.state == BACKGROUND_DFU_DOWNLOAD_TRIG || dfu_state.state == BACKGROUND_DFU_IDLE) &&
       (dfu_state.prev_state == BACKGROUND_DFU_IDLE)) {
-    dfu_trigger = false;
+    state.dfu_trigger = false;
     app_timer_stop(coap_tick);
     coap_dfu_reset_state();
     otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
@@ -202,14 +209,12 @@ void rtc_callback(void) {
   }
   if (hours_count % DFU_CHECK_HOURS == dfu_jitter_hours) {
     dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * 24);
-    dfu_trigger = true;
+    state.dfu_trigger = true;
   }
 }
 
 void ntp_jitter_callback(void* m) {
-    if (state == IDLE) {
-        state = UPDATE_TIME;
-    }
+    state.update_time = true;
 }
 
 void __attribute__((weak)) dns_response_handler(void         * p_context,
@@ -218,10 +223,11 @@ void __attribute__((weak)) dns_response_handler(void         * p_context,
                                  uint32_t       ttl,
                                  otError        error)
 {
-    dns_error |= error;
     if (error != OT_ERROR_NONE)
     {
         NRF_LOG_INFO("DNS response error %d.", error);
+        // retry dns resolve
+        state.resolve_addr = true;
         return;
     }
 
@@ -248,7 +254,6 @@ void ntp_response_handler(void* context, uint64_t time, otError error) {
     NRF_LOG_INFO("ntp error: %d", error);
   }
   otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
-  state = IDLE;
 }
 
 void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * p_context) {
@@ -258,9 +263,7 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
     if (flags & OT_CHANGED_IP6_ADDRESS_ADDED && otThreadGetDeviceRole(p_context) == 2) {
       NRF_LOG_INFO("We have internet connectivity!");
       addresses_print(p_context);
-      if (state == IDLE) {
-        state = UPDATE_TIME;
-      }
+      state.update_time = true;
     }
 }
 
@@ -402,16 +405,12 @@ static void send_color(void) {
 }
 
 void periodic_sensor_read_callback(void* m) {
-  if (state == IDLE) {
-    state = SEND_PERIODIC;
-  }
+  state.send_periodic = true;
 }
 
 void light_sensor_read_callback(float lux) {
   sensed_lux = lux;
-  if (state == IDLE) {
-    state = SEND_LIGHT;
-  }
+  state.send_light = true;
 }
 
 void pir_backoff_callback(void* m) {
@@ -431,9 +430,7 @@ void pir_enable_callback(void* m) {
 }
 
 void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
-  if (state == IDLE) {
-    state = SEND_MOTION;
-  }
+  state.send_motion = true;
 }
 
 void light_interrupt_callback(void) {
@@ -496,173 +493,156 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info) {
   //thread_coap_send(thread_get_instance(), OT_COAP_CODE_PUT, OT_COAP_TYPE_NON_CONFIRMABLE, &m_coap_address, "error", data, 1+6+sizeof(uint32_t));
   NRF_LOG_INFO("GOING FOR RESET");
   NRF_LOG_FINAL_FLUSH();
-  do_reset = true;
+  state.do_reset = true;
 }
 
 void state_step(void) {
   otInstance * thread_instance = thread_get_instance();
-  switch(state) {
-    case IDLE: {
-      //uint32_t poll = otLinkGetPollPeriod(thread_get_instance());
-      //if (poll != DEFAULT_POLL_PERIOD) {
-      //  otLinkSetPollPeriod(thread_instance, DEFAULT_POLL_PERIOD);
-      //}
-    break;
+  if (state.send_light) {
+    float upper = sensed_lux + sensed_lux * 0.05;
+    float lower = sensed_lux - sensed_lux * 0.05;
+    NRF_LOG_INFO("Sensed: lux: %u, upper: %u, lower: %u", (uint32_t)sensed_lux, (uint32_t)upper, (uint32_t)lower);
+    max44009_set_upper_threshold(upper);
+    max44009_set_lower_threshold(lower);
+
+    packet.timestamp = ab1815_get_time_unix();
+    packet.data = (uint8_t*)&sensed_lux;
+    packet.data_len = sizeof(sensed_lux);
+    permamote_coap_send(&m_coap_address, "light_lux", true, &packet);
+    state.send_light = false;
+  }
+  if (state.send_motion) {
+    uint8_t data = 1;
+
+    // disable interrupt and turn off PIR
+    NRF_LOG_INFO("TURN off PIR ");
+    nrf_drv_gpiote_in_event_disable(PIR_OUT);
+    nrf_gpio_pin_set(PIR_EN);
+
+    ret_code_t err_code = app_timer_start(pir_backoff, PIR_BACKOFF_PERIOD, NULL);
+    APP_ERROR_CHECK(err_code);
+
+    NRF_LOG_INFO("Saw motion");
+    packet.timestamp = ab1815_get_time_unix();
+    packet.data = &data;
+    packet.data_len = sizeof(data);
+    permamote_coap_send(&m_coap_address, "motion", true, &packet);
+    state.send_motion = false;
+  }
+  if (state.send_periodic) {
+    //NRF_LOG_INFO("poll period: %d", otLinkGetPollPeriod(thread_get_instance()));
+    //ab1815_time_t time;
+    //ab1815_get_time(&time);
+    //NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
+    //if (otThreadGetDeviceRole(thread_get_instance()) == 2) {
+    //  ab1815_tickle_watchdog();
+    //}
+    //if(time.years == 0 && state == IDLE) {
+    //  NRF_LOG_INFO("VERY INVALID TIME");
+    //  state = UPDATE_TIME;
+    //  return;
+    //}
+
+
+    period_count ++;
+    if (period_count % sensor_period.voltage == 0) {
+      send_voltage();
     }
-    case SEND_LIGHT:{
-      float upper = sensed_lux + sensed_lux * 0.05;
-      float lower = sensed_lux - sensed_lux * 0.05;
-      NRF_LOG_INFO("Sensed: lux: %u, upper: %u, lower: %u", (uint32_t)sensed_lux, (uint32_t)upper, (uint32_t)lower);
-      max44009_set_upper_threshold(upper);
-      max44009_set_lower_threshold(lower);
-
-      packet.timestamp = ab1815_get_time_unix();
-      packet.data = (uint8_t*)&sensed_lux;
-      packet.data_len = sizeof(sensed_lux);
-      permamote_coap_send(&m_coap_address, "light_lux", true, &packet);
-      state = IDLE;
-
-      break;
+    if (period_count % sensor_period.temp_pres_hum == 0) {
+      send_temp_pres_hum();
     }
-    case SEND_MOTION: {
-      uint8_t data = 1;
+    if (period_count % sensor_period.color == 0) {
+      send_color();
+    }
+    if (period_count % sensor_period.discover == 0) {
+      send_discover();
+    }
+    //send_free_buffers();
 
-      // disable interrupt and turn off PIR
-      NRF_LOG_INFO("TURN off PIR ");
-      nrf_drv_gpiote_in_event_disable(PIR_OUT);
-      nrf_gpio_pin_set(PIR_EN);
+    //max44009_schedule_read_lux();
+    if (state.dfu_trigger == true) {
+      state.dfu_trigger = false;
 
-      ret_code_t err_code = app_timer_start(pir_backoff, PIR_BACKOFF_PERIOD, NULL);
+      // Send discovery packet and version before updating
+      send_discover();
+      send_version();
+
+      // Start coap timer tick
+      ret_code_t err_code = app_timer_start(coap_tick, COAP_TICK_TIME, NULL);
       APP_ERROR_CHECK(err_code);
 
-      NRF_LOG_INFO("Saw motion");
-      packet.timestamp = ab1815_get_time_unix();
-      packet.data = &data;
-      packet.data_len = sizeof(data);
-      permamote_coap_send(&m_coap_address, "motion", true, &packet);
-      state = IDLE;
-
-      break;
-    }
-    case SEND_PERIODIC: {
-      //NRF_LOG_INFO("poll period: %d", otLinkGetPollPeriod(thread_get_instance()));
-      //ab1815_time_t time;
-      //ab1815_get_time(&time);
-      //NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
-      //if (otThreadGetDeviceRole(thread_get_instance()) == 2) {
-      //  ab1815_tickle_watchdog();
+      otLinkSetPollPeriod(thread_instance, DFU_POLL_PERIOD);
+      coap_remote_t remote;
+      memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
+      remote.port_number = OT_DEFAULT_COAP_PORT;
+      int result = coap_dfu_trigger(&remote);
+      NRF_LOG_INFO("result: %d", result);
+      err_code = app_timer_start(dfu_monitor, DFU_MONITOR_PERIOD, NULL);
+      APP_ERROR_CHECK(err_code);
+      //if (result == NRF_ERROR_INVALID_STATE) {
+      //    coap_dfu_reset_state();
       //}
-      //if(time.years == 0 && state == IDLE) {
-      //  NRF_LOG_INFO("VERY INVALID TIME");
-      //  state = UPDATE_TIME;
-      //  return;
-      //}
-
-
-      period_count ++;
-      if (period_count % sensor_period.voltage == 0) {
-        send_voltage();
-      }
-      if (period_count % sensor_period.temp_pres_hum == 0) {
-        send_temp_pres_hum();
-      }
-      if (period_count % sensor_period.color == 0) {
-        send_color();
-      }
-      if (period_count % sensor_period.discover == 0) {
-        send_discover();
-      }
-      //send_free_buffers();
-
-      state = IDLE;
-
-      //max44009_schedule_read_lux();
-      if (dfu_trigger == true) {
-        dfu_trigger = false;
-
-        // Send discovery packet and version before updating
-        send_discover();
-        send_version();
-
-        // Start coap timer tick
-        ret_code_t err_code = app_timer_start(coap_tick, COAP_TICK_TIME, NULL);
-        APP_ERROR_CHECK(err_code);
-
-        otLinkSetPollPeriod(thread_instance, DFU_POLL_PERIOD);
-        coap_remote_t remote;
-        memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
-        remote.port_number = OT_DEFAULT_COAP_PORT;
-        int result = coap_dfu_trigger(&remote);
-        NRF_LOG_INFO("result: %d", result);
-        err_code = app_timer_start(dfu_monitor, DFU_MONITOR_PERIOD, NULL);
-        APP_ERROR_CHECK(err_code);
-        //if (result == NRF_ERROR_INVALID_STATE) {
-        //    coap_dfu_reset_state();
-        //}
-      }
-      break;
     }
-    case UPDATE_TIME: {
-      NRF_LOG_INFO("RTC UPDATE");
-      otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
 
-      // resolve dns if needed
-      if (otIp6IsAddressEqual(&m_ntp_address, &unspecified_ipv6)
-       || otIp6IsAddressEqual(&m_coap_address, &unspecified_ipv6)) {
-        NRF_LOG_INFO("Resolving Addresses");
-        dns_error = 0;
-        thread_dns_hostname_resolve(thread_instance,
-                                    DNS_SERVER_ADDR,
-                                    NTP_SERVER_HOSTNAME,
-                                    dns_response_handler,
-                                    (void*) &m_ntp_address);
-        thread_dns_hostname_resolve(thread_instance,
-                                    DNS_SERVER_ADDR,
-                                    COAP_SERVER_HOSTNAME,
-                                    dns_response_handler,
-                                    (void*) &m_coap_address);
-        thread_dns_hostname_resolve(thread_instance,
-                                    DNS_SERVER_ADDR,
-                                    UPDATE_SERVER_HOSTNAME,
-                                    dns_response_handler,
-                                    (void*) &m_up_address);
-        state = RESOLVING_ADDR;
-        break;
-      }
+    state.send_periodic = false;
+  }
+  if (state.update_time) {
+    state.update_time = false;
+    NRF_LOG_INFO("RTC UPDATE");
+    otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
 
+    // resolve dns if needed
+    if (!are_addresses_resolved()) {
+      state.resolve_addr = true;
+    }
+    else {
       // dns is resolved!
       // request ntp time update
       otError error = thread_ntp_request(thread_instance, &m_ntp_address, NULL, ntp_response_handler);
       NRF_LOG_INFO("sent ntp poll!");
       NRF_LOG_INFO("error: %d", error);
 
-      state = WAIT_TIME;
-      break;
+      state.wait_time = true;
     }
-    case RESOLVING_ADDR: {
-      bool resolved = true;
-      for (uint8_t i = 0; i < NUM_ADDRESSES; i++) {
-        resolved &= !otIp6IsAddressEqual(addresses[i], &unspecified_ipv6);
-      }
-      if (resolved)
-      {
-         state = UPDATE_TIME;
-      }
-      break;
+  }
+  if (state.wait_time) {
+    uint32_t poll = otLinkGetPollPeriod(thread_get_instance());
+    if (poll != RECV_POLL_PERIOD) {
+      NRF_LOG_INFO("poll: %u", poll);
+      otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
     }
-    case WAIT_TIME: {
-      uint32_t poll = otLinkGetPollPeriod(thread_get_instance());
-      if (poll != RECV_POLL_PERIOD) {
-        NRF_LOG_INFO("poll: %u", poll);
-        otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
-      }
-      break;
+    state.wait_time = false;
+  }
+  if (state.resolve_addr) {
+      NRF_LOG_INFO("Resolving Addresses");
+      thread_dns_hostname_resolve(thread_instance,
+          DNS_SERVER_ADDR,
+          NTP_SERVER_HOSTNAME,
+          dns_response_handler,
+          (void*) &m_ntp_address);
+      thread_dns_hostname_resolve(thread_instance,
+          DNS_SERVER_ADDR,
+          COAP_SERVER_HOSTNAME,
+          dns_response_handler,
+          (void*) &m_coap_address);
+      thread_dns_hostname_resolve(thread_instance,
+          DNS_SERVER_ADDR,
+          UPDATE_SERVER_HOSTNAME,
+          dns_response_handler,
+          (void*) &m_up_address);
+      state.resolve_addr = false;
+      state.resolve_wait = true;
+  }
+  if (state.resolve_wait) {
+    bool resolved = are_addresses_resolved();
+    if (resolved)
+    {
+      state.update_time = true;
+      state.resolve_wait = false;
     }
-    default:
-      break;
   }
 
-  if (do_reset) {
+  if (state.do_reset) {
     static volatile int i = 0;
     if (i++ > 100) {
       NVIC_SystemReset();
@@ -745,7 +725,6 @@ int main(void) {
   for(uint8_t i = 0; i < NUM_ADDRESSES; i++) {
     *(addresses[i]) = unspecified_ipv6;
   }
-
 
   sensors_init(&twi_mngr_instance, &spi_instance);
 
