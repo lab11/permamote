@@ -90,7 +90,6 @@ typedef struct{
   bool send_motion;
   bool send_periodic;
   bool update_time;
-  bool wait_time;
   bool resolve_addr;
   bool resolve_wait;
   bool dfu_trigger;
@@ -227,6 +226,7 @@ void __attribute__((weak)) dns_response_handler(void         * p_context,
     {
         NRF_LOG_INFO("DNS response error %d.", error);
         // retry dns resolve
+        // TODO not the place for this!
         state.resolve_addr = true;
         return;
     }
@@ -508,10 +508,11 @@ void state_step(void) {
     packet.timestamp = ab1815_get_time_unix();
     packet.data = (uint8_t*)&sensed_lux;
     packet.data_len = sizeof(sensed_lux);
-    permamote_coap_send(&m_coap_address, "light_lux", true, &packet);
+    permamote_coap_send(&m_coap_address, "light_lux", false, &packet);
     state.send_light = false;
   }
   if (state.send_motion) {
+    state.send_motion = false;
     uint8_t data = 1;
 
     // disable interrupt and turn off PIR
@@ -526,8 +527,7 @@ void state_step(void) {
     packet.timestamp = ab1815_get_time_unix();
     packet.data = &data;
     packet.data_len = sizeof(data);
-    permamote_coap_send(&m_coap_address, "motion", true, &packet);
-    state.send_motion = false;
+    permamote_coap_send(&m_coap_address, "motion", false, &packet);
   }
   if (state.send_periodic) {
     //NRF_LOG_INFO("poll period: %d", otLinkGetPollPeriod(thread_get_instance()));
@@ -601,17 +601,13 @@ void state_step(void) {
       otError error = thread_ntp_request(thread_instance, &m_ntp_address, NULL, ntp_response_handler);
       NRF_LOG_INFO("sent ntp poll!");
       NRF_LOG_INFO("error: %d", error);
+      uint32_t poll = otLinkGetPollPeriod(thread_get_instance());
+      if (poll != RECV_POLL_PERIOD) {
+        NRF_LOG_INFO("poll: %u", poll);
+        otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
+      }
 
-      state.wait_time = true;
     }
-  }
-  if (state.wait_time) {
-    uint32_t poll = otLinkGetPollPeriod(thread_get_instance());
-    if (poll != RECV_POLL_PERIOD) {
-      NRF_LOG_INFO("poll: %u", poll);
-      otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
-    }
-    state.wait_time = false;
   }
   if (state.resolve_addr) {
       NRF_LOG_INFO("Resolving Addresses");
