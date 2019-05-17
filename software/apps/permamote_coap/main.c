@@ -242,7 +242,8 @@ void ntp_response_handler(void* context, uint64_t time, otError error) {
     // set jitter for next dfu check
     dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * 24);
     NRF_LOG_INFO("JITTER: %u", dfu_jitter_hours);
-    // send version because why not
+    // send version and discover because why not
+    send_discover();
     send_version();
     seed = true;
   }
