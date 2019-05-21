@@ -90,9 +90,11 @@ typedef struct{
   bool send_motion;
   bool send_periodic;
   bool update_time;
+  bool up_time_done;
   bool resolve_addr;
   bool resolve_wait;
   bool dfu_trigger;
+  bool performing_dfu;
   bool do_reset;
 } permamote_state_t;
 
@@ -171,12 +173,14 @@ void dfu_monitor_callback(void* m) {
   NRF_LOG_INFO("state: %s", background_dfu_state_to_string(dfu_state.state));
   NRF_LOG_INFO("prev state: %s", background_dfu_state_to_string(dfu_state.prev_state));
   NRF_LOG_INFO("d blocks: %d", dfu_state.block_num);
+  uint32_t poll = otLinkGetPollPeriod(thread_get_instance());
+  NRF_LOG_INFO("poll period: %d", poll);
 
   // if this state combination, there isn't a new image for us, or server not
   // responding, so return to normal operation
   if ((dfu_state.state == BACKGROUND_DFU_DOWNLOAD_TRIG || dfu_state.state == BACKGROUND_DFU_IDLE) &&
       (dfu_state.prev_state == BACKGROUND_DFU_IDLE)) {
-    state.dfu_trigger = false;
+    state.performing_dfu = false;
     app_timer_stop(coap_tick);
     coap_dfu_reset_state();
     otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
@@ -207,7 +211,9 @@ void rtc_callback(void) {
     APP_ERROR_CHECK(err_code);
   }
   if (hours_count % DFU_CHECK_HOURS == dfu_jitter_hours) {
-    dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * 24);
+    dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * DFU_CHECK_HOURS);
+    NRF_LOG_INFO("jitter: %u", (uint32_t) dfu_jitter_hours);
+    NRF_LOG_INFO("going for DFU");
     state.dfu_trigger = true;
   }
 }
@@ -237,16 +243,6 @@ void __attribute__((weak)) dns_response_handler(void         * p_context,
 
 void ntp_response_handler(void* context, uint64_t time, otError error) {
   struct timeval tv = {.tv_sec = (uint32_t)time & UINT32_MAX};
-  if (!seed) {
-    srand((uint32_t)time & UINT32_MAX);
-    // set jitter for next dfu check
-    dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * 24);
-    NRF_LOG_INFO("JITTER: %u", dfu_jitter_hours);
-    // send version and discover because why not
-    send_discover();
-    send_version();
-    seed = true;
-  }
   if (error == OT_ERROR_NONE) {
     ab1815_set_time(unix_to_ab1815(tv));
     NRF_LOG_INFO("ntp time: %lu.%lu", (uint32_t)time & UINT32_MAX);
@@ -254,7 +250,7 @@ void ntp_response_handler(void* context, uint64_t time, otError error) {
   else {
     NRF_LOG_INFO("ntp error: %d", error);
   }
-  otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
+  state.up_time_done = true;
 }
 
 void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * p_context) {
@@ -561,8 +557,9 @@ void state_step(void) {
     //send_free_buffers();
 
     //max44009_schedule_read_lux();
-    if (state.dfu_trigger == true) {
+    if (state.dfu_trigger == true && state.performing_dfu == false) {
       state.dfu_trigger = false;
+      state.performing_dfu = true;
 
       // Send discovery packet and version before updating
       send_discover();
@@ -608,6 +605,23 @@ void state_step(void) {
         otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
       }
 
+    }
+  }
+  if (state.up_time_done) {
+    // if not performing a dfu, return poll period to default
+    if (!state.performing_dfu) {
+      otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
+    }
+    // if we haven't performed initial setup of rand
+    if (!seed) {
+      srand((uint32_t)time & UINT32_MAX);
+      // set jitter for next dfu check
+      dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * DFU_CHECK_HOURS);
+      NRF_LOG_INFO("JITTER: %u", dfu_jitter_hours);
+      // send version and discover because why not
+      send_discover();
+      send_version();
+      seed = true;
     }
   }
   if (state.resolve_addr) {
