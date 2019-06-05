@@ -496,8 +496,8 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info) {
 void state_step(void) {
   otInstance * thread_instance = thread_get_instance();
   if (state.send_light) {
-    float upper = sensed_lux + sensed_lux * 0.05;
-    float lower = sensed_lux - sensed_lux * 0.05;
+    float upper = sensed_lux + sensed_lux * 0.1;
+    float lower = sensed_lux - sensed_lux * 0.1;
     NRF_LOG_INFO("Sensed: lux: %u, upper: %u, lower: %u", (uint32_t)sensed_lux, (uint32_t)upper, (uint32_t)lower);
     max44009_set_upper_threshold(upper);
     max44009_set_lower_threshold(lower);
