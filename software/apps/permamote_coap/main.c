@@ -106,7 +106,6 @@ APP_TIMER_DEF(dfu_monitor);
 APP_TIMER_DEF(coap_tick);
 
 static uint8_t dfu_jitter_hours = 0;
-static uint32_t last_block = 0;
 static bool seed = false;
 static uint8_t device_id[6];
 static permamote_state_t state = {0};
@@ -172,7 +171,6 @@ void dfu_monitor_callback(void* m) {
   coap_dfu_diagnostic_get(&dfu_state);
   NRF_LOG_INFO("state: %s", background_dfu_state_to_string(dfu_state.state));
   NRF_LOG_INFO("prev state: %s", background_dfu_state_to_string(dfu_state.prev_state));
-  NRF_LOG_INFO("d blocks: %d", dfu_state.block_num);
   uint32_t poll = otLinkGetPollPeriod(thread_get_instance());
   NRF_LOG_INFO("poll period: %d", poll);
 
@@ -186,18 +184,6 @@ void dfu_monitor_callback(void* m) {
     otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
     app_timer_stop(dfu_monitor);
     NRF_LOG_INFO("Aborted DFU operation: Image already installed or server not responding");
-  }
-  // if we haven't downloaded any new blocks, reset and retrigger dfu
-  //else if (last_block == dfu_state.block_num) {
-  //  coap_dfu_reset_state();
-  //  coap_remote_t remote;
-  //  memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
-  //  remote.port_number = OT_DEFAULT_COAP_PORT;
-  //  int result = coap_dfu_trigger(&remote);
-  //  NRF_LOG_INFO("result: %d", result);
-  //}
-  else {
-    last_block = dfu_state.block_num;
   }
 }
 
