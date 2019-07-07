@@ -179,7 +179,7 @@ void dfu_monitor_callback(void* m) {
   if ((dfu_state.state == BACKGROUND_DFU_DOWNLOAD_TRIG || dfu_state.state == BACKGROUND_DFU_IDLE) &&
       (dfu_state.prev_state == BACKGROUND_DFU_IDLE)) {
     state.performing_dfu = false;
-    app_timer_stop(coap_tick);
+    //app_timer_stop(coap_tick);
     coap_dfu_reset_state();
     otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
     app_timer_stop(dfu_monitor);
@@ -549,17 +549,13 @@ void state_step(void) {
       send_discover();
       send_version();
 
-      // Start coap timer tick
-      ret_code_t err_code = app_timer_start(coap_tick, COAP_TICK_TIME, NULL);
-      APP_ERROR_CHECK(err_code);
-
       otLinkSetPollPeriod(thread_instance, DFU_POLL_PERIOD);
       coap_remote_t remote;
       memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
       remote.port_number = OT_DEFAULT_COAP_PORT;
       int result = coap_dfu_trigger(&remote);
       NRF_LOG_INFO("result: %d", result);
-      err_code = app_timer_start(dfu_monitor, DFU_MONITOR_PERIOD, NULL);
+      ret_code_t err_code = app_timer_start(dfu_monitor, DFU_MONITOR_PERIOD, NULL);
       APP_ERROR_CHECK(err_code);
       //if (result == NRF_ERROR_INVALID_STATE) {
       //    coap_dfu_reset_state();
@@ -669,6 +665,10 @@ void timer_init(void)
 
   err_code = app_timer_create(&coap_tick, APP_TIMER_MODE_REPEATED, app_coap_time_tick);
   APP_ERROR_CHECK(err_code);
+  // Start coap timer tick
+  err_code = app_timer_start(coap_tick, COAP_TICK_TIME, NULL);
+  APP_ERROR_CHECK(err_code);
+
 
 }
 
