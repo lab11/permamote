@@ -280,7 +280,6 @@ static void send_temp_pres_hum(void) {
   // Prepare temp and pressure packets
   packet.timestamp = ab1815_get_time_unix();
   packet.data = (uint8_t*)&temperature;
-  // send and tickle if success
   permamote_coap_send(&m_coap_address, "temperature_c", false, &packet);
   packet.data = (uint8_t*)&pressure;
   permamote_coap_send(&m_coap_address, "pressure_mbar", false, &packet);
@@ -295,7 +294,6 @@ static void send_temp_pres_hum(void) {
   // Prepare humidity packet
   packet.timestamp = ab1815_get_time_unix();
   packet.data = (uint8_t*)&humidity;
-  // send and tickle if success
   permamote_coap_send(&m_coap_address, "humidity_percent", false, &packet);
   NRF_LOG_INFO("Sensed si7021: humidity: %d", (int32_t)humidity);
 }
@@ -314,7 +312,6 @@ static void send_voltage(void) {
   float v_data[3] = {vbat, vsol, vsec};
   packet.data = (uint8_t*)v_data;
   packet.data_len = 3 * sizeof(vbat);
-  // send and tickle if success
   permamote_coap_send(&m_coap_address, "voltage", false, &packet);
   NRF_LOG_INFO("Sensed voltage: vbat*100: %d, vsol*100: %d, vsec*100: %d", (int32_t)(vbat*100), (int32_t)(vsol*100), (int32_t)(vsec*100));
 
@@ -525,6 +522,7 @@ void state_step(void) {
     //  state = UPDATE_TIME;
     //  return;
     //}
+    ab1815_tickle_watchdog();
 
 
     period_count ++;

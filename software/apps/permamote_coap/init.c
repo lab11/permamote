@@ -61,7 +61,7 @@ int sensors_init(const nrf_twi_mngr_t* twi_mngr_instance, const nrf_drv_spi_t* s
   ab1815_time_t alarm_time = {.hours = 8};
   ab1815_set_alarm(alarm_time, ONCE_PER_HOUR, (ab1815_alarm_callback*) rtc_callback);
   ab1815_clear_watchdog();
-  //ab1815_set_watchdog(1, 31, _1_4HZ);
+  ab1815_set_watchdog(1, 18, _1_4HZ);
 
 
   // init sensors
