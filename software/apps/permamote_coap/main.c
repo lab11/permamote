@@ -21,6 +21,7 @@
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
 #include "nrf_dfu_utils.h"
+#include "nrf_dfu_settings.h"
 #include "coap_dfu.h"
 #include "coap_api.h"
 #include "background_dfu_state.h"
@@ -157,6 +158,7 @@ static void addresses_print(otInstance * aInstance)
 void coap_dfu_handle_error(void)
 {
     coap_dfu_reset_state();
+    nrf_dfu_settings_progress_reset();
 }
 
 // Function for handling CoAP periodically time ticks.
@@ -181,6 +183,7 @@ void dfu_monitor_callback(void* m) {
     state.performing_dfu = false;
     //app_timer_stop(coap_tick);
     coap_dfu_reset_state();
+    nrf_dfu_settings_progress_reset();
     otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
     app_timer_stop(dfu_monitor);
     NRF_LOG_INFO("Aborted DFU operation: Image already installed or server not responding");
@@ -553,13 +556,14 @@ void state_step(void) {
       coap_remote_t remote;
       memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
       remote.port_number = OT_DEFAULT_COAP_PORT;
-      int result = coap_dfu_trigger(&remote);
-      NRF_LOG_INFO("result: %d", result);
       ret_code_t err_code = app_timer_start(dfu_monitor, DFU_MONITOR_PERIOD, NULL);
       APP_ERROR_CHECK(err_code);
-      //if (result == NRF_ERROR_INVALID_STATE) {
-      //    coap_dfu_reset_state();
-      //}
+      int result = coap_dfu_trigger(&remote);
+      NRF_LOG_INFO("result: %d", result);
+      if (result == NRF_ERROR_INVALID_STATE) {
+          coap_dfu_reset_state();
+          nrf_dfu_settings_progress_reset();
+      }
     }
 
     state.send_periodic = false;
