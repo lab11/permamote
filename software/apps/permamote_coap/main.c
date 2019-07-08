@@ -537,13 +537,12 @@ void state_step(void) {
     }
     if (period_count % sensor_period.color == 0) {
       send_color();
+      max44009_schedule_read_lux();
     }
     if (period_count % sensor_period.discover == 0) {
       send_discover();
     }
-    //send_free_buffers();
 
-    //max44009_schedule_read_lux();
     if (state.dfu_trigger == true && state.performing_dfu == false) {
       state.dfu_trigger = false;
       state.performing_dfu = true;
