@@ -32,9 +32,8 @@ otError permamote_coap_send(otIp6Address* dest_addr,
   memcpy(data+ptr, packet->id, packet->id_len);
   ptr += packet->id_len;
   data[ptr++] = PERMAMOTE_PACKET_VERSION;
-  // don't implement seq number yet
-  //memcpy(data+ptr, &seq_no, sizeof(seq_no));
-  //ptr += sizeof(seq_no);
+  memcpy(data+ptr, &seq_no, sizeof(seq_no));
+  ptr += sizeof(seq_no);
   memcpy(data+ptr, &time_sec, sizeof(time_sec));
   ptr += sizeof(time_sec);
   memcpy(data+ptr, &time_usec, sizeof(time_usec));
