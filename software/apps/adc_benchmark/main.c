@@ -16,7 +16,7 @@
 #include "nrf_drv_clock.h"
 #include "nrf_drv_gpiote.h"
 #include "nrf_drv_saadc.h"
-#include "nrf_drv_timer.h"
+#include "nrf_drv_rtc.h"
 #include "nrf_drv_ppi.h"
 #include "nrf_power.h"
 #include "nrf_log.h"
@@ -34,19 +34,19 @@
 #include <openthread/message.h>
 
 //#define SAADC_SAMPLE_RATE 488 // every 1/2048th of a second
-#define SAADC_SAMPLE_RATE 244 // every 1/4096th of a second
-#define SAADC_SAMPLES_IN_BUFFER 2
+#define SAADC_SAMPLE_FREQ 4096 // every 1/4096th of a second
+#define SAADC_SAMPLES_IN_BUFFER 3
 #define SAADC_OVERSAMPLE NRF_SAADC_OVERSAMPLE_DISABLED
 #define SAADC_BURST_MODE 0
 
-static const nrf_drv_timer_t   m_timer = NRF_DRV_TIMER_INSTANCE(3);
-static nrf_saadc_value_t       m_buffer_pool[2][SAADC_SAMPLES_IN_BUFFER];
-static nrf_ppi_channel_t       m_ppi_channel;
-static uint32_t                m_adc_evt_counter;
+static const nrf_drv_rtc_t  rtc = NRF_DRV_RTC_INSTANCE(0);
+static nrf_saadc_value_t    m_buffer_pool[2][SAADC_SAMPLES_IN_BUFFER];
+static nrf_ppi_channel_t    m_ppi_channel;
+static uint32_t             m_adc_evt_counter;
 
 static uint16_t sample_count = 0;
-static float dcurrent[4096];
-static float voltage[4096];
+static float dcurrent[SAADC_SAMPLE_FREQ];
+static float voltage[SAADC_SAMPLE_FREQ];
 
 uint8_t enables[7] = {
    MAX44009_EN,
@@ -71,12 +71,14 @@ void saadc_handler(nrf_drv_saadc_evt_t const * p_event)
     {
         ret_code_t err_code;
         uint8_t value[SAADC_SAMPLES_IN_BUFFER*2];
+        int16_t* buffer = p_event->data.done.p_buffer;
 
         // set buffers
         err_code = nrf_drv_saadc_buffer_convert(p_event->data.done.p_buffer, SAADC_SAMPLES_IN_BUFFER);
         APP_ERROR_CHECK(err_code);
 
-        printf("%d, %d\n", p_event->data.done.p_buffer[0], p_event->data.done.p_buffer[1]);
+        printf("%d, %d, %d\n", buffer[0], buffer[1], buffer[2]);
+        //printf("%d\n", buffer[0]);
 
         // print samples on hardware UART and parse data for BLE transmission
         //printf("ADC event number: %d\r\n",(int)m_adc_evt_counter);
@@ -108,34 +110,41 @@ void saadc_handler(nrf_drv_saadc_evt_t const * p_event)
     }
 }
 
-void timer_handler(nrf_timer_event_t event_type, void* p_context)
+static void rtc_handler(nrf_drv_rtc_int_type_t int_type)
 {
 
 }
+
+
 
 void saadc_sampling_event_init(void) {
     ret_code_t err_code;
     err_code = nrf_drv_ppi_init();
     APP_ERROR_CHECK(err_code);
 
-    nrf_drv_timer_config_t timer_config = NRF_DRV_TIMER_DEFAULT_CONFIG;
-    timer_config.frequency = NRF_TIMER_FREQ_31250Hz;
-    err_code = nrf_drv_timer_init(&m_timer, &timer_config, timer_handler);
+    nrf_drv_rtc_config_t config = NRF_DRV_RTC_DEFAULT_CONFIG;
+    config.reliable = 1;
+    err_code = nrf_drv_rtc_init(&rtc, &config, rtc_handler);
     APP_ERROR_CHECK(err_code);
 
-    /* setup m_timer for compare event */
-    uint32_t ticks = nrf_drv_timer_ms_to_ticks(&m_timer,250);
-    nrf_drv_timer_extended_compare(&m_timer, NRF_TIMER_CC_CHANNEL0, ticks, NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK, false);
-    nrf_drv_timer_enable(&m_timer);
+    //Set compare channel 0 to trigger at 4096 Hz
+    err_code = nrf_drv_rtc_cc_set(&rtc,0,8,false);
+    APP_ERROR_CHECK(err_code);
 
-    uint32_t timer_compare_event_addr = nrf_drv_timer_compare_event_address_get(&m_timer, NRF_TIMER_CC_CHANNEL0);
+    //Power on RTC instance
+    nrf_drv_rtc_enable(&rtc);
+
+    uint32_t rtc_compare_event_addr = nrf_drv_rtc_event_address_get(&rtc, NRF_RTC_EVENT_COMPARE_0);
+    uint32_t rtc_clear_task_addr = nrf_drv_rtc_task_address_get(&rtc, NRF_RTC_TASK_CLEAR);
     uint32_t saadc_sample_event_addr = nrf_drv_saadc_sample_task_get();
 
     /* setup ppi channel so that timer compare event is triggering sample task in SAADC */
     err_code = nrf_drv_ppi_channel_alloc(&m_ppi_channel);
     APP_ERROR_CHECK(err_code);
 
-    err_code = nrf_drv_ppi_channel_assign(m_ppi_channel, timer_compare_event_addr, saadc_sample_event_addr);
+    err_code = nrf_drv_ppi_channel_assign(m_ppi_channel, rtc_compare_event_addr, saadc_sample_event_addr);
+    APP_ERROR_CHECK(err_code);
+    err_code = nrf_drv_ppi_channel_fork_assign(m_ppi_channel, rtc_clear_task_addr);
     APP_ERROR_CHECK(err_code);
 }
 
@@ -154,25 +163,30 @@ void saadc_init(void) {
     saadc_config.resolution = NRF_SAADC_RESOLUTION_12BIT;
 
     // set up voltage ADC
-    nrf_saadc_channel_config_t primary_channel_config =
+    nrf_saadc_channel_config_t channel_config0 =
         NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN5);
 
-    nrf_saadc_channel_config_t secondary_channel_config =
+    nrf_saadc_channel_config_t channel_config1 =
+        NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN6);
+
+    nrf_saadc_channel_config_t channel_config2 =
         NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN7);
 
     err_code = nrf_drv_saadc_init(&saadc_config, saadc_handler);
     APP_ERROR_CHECK(err_code);
 
-    err_code = nrf_drv_saadc_channel_init(0, &primary_channel_config);
+    err_code = nrf_drv_saadc_channel_init(0, &channel_config0);
     APP_ERROR_CHECK(err_code);
-    //err_code = nrf_drv_saadc_channel_init(1, &secondary_channel_config);
-    //APP_ERROR_CHECK(err_code);
+    err_code = nrf_drv_saadc_channel_init(1, &channel_config1);
+    APP_ERROR_CHECK(err_code);
+    err_code = nrf_drv_saadc_channel_init(2, &channel_config2);
+    APP_ERROR_CHECK(err_code);
 
     // set up double buffers
     err_code = nrf_drv_saadc_buffer_convert(m_buffer_pool[0], SAADC_SAMPLES_IN_BUFFER);
     err_code = nrf_drv_saadc_buffer_convert(m_buffer_pool[1], SAADC_SAMPLES_IN_BUFFER);
 
-    nrf_drv_saadc_calibrate_offset();
+    //nrf_drv_saadc_calibrate_offset();
 }
 
 
@@ -208,16 +222,16 @@ int main(void) {
 
     // Init log
     log_init();
-    //printf("\nADC TEST\n");
+    printf("\nADC TEST\n");
 
-    saadc_sampling_event_init();
     saadc_init();
+    saadc_sampling_event_init();
     saadc_sampling_event_enable();
 
     while (1) {
         if (NRF_LOG_PROCESS() == false)
         {
-            __WFE();
+            __WFI();
         }
     }
 }
