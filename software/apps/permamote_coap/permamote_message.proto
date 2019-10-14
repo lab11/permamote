@@ -1,17 +1,19 @@
 syntax = "proto3";
+import "nanopb.proto";
 
 message Header {
-  string path = 1;
-  bytes  id = 2;
+  uint32 version = 1;
+  bytes  id = 2 [(nanopb).max_size = 64];
   uint32 seq_no = 3;
   uint64 tv_sec = 4;
-  uint64 tv_usec = 5;
+  uint32 tv_usec = 5;
 }
 
-message SystemVoltages {
+message SystemVoltage {
   float vbat = 1;
   float vsol = 2;
   float vsec = 3;
+  bool  vbat_ok = 4;
 }
 
 message ColorCounts {
@@ -23,27 +25,31 @@ message ColorCounts {
 
 message ThreadInfo {
   uint32 rloc16 = 1;
-  bytes  ext_addr = 2;
+  bytes  ext_addr = 2 [(nanopb).max_size = 16];
+  uint32 parent_avg_rssi = 3;
+  uint32 parent_last_rssi = 4;
 }
 
 message SystemData {
-  Header header = 1;
-
-  string discovery = 2;
+  string discovery = 2 [(nanopb).max_size = 64];
   ThreadInfo thread_info = 3;
-  string version = 4;
+  string version = 4 [(nanopb).max_size = 64];
 }
 
 message SensorData {
+  float temperature_c = 1;
+  float pressure_mbar = 2;
+  float humidity_percent = 3;
+  SystemVoltage voltage = 4;
+  float light_color_cct_k = 5;
+  ColorCounts light_color_counts = 6;
+  float light_lux = 7;
+  bool motion = 8;
+}
+
+message PermamoteMessage {
   Header header = 1;
 
-  float temperature_c = 5;
-  float pressure_mbar = 6;
-  float humidity_percent = 7;
-  SystemVoltages voltage = 8;
-  bool  vbat_ok = 9;
-  float light_color_cct_k = 10;
-  ColorCounts light_color_counts = 11;
-  float light_lux = 12;
-  bool motion = 13;
+  SensorData sensor_data = 2;
+  SystemData system_data = 3;
 }
