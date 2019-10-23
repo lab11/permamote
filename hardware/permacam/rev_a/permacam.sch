@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.4.2">
+<eagle version="9.5.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -3032,6 +3032,7 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <attribute name="DIGIKEY" value="541-100MAHCT-ND"/>
 <attribute name="MPN" value="HMC0402JT100M "/>
 </part>
+<part name="GND7" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -3281,6 +3282,9 @@ Either populate the NRF52840
 <instance part="S1" gate="G$1" x="88.9" y="7.62" smashed="yes">
 <attribute name="NAME" x="86.36" y="5.08" size="1.778" layer="95"/>
 </instance>
+<instance part="GND7" gate="1" x="91.44" y="48.26" smashed="yes">
+<attribute name="VALUE" x="88.9" y="45.72" size="1.778" layer="96"/>
+</instance>
 </instances>
 <busses>
 </busses>
@@ -3469,6 +3473,14 @@ Either populate the NRF52840
 <junction x="226.06" y="91.44"/>
 <pinref part="C5" gate="G$1" pin="1"/>
 <wire x1="226.06" y1="76.2" x2="223.52" y2="76.2" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="U1" gate="G$1" pin="EXTI"/>
+<wire x1="83.82" y1="43.18" x2="86.36" y2="43.18" width="0.1524" layer="91"/>
+<wire x1="86.36" y1="43.18" x2="86.36" y2="53.34" width="0.1524" layer="91"/>
+<wire x1="86.36" y1="53.34" x2="91.44" y2="53.34" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="53.34" x2="91.44" y2="50.8" width="0.1524" layer="91"/>
+<pinref part="GND7" gate="1" pin="GND"/>
 </segment>
 </net>
 <net name="N$8" class="0">
