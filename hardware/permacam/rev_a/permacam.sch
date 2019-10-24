@@ -3039,6 +3039,11 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <part name="TP12" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="TP18" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="TP19" library="headers" deviceset="TEST-POINT" device=""/>
+<part name="C20" library="passives" deviceset="CAPACITOR" device="0603_CAP" value="10uF">
+<attribute name="DIGIKEY" value="490-3896-1-ND"/>
+<attribute name="MPN" value="GRM188R60J106ME47D "/>
+</part>
+<part name="GND15" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -4629,6 +4634,15 @@ Either populate the NRF52840
 <attribute name="NAME" x="77.2414" y="168.91" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="82.042" y="168.91" size="1.778" layer="96" rot="R90"/>
 </instance>
+<instance part="C20" gate="G$1" x="93.98" y="172.72" smashed="yes">
+<attribute name="DIGIKEY" x="93.98" y="172.72" size="1.016" layer="96" align="bottom-center" display="off"/>
+<attribute name="MPN" x="93.98" y="172.72" size="1.778" layer="96" display="off"/>
+<attribute name="NAME" x="92.71" y="171.45" size="1.778" layer="95" ratio="12" rot="R90" align="bottom-center"/>
+<attribute name="VALUE" x="95.25" y="171.45" size="1.778" layer="96" ratio="12" rot="R270" align="bottom-center"/>
+</instance>
+<instance part="GND15" gate="1" x="93.98" y="165.1" smashed="yes">
+<attribute name="VALUE" x="91.44" y="162.56" size="1.778" layer="96"/>
+</instance>
 </instances>
 <busses>
 </busses>
@@ -4677,6 +4691,10 @@ Either populate the NRF52840
 <pinref part="GND11" gate="1" pin="GND"/>
 <wire x1="157.48" y1="152.4" x2="154.94" y2="152.4" width="0.1524" layer="91"/>
 <wire x1="154.94" y1="152.4" x2="154.94" y2="149.86" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="C20" gate="G$1" pin="2"/>
+<pinref part="GND15" gate="1" pin="GND"/>
 </segment>
 </net>
 <net name="SCL" class="0">
@@ -4730,6 +4748,9 @@ Either populate the NRF52840
 <wire x1="78.74" y1="175.26" x2="78.74" y2="177.8" width="0.1524" layer="91"/>
 <wire x1="78.74" y1="177.8" x2="86.36" y2="177.8" width="0.1524" layer="91"/>
 <junction x="86.36" y="177.8"/>
+<pinref part="C20" gate="G$1" pin="1"/>
+<wire x1="86.36" y1="177.8" x2="93.98" y2="177.8" width="0.1524" layer="91"/>
+<wire x1="93.98" y1="177.8" x2="93.98" y2="175.26" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SDA" class="0">
