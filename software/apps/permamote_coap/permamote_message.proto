@@ -1,9 +1,8 @@
 syntax = "proto3";
-import "nanopb.proto";
 
 message Header {
   uint32 version = 1;
-  bytes  id = 2 [(nanopb).max_size = 64];
+  bytes  id = 2;
   uint32 seq_no = 3;
   uint64 tv_sec = 4;
   uint32 tv_usec = 5;
@@ -25,15 +24,15 @@ message ColorCounts {
 
 message ThreadInfo {
   uint32 rloc16 = 1;
-  bytes  ext_addr = 2 [(nanopb).max_size = 16];
+  bytes  ext_addr = 2;
   uint32 parent_avg_rssi = 3;
   uint32 parent_last_rssi = 4;
 }
 
 message SystemData {
-  string discovery = 2 [(nanopb).max_size = 64];
-  ThreadInfo thread_info = 3;
-  string version = 4 [(nanopb).max_size = 64];
+  string discovery = 1;
+  ThreadInfo thread_info = 2;
+  string version = 3;
 }
 
 message SensorData {
