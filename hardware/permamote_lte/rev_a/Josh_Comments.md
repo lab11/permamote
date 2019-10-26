@@ -6,7 +6,6 @@
 - give the nrf a name
 - if this is transmitting cellular it needs a much bigger cap on vdd
 - I would pick a sim card holder with a detection line...we should probably do that on Neha's board too
-- I don't see an LED in the schematic - you should add one, probably tricolo
 - I would route the RST line from the ambique to the nrf's actual reset not just a GPIO pin so that it's watchdog functionality works properly
 - Also the JLINK definitely needs to be connected to nRESET on the NRF
 - What was LBST supposed to connect to?...Oh I see. You should switch it to a label in a box. I'm not sure it's actually connected the way it is.
