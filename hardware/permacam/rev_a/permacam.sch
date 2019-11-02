@@ -1261,7 +1261,9 @@ Chip Antenna</description>
 <connect gate="G$1" pin="TRIG" pad="6"/>
 </connects>
 <technologies>
-<technology name=""/>
+<technology name="">
+<attribute name="MPN" value="HMB01B0-ANA" constant="no"/>
+</technology>
 </technologies>
 </device>
 </devices>
@@ -1321,7 +1323,7 @@ Chip Antenna</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="TPS22860">
+<deviceset name="TPS22860" prefix="U">
 <description>Ultra-Low Leakage Load Switch</description>
 <gates>
 <gate name="G$1" symbol="TPS22860" x="0" y="0"/>

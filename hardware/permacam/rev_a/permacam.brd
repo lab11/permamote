@@ -34,7 +34,7 @@
 <layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
 <layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
@@ -1919,6 +1919,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="NAME" x="24.511" y="58.039" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center"/>
 </element>
 <element name="U4" library="chips" package="NEOPAC-26" value="HM01B0-ANA" x="8.89" y="47.244" smashed="yes">
+<attribute name="MPN" value="HMB01B0-ANA" x="8.89" y="47.244" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="6.909" y="49.679" size="0.8128" layer="21" font="vector" ratio="12"/>
 </element>
 <element name="Q1" library="fets" package="XDFN-6" value="PMDXB950UPEL" x="18.796" y="2.54" smashed="yes" rot="R270">
