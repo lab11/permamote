@@ -490,6 +490,10 @@ To use, set global attributes TITLE, AUTHOR and REV in your schematic.</descript
 <wire x1="7" y1="7" x2="7" y2="-7" width="0.127" layer="21"/>
 <wire x1="7" y1="-7" x2="-7" y2="-7" width="0.127" layer="21"/>
 <wire x1="-7" y1="-7" x2="-7" y2="7" width="0.127" layer="21"/>
+<hole x="0" y="9" drill="2"/>
+<hole x="0" y="-9" drill="2"/>
+<hole x="0" y="-9.5" drill="2"/>
+<hole x="0" y="9.5" drill="2"/>
 </package>
 <package name="DCK6">
 <smd name="1" x="-0.9779" y="0.65" dx="1.1684" dy="0.3556" layer="1"/>
