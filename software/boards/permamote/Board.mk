@@ -117,5 +117,6 @@ BOARD_SOURCES += \
 	background_dfu_state.c \
 	fds.c \
 	nrf_atfifo.c \
+	pb_encode.c \
 
 endif

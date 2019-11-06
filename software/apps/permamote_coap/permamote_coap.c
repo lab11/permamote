@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "pb_encode.h"
+
 #include "ab1815.h"
 
 #include "flash_storage.h"
@@ -34,13 +36,15 @@ otError permamote_coap_send(otIp6Address* dest_addr,
   header.tv_usec = time.tv_usec;
   header.seq_no = seq_no;
 
-  msg->header = header;
-
-  size_t len = 0;//sensor_data__get_packed_size(msg);
-  //APP_ERROR_CHECK_BOOL(len < 256);
+  memcpy(&(msg->header), &header, sizeof(header));
 
   uint8_t packed_data [256];
-  //sensor_data__pack(msg, packed_data);
+
+  pb_ostream_t stream;
+  stream = pb_ostream_from_buffer(packed_data, sizeof(packed_data));
+  pb_encode(&stream, PermamoteMessage_fields, msg);
+  size_t len = stream.bytes_written;
+  APP_ERROR_CHECK_BOOL(len < 256);
 
   //data[ptr++] = packet->id_len;
   //memcpy(data+ptr, packet->id, packet->id_len);

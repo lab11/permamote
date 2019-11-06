@@ -29,13 +29,7 @@ message ThreadInfo {
   uint32 parent_last_rssi = 4;
 }
 
-message SystemData {
-  string discovery = 1;
-  ThreadInfo thread_info = 2;
-  string version = 3;
-}
-
-message SensorData {
+message Data {
   float temperature_c = 1;
   float pressure_mbar = 2;
   float humidity_percent = 3;
@@ -44,11 +38,12 @@ message SensorData {
   ColorCounts light_color_counts = 6;
   float light_lux = 7;
   bool motion = 8;
+  string discovery = 9;
+  ThreadInfo thread_info = 10;
+  string version = 11;
 }
 
 message PermamoteMessage {
   Header header = 1;
-
-  SensorData sensor_data = 2;
-  SystemData system_data = 3;
+  Data data = 2;
 }

@@ -38,7 +38,7 @@
 #include "flash_storage.h"
 
 #include "permamote.h"
-#include "permamote_message.pb.h"
+#include "parse.pb.h"
 #include "ab1815.h"
 #include "max44009.h"
 #include "ms5637.h"
@@ -284,8 +284,8 @@ static void send_temp_pres_hum(void) {
   nrf_gpio_pin_set(MS5637_EN);
 
   // Prepare temp and pressure packets
-  msg.sensor_data.temperature_c = temperature;
-  msg.sensor_data.pressure_mbar = pressure;
+  msg.data.temperature_c = temperature;
+  msg.data.pressure_mbar = pressure;
 
   // sense humidity
   nrf_gpio_pin_clear(SI7021_EN);
@@ -295,7 +295,7 @@ static void send_temp_pres_hum(void) {
   nrf_gpio_pin_set(SI7021_EN);
 
   // Prepare humidity packet
-  msg.sensor_data.humidity_percent = humidity;
+  msg.data.humidity_percent = humidity;
 
   permamote_coap_send(&m_coap_address, "temp_pres_hum", false, &msg);
 
@@ -311,17 +311,17 @@ static void send_voltage(void) {
   nrf_drv_saadc_sample_convert(0, adc_samples);
   nrf_drv_saadc_sample_convert(1, adc_samples+1);
   nrf_drv_saadc_sample_convert(2, adc_samples+2);
-  msg.sensor_data.voltage.vbat = 0.6 * 6 * (float)adc_samples[0] / ((1 << 10)-1);
-  msg.sensor_data.voltage.vsol = 0.6 * 6 * (float)adc_samples[1] / ((1 << 10)-1);
-  msg.sensor_data.voltage.vsec = 0.6 * 6 * (float)adc_samples[2] / ((1 << 10)-1);
+  msg.data.voltage.vbat = 0.6 * 6 * (float)adc_samples[0] / ((1 << 10)-1);
+  msg.data.voltage.vsol = 0.6 * 6 * (float)adc_samples[1] / ((1 << 10)-1);
+  msg.data.voltage.vsec = 0.6 * 6 * (float)adc_samples[2] / ((1 << 10)-1);
 
   // sense vbat_ok
-  msg.sensor_data.voltage.vbat_ok = nrf_gpio_pin_read(VBAT_OK);
+  msg.data.voltage.vbat_ok = nrf_gpio_pin_read(VBAT_OK);
 
   permamote_coap_send(&m_coap_address, "voltage", false, &msg);
 
-  NRF_LOG_INFO("Sensed voltage: vbat*100: %d, vsol*100: %d, vsec*100: %d", (int32_t)(msg.sensor_data.voltage.vbat*100), (int32_t)(msg.sensor_data.voltage.vsol*100), (int32_t)(msg.sensor_data.voltage.vsec*100));
-  NRF_LOG_INFO("VBAT_OK: %d", msg.sensor_data.voltage.vbat_ok);
+  NRF_LOG_INFO("Sensed voltage: vbat*100: %d, vsol*100: %d, vsec*100: %d", (int32_t)(msg.data.voltage.vbat*100), (int32_t)(msg.data.voltage.vsol*100), (int32_t)(msg.data.voltage.vsec*100));
+  NRF_LOG_INFO("VBAT_OK: %d", msg.data.voltage.vbat_ok);
 }
 
 void color_read_callback(uint16_t red, uint16_t green, uint16_t blue, uint16_t clear) {
@@ -331,11 +331,11 @@ void color_read_callback(uint16_t red, uint16_t green, uint16_t blue, uint16_t c
   tcs34725_off();
   tcs34725_ir_compensate(&red, &green, &blue, &clear);
   cct = tcs34725_calculate_ct(red, blue);
-  msg.sensor_data.light_color_cct_k = cct;
-  msg.sensor_data.light_color_counts.red = red;
-  msg.sensor_data.light_color_counts.green = green;
-  msg.sensor_data.light_color_counts.blue = blue;
-  msg.sensor_data.light_color_counts.clear = clear;
+  msg.data.light_color_cct_k = cct;
+  msg.data.light_color_counts.red = red;
+  msg.data.light_color_counts.green = green;
+  msg.data.light_color_counts.blue = blue;
+  msg.data.light_color_counts.clear = clear;
   // send
   permamote_coap_send(&m_coap_address, "light_color", false, &msg);
 
@@ -347,17 +347,17 @@ static void send_thread_info(void) {
   PermamoteMessage msg = PermamoteMessage_init_default;
 
   uint16_t rloc16 = otThreadGetRloc16(thread_instance);
-  msg.system_data.thread_info.rloc16 = rloc16;
+  msg.data.thread_info.rloc16 = rloc16;
   const otExtAddress * ext_addr = otLinkGetExtendedAddress(thread_instance);
-  memcpy(msg.system_data.thread_info.ext_addr.bytes, ext_addr, sizeof(ext_addr));
-  msg.system_data.thread_info.ext_addr.size = sizeof(ext_addr);
+  memcpy(msg.data.thread_info.ext_addr.bytes, ext_addr, sizeof(otExtAddress));
+  msg.data.thread_info.ext_addr.size = sizeof(otExtAddress);
   int8_t avg_rssi, last_rssi;
   otThreadGetParentAverageRssi(thread_instance, &avg_rssi);
-  msg.system_data.thread_info.parent_avg_rssi = avg_rssi;
+  msg.data.thread_info.parent_avg_rssi = avg_rssi;
   otThreadGetParentLastRssi(thread_instance, &last_rssi);
-  msg.system_data.thread_info.parent_last_rssi = last_rssi;
+  msg.data.thread_info.parent_last_rssi = last_rssi;
 
-  char ext_str[64];
+  char ext_str[128];
   snprintf(ext_str, sizeof(ext_str), "%2x:%2x:%2x:%2x:%2x:%2x:%2x:%2x",
           *(ext_addr->m8 + 0),
           *(ext_addr->m8 + 1),
@@ -370,15 +370,15 @@ static void send_thread_info(void) {
 
   NRF_LOG_INFO("rloc16: 0x%x", rloc16);
   NRF_LOG_INFO("ext_addr: %s", ext_str);
-  NRF_LOG_INFO("average rssi: %s", avg_rssi);
-  NRF_LOG_INFO("last rssi: %s", last_rssi);
+  NRF_LOG_INFO("average rssi: %d", avg_rssi);
+  NRF_LOG_INFO("last rssi: %d", last_rssi);
 
   permamote_coap_send(&m_coap_address, "thread_info", false, &msg);
 }
 
 static void send_discover(void) {
   PermamoteMessage msg = PermamoteMessage_init_default;
-  strncpy(msg.system_data.discovery, PARSE_ADDR, sizeof(msg.system_data.discovery));
+  strncpy(msg.data.discovery, PARSE_ADDR, sizeof(msg.data.discovery));
 
   NRF_LOG_INFO("Sent discovery");
 
@@ -387,7 +387,7 @@ static void send_discover(void) {
 
 static void send_version(void) {
   PermamoteMessage msg = PermamoteMessage_init_default;
-  strncpy(msg.system_data.version, GIT_VERSION, sizeof(msg.system_data.version));
+  strncpy(msg.data.version, GIT_VERSION, sizeof(msg.data.version));
 
   NRF_LOG_INFO("Sent version");
 
@@ -445,7 +445,7 @@ void send_light() {
   max44009_set_upper_threshold(upper);
   max44009_set_lower_threshold(lower);
 
-  msg.sensor_data.light_lux = sensed_lux;
+  msg.data.light_lux = sensed_lux;
   permamote_coap_send(&m_coap_address, "light_lux", false, &msg);
 }
 
@@ -461,7 +461,7 @@ void send_motion() {
   APP_ERROR_CHECK(err_code);
 
   NRF_LOG_INFO("Saw motion");
-  msg.sensor_data.motion = true;
+  msg.data.motion = true;
 
   permamote_coap_send(&m_coap_address, "motion", false, &msg);
 }

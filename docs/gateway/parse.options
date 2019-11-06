@@ -1,5 +1,5 @@
 Header.id               max_size:64
 ThreadInfo.ext_addr     max_size:16
-SystemData.discovery    max_size:64
-SystemData.version      max_size:64
+Data.discovery          max_size:64
+Data.version            max_size:64
 

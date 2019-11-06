@@ -4,7 +4,7 @@
 #include "thread_coap.h"
 #include "app_error.h"
 
-#include "permamote_message.pb.h"
+#include "parse.pb.h"
 
 #define PERMAMOTE_PACKET_VERSION 3
 
