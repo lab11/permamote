@@ -34,7 +34,7 @@
 <layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
 <layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
@@ -1633,8 +1633,8 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="NAME" x="19.215" y="35.914" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
 <element name="R10" library="passives" package="0603-RES" value="215k" x="19.177" y="39.37" smashed="yes">
-<attribute name="DIGIKEY" value="YAG3055CT-ND" x="19.177" y="39.37" size="1.778" layer="27" display="off"/>
-<attribute name="MPN" value="RC0402FR-07215KL" x="19.177" y="39.37" size="1.778" layer="27" display="off"/>
+<attribute name="DIGIKEY" value="311-215KHRCT-ND" x="19.177" y="39.37" size="1.778" layer="27" display="off"/>
+<attribute name="MPN" value="RC0603FR-07215KL" x="19.177" y="39.37" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="19.177" y="38.735" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
 <element name="R15" library="passives" package="0603-RES" value="33M" x="19.177" y="40.767" smashed="yes" rot="R180">
@@ -1830,9 +1830,9 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="VALUE" x="19.685" y="58.166" size="1.016" layer="27" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
 <element name="BT2" library="batteries" package="2477THMCOINCLIP" value="2477THMCOINCELLCLIP" x="13.589" y="15.748" locked="yes" smashed="yes" rot="MR90">
-<attribute name="DIGIKEY" value="BAT-HLD-001-THM-ND" x="13.589" y="15.748" size="1.778" layer="28" font="vector" ratio="12" rot="MR90" display="off"/>
+<attribute name="DIGIKEY" value="36-3039-ND" x="13.589" y="15.748" size="1.778" layer="28" font="vector" ratio="12" rot="MR90" display="off"/>
 <attribute name="MANUFACTURER" value="Keystone" x="13.589" y="15.748" size="1.778" layer="28" rot="MR90" display="off"/>
-<attribute name="MPN" value="BAT-HLD-001-THM" x="13.589" y="15.748" size="1.778" layer="28" rot="MR90" display="off"/>
+<attribute name="MPN" value="3039" x="13.589" y="15.748" size="1.778" layer="28" rot="MR90" display="off"/>
 <attribute name="NAME" x="10.922" y="2.667" size="0.8128" layer="26" font="vector" ratio="12" rot="MR180" align="bottom-center"/>
 </element>
 <element name="L3" library="passives" package="IHL-1212BZ-11" value="1uH" x="25.4" y="39.243" smashed="yes" rot="R270">

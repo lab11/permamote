@@ -2880,8 +2880,8 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <attribute name="MPN" value="GRM188R60J106ME47D "/>
 </part>
 <part name="R10" library="passives" deviceset="RESISTOR" device="0603_RES" value="215k">
-<attribute name="DIGIKEY" value="YAG3055CT-ND"/>
-<attribute name="MPN" value="RC0402FR-07215KL"/>
+<attribute name="DIGIKEY" value="311-215KHRCT-ND"/>
+<attribute name="MPN" value="RC0603FR-07215KL"/>
 </part>
 <part name="GND8" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND9" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
@@ -3014,10 +3014,7 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <part name="GND22" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND23" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND19" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="BT2" library="batteries" deviceset="2477THMCOINCELLCLIP" device="">
-<attribute name="DIGIKEY" value="BAT-HLD-001-THM-ND"/>
-<attribute name="MPN" value="BAT-HLD-001-THM"/>
-</part>
+<part name="BT2" library="batteries" deviceset="2477THMCOINCELLCLIP" device=""/>
 <part name="L3" library="passives" deviceset="INDUCTOR" device="IHL" value="1uH">
 <attribute name="DIGIKEY" value="541-1319-1-ND"/>
 <attribute name="MPN" value="IHLP1212BZER1R0M11"/>
