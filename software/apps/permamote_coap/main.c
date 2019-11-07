@@ -311,17 +311,17 @@ static void send_voltage(void) {
   nrf_drv_saadc_sample_convert(0, adc_samples);
   nrf_drv_saadc_sample_convert(1, adc_samples+1);
   nrf_drv_saadc_sample_convert(2, adc_samples+2);
-  msg.data.voltage.vbat = 0.6 * 6 * (float)adc_samples[0] / ((1 << 10)-1);
-  msg.data.voltage.vsol = 0.6 * 6 * (float)adc_samples[1] / ((1 << 10)-1);
-  msg.data.voltage.vsec = 0.6 * 6 * (float)adc_samples[2] / ((1 << 10)-1);
+  msg.data.primary_voltage= 0.6 * 6 * (float)adc_samples[0] / ((1 << 10)-1);
+  msg.data.solar_voltage= 0.6 * 6 * (float)adc_samples[1] / ((1 << 10)-1);
+  msg.data.secondary_voltage= 0.6 * 6 * (float)adc_samples[2] / ((1 << 10)-1);
 
   // sense vbat_ok
-  msg.data.voltage.vbat_ok = nrf_gpio_pin_read(VBAT_OK);
+  msg.data.vbat_ok = nrf_gpio_pin_read(VBAT_OK);
 
   permamote_coap_send(&m_coap_address, "voltage", false, &msg);
 
-  NRF_LOG_INFO("Sensed voltage: vbat*100: %d, vsol*100: %d, vsec*100: %d", (int32_t)(msg.data.voltage.vbat*100), (int32_t)(msg.data.voltage.vsol*100), (int32_t)(msg.data.voltage.vsec*100));
-  NRF_LOG_INFO("VBAT_OK: %d", msg.data.voltage.vbat_ok);
+  NRF_LOG_INFO("Sensed voltage: vbat*100: %d, vsol*100: %d, vsec*100: %d", (int32_t)(msg.data.primary_voltage*100), (int32_t)(msg.data.solar_voltage*100), (int32_t)(msg.data.secondary_voltage*100));
+  NRF_LOG_INFO("VBAT_OK: %d", msg.data.vbat_ok);
 }
 
 void color_read_callback(uint16_t red, uint16_t green, uint16_t blue, uint16_t clear) {
@@ -332,10 +332,10 @@ void color_read_callback(uint16_t red, uint16_t green, uint16_t blue, uint16_t c
   tcs34725_ir_compensate(&red, &green, &blue, &clear);
   cct = tcs34725_calculate_ct(red, blue);
   msg.data.light_color_cct_k = cct;
-  msg.data.light_color_counts.red = red;
-  msg.data.light_color_counts.green = green;
-  msg.data.light_color_counts.blue = blue;
-  msg.data.light_color_counts.clear = clear;
+  msg.data.light_color_red = red;
+  msg.data.light_color_green = green;
+  msg.data.light_color_blue = blue;
+  msg.data.light_color_clear = clear;
   // send
   permamote_coap_send(&m_coap_address, "light_color", false, &msg);
 
@@ -347,15 +347,15 @@ static void send_thread_info(void) {
   PermamoteMessage msg = PermamoteMessage_init_default;
 
   uint16_t rloc16 = otThreadGetRloc16(thread_instance);
-  msg.data.thread_info.rloc16 = rloc16;
+  msg.data.thread_rloc16 = rloc16;
   const otExtAddress * ext_addr = otLinkGetExtendedAddress(thread_instance);
-  memcpy(msg.data.thread_info.ext_addr.bytes, ext_addr, sizeof(otExtAddress));
-  msg.data.thread_info.ext_addr.size = sizeof(otExtAddress);
+  memcpy(msg.data.thread_ext_addr.bytes, ext_addr, sizeof(otExtAddress));
+  msg.data.thread_ext_addr.size = sizeof(otExtAddress);
   int8_t avg_rssi, last_rssi;
   otThreadGetParentAverageRssi(thread_instance, &avg_rssi);
-  msg.data.thread_info.parent_avg_rssi = avg_rssi;
+  msg.data.thread_parent_avg_rssi = avg_rssi;
   otThreadGetParentLastRssi(thread_instance, &last_rssi);
-  msg.data.thread_info.parent_last_rssi = last_rssi;
+  msg.data.thread_parent_last_rssi = last_rssi;
 
   char ext_str[128];
   snprintf(ext_str, sizeof(ext_str), "%2x:%2x:%2x:%2x:%2x:%2x:%2x:%2x",

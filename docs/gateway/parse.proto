@@ -8,39 +8,35 @@ message Header {
   uint32 tv_usec = 5;
 }
 
-message SystemVoltage {
-  float vbat = 1;
-  float vsol = 2;
-  float vsec = 3;
-  bool  vbat_ok = 4;
-}
-
-message ColorCounts {
-  uint32 red = 1;
-  uint32 green = 2;
-  uint32 blue = 3;
-  uint32 clear = 4;
-}
-
-message ThreadInfo {
-  uint32 rloc16 = 1;
-  bytes  ext_addr = 2;
-  uint32 parent_avg_rssi = 3;
-  uint32 parent_last_rssi = 4;
-}
-
 message Data {
+  // Sensor data
   float temperature_c = 1;
   float pressure_mbar = 2;
   float humidity_percent = 3;
-  SystemVoltage voltage = 4;
-  float light_color_cct_k = 5;
-  ColorCounts light_color_counts = 6;
-  float light_lux = 7;
-  bool motion = 8;
-  string discovery = 9;
-  ThreadInfo thread_info = 10;
-  string version = 11;
+
+  float primary_voltage = 4;
+  float solar_voltage = 5;
+  float secondary_voltage = 6;
+  bool  vbat_ok = 7;
+
+  float light_color_cct_k = 8;
+  uint32 light_color_red = 9;
+  uint32 light_color_green = 10;
+  uint32 light_color_blue = 11;
+  uint32 light_color_clear = 12;
+  float light_lux = 13;
+
+  bool motion = 14;
+
+  // System data
+  string discovery = 15;
+  string version = 16;
+
+  // Thread Info
+  uint32 thread_rloc16 = 30;
+  bytes  thread_ext_addr = 31;
+  uint32 thread_parent_avg_rssi = 32;
+  uint32 thread_parent_last_rssi = 33;
 }
 
 message PermamoteMessage {
