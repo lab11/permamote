@@ -9,37 +9,37 @@ message Header {
 }
 
 message Data {
-  // Sensor data
-  float temperature_c = 1;
-  float pressure_mbar = 2;
-  float humidity_percent = 3;
-
-  float primary_voltage = 4;
-  float solar_voltage = 5;
-  float secondary_voltage = 6;
-  bool  vbat_ok = 7;
-
-  float light_color_cct_k = 8;
-  uint32 light_color_red = 9;
-  uint32 light_color_green = 10;
-  uint32 light_color_blue = 11;
-  uint32 light_color_clear = 12;
-  float light_lux = 13;
-
-  bool motion = 14;
-
   // System data
-  string discovery = 15;
-  string version = 16;
+  string discovery = 1;
+  string version = 2;
+
+  // Sensor data
+  float temperature_c = 10;
+  float pressure_mbar = 11;
+  float humidity_percent = 12;
+
+  float primary_voltage = 20;
+  float solar_voltage = 21;
+  float secondary_voltage = 22;
+  bool  vbat_ok = 23;
+
+  float light_color_cct_k = 30;
+  uint32 light_color_red = 31;
+  uint32 light_color_green = 32;
+  uint32 light_color_blue = 33;
+  uint32 light_color_clear = 34;
+  float light_lux = 35;
+
+  bool motion = 40;
 
   // Thread Info
-  uint32 thread_rloc16 = 30;
-  bytes  thread_ext_addr = 31;
-  uint32 thread_parent_avg_rssi = 32;
-  uint32 thread_parent_last_rssi = 33;
+  uint32 thread_rloc16 = 50;
+  bytes  thread_ext_addr = 51;
+  uint32 thread_parent_avg_rssi = 52;
+  uint32 thread_parent_last_rssi = 53;
 }
 
-message PermamoteMessage {
+message Message {
   Header header = 1;
   Data data = 2;
 }

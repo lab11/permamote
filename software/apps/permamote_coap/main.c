@@ -275,7 +275,7 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
 
 static void send_temp_pres_hum(void) {
   float temperature, pressure, humidity;
-  PermamoteMessage msg = PermamoteMessage_init_default;
+  Message msg = Message_init_default;
 
   // sense temperature and pressure
   nrf_gpio_pin_clear(MS5637_EN);
@@ -305,7 +305,7 @@ static void send_temp_pres_hum(void) {
 
 static void send_voltage(void) {
   // sense voltage
-  PermamoteMessage msg = PermamoteMessage_init_default;
+  Message msg = Message_init_default;
 
   nrf_saadc_value_t adc_samples[3];
   nrf_drv_saadc_sample_convert(0, adc_samples);
@@ -326,7 +326,7 @@ static void send_voltage(void) {
 
 void color_read_callback(uint16_t red, uint16_t green, uint16_t blue, uint16_t clear) {
   float cct;
-  PermamoteMessage msg = PermamoteMessage_init_default;
+  Message msg = Message_init_default;
 
   tcs34725_off();
   tcs34725_ir_compensate(&red, &green, &blue, &clear);
@@ -344,7 +344,7 @@ void color_read_callback(uint16_t red, uint16_t green, uint16_t blue, uint16_t c
 }
 static void send_thread_info(void) {
   otInstance * thread_instance = thread_get_instance();
-  PermamoteMessage msg = PermamoteMessage_init_default;
+  Message msg = Message_init_default;
 
   uint16_t rloc16 = otThreadGetRloc16(thread_instance);
   msg.data.thread_rloc16 = rloc16;
@@ -377,7 +377,7 @@ static void send_thread_info(void) {
 }
 
 static void send_discover(void) {
-  PermamoteMessage msg = PermamoteMessage_init_default;
+  Message msg = Message_init_default;
   strncpy(msg.data.discovery, PARSE_ADDR, sizeof(msg.data.discovery));
 
   NRF_LOG_INFO("Sent discovery");
@@ -386,7 +386,7 @@ static void send_discover(void) {
 }
 
 static void send_version(void) {
-  PermamoteMessage msg = PermamoteMessage_init_default;
+  Message msg = Message_init_default;
   strncpy(msg.data.version, GIT_VERSION, sizeof(msg.data.version));
 
   NRF_LOG_INFO("Sent version");
@@ -438,7 +438,7 @@ void light_interrupt_callback(void) {
 }
 
 void send_light() {
-  PermamoteMessage msg = PermamoteMessage_init_default;
+  Message msg = Message_init_default;
   float upper = sensed_lux + sensed_lux * 0.1;
   float lower = sensed_lux - sensed_lux * 0.1;
   NRF_LOG_INFO("Sensed: lux: %u, upper: %u, lower: %u", (uint32_t)sensed_lux, (uint32_t)upper, (uint32_t)lower);
@@ -450,7 +450,7 @@ void send_light() {
 }
 
 void send_motion() {
-  PermamoteMessage msg = PermamoteMessage_init_default;
+  Message msg = Message_init_default;
 
   // disable interrupt and turn off PIR
   NRF_LOG_INFO("TURN off PIR ");

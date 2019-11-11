@@ -20,8 +20,15 @@ const otIp6Address unspecified_ipv6 =
     }
 };
 
+void permamote_response_handler (void* context, otMessage* message, const
+                                 otMessageInfo* message_info, otError result) {
+  if (result == OT_ERROR_NONE) {
+    printf("got response!\n");
+  }
+}
+
 otError permamote_coap_send(otIp6Address* dest_addr,
-    const char* path, bool confirmable, PermamoteMessage* msg) {
+    const char* path, bool confirmable, Message* msg) {
   if (otIp6IsAddressEqual(dest_addr, &unspecified_ipv6)) {
     return OT_ERROR_ADDRESS_QUERY;
   }
@@ -42,7 +49,7 @@ otError permamote_coap_send(otIp6Address* dest_addr,
 
   pb_ostream_t stream;
   stream = pb_ostream_from_buffer(packed_data, sizeof(packed_data));
-  pb_encode(&stream, PermamoteMessage_fields, msg);
+  pb_encode(&stream, Message_fields, msg);
   size_t len = stream.bytes_written;
   APP_ERROR_CHECK_BOOL(len < 256);
 
@@ -61,7 +68,7 @@ otError permamote_coap_send(otIp6Address* dest_addr,
 
   otCoapType coap_type = confirmable ? OT_COAP_TYPE_CONFIRMABLE : OT_COAP_TYPE_NON_CONFIRMABLE;
 
-  otError error = thread_coap_send(thread_instance, OT_COAP_CODE_PUT, coap_type, dest_addr, path, packed_data, len);
+  otError error = thread_coap_send(thread_instance, OT_COAP_CODE_PUT, coap_type, dest_addr, path, packed_data, len, permamote_response_handler);
 
   // increment sequence number if successful
   if (error == OT_ERROR_NONE) {
