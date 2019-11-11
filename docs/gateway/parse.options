@@ -1,0 +1,5 @@
+Header.id               max_size:64
+Data.thread_ext_addr    max_size:16
+Data.discovery          max_size:64
+Data.version            max_size:64
+
