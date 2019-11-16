@@ -1,5 +1,6 @@
 Header.id               max_size:64
+Header.device_type      max_size:64
 Data.thread_ext_addr    max_size:16
 Data.discovery          max_size:64
-Data.version            max_size:64
+Data.git_version        max_size:64
 

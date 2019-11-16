@@ -331,11 +331,11 @@ void color_read_callback(uint16_t red, uint16_t green, uint16_t blue, uint16_t c
   tcs34725_off();
   tcs34725_ir_compensate(&red, &green, &blue, &clear);
   cct = tcs34725_calculate_ct(red, blue);
-  msg.data.light_color_cct_k = cct;
-  msg.data.light_color_red = red;
-  msg.data.light_color_green = green;
-  msg.data.light_color_blue = blue;
-  msg.data.light_color_clear = clear;
+  msg.data.light_cct_k = cct;
+  msg.data.light_counts_red = red;
+  msg.data.light_counts_green = green;
+  msg.data.light_counts_blue = blue;
+  msg.data.light_counts_clear = clear;
   // send
   permamote_coap_send(&m_coap_address, "light_color", false, &msg);
 
@@ -387,7 +387,7 @@ static void send_discover(void) {
 
 static void send_version(void) {
   Message msg = Message_init_default;
-  strncpy(msg.data.version, GIT_VERSION, sizeof(msg.data.version));
+  strncpy(msg.data.git_version, GIT_VERSION, sizeof(msg.data.git_version));
 
   NRF_LOG_INFO("Sent version");
 

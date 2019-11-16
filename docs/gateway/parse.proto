@@ -3,15 +3,16 @@ syntax = "proto3";
 message Header {
   uint32 version = 1;
   bytes  id = 2;
-  uint32 seq_no = 3;
-  uint64 tv_sec = 4;
-  uint32 tv_usec = 5;
+  string device_type = 3;
+  uint32 seq_no = 4;
+  uint64 tv_sec = 5;
+  uint32 tv_usec = 6;
 }
 
 message Data {
   // System data
   string discovery = 1;
-  string version = 2;
+  string git_version = 2;
 
   // Sensor data
   float temperature_c = 10;
@@ -23,11 +24,11 @@ message Data {
   float secondary_voltage = 22;
   bool  vbat_ok = 23;
 
-  float light_color_cct_k = 30;
-  uint32 light_color_red = 31;
-  uint32 light_color_green = 32;
-  uint32 light_color_blue = 33;
-  uint32 light_color_clear = 34;
+  float light_cct_k = 30;
+  uint32 light_counts_red = 31;
+  uint32 light_counts_green = 32;
+  uint32 light_counts_blue = 33;
+  uint32 light_counts_clear = 34;
   float light_lux = 35;
 
   bool motion = 40;
