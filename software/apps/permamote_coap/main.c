@@ -563,21 +563,22 @@ void state_step(void) {
 
 
     period_count ++;
-    if (period_count % sensor_period.voltage == 0) {
-      send_voltage();
-    }
-    if (period_count % sensor_period.temp_pres_hum == 0) {
-      send_temp_pres_hum();
-    }
+    //if (period_count % sensor_period.voltage == 0) {
+    //  send_voltage();
+    //}
+    //if (period_count % sensor_period.temp_pres_hum == 0) {
+    //  send_temp_pres_hum();
+    //}
     if (period_count % sensor_period.color == 0) {
       send_color();
       max44009_schedule_read_lux();
     }
     if (period_count % sensor_period.discover == 0) {
       send_discover();
-      send_thread_info();
+      //send_thread_info();
     }
 
+    state.dfu_trigger = false;
     if (state.dfu_trigger == true && state.performing_dfu == false) {
       state.dfu_trigger = false;
       state.performing_dfu = true;
