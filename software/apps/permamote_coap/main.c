@@ -48,6 +48,8 @@
 #include "callbacks.h"
 #include "config.h"
 
+#include "circadian.h"
+
 /*
  * ntp and coap endpoint addresses, to be populated by DNS
  * ========================================================
@@ -333,10 +335,18 @@ void color_read_callback(uint16_t red, uint16_t green, uint16_t blue, uint16_t c
   tcs34725_off();
   tcs34725_ir_compensate(&red, &green, &blue, &clear);
   //cct = tcs34725_calculate_cct(red, green, blue);
-  cct = tcs34725_calculate_ct(red, blue);
+  //cct = tcs34725_calculate_ct(red, blue);
+  // convert to color lux
+  nrf_gpio_cfg_output(RTC_IRQ1);
+  nrf_gpio_pin_clear(RTC_IRQ1);
+  float cla = calculate_cla(red, green, blue);
+  nrf_gpio_pin_set(RTC_IRQ1);
+  nrf_gpio_pin_clear(RTC_IRQ1);
+  float cs = calculate_cs(cla);
+  nrf_gpio_pin_set(RTC_IRQ1);
   packet.timestamp = ab1815_get_time_unix();
-  packet.data = (uint8_t*)&cct;
-  packet.data_len = sizeof(cct);
+  packet.data = (uint8_t*)&cla;
+  packet.data_len = sizeof(cla);
   // send
   permamote_coap_send(&m_coap_address, "light_color_cct_k", false, &packet);
 
@@ -345,7 +355,8 @@ void color_read_callback(uint16_t red, uint16_t green, uint16_t blue, uint16_t c
   packet.data_len = 4*sizeof(red);
   permamote_coap_send(&m_coap_address, "light_color_counts", false, &packet);
 
-  NRF_LOG_INFO("Sensed light cct: %u", (uint32_t)cct);
+  NRF_LOG_INFO("Sensed light cla: %u", (uint32_t)cla);
+  NRF_LOG_INFO("Sensed light 100*cs: %u", (uint32_t)100*cs);
   NRF_LOG_INFO("Sensed light color:\n\tr: %u\n\tg: %u\n\tb: %u", (uint16_t)red, (uint16_t)green, (uint16_t)blue);
 }
 static void send_thread_info(void) {
