@@ -44,13 +44,32 @@ your own OpenThread network.
 
 Cloning
 -------
-To clone both this repository and the required submodules,
-clone with the `--recursive` option:
+Submodules of this repo depend on Git LFS, so you should install that:
 
-`git clone --recursive git@github.com:lab11/permamote.git`
+On mac:
+```
+brew install git-lfs
+```
+On ubuntu/debian:
+```
+sudo apt-get install git-lfs
+```
+Then:
+```
+git lfs install
+```
+
+To clone both this repository and the required submodules,
+clone with the `--recurse-submodules` option:
+
+```
+git clone --recurse-submodules git@github.com:lab11/permamote.git
+```
 
 Otherwise, you can initialize the submodule and keep submodules up to
 date by doing
 
-`git submodule update --init --recursive`
+```
+git submodule update --init --recursive
+```
 

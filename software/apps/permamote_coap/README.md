@@ -38,9 +38,9 @@ make flash
 
 You should see a red LED turn on. This means the bootloader has successfully been flashed and recognizes that there is not yet a valid application installed.
 
-Next, navigate to the [`permamote_coap`](https://github.com/lab11/permamote/tree/master/software/apps/permamote_coap) application and generate the bootloader settings and flash this app, with a device ID:
+Next, navigate to the [`permamote_coap`](https://github.com/lab11/permamote/tree/master/software/apps/permamote_coap) application and flash this app, with a device ID:
 ```
-make flash_first_dfu ID=C0:98:E5:11:XX:XX
+make flash ID=C0:98:E5:11:XX:XX
 ```
 Replace XX:XX with your desired ID.
 

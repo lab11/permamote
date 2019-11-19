@@ -2,7 +2,7 @@
 #define NTP_SERVER_HOSTNAME "us.pool.ntp.org"
 #define UPDATE_SERVER_HOSTNAME "dfu.permamote.com"
 #define DNS_SERVER_ADDR "fdaa:bb:1::2"
-#define PARSE_ADDR "j2x.us/perm"
+#define PARSE_ADDR "lab11.github.io/permamote/gateway/"
 
 #define DEFAULT_CHILD_TIMEOUT    2*60  /**< Thread child timeout [s]. */
 #define DEFAULT_POLL_PERIOD      60000 /**< Thread Sleepy End Device polling period when Asleep. [ms] */

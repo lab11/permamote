@@ -113,6 +113,7 @@ static permamote_state_t state = {0};
 static float sensed_lux;
 
 // forward declaration
+static void send_thread_info(void);
 static void send_discover(void);
 static void send_version(void);
 
@@ -347,6 +348,39 @@ void color_read_callback(uint16_t red, uint16_t green, uint16_t blue, uint16_t c
   NRF_LOG_INFO("Sensed light cct: %u", (uint32_t)cct);
   NRF_LOG_INFO("Sensed light color:\n\tr: %u\n\tg: %u\n\tb: %u", (uint16_t)red, (uint16_t)green, (uint16_t)blue);
 }
+static void send_thread_info(void) {
+  otInstance * thread_instance = thread_get_instance();
+  uint16_t rloc16 = otThreadGetRloc16(thread_instance);
+  const otExtAddress * ext_addr = otLinkGetExtendedAddress(thread_instance);
+  uint8_t data[sizeof(rloc16) + sizeof(otExtAddress)];
+
+  char ext_str[64];
+  snprintf(ext_str, sizeof(ext_str), "%2x:%2x:%2x:%2x:%2x:%2x:%2x:%2x",
+          *(ext_addr->m8 + 0),
+          *(ext_addr->m8 + 1),
+          *(ext_addr->m8 + 2),
+          *(ext_addr->m8 + 3),
+          *(ext_addr->m8 + 4),
+          *(ext_addr->m8 + 5),
+          *(ext_addr->m8 + 6),
+          *(ext_addr->m8 + 7));
+
+  NRF_LOG_INFO("rloc16: 0x%x", rloc16);
+  NRF_LOG_INFO("ext_addr: %s", ext_str);
+
+  memcpy(data, (uint8_t*)&rloc16, sizeof(rloc16));
+  memcpy(data+sizeof(rloc16), ext_addr->m8, sizeof(otExtAddress));
+
+  packet.data = data;
+  packet.data_len = sizeof(data);
+
+  for(size_t i = 0; i < sizeof(data); i++) {
+    printf("%2x", data[i]);
+  }
+  printf("\n");
+
+  permamote_coap_send(&m_coap_address, "thread_info", false, &packet);
+}
 
 static void send_discover(void) {
   const char* addr = PARSE_ADDR;
@@ -541,6 +575,7 @@ void state_step(void) {
     }
     if (period_count % sensor_period.discover == 0) {
       send_discover();
+      send_thread_info();
     }
 
     if (state.dfu_trigger == true && state.performing_dfu == false) {
@@ -603,6 +638,7 @@ void state_step(void) {
       NRF_LOG_INFO("JITTER: %u", dfu_jitter_hours);
       // send version and discover because why not
       send_discover();
+      send_thread_info();
       send_version();
       seed = true;
     }

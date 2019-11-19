@@ -18,7 +18,7 @@ APP_HEADER_PATHS += .
 APP_SOURCE_PATHS += .
 APP_SOURCES = $(notdir $(wildcard ./*.c))
 
-NRF_BASE_DIR ?= ../../nrf5x-base
+NRF_BASE_DIR ?= ../../nrf52x-base
 # Include board Makefile (if any)
 include $(NRF_BASE_DIR)/../boards/permamote_bootloader/Board.mk
 # Include main Makefile

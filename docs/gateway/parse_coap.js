@@ -13,6 +13,10 @@ var parse_payload = function (device_id, resource_url, payload, cb) {
       if (resource_url == '/version') {
         out.git_version = payload.toString('utf-8');
       }
+      else if (resource_url == '/thread_info') {
+        out.rloc16 = payload.readUInt16LE();
+        out.ext_addr = payload.toString('hex', 2, 10);
+      }
       else if (resource_url === '/light_lux') {
         out.light_lux = payload.readFloatLE();
       }
