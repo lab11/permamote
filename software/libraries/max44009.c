@@ -5,7 +5,7 @@
 #include "nrf_log_ctrl.h"
 
 #include "max44009.h"
-#include "permamote.h"
+#include "custom_board.h"
 
 static const nrf_twi_mngr_t* twi_mngr_instance;
 static uint8_t int_status_buf[2] = {MAX44009_INT_STATUS, 0};

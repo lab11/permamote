@@ -22,7 +22,7 @@
 #endif
 
 // ***** Board Specific Configuration *****
-#include "permamote.h"
+#include "custom_board.h"
 static const uint8_t LEDS[LEDS_NUMBER] = {LED_1, LED_2, LED_3};
 // ****************************************
 
