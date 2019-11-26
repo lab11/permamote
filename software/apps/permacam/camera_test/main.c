@@ -79,6 +79,7 @@ int main(void) {
     NRF_LOG_INFO("turning on camera");
 
     hm01b0_power_up();
+    hm01b0_mclk_enable();
     uint16_t model_id = 0xFF;
     int error = hm01b0_get_modelid(&model_id);
     NRF_LOG_INFO("error: %d, model id: 0x%x", error, model_id);

@@ -188,7 +188,9 @@ void hm01b0_mclk_enable() {
   nrfx_timer_config_t timer_config = NRFX_TIMER_DEFAULT_CONFIG;
   timer_config.frequency = NRF_TIMER_FREQ_16MHz;
   int err_code = nrfx_timer_init(&mclk_timer, &timer_config, timer_handler);
+  APP_ERROR_CHECK(err_code);
   nrfx_timer_extended_compare(&mclk_timer, NRF_TIMER_CC_CHANNEL0, 1, NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK, false);
+  nrfx_timer_enable(&mclk_timer);
 
   //
   // Configure timer output pin.
@@ -202,21 +204,17 @@ void hm01b0_mclk_enable() {
 
   // Set up PPI interface
   uint32_t mclk_gpio_task_addr = nrfx_gpiote_out_task_addr_get(HM01B0_MCLKO);
-  uint32_t timer_compare_event_addr = nrfx_timer_event_address_get(&mclk_timer, NRF_TIMER_EVENT_COMPARE0);
+  uint32_t timer_compare_event_addr = nrfx_timer_compare_event_address_get(&mclk_timer, NRF_TIMER_CC_CHANNEL0);
 
   /* setup ppi channel so that timer compare event is triggering GPIO toggle */
   err_code = nrfx_ppi_channel_alloc(&mclk_ppi_channel);
   APP_ERROR_CHECK(err_code);
 
-  err_code = nrfx_ppi_channel_assign(mclk_ppi_channel, mclk_gpio_task_addr, timer_compare_event_addr);
+  err_code = nrfx_ppi_channel_assign(mclk_ppi_channel, timer_compare_event_addr, mclk_gpio_task_addr);
   APP_ERROR_CHECK(err_code);
   err_code = nrfx_ppi_channel_enable(mclk_ppi_channel);
   APP_ERROR_CHECK(err_code);
 
-  //
-  // Start the timer.
-  //
-  nrfx_timer_enable(&mclk_timer);
 }
 
 //*****************************************************************************
