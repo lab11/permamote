@@ -1,10 +1,24 @@
-#include "nrf_twi.h"
+#include "nrf_error.h"
 #include "nrf_delay.h"
 #include "nrf_log.h"
+#include "nrf_gpio.h"
+#include "nrfx_gpiote.h"
+#include "nrfx_timer.h"
+#include "nrf_clock.h"
+#include "nrfx_ppi.h"
+#include "nrfx_spi.h"
+#include "nrfx_spis.h"
 
 #include "hm01b0.h"
 
 #include "custom_board.h"
+
+static uint8_t image_buffer[HM01B0_LINE_WIDTH * HM01B0_LINE_NUMBER];
+
+static const nrfx_timer_t mclk_timer = NRFX_TIMER_INSTANCE(1);
+static nrf_ppi_channel_t mclk_ppi_channel;
+
+static const nrfx_spis_t camera_spis_instance = NRFX_SPIS_INSTANCE(2);
 
 static const nrf_twi_mngr_t* twi_mngr_instance;
 
@@ -24,7 +38,7 @@ static int32_t hm01b0_load_script(const hm_script_t* psScript, uint32_t ui32Scri
 //!
 //! This function writes value to HM01B0 registers.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 static int32_t hm01b0_write_reg(uint16_t reg, const uint8_t* buf, size_t len) {
@@ -54,7 +68,7 @@ static int32_t hm01b0_write_reg(uint16_t reg, const uint8_t* buf, size_t len) {
 //!
 //! This function reads value from HM01B0 registers.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 static int32_t hm01b0_read_reg(uint16_t reg, uint8_t* buf, size_t len) {
@@ -88,22 +102,22 @@ static int32_t hm01b0_read_reg(uint16_t reg, uint8_t* buf, size_t len) {
 //!
 //! This function loads HM01B0 a given script.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 static int32_t hm01b0_load_script(const hm_script_t* psScript, uint32_t ui32ScriptCmdNum) {
-  int error = 0;
+  int err_code = 0;
 
   for (size_t idx = 0; idx < ui32ScriptCmdNum; idx++) {
-    error = hm01b0_write_reg((psScript + idx)->ui16Reg,
+    err_code = hm01b0_write_reg((psScript + idx)->ui16Reg,
                             &((psScript + idx)->ui8Val),
                             sizeof(uint8_t));
-    if (error != NRF_SUCCESS) {
+    if (err_code != NRF_SUCCESS) {
       break;
     }
   }
 
-  return error;
+  return err_code;
 }
 
 //*****************************************************************************
@@ -137,13 +151,32 @@ void hm01b0_power_down(void) {
   nrf_gpio_pin_set(HM01B0_ENn);
 }
 
+static void timer_handler(nrf_timer_event_t event_type, void *context) {
+
+}
+
+static void camera_spis_handler(nrfx_spis_evt_t  const * event, void *context) {
+  //TODO actually get correct event type
+  switch(event->evt_type) {
+    case NRFX_SPIS_BUFFERS_SET_DONE:
+      NRF_LOG_INFO("SPIS ready!");
+      break;
+    case NRFX_SPIS_XFER_DONE:
+      NRF_LOG_INFO("Transfer Done!");
+      // TODO set next buffer!
+      break;
+    default:
+      break;
+  }
+}
+
 //*****************************************************************************
 //
 //! @brief Enable MCLK
 //!
 //! @param psCfg                - Pointer to HM01B0 configuration structure.
 //!
-//! This function utilizes CTimer to generate MCLK for HM01B0.
+//! This function utilizes a Timer, PPI, and GPIOTE to generate MCLK for HM01B0.
 //!
 //! @return none.
 //
@@ -152,22 +185,38 @@ void hm01b0_mclk_enable() {
   //
   // Set up timer.
   //
-
-  //
-  // Set the pattern in the CMPR registers.
-  //
-
-  //
-  // Set the timer trigger and pattern length.
-  //
+  nrfx_timer_config_t timer_config = NRFX_TIMER_DEFAULT_CONFIG;
+  timer_config.frequency = NRF_TIMER_FREQ_16MHz;
+  int err_code = nrfx_timer_init(&mclk_timer, &timer_config, timer_handler);
+  nrfx_timer_extended_compare(&mclk_timer, NRF_TIMER_CC_CHANNEL0, 1, NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK, false);
 
   //
   // Configure timer output pin.
   //
+  if (!nrfx_gpiote_is_init()) {
+    nrfx_gpiote_init();
+  }
+  nrfx_gpiote_out_config_t gpio_config = NRFX_GPIOTE_CONFIG_OUT_TASK_TOGGLE(0);
+  nrfx_gpiote_out_init(HM01B0_MCLKO, &gpio_config);
+  nrfx_gpiote_out_task_enable(HM01B0_MCLKO);
+
+  // Set up PPI interface
+  uint32_t mclk_gpio_task_addr = nrfx_gpiote_out_task_addr_get(HM01B0_MCLKO);
+  uint32_t timer_compare_event_addr = nrfx_timer_event_address_get(&mclk_timer, NRF_TIMER_EVENT_COMPARE0);
+
+  /* setup ppi channel so that timer compare event is triggering GPIO toggle */
+  err_code = nrfx_ppi_channel_alloc(&mclk_ppi_channel);
+  APP_ERROR_CHECK(err_code);
+
+  err_code = nrfx_ppi_channel_assign(mclk_ppi_channel, mclk_gpio_task_addr, timer_compare_event_addr);
+  APP_ERROR_CHECK(err_code);
+  err_code = nrfx_ppi_channel_enable(mclk_ppi_channel);
+  APP_ERROR_CHECK(err_code);
 
   //
   // Start the timer.
   //
+  nrfx_timer_enable(&mclk_timer);
 }
 
 //*****************************************************************************
@@ -185,6 +234,8 @@ void hm01b0_mclk_disable() {
   //
   // Stop the timer.
   //
+
+  nrfx_timer_disable(&mclk_timer);
 }
 
 //*****************************************************************************
@@ -195,7 +246,7 @@ void hm01b0_mclk_disable() {
 //!
 //! This function initializes interfaces.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 int32_t hm01b0_init_if(const nrf_twi_mngr_t* instance) {
@@ -204,8 +255,17 @@ int32_t hm01b0_init_if(const nrf_twi_mngr_t* instance) {
   //
   twi_mngr_instance = instance;
 
-  // initialize pins for camera interface.
-
+  // initialize SPI for camera interface.
+  // Enable the constant latency sub power mode to minimize the time it takes
+  // for the SPIS peripheral to become active after the CSN line is asserted
+  // (when the CPU is in sleep mode).
+  NRF_POWER->TASKS_CONSTLAT = 1;
+  nrfx_spis_config_t camera_spis_config = NRFX_SPIS_DEFAULT_CONFIG;
+  camera_spis_config.sck_pin = HM01B0_PCLKO;
+  camera_spis_config.mosi_pin = HM01B0_CAM_D0;
+  camera_spis_config.csn_pin = HM01B0_LVLD;
+  APP_ERROR_CHECK(nrfx_spis_init(&camera_spis_instance, &camera_spis_config, camera_spis_handler, NULL));
+  APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, image_buffer, HM01B0_LINE_WIDTH));
 
   return NRF_SUCCESS;
 }
@@ -218,7 +278,7 @@ int32_t hm01b0_init_if(const nrf_twi_mngr_t* instance) {
 //!
 //! This function deinitializes interfaces.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 int32_t hm01b0_deinit_if(void) {
@@ -236,28 +296,28 @@ int32_t hm01b0_deinit_if(void) {
 //!
 //! This function reads back HM01B0 model ID.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 int32_t hm01b0_get_modelid(uint16_t* model_id) {
   uint8_t data[1];
-  int error;
+  int err_code;
 
   *model_id = 0x0000;
 
-  error =
+  err_code =
       hm01b0_read_reg(HM01B0_REG_MODEL_ID_H, data, sizeof(data));
-  if (error == NRF_SUCCESS) {
+  if (err_code == NRF_SUCCESS) {
     *model_id |= (data[0] << 8);
   }
 
-  error =
+  err_code =
       hm01b0_read_reg(HM01B0_REG_MODEL_ID_L, data, sizeof(data));
-  if (error == NRF_SUCCESS) {
+  if (err_code == NRF_SUCCESS) {
     *model_id |= data[0];
   }
 
-  return error;
+  return err_code;
 }
 
 //*****************************************************************************
@@ -271,7 +331,7 @@ int32_t hm01b0_get_modelid(uint16_t* model_id) {
 //!
 //! This function initilizes HM01B0 with a given script.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 int32_t hm01b0_init_system(const hm_script_t* psScript,
@@ -287,7 +347,7 @@ int32_t hm01b0_init_system(const hm_script_t* psScript,
 //!
 //! This function sets HM01B0 in the walking 1s test mode.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 //uint32_t hm01b0_test_walking1s(hm01b0_cfg_t* psCfg) {
@@ -308,7 +368,7 @@ int32_t hm01b0_init_system(const hm_script_t* psScript,
 //!
 //! This function sets HM01B0 in the walking 1s test mode.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 //void hm01b0_test_walking1s_check_data_sanity(uint8_t* pui8Buffer,
@@ -345,7 +405,7 @@ int32_t hm01b0_init_system(const hm_script_t* psScript,
 //!
 //! This function resets HM01B0 by issuing a reset command.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 int32_t hm01b0_reset_sw(void) {
@@ -363,19 +423,19 @@ int32_t hm01b0_reset_sw(void) {
 //!
 //! This function get HM01B0 operation mode.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 int32_t hm01b0_get_mode(uint8_t* mode) {
   uint8_t data[1] = {0x01};
-  int error;
+  int err_code;
 
-  error =
+  err_code =
       hm01b0_read_reg(HM01B0_REG_MODE_SELECT, data, sizeof(data));
 
   *mode = data[0];
 
-  return error;
+  return err_code;
 }
 
 //*****************************************************************************
@@ -394,7 +454,7 @@ int32_t hm01b0_get_mode(uint8_t* mode) {
 //!
 //! This function set HM01B0 operation mode.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 //uint32_t hm01b0_set_mode(hm01b0_cfg_t* psCfg, uint8_t ui8Mode,
@@ -424,7 +484,7 @@ int32_t hm01b0_get_mode(uint8_t* mode) {
 //!
 //! This function triggers HM01B0 to stream by toggling the TRIG pin.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 //uint32_t hm01b0_hardware_trigger_streaming(hm01b0_cfg_t* psCfg, bool bTrigger) {
@@ -460,7 +520,7 @@ int32_t hm01b0_get_mode(uint8_t* mode) {
 //!
 //! This function set HM01B0 mirror mode.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 //uint32_t hm01b0_set_mirror(hm01b0_cfg_t* psCfg, bool bHmirror, bool bVmirror) {
@@ -497,7 +557,7 @@ int32_t hm01b0_get_mode(uint8_t* mode) {
 //!
 //! This function read data of one frame from HM01B0.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 //uint32_t hm01b0_blocking_read_oneframe(hm01b0_cfg_t* psCfg, uint8_t* pui8Buffer,

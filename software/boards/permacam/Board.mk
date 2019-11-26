@@ -41,6 +41,7 @@ BOARD_SOURCES += \
 	nrf_balloc.c\
 	nrf_drv_twi.c\
 	nrf_drv_spi.c\
+	nrfx_spis.c \
 	nrf_twi_mngr.c\
 	nrf_spi_mngr.c\
 	nrf_fprintf.c\

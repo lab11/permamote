@@ -43,6 +43,9 @@
 #define HM01B0_REG_GRP_PARAM_HOLD_CONSUME (0x00)
 #define HM01B0_REG_GRP_PARAM_HOLD_HOLD (0x01)
 
+#define HM01B0_LINE_WIDTH (324)
+#define HM01B0_LINE_NUMBER (324)
+
 typedef struct {
   uint16_t ui16Reg;
   uint8_t ui8Val;
