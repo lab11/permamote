@@ -22,8 +22,8 @@ static const nrfx_spis_t camera_spis_instance = NRFX_SPIS_INSTANCE(2);
 
 static const nrf_twi_mngr_t* twi_mngr_instance;
 
-static int32_t hm01b0_write_reg(uint16_t reg, const uint8_t* buf, size_t len);
-static int32_t hm01b0_read_reg(uint16_t reg, uint8_t* buf, size_t len);
+int32_t hm01b0_write_reg(uint16_t reg, const uint8_t* buf, size_t len);
+int32_t hm01b0_read_reg(uint16_t reg, uint8_t* buf, size_t len);
 static int32_t hm01b0_load_script(const hm_script_t* psScript, uint32_t ui32ScriptCmdNum);
 
 
@@ -41,19 +41,23 @@ static int32_t hm01b0_load_script(const hm_script_t* psScript, uint32_t ui32Scri
 //! @return err_code code.
 //
 //*****************************************************************************
-static int32_t hm01b0_write_reg(uint16_t reg, const uint8_t* buf, size_t len) {
+int32_t hm01b0_write_reg(uint16_t reg, const uint8_t* buf, size_t len) {
   //
   // Create the transaction.
   //
+  uint8_t regb[16];
+  regb[0] = 0xFF & (reg >> 8);
+  regb[1] = 0xFF & reg;
+  memcpy(regb+2, buf, len);
+
   nrf_twi_mngr_transfer_t const write_transfer[] = {
-    NRF_TWI_MNGR_WRITE(HM01B0_DEFAULT_ADDRESS, (uint8_t*)&reg, sizeof(reg), NRF_TWI_MNGR_NO_STOP),
-    NRF_TWI_MNGR_WRITE(HM01B0_DEFAULT_ADDRESS, buf, len, 0),
+    NRF_TWI_MNGR_WRITE(HM01B0_DEFAULT_ADDRESS, regb, len+2, 0),
   };
 
   //
   // Execute the transction.
   //
-  return nrf_twi_mngr_perform(twi_mngr_instance, NULL, write_transfer, 2, NULL);
+  return nrf_twi_mngr_perform(twi_mngr_instance, NULL, write_transfer, 1, NULL);
 }
 
 //*****************************************************************************
@@ -71,25 +75,24 @@ static int32_t hm01b0_write_reg(uint16_t reg, const uint8_t* buf, size_t len) {
 //! @return err_code code.
 //
 //*****************************************************************************
-static int32_t hm01b0_read_reg(uint16_t reg, uint8_t* buf, size_t len) {
+int32_t hm01b0_read_reg(uint16_t reg, uint8_t* buf, size_t len) {
   //
   // Create the transaction.
   //
 
-  uint8_t write_buffer[16];
-  write_buffer[0] = 0xFF & (reg >> 1);
-  write_buffer[1] = 0xFF & reg;
-  //uint8_t size = len < sizeof(write_buffer) - sizeof(reg)? len : sizeof(write_buffer) - sizeof(reg);
-  memcpy(write_buffer + sizeof(reg), buf, len);
+  uint8_t regb[2];
+  regb[0] = 0xFF & (reg >> 8);
+  regb[1] = 0xFF & reg;
 
   nrf_twi_mngr_transfer_t const read_transfer[] = {
-    NRF_TWI_MNGR_WRITE(HM01B0_DEFAULT_ADDRESS, write_buffer, len+2, 0),
+    NRF_TWI_MNGR_WRITE(HM01B0_DEFAULT_ADDRESS, regb, sizeof(regb), 0),
+    NRF_TWI_MNGR_READ(HM01B0_DEFAULT_ADDRESS, buf, len, 0),
   };
 
   //
   // Execute the transction.
   //
-  return nrf_twi_mngr_perform(twi_mngr_instance, NULL, read_transfer, 1, NULL);
+  return nrf_twi_mngr_perform(twi_mngr_instance, NULL, read_transfer, 2, NULL);
 }
 
 //*****************************************************************************
@@ -133,7 +136,7 @@ static int32_t hm01b0_load_script(const hm_script_t* psScript, uint32_t ui32Scri
 //*****************************************************************************
 void hm01b0_power_up(void) {
   nrf_gpio_pin_clear(HM01B0_ENn);
-  nrf_delay_us(500);
+  nrf_delay_us(50);
 }
 
 //*****************************************************************************
@@ -455,22 +458,22 @@ int32_t hm01b0_get_mode(uint8_t* mode) {
 //! @return err_code code.
 //
 //*****************************************************************************
-//uint32_t hm01b0_set_mode(hm01b0_cfg_t* psCfg, uint8_t ui8Mode,
-//                         uint8_t ui8FrameCnt) {
-//  uint32_t ui32Err = HM01B0_ERR_OK;
-//
-//  if (ui8Mode == HM01B0_REG_MODE_SELECT_STREAMING_NFRAMES) {
-//    ui32Err = hm01b0_write_reg(psCfg, HM01B0_REG_PMU_PROGRAMMABLE_FRAMECNT,
-//                               &ui8FrameCnt, sizeof(ui8FrameCnt));
-//  }
-//
-//  if (ui32Err == HM01B0_ERR_OK) {
-//    ui32Err = hm01b0_write_reg(psCfg, HM01B0_REG_MODE_SELECT, &ui8Mode,
-//                               sizeof(ui8Mode));
-//  }
-//
-//  return ui32Err;
-//}
+int32_t hm01b0_set_mode(hm01b0_mode mode,
+                         uint8_t frame_cnt) {
+  int32_t err_code = NRF_SUCCESS;
+
+  if (mode == STREAM_N) {
+    err_code = hm01b0_write_reg(HM01B0_REG_PMU_PROGRAMMABLE_FRAMECNT,
+                               &frame_cnt, sizeof(frame_cnt));
+  }
+
+  if (err_code == NRF_SUCCESS) {
+    err_code = hm01b0_write_reg(HM01B0_REG_MODE_SELECT, &mode,
+                               sizeof(mode));
+  }
+
+  return err_code;
+}
 
 //*****************************************************************************
 //

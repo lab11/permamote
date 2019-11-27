@@ -51,6 +51,13 @@ typedef struct {
   uint8_t ui8Val;
 } hm_script_t;
 
+typedef enum {
+    STANDBY   = HM01B0_REG_MODE_SELECT_STANDBY,
+    STREAMING = HM01B0_REG_MODE_SELECT_STREAMING,
+    STREAM_N  = HM01B0_REG_MODE_SELECT_STREAMING_NFRAMES,
+    HW_TRIG   = HM01B0_REG_MODE_SELECT_STREAMING_HW_TRIGGER
+} hm01b0_mode;
+
 //*****************************************************************************
 //
 //! @brief Power up HM01B0
@@ -237,8 +244,7 @@ int32_t hm01b0_get_mode(uint8_t* mode);
 //! @return Error code.
 //
 //*****************************************************************************
-//int32_t hm01b0_set_mode(hm01b0_cfg_t *psCfg, uint8_t ui8Mode,
-//                         uint8_t framecnt);
+int32_t hm01b0_set_mode(hm01b0_mode mode, uint8_t frame_cnt);
 
 //*****************************************************************************
 //
