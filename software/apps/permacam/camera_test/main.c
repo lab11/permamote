@@ -17,7 +17,7 @@
 #include "permacam.h"
 
 #include "hm01b0.h"
-#include "HM01B0_Walking1s_01.h"
+#include "HM01B0_RAW8_QVGA_8bits_lsb_5fps.h"
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 
@@ -74,17 +74,26 @@ int main(void) {
 
     twi_init(&twi_mngr_instance);
 
-    hm01b0_init_if(&twi_mngr_instance);
-
     NRF_LOG_INFO("turning on camera");
 
     hm01b0_power_up();
     hm01b0_mclk_enable();
+
+    hm01b0_init_if(&twi_mngr_instance);
+
     uint16_t model_id = 0xFF;
     int error = hm01b0_get_modelid(&model_id);
     NRF_LOG_INFO("error: %d, model id: 0x%x", error, model_id);
-    error = hm01b0_init_system(sHM01b0TestModeScript_Walking1s, sizeof(sHM01b0TestModeScript_Walking1s));
+
+    error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
     NRF_LOG_INFO("error: %d", error);
+
+    error = hm01b0_set_mode(STREAMING, 0);
+
+    uint8_t mode = 0x00;
+    error = hm01b0_get_mode(&mode);
+    NRF_LOG_INFO("error: %d, %x", error, mode);
+
 
     // Enter main loop.
     while (1) {

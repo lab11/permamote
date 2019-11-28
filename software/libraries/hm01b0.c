@@ -165,8 +165,10 @@ static void camera_spis_handler(nrfx_spis_evt_t  const * event, void *context) {
       NRF_LOG_INFO("SPIS ready!");
       break;
     case NRFX_SPIS_XFER_DONE:
-      NRF_LOG_INFO("Transfer Done!");
+      //NRF_LOG_INFO("Transfer Done!");
       // TODO set next buffer!
+      //NRF_LOG_INFO("img buffer: 0x%x, len %d", image_buffer, event->rx_amount);
+      APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, image_buffer, HM01B0_LINE_WIDTH));
       break;
     default:
       break;
