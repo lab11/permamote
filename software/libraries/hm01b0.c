@@ -164,13 +164,19 @@ static void shift_right_by_2(uint8_t* arr, size_t len) {
     arr[i] = (arr[i] >> 2 | (arr[i-1] & 0x3) << 6);
   }
   arr[0] = 0;
-  for(uint8_t j = 0; j < 2; j++) {
-    for(size_t i = 0; i < len; ++i) {
-      arr[i] = arr[i+1];
-    }
-    arr[len-1] = 0x00;
+}
+
+static void correct_image() {
+  // clear border pixels
+  for(size_t i = 0; i < HM01B0_LINE_WIDTH*HM01B0_LINE_NUMBER; i+=HM01B0_LINE_WIDTH) {
+    shift_right_by_2(image_buffer+i, HM01B0_LINE_WIDTH);
+    image_buffer[i] = 0;
+    image_buffer[i+1] = 0;
+    image_buffer[i+HM01B0_LINE_WIDTH-2] = 0;
+    image_buffer[i+HM01B0_LINE_WIDTH-1] = 0;
   }
 }
+
 
 static void camera_spis_handler(nrfx_spis_evt_t  const * event, void *context) {
   //TODO actually get correct event type
@@ -178,7 +184,9 @@ static void camera_spis_handler(nrfx_spis_evt_t  const * event, void *context) {
     case NRFX_SPIS_XFER_DONE:
       //NRF_LOG_INFO("img buffer: 0x%x, len %x, max: %x, first: %x", current_index, event->rx_amount, HM01B0_LINE_WIDTH, image_buffer[0]);
       current_index += HM01B0_LINE_WIDTH;
-      APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, current_index, HM01B0_LINE_WIDTH));
+      if (current_index - image_buffer < HM01B0_LINE_WIDTH*HM01B0_QVGA_LINE_NUMBER) {
+        APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, current_index, HM01B0_LINE_WIDTH));
+      }
       break;
     case NRFX_SPIS_BUFFERS_SET_DONE:
       //NRF_LOG_INFO("SPIS ready!");
@@ -284,7 +292,7 @@ int32_t hm01b0_init_if(const nrf_twi_mngr_t* instance) {
   APP_ERROR_CHECK(nrfx_spis_init(&camera_spis_instance, &camera_spis_config, camera_spis_handler, NULL));
   NRF_LOG_INFO("SIZE: %x, Location: 0x%x", sizeof(image_buffer), image_buffer);
   current_index = image_buffer;
-  APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, image_buffer, HM01B0_LINE_WIDTH));
+  //APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, image_buffer, HM01B0_LINE_WIDTH));
 
   return NRF_SUCCESS;
 }
@@ -579,8 +587,25 @@ int32_t hm01b0_set_mode(hm01b0_mode mode,
 //! @return err_code code.
 //
 //*****************************************************************************
-//uint32_t hm01b0_blocking_read_oneframe(hm01b0_cfg_t* psCfg, uint8_t* pui8Buffer,
-//                                       uint32_t ui32BufferLen) {
+int32_t hm01b0_blocking_read_oneframe(uint8_t *buf, size_t len) {
+  int32_t err_code = NRF_SUCCESS;
+
+  // set mode to streaming, and wait a bit for autogain
+  hm01b0_set_mode(STREAMING, 1);
+  nrf_delay_ms(2000);
+
+  APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, image_buffer, HM01B0_LINE_WIDTH));
+  while(current_index - image_buffer < HM01B0_LINE_WIDTH*HM01B0_QVGA_LINE_NUMBER) {
+    __WFI();
+    //NRF_LOG_INFO("CURRENT_SIZE: 0x%x", current_index-image_buffer);
+  }
+
+  NRF_LOG_INFO("SHIFTED", current_index-image_buffer);
+  correct_image();
+
+  return err_code;
+}
+
 //  uint32_t ui32Err = HM01B0_ERR_OK;
 //  uint32_t ui32Idx = 0x00;
 //

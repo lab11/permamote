@@ -45,7 +45,7 @@
 
 #define HM01B0_LINE_WIDTH (324)
 #define HM01B0_LINE_CROPPED (320)
-#define HM01B0_QVGA_LINE_NUMBER (324)
+#define HM01B0_QVGA_LINE_NUMBER (244)
 #define HM01B0_LINE_NUMBER (324)
 
 typedef struct {
@@ -291,8 +291,7 @@ int32_t hm01b0_set_mode(hm01b0_mode mode, uint8_t frame_cnt);
 //! @return Error code.
 //
 //*****************************************************************************
-//int32_t hm01b0_blocking_read_oneframe(hm01b0_cfg_t *psCfg, uint8_t *pui8Buffer,
-//                                       uint32_t ui32BufferLen);
+int32_t hm01b0_blocking_read_oneframe(uint8_t *buf, size_t len);
 
 //*****************************************************************************
 //

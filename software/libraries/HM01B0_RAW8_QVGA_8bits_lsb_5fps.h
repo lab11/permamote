@@ -219,13 +219,8 @@ const hm_script_t sHM01B0InitScript[] = {
     // W 24 1012 00 2 1 ; Sync. enable VSYNC shift
     {
         0x1012,
-        0x03,
-    },
-    {
-        0x3023,
         0x01,
     },
-
     //
     // // ROI Statistic
     // W 24 2000 07 2 1 ; [0] : AE stat en [1] : MD LROI stat en [2] : MD GROI
