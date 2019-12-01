@@ -16,7 +16,7 @@ limitations under the License.
 #ifndef TENSORFLOW_LITE_EXPERIMENTAL_MICRO_EXAMPLES_PERSON_DETECTION_HIMAX_DRIVER_HM01B0_RAW8_QVGA_8BITS_LSB_5FPS_H_
 #define TENSORFLOW_LITE_EXPERIMENTAL_MICRO_EXAMPLES_PERSON_DETECTION_HIMAX_DRIVER_HM01B0_RAW8_QVGA_8BITS_LSB_5FPS_H_
 
-#include "HM01B0.h"
+#include "hm01b0.h"
 
 const hm_script_t sHM01B0InitScript[] = {
     // ;*************************************************************************
@@ -219,6 +219,10 @@ const hm_script_t sHM01B0InitScript[] = {
     // W 24 1012 00 2 1 ; Sync. enable VSYNC shift
     {
         0x1012,
+        0x03,
+    },
+    {
+        0x3023,
         0x01,
     },
 
@@ -421,7 +425,7 @@ const hm_script_t sHM01B0InitScript[] = {
     // W 24 0343 77 2 1 ; smia line length Lb 375
     {
         0x0343,
-        0x77,
+        0x78,
     },
     //
     // //---------------------------------------------------
@@ -464,7 +468,7 @@ const hm_script_t sHM01B0InitScript[] = {
     // [4:0]: keep value as 0x02
     {
         0x3059,
-        0x02,
+        0x22,
     },
     // W 24 3060 01 2 1 ; [5]: gated_clock, [4]: msb first,
     {
@@ -477,7 +481,11 @@ const hm_script_t sHM01B0InitScript[] = {
     //
     {
         0x0101,
-        0x01,
+        0x00,
+    },
+    {
+      0x0601,
+      0x00,
     },
     // //---------------------------------------------------
     // // CMU update

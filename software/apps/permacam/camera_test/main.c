@@ -88,7 +88,7 @@ int main(void) {
     error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
     NRF_LOG_INFO("error: %d", error);
 
-    error = hm01b0_set_mode(STREAMING, 0);
+    error = hm01b0_set_mode(STREAM_N, 1);
 
     uint8_t mode = 0x00;
     error = hm01b0_get_mode(&mode);
@@ -97,12 +97,10 @@ int main(void) {
 
     // Enter main loop.
     while (1) {
-        //nrf_delay_ms(500);
         //led_toggle(LED);
         if (NRF_LOG_PROCESS() == false)
         {
             __WFE();
         }
-
     }
 }

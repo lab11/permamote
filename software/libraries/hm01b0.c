@@ -13,7 +13,8 @@
 
 #include "custom_board.h"
 
-static uint8_t image_buffer[HM01B0_LINE_WIDTH * HM01B0_LINE_NUMBER];
+static uint8_t image_buffer[HM01B0_LINE_WIDTH * HM01B0_LINE_WIDTH];
+static uint8_t* current_index = image_buffer;
 
 static const nrfx_timer_t mclk_timer = NRFX_TIMER_INSTANCE(1);
 static nrf_ppi_channel_t mclk_ppi_channel;
@@ -158,17 +159,29 @@ static void timer_handler(nrf_timer_event_t event_type, void *context) {
 
 }
 
+static void shift_right_by_2(uint8_t* arr, size_t len) {
+  for(size_t i = len-1; i > 0; --i) {
+    arr[i] = (arr[i] >> 2 | (arr[i-1] & 0x3) << 6);
+  }
+  arr[0] = 0;
+  for(uint8_t j = 0; j < 2; j++) {
+    for(size_t i = 0; i < len; ++i) {
+      arr[i] = arr[i+1];
+    }
+    arr[len-1] = 0x00;
+  }
+}
+
 static void camera_spis_handler(nrfx_spis_evt_t  const * event, void *context) {
   //TODO actually get correct event type
   switch(event->evt_type) {
-    case NRFX_SPIS_BUFFERS_SET_DONE:
-      NRF_LOG_INFO("SPIS ready!");
-      break;
     case NRFX_SPIS_XFER_DONE:
-      //NRF_LOG_INFO("Transfer Done!");
-      // TODO set next buffer!
-      //NRF_LOG_INFO("img buffer: 0x%x, len %d", image_buffer, event->rx_amount);
-      APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, image_buffer, HM01B0_LINE_WIDTH));
+      //NRF_LOG_INFO("img buffer: 0x%x, len %x, max: %x, first: %x", current_index, event->rx_amount, HM01B0_LINE_WIDTH, image_buffer[0]);
+      current_index += HM01B0_LINE_WIDTH;
+      APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, current_index, HM01B0_LINE_WIDTH));
+      break;
+    case NRFX_SPIS_BUFFERS_SET_DONE:
+      //NRF_LOG_INFO("SPIS ready!");
       break;
     default:
       break;
@@ -264,10 +277,13 @@ int32_t hm01b0_init_if(const nrf_twi_mngr_t* instance) {
   // (when the CPU is in sleep mode).
   NRF_POWER->TASKS_CONSTLAT = 1;
   nrfx_spis_config_t camera_spis_config = NRFX_SPIS_DEFAULT_CONFIG;
+  camera_spis_config.mode = NRF_SPIS_MODE_1;
   camera_spis_config.sck_pin = HM01B0_PCLKO;
   camera_spis_config.mosi_pin = HM01B0_CAM_D0;
   camera_spis_config.csn_pin = HM01B0_LVLD;
   APP_ERROR_CHECK(nrfx_spis_init(&camera_spis_instance, &camera_spis_config, camera_spis_handler, NULL));
+  NRF_LOG_INFO("SIZE: %x, Location: 0x%x", sizeof(image_buffer), image_buffer);
+  current_index = image_buffer;
   APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, image_buffer, HM01B0_LINE_WIDTH));
 
   return NRF_SUCCESS;
