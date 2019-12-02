@@ -17,7 +17,7 @@
 #include "permacam.h"
 
 #include "hm01b0.h"
-#include "HM01B0_RAW8_QVGA_8bits_lsb_5fps.h"
+#include "HM01B0_SERIAL_FULL_8bits_msb_5fps.h"
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 
@@ -88,8 +88,10 @@ int main(void) {
     error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
     NRF_LOG_INFO("error: %d", error);
 
-    //error = hm01b0_set_mode(STREAM_N, 1);
+    nrf_gpio_pin_clear(LED_1);
     hm01b0_blocking_read_oneframe(NULL, 0);
+    nrf_gpio_pin_set(LED_1);
+    hm01b0_power_down();
 
     NRF_LOG_INFO("DONE!!!!");
 

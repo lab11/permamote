@@ -45,7 +45,7 @@
 
 #define HM01B0_LINE_WIDTH (324)
 #define HM01B0_LINE_CROPPED (320)
-#define HM01B0_QVGA_LINE_NUMBER (244)
+#define HM01B0_QVGA_LINE_NUMBER (324)
 #define HM01B0_LINE_NUMBER (324)
 
 typedef struct {

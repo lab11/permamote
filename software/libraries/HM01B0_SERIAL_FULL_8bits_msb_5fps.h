@@ -429,7 +429,7 @@ const hm_script_t sHM01B0InitScript[] = {
     // W 24 3010 01 2 1 ; [0] : window mode 0 : full frame 324x324 1 : QVGA
     {
         0x3010,
-        0x01,
+        0x00,
     },
     //
     //
@@ -468,7 +468,7 @@ const hm_script_t sHM01B0InitScript[] = {
     // W 24 3060 01 2 1 ; [5]: gated_clock, [4]: msb first,
     {
         0x3060,
-        0x20,
+        0x30,
     },
     // ; [3:2]: vt_reg_div -> div by 4/8/1/2
     // ; [1;0]: vt_sys_div -> div by 8/4/2/1
@@ -476,7 +476,7 @@ const hm_script_t sHM01B0InitScript[] = {
     //
     {
         0x0101,
-        0x00,
+        0x00
     },
     {
       0x0601,
