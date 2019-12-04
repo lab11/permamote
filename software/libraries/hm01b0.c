@@ -13,7 +13,7 @@
 
 #include "custom_board.h"
 
-static uint8_t image_buffer[HM01B0_LINE_WIDTH * HM01B0_LINE_WIDTH];
+static uint8_t image_buffer[HM01B0_IMAGE_SIZE];
 static uint8_t* current_index = image_buffer;
 
 static const nrfx_timer_t mclk_timer = NRFX_TIMER_INSTANCE(1);
@@ -168,12 +168,12 @@ static void shift_right_by_2(uint8_t* arr, size_t len) {
 
 static void correct_image() {
   // clear border pixels
-  for(size_t i = 0; i < HM01B0_LINE_WIDTH*HM01B0_LINE_NUMBER; i+=HM01B0_LINE_WIDTH) {
-    shift_right_by_2(image_buffer+i, HM01B0_LINE_WIDTH);
+  for(size_t i = 0; i < HM01B0_IMAGE_SIZE; i+=HM01B0_PIXEL_X_NUM) {
+    shift_right_by_2(image_buffer+i, HM01B0_PIXEL_X_NUM);
     image_buffer[i] = 0;
-    image_buffer[i+1] = 0;
-    image_buffer[i+HM01B0_LINE_WIDTH-2] = 0;
-    image_buffer[i+HM01B0_LINE_WIDTH-1] = 0;
+    image_buffer[i + 1] = 0;
+    image_buffer[i + HM01B0_PIXEL_X_NUM - 2] = 0;
+    image_buffer[i + HM01B0_PIXEL_X_NUM - 1] = 0;
   }
 }
 
@@ -182,10 +182,9 @@ static void camera_spis_handler(nrfx_spis_evt_t  const * event, void *context) {
   //TODO actually get correct event type
   switch(event->evt_type) {
     case NRFX_SPIS_XFER_DONE:
-      //NRF_LOG_INFO("img buffer: 0x%x, len %x, max: %x, first: %x", current_index, event->rx_amount, HM01B0_LINE_WIDTH, image_buffer[0]);
-      current_index += HM01B0_LINE_WIDTH;
-      if (current_index - image_buffer < HM01B0_LINE_WIDTH*HM01B0_QVGA_LINE_NUMBER) {
-        APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, current_index, HM01B0_LINE_WIDTH));
+      current_index += HM01B0_PIXEL_X_NUM;
+      if (current_index - image_buffer < HM01B0_IMAGE_SIZE) {
+        APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, current_index, HM01B0_PIXEL_X_NUM));
       }
       break;
     case NRFX_SPIS_BUFFERS_SET_DONE:
@@ -292,7 +291,6 @@ int32_t hm01b0_init_if(const nrf_twi_mngr_t* instance) {
   APP_ERROR_CHECK(nrfx_spis_init(&camera_spis_instance, &camera_spis_config, camera_spis_handler, NULL));
   NRF_LOG_INFO("SIZE: %x, Location: 0x%x", sizeof(image_buffer), image_buffer);
   current_index = image_buffer;
-  //APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, image_buffer, HM01B0_LINE_WIDTH));
 
   return NRF_SUCCESS;
 }
@@ -594,8 +592,8 @@ int32_t hm01b0_blocking_read_oneframe(uint8_t *buf, size_t len) {
   hm01b0_set_mode(STREAMING, 1);
   nrf_delay_ms(2000);
 
-  APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, image_buffer, HM01B0_LINE_WIDTH));
-  while(current_index - image_buffer < HM01B0_LINE_WIDTH*HM01B0_QVGA_LINE_NUMBER) {
+  APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, image_buffer, HM01B0_PIXEL_X_NUM));
+  while(current_index - image_buffer < HM01B0_IMAGE_SIZE) {
     __WFI();
     //NRF_LOG_INFO("CURRENT_SIZE: 0x%x", current_index-image_buffer);
   }
