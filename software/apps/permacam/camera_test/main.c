@@ -13,13 +13,16 @@
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
+#include "nrf_drv_spi.h"
 
 #include "permacam.h"
 
 #include "hm01b0.h"
+#include "ab1815.h"
 #include "HM01B0_SERIAL_FULL_8bits_msb_5fps.h"
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
+static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
 
 uint8_t enables[7] = {
    HM01B0_ENn,
@@ -67,33 +70,51 @@ int main(void) {
       nrf_gpio_pin_set(enables[i]);
     }
 
-    nrf_gpio_cfg_output(SPI_MISO);
-    nrf_gpio_cfg_output(SPI_MOSI);
-    nrf_gpio_pin_set(SPI_MISO);
-    nrf_gpio_pin_set(SPI_MOSI);
-
     twi_init(&twi_mngr_instance);
+
+    // setup RTC
+    ab1815_init(&spi_instance);
+    ab1815_control_t ab1815_config;
+    ab1815_get_config(&ab1815_config);
+    ab1815_config.auto_rst = 1;
+    ab1815_set_config(ab1815_config);
 
     NRF_LOG_INFO("turning on camera");
 
+    hm01b0_init_if(&twi_mngr_instance);
+
+    nrf_gpio_pin_clear(LED_1);
     hm01b0_power_up();
     hm01b0_mclk_enable();
 
-    hm01b0_init_if(&twi_mngr_instance);
+    //uint16_t model_id = 0xFF;
+    //int error = hm01b0_get_modelid(&model_id);
+    //NRF_LOG_INFO("error: %d, model id: 0x%x", error, model_id);
 
-    uint16_t model_id = 0xFF;
-    int error = hm01b0_get_modelid(&model_id);
-    NRF_LOG_INFO("error: %d, model id: 0x%x", error, model_id);
+    int error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
+    //NRF_LOG_INFO("error: %d", error);
 
-    error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
-    NRF_LOG_INFO("error: %d", error);
-
-    nrf_gpio_pin_clear(LED_1);
     hm01b0_blocking_read_oneframe(NULL, 0);
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
+    hm01b0_mclk_disable();
 
-    NRF_LOG_INFO("DONE!!!!");
+    nrf_gpio_cfg_output(HM01B0_MCLK);
+    nrf_gpio_cfg_output(HM01B0_PCLKO);
+    nrf_gpio_cfg_output(HM01B0_FVLD);
+    nrf_gpio_cfg_output(HM01B0_LVLD);
+    nrf_gpio_cfg_output(HM01B0_CAM_D0);
+    nrf_gpio_cfg_output(HM01B0_CAM_TRIG);
+    nrf_gpio_cfg_output(HM01B0_CAM_INT);
+    nrf_gpio_pin_clear(HM01B0_MCLK);
+    nrf_gpio_pin_clear(HM01B0_PCLKO);
+    nrf_gpio_pin_clear(HM01B0_FVLD);
+    nrf_gpio_pin_clear(HM01B0_LVLD);
+    nrf_gpio_pin_clear(HM01B0_CAM_D0);
+    nrf_gpio_pin_clear(HM01B0_CAM_TRIG);
+    nrf_gpio_pin_clear(HM01B0_CAM_INT);
+
+    //NRF_LOG_INFO("DONE!!!!");
 
     // Enter main loop.
     while (1) {

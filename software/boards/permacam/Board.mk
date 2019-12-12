@@ -118,5 +118,6 @@ BOARD_SOURCES += \
 	background_dfu_state.c \
 	fds.c \
 	nrf_atfifo.c \
+	ab1815.c \
 
 endif

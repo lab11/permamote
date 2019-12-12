@@ -3,7 +3,7 @@
 #include "time.h"
 
 #include "nrf_spi_mngr.h"
-#include "permamote.h"
+#include "custom_board.h"
 
 // Time and date registers
 #define AB1815_HUND               0x00

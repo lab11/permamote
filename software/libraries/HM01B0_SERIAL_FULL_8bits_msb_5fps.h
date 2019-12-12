@@ -404,12 +404,12 @@ const hm_script_t sHM01B0InitScript[] = {
     // W 24 0340 0C 2 1 ; smia frame length Hb
     {
         0x0340,
-        0x0C,
+        0x01,
     },
     // W 24 0341 7A 2 1 ; smia frame length Lb 3192
     {
         0x0341,
-        0x7A,
+        0x58,
     },
     //
     // W 24 0342 01 2 1 ; smia line length Hb
@@ -474,10 +474,6 @@ const hm_script_t sHM01B0InitScript[] = {
     // ; [1;0]: vt_sys_div -> div by 8/4/2/1
     //
     //
-    {
-        0x0101,
-        0x00
-    },
     {
       0x0601,
       0x00,

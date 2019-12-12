@@ -146,7 +146,7 @@ void hm01b0_power_up(void) {
 //!
 //! @param psCfg                - Pointer to HM01B0 configuration structure.
 //!
-//! This function powers up HM01B0.
+//! This function powers down HM01B0.
 //!
 //! @return none.
 //
@@ -224,11 +224,11 @@ void hm01b0_mclk_enable() {
     nrfx_gpiote_init();
   }
   nrfx_gpiote_out_config_t gpio_config = NRFX_GPIOTE_CONFIG_OUT_TASK_TOGGLE(0);
-  nrfx_gpiote_out_init(HM01B0_MCLKO, &gpio_config);
-  nrfx_gpiote_out_task_enable(HM01B0_MCLKO);
+  nrfx_gpiote_out_init(HM01B0_MCLK, &gpio_config);
+  nrfx_gpiote_out_task_enable(HM01B0_MCLK);
 
   // Set up PPI interface
-  uint32_t mclk_gpio_task_addr = nrfx_gpiote_out_task_addr_get(HM01B0_MCLKO);
+  uint32_t mclk_gpio_task_addr = nrfx_gpiote_out_task_addr_get(HM01B0_MCLK);
   uint32_t timer_compare_event_addr = nrfx_timer_compare_event_address_get(&mclk_timer, NRF_TIMER_CC_CHANNEL0);
 
   /* setup ppi channel so that timer compare event is triggering GPIO toggle */
@@ -257,7 +257,12 @@ void hm01b0_mclk_disable() {
   //
   // Stop the timer.
   //
+  NRF_POWER->TASKS_LOWPWR = 1;
+  NRF_POWER->TASKS_CONSTLAT = 0;
+  nrfx_spis_uninit(&camera_spis_instance);
 
+  nrf_ppi_channel_disable(mclk_ppi_channel);
+  nrfx_gpiote_out_task_disable(HM01B0_MCLK);
   nrfx_timer_disable(&mclk_timer);
 }
 
@@ -589,8 +594,7 @@ int32_t hm01b0_blocking_read_oneframe(uint8_t *buf, size_t len) {
   int32_t err_code = NRF_SUCCESS;
 
   // set mode to streaming, and wait a bit for autogain
-  hm01b0_set_mode(STREAMING, 1);
-  nrf_delay_ms(2000);
+  hm01b0_set_mode(STREAM_N, 1);
 
   APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, image_buffer, HM01B0_PIXEL_X_NUM));
   while(current_index - image_buffer < HM01B0_IMAGE_SIZE) {
