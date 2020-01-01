@@ -2372,12 +2372,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <package name="PAD.03X.03">
 <smd name="P$1" x="0" y="0" dx="0.762" dy="0.762" layer="1" roundness="100" cream="no"/>
 </package>
-<package name="TESTPOINT_0.040IN">
-<pad name="TESTPOINT" x="0" y="0" drill="1.016"/>
-<text x="0" y="1.524" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
-<text x="0" y="-2.54" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center">&gt;VALUE</text>
-<circle x="0" y="0" radius="1.27" width="0.127" layer="21"/>
-</package>
 </packages>
 <symbols>
 <symbol name="TEST_POINT">
@@ -2399,24 +2393,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 </connects>
 <technologies>
 <technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="TEST_POINT_0.040IN" prefix="TP">
-<description>0.040in Test Point</description>
-<gates>
-<gate name="G$1" symbol="TEST_POINT" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="TESTPOINT_0.040IN">
-<connects>
-<connect gate="G$1" pin="TESTPOINT" pad="TESTPOINT"/>
-</connects>
-<technologies>
-<technology name="">
-<attribute name="DIGIKEY" value="5001K-ND"/>
-</technology>
 </technologies>
 </device>
 </devices>
@@ -3503,13 +3479,13 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <attribute name="DESCRIPTION" value="IC LOAD SWITCH SOT23-6"/>
 </part>
 <part name="+3V8" library="regulators" deviceset="+3V3" device=""/>
-<part name="TP38" library="headers" deviceset="TEST_POINT_0.040IN" device=""/>
 <part name="FRAME4" library="lab11-frames" deviceset="LETTER_L_BLANK" device="">
 <attribute name="REV" value="A"/>
 <attribute name="TITLE" value="PERMAMOTE_LTE"/>
 </part>
-<part name="TP28" library="headers" deviceset="TEST_POINT_0.040IN" device=""/>
-<part name="TP29" library="headers" deviceset="TEST_POINT_0.040IN" device=""/>
+<part name="TP30" library="headers" deviceset="TEST-POINT" device=""/>
+<part name="TP31" library="headers" deviceset="TEST-POINT" device=""/>
+<part name="TP32" library="headers" deviceset="TEST-POINT" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -3887,9 +3863,9 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <label x="48.26" y="20.32" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<label x="109.22" y="83.82" size="1.27" layer="95" rot="R270" xref="yes"/>
-<wire x1="109.22" y1="83.82" x2="109.22" y2="88.9" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="P0.21"/>
+<label x="111.76" y="83.82" size="1.27" layer="95" rot="R270" xref="yes"/>
+<wire x1="111.76" y1="83.82" x2="111.76" y2="88.9" width="0.1524" layer="91"/>
+<pinref part="IC1" gate="G$1" pin="P0.22"/>
 </segment>
 </net>
 <net name="MOSI" class="0">
@@ -3899,9 +3875,9 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <label x="48.26" y="17.78" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<label x="111.76" y="83.82" size="1.27" layer="95" rot="R270" xref="yes"/>
-<wire x1="111.76" y1="83.82" x2="111.76" y2="88.9" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="P0.22"/>
+<label x="109.22" y="83.82" size="1.27" layer="95" rot="R270" xref="yes"/>
+<wire x1="109.22" y1="83.82" x2="109.22" y2="88.9" width="0.1524" layer="91"/>
+<pinref part="IC1" gate="G$1" pin="P0.21"/>
 </segment>
 </net>
 <net name="N$26" class="0">
@@ -4437,9 +4413,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <instance part="+3V8" gate="P1" x="60.96" y="88.9" smashed="yes">
 <attribute name="VALUE" x="58.42" y="83.82" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="TP38" gate="G$1" x="109.22" y="58.42" smashed="yes">
-<attribute name="NAME" x="106.045" y="58.42" size="1.016" layer="95" ratio="12" align="center-right"/>
-</instance>
 <instance part="FRAME4" gate="G$1" x="0" y="0" smashed="yes"/>
 <instance part="FRAME4" gate="G$2" x="152.4" y="0" smashed="yes">
 <attribute name="LAST_DATE_TIME" x="165.1" y="1.27" size="2.54" layer="94" font="vector"/>
@@ -4448,11 +4421,14 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <attribute name="TITLE" x="153.67" y="12.2428" size="3.175" layer="94" font="vector"/>
 <attribute name="AUTHOR" x="169.545" y="6.35" size="2.54" layer="94" font="vector"/>
 </instance>
-<instance part="TP28" gate="G$1" x="50.8" y="106.68" smashed="yes" rot="R90">
-<attribute name="NAME" x="50.8" y="103.505" size="1.016" layer="95" ratio="12" rot="R90" align="center-right"/>
+<instance part="TP30" gate="G$1" x="50.8" y="124.46" smashed="yes" rot="R270">
+<attribute name="NAME" x="50.8" y="127.635" size="1.016" layer="95" ratio="12" rot="R270" align="center-right"/>
 </instance>
-<instance part="TP29" gate="G$1" x="50.8" y="127" smashed="yes" rot="R270">
-<attribute name="NAME" x="50.8" y="130.175" size="1.016" layer="95" ratio="12" rot="R270" align="center-right"/>
+<instance part="TP31" gate="G$1" x="50.8" y="109.22" smashed="yes" rot="R90">
+<attribute name="NAME" x="50.8" y="106.045" size="1.016" layer="95" ratio="12" rot="R90" align="center-right"/>
+</instance>
+<instance part="TP32" gate="G$1" x="109.22" y="60.96" smashed="yes">
+<attribute name="NAME" x="106.045" y="60.96" size="1.016" layer="95" ratio="12" align="center-right"/>
 </instance>
 </instances>
 <busses>
@@ -4489,10 +4465,10 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <pinref part="U5" gate="A" pin="DATA1_OUT"/>
 <wire x1="53.34" y1="119.38" x2="50.8" y2="119.38" width="0.1524" layer="91"/>
 <label x="45.72" y="119.38" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="TP29" gate="G$1" pin="TESTPOINT"/>
 <wire x1="50.8" y1="119.38" x2="45.72" y2="119.38" width="0.1524" layer="91"/>
-<wire x1="50.8" y1="124.46" x2="50.8" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="50.8" y1="121.92" x2="50.8" y2="119.38" width="0.1524" layer="91"/>
 <junction x="50.8" y="119.38"/>
+<pinref part="TP30" gate="G$1" pin="TESTPOINT"/>
 </segment>
 <segment>
 <label x="172.72" y="116.84" size="1.27" layer="95" rot="R180" xref="yes"/>
@@ -4515,10 +4491,10 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <pinref part="U5" gate="A" pin="DATA2_OUT"/>
 <wire x1="53.34" y1="114.3" x2="50.8" y2="114.3" width="0.1524" layer="91"/>
 <label x="45.72" y="114.3" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="TP28" gate="G$1" pin="TESTPOINT"/>
 <wire x1="50.8" y1="114.3" x2="45.72" y2="114.3" width="0.1524" layer="91"/>
-<wire x1="50.8" y1="114.3" x2="50.8" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="50.8" y1="114.3" x2="50.8" y2="111.76" width="0.1524" layer="91"/>
 <junction x="50.8" y="114.3"/>
+<pinref part="TP31" gate="G$1" pin="TESTPOINT"/>
 </segment>
 <segment>
 <pinref part="J3" gate="G$1" pin="C7(IO)"/>
@@ -4604,11 +4580,11 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <pinref part="J5" gate="G$1" pin="A"/>
 <pinref part="R16" gate="G$1" pin="1"/>
 <wire x1="157.48" y1="53.34" x2="111.76" y2="53.34" width="0.1524" layer="91"/>
-<wire x1="111.76" y1="53.34" x2="111.76" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="111.76" y1="53.34" x2="111.76" y2="60.96" width="0.1524" layer="91"/>
 <label x="111.76" y="53.34" size="1.27" layer="95" font="vector" rot="R180" xref="yes"/>
-<pinref part="TP38" gate="G$1" pin="TESTPOINT"/>
-<wire x1="111.76" y1="58.42" x2="111.76" y2="76.2" width="0.1524" layer="91"/>
-<junction x="111.76" y="58.42"/>
+<pinref part="TP32" gate="G$1" pin="TESTPOINT"/>
+<wire x1="111.76" y1="60.96" x2="111.76" y2="76.2" width="0.1524" layer="91"/>
+<junction x="111.76" y="60.96"/>
 </segment>
 </net>
 <net name="N$13" class="0">
