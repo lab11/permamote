@@ -2194,11 +2194,11 @@ Quickturn PCB 4 Layer .DRU</description>
 <element name="L1" library="passives" package="0402_CAP" value="7.5nH" x="6.35" y="50.927" smashed="yes" rot="R90">
 <attribute name="NAME" x="6.731" y="52.197" size="1.016" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
-<element name="J4" library="connector" package="U.FL_SMT" value="U.FL-R-SMT" x="2.413" y="50.419" smashed="yes" rot="R90">
-<attribute name="DIGIKEY" value="H122041-ND" x="2.413" y="50.419" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="MANUFACTURER" value="Hirose" x="2.413" y="50.419" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="MPN" value="U.FL-R-SMT-1(01)" x="2.413" y="50.419" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="NAME" x="-0.381" y="50.419" size="1.016" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
+<element name="J4" library="connector" package="U.FL_SMT" value="U.FL-R-SMT" x="2.286" y="50.8" smashed="yes" rot="R90">
+<attribute name="DIGIKEY" value="H122041-ND" x="2.286" y="50.8" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="MANUFACTURER" value="Hirose" x="2.286" y="50.8" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="MPN" value="U.FL-R-SMT-1(01)" x="2.286" y="50.8" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="NAME" x="-0.508" y="50.8" size="1.016" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
 <element name="ANT1" library="1462350001" package="ANT_1462350001" value="1462350001" x="2.286" y="56.896" smashed="yes" rot="R90">
 <attribute name="DESCRIPTION" value=" Antenna GPS 1.4dBi Gain 1578MHz SMD T/R " x="2.286" y="56.896" size="1.778" layer="27" rot="R90" display="off"/>
@@ -2609,7 +2609,7 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="6.966" y1="47.754" x2="6.966" y2="48.495" width="0.1524" layer="1"/>
 <wire x1="6.966" y1="48.495" x2="6.985" y2="48.514" width="0.1524" layer="1" curve="-90"/>
 <wire x1="12.396" y1="57.041" x2="12.192" y2="57.245" width="0.1524" layer="16"/>
-<via x="0.635" y="47.625" extent="1-16" drill="0.2032"/>
+<via x="0.762" y="47.752" extent="1-16" drill="0.2032"/>
 <via x="5.334" y="48.514" extent="1-16" drill="0.2032"/>
 <via x="5.334" y="52.705" extent="1-16" drill="0.2032"/>
 <via x="5.715" y="56.515" extent="1-16" drill="0.2032"/>
@@ -2629,16 +2629,16 @@ Quickturn PCB 4 Layer .DRU</description>
 </polygon>
 <polygon width="0.1524" layer="1">
 <vertex x="1.397" y="49.403"/>
-<vertex x="1.397" y="47.752"/>
-<vertex x="3.429" y="47.752"/>
+<vertex x="1.397" y="48.133"/>
+<vertex x="3.429" y="48.133"/>
 <vertex x="3.429" y="49.403"/>
 </polygon>
 <via x="7.493" y="55.245" extent="1-16" drill="0.2032"/>
 <via x="10.795" y="55.118" extent="1-16" drill="0.2032"/>
 <via x="11.938" y="55.118" extent="1-16" drill="0.2032"/>
 <via x="12.319" y="59.309" extent="1-16" drill="0.2032"/>
-<wire x1="2.413" y1="51.894" x2="5.256" y2="51.894" width="0.1524" layer="1"/>
-<wire x1="5.256" y1="51.894" x2="5.334" y2="51.816" width="0.1524" layer="1"/>
+<wire x1="2.286" y1="52.275" x2="4.875" y2="52.275" width="0.1524" layer="1"/>
+<wire x1="4.875" y1="52.275" x2="5.334" y2="51.816" width="0.1524" layer="1"/>
 </signal>
 <signal name="VCC">
 <contactref element="U7" pad="1"/>
@@ -4127,8 +4127,8 @@ Quickturn PCB 4 Layer .DRU</description>
 <wire x1="6.223" y1="51.23306875" x2="6.35" y2="51.36006875" width="0.1524" layer="1"/>
 <wire x1="6.35" y1="52.14493125" x2="6.35" y2="51.36006875" width="0.1524" layer="1"/>
 <wire x1="6.35" y1="51.36006875" x2="6.126515625" y2="51.181" width="0.1524" layer="1"/>
-<wire x1="6.126515625" y1="51.181" x2="4.7" y2="51.181" width="0.1524" layer="1"/>
-<wire x1="4.7" y1="51.181" x2="3.938" y2="50.419" width="0.1524" layer="1"/>
+<wire x1="6.126515625" y1="51.181" x2="4.192" y2="51.181" width="0.1524" layer="1"/>
+<wire x1="4.192" y1="51.181" x2="3.811" y2="50.8" width="0.1524" layer="1"/>
 <wire x1="6.35" y1="51.36006875" x2="7.200503125" y2="51.36006875" width="0.1524" layer="1"/>
 <wire x1="7.18693125" y1="51.308" x2="7.200503125" y2="51.36006875" width="0.1524" layer="1"/>
 </signal>
@@ -4454,16 +4454,16 @@ Quickturn PCB 4 Layer .DRU</description>
 </signal>
 <signal name="N$39">
 <polygon width="0.1524" layer="2" pour="cutout">
-<vertex x="4.826" y="48.133"/>
-<vertex x="0" y="48.133"/>
+<vertex x="4.826" y="48.387"/>
+<vertex x="0" y="48.387"/>
 <vertex x="0" y="53.213"/>
 <vertex x="4.826" y="53.213"/>
 </polygon>
 </signal>
 <signal name="N$43">
 <polygon width="0.1524" layer="15" pour="cutout">
-<vertex x="4.826" y="48.133"/>
-<vertex x="0" y="48.133"/>
+<vertex x="4.826" y="48.387"/>
+<vertex x="0" y="48.387"/>
 <vertex x="0" y="53.213"/>
 <vertex x="4.826" y="53.213"/>
 </polygon>
@@ -4471,8 +4471,8 @@ Quickturn PCB 4 Layer .DRU</description>
 <signal name="N$44">
 <polygon width="0.1524" layer="16" pour="cutout">
 <vertex x="4.826" y="53.213"/>
-<vertex x="4.826" y="48.133"/>
-<vertex x="0" y="48.133"/>
+<vertex x="4.826" y="48.387"/>
+<vertex x="0" y="48.387"/>
 <vertex x="0" y="53.213"/>
 </polygon>
 </signal>
