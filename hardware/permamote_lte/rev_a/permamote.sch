@@ -3195,8 +3195,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <part name="GND13" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND14" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="X4" library="crystals" deviceset="ABS07-32.768KHZ" device="-7-T" value="ABS07-32.768KHZ-7-T"/>
-<part name="C33" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="DNP"/>
-<part name="C34" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="DNP"/>
 <part name="C26" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
 <attribute name="DIGIKEY" value="490-7195-1-ND "/>
 <attribute name="MPN" value="GRM155R70G105KA12D "/>
@@ -3531,14 +3529,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <attribute name="NAME" x="15.24" y="38.1" size="1.27" layer="95"/>
 <attribute name="VALUE" x="15.24" y="35.56" size="1.27" layer="96"/>
 </instance>
-<instance part="C33" gate="G$1" x="12.7" y="22.86" smashed="yes">
-<attribute name="NAME" x="11.43" y="21.59" size="1.778" layer="95" ratio="12" rot="R90" align="bottom-center"/>
-<attribute name="VALUE" x="13.97" y="21.59" size="1.778" layer="96" ratio="12" rot="R270" align="bottom-center"/>
-</instance>
-<instance part="C34" gate="G$1" x="22.86" y="22.86" smashed="yes">
-<attribute name="NAME" x="21.59" y="21.59" size="1.778" layer="95" ratio="12" rot="R90" align="bottom-center"/>
-<attribute name="VALUE" x="24.13" y="21.59" size="1.778" layer="96" ratio="12" rot="R270" align="bottom-center"/>
-</instance>
 <instance part="C26" gate="G$1" x="7.62" y="38.1" smashed="yes">
 <attribute name="DIGIKEY" x="7.62" y="38.1" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="7.62" y="38.1" size="1.778" layer="96" display="off"/>
@@ -3710,15 +3700,25 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <wire x1="7.62" y1="33.02" x2="7.62" y2="15.24" width="0.1524" layer="91"/>
 <wire x1="7.62" y1="15.24" x2="12.7" y2="15.24" width="0.1524" layer="91"/>
 <junction x="30.48" y="15.24"/>
-<pinref part="C33" gate="G$1" pin="2"/>
 <wire x1="12.7" y1="15.24" x2="22.86" y2="15.24" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="15.24" x2="30.48" y2="15.24" width="0.1524" layer="91"/>
-<wire x1="12.7" y1="17.78" x2="12.7" y2="15.24" width="0.1524" layer="91"/>
 <junction x="12.7" y="15.24"/>
-<pinref part="C34" gate="G$1" pin="2"/>
-<wire x1="22.86" y1="17.78" x2="22.86" y2="15.24" width="0.1524" layer="91"/>
 <junction x="22.86" y="15.24"/>
 <pinref part="C26" gate="G$1" pin="2"/>
+<pinref part="X4" gate="G$1" pin="1"/>
+<wire x1="12.7" y1="30.48" x2="12.7" y2="40.64" width="0.1524" layer="91"/>
+<junction x="12.7" y="30.48"/>
+<wire x1="12.7" y1="40.64" x2="35.56" y2="40.64" width="0.1524" layer="91"/>
+<wire x1="35.56" y1="40.64" x2="35.56" y2="35.56" width="0.1524" layer="91"/>
+<pinref part="U1" gate="G$1" pin="XI"/>
+<wire x1="35.56" y1="35.56" x2="50.8" y2="35.56" width="0.1524" layer="91"/>
+<wire x1="12.7" y1="30.48" x2="12.7" y2="15.24" width="0.1524" layer="91"/>
+<pinref part="X4" gate="G$1" pin="2"/>
+<pinref part="U1" gate="G$1" pin="XO"/>
+<wire x1="50.8" y1="33.02" x2="22.86" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="22.86" y1="33.02" x2="22.86" y2="30.48" width="0.1524" layer="91"/>
+<junction x="22.86" y="30.48"/>
+<wire x1="22.86" y1="30.48" x2="22.86" y2="15.24" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U1" gate="G$1" pin="VSS"/>
@@ -3878,30 +3878,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <label x="109.22" y="83.82" size="1.27" layer="95" rot="R270" xref="yes"/>
 <wire x1="109.22" y1="83.82" x2="109.22" y2="88.9" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="G$1" pin="P0.21"/>
-</segment>
-</net>
-<net name="N$26" class="0">
-<segment>
-<pinref part="X4" gate="G$1" pin="1"/>
-<pinref part="C33" gate="G$1" pin="1"/>
-<wire x1="12.7" y1="30.48" x2="12.7" y2="25.4" width="0.1524" layer="91"/>
-<wire x1="12.7" y1="30.48" x2="12.7" y2="40.64" width="0.1524" layer="91"/>
-<junction x="12.7" y="30.48"/>
-<wire x1="12.7" y1="40.64" x2="35.56" y2="40.64" width="0.1524" layer="91"/>
-<wire x1="35.56" y1="40.64" x2="35.56" y2="35.56" width="0.1524" layer="91"/>
-<pinref part="U1" gate="G$1" pin="XI"/>
-<wire x1="35.56" y1="35.56" x2="50.8" y2="35.56" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$27" class="0">
-<segment>
-<pinref part="X4" gate="G$1" pin="2"/>
-<pinref part="C34" gate="G$1" pin="1"/>
-<wire x1="22.86" y1="30.48" x2="22.86" y2="25.4" width="0.1524" layer="91"/>
-<pinref part="U1" gate="G$1" pin="XO"/>
-<wire x1="50.8" y1="33.02" x2="22.86" y2="33.02" width="0.1524" layer="91"/>
-<wire x1="22.86" y1="33.02" x2="22.86" y2="30.48" width="0.1524" layer="91"/>
-<junction x="22.86" y="30.48"/>
 </segment>
 </net>
 <net name="!RTC_EXTR" class="0">
