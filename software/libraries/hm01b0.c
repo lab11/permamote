@@ -14,6 +14,7 @@
 #include "custom_board.h"
 
 static uint8_t* current_image;
+static size_t   current_image_size;
 static uint32_t current_size;
 
 static const nrfx_timer_t mclk_timer = NRFX_TIMER_INSTANCE(1);
@@ -32,10 +33,9 @@ static int32_t hm01b0_load_script(const hm_script_t* psScript, uint32_t ui32Scri
 //
 //! @brief Write HM01B0 registers
 //!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
-//! @param ui16Reg              - Register address.
-//! @param pui8Value            - Pointer to the data to be written.
-//! @param ui32NumBytes         - Length of the data in bytes to be written.
+//! @param reg                  - Register address.
+//! @param buf                  - Pointer to the data to be written.
+//! @param len                  - Length of the data in bytes to be written.
 //!
 //! This function writes value to HM01B0 registers.
 //!
@@ -68,11 +68,10 @@ int32_t hm01b0_write_reg(uint16_t reg, const uint8_t* buf, size_t len) {
 //
 //! @brief Read HM01B0 registers
 //!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
-//! @param ui16Reg              - Register address.
-//! @param pui8Value            - Pointer to the buffer for read data to be put
+//! @param reg                  - Register address.
+//! @param buf                  - Pointer to the buffer for read data to be put
 //! into.
-//! @param ui32NumBytes         - Length of the data to be read.
+//! @param len                  - Length of the data to be read.
 //!
 //! This function reads value from HM01B0 registers.
 //!
@@ -103,20 +102,20 @@ int32_t hm01b0_read_reg(uint16_t reg, uint8_t* buf, size_t len) {
 //
 //! @brief Load HM01B0 a given script
 //!
-//! @param psScript             - Pointer to the script to be loaded.
-//! @param ui32ScriptCmdNum     - Number of entries in a given script.
+//! @param script               - Pointer to the script to be loaded.
+//! @param cmd_num              - Number of entries in a given script.
 //!
 //! This function loads HM01B0 a given script.
 //!
 //! @return err_code code.
 //
 //*****************************************************************************
-static int32_t hm01b0_load_script(const hm_script_t* psScript, uint32_t ui32ScriptCmdNum) {
+static int32_t hm01b0_load_script(const hm_script_t* script, uint32_t cmd_num) {
   int err_code = 0;
 
-  for (size_t idx = 0; idx < ui32ScriptCmdNum; idx++) {
-    err_code = hm01b0_write_reg((psScript + idx)->ui16Reg,
-                            &((psScript + idx)->ui8Val),
+  for (size_t idx = 0; idx < cmd_num; idx++) {
+    err_code = hm01b0_write_reg((script + idx)->ui16Reg,
+                            &((script + idx)->ui8Val),
                             sizeof(uint8_t));
     if (err_code != NRF_SUCCESS) {
       break;
@@ -129,8 +128,6 @@ static int32_t hm01b0_load_script(const hm_script_t* psScript, uint32_t ui32Scri
 //*****************************************************************************
 //
 //! @brief Power up HM01B0
-//!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
 //!
 //! This function powers up HM01B0.
 //!
@@ -149,8 +146,6 @@ void hm01b0_power_up(void) {
 //*****************************************************************************
 //
 //! @brief Power down HM01B0
-//!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
 //!
 //! This function powers down HM01B0.
 //!
@@ -177,12 +172,16 @@ void hm01b0_power_down(void) {
   nrf_gpio_pin_clear(HM01B0_CAM_D0);
   nrf_gpio_pin_clear(HM01B0_CAM_TRIG);
   nrf_gpio_pin_clear(HM01B0_CAM_INT);
+
+  hm01b0_deinit_if();
 }
 
+// Empty timer handler for MCLK timer generator
 static void timer_handler(nrf_timer_event_t event_type, void *context) {
 
 }
 
+// Helper function to shift an array 2 bits to the right
 static void shift_right_by_2(uint8_t* arr, size_t len) {
   for(size_t i = len-1; i > 0; --i) {
     arr[i] = (arr[i] >> 2 | (arr[i-1] & 0x3) << 6);
@@ -190,6 +189,7 @@ static void shift_right_by_2(uint8_t* arr, size_t len) {
   arr[0] = 0;
 }
 
+// Helper function to correct an image captured over SPI
 static void correct_image(uint8_t* arr) {
   // clear border pixels
   for(size_t i = 0; i < HM01B0_IMAGE_SIZE; i+=HM01B0_PIXEL_X_NUM) {
@@ -201,13 +201,13 @@ static void correct_image(uint8_t* arr) {
   }
 }
 
-
+// SPIS handler to auto-increment on every line read in
 static void camera_spis_handler(nrfx_spis_evt_t  const * event, void *context) {
   //TODO actually get correct event type
   switch(event->evt_type) {
     case NRFX_SPIS_XFER_DONE:
       current_size += HM01B0_PIXEL_X_NUM;
-      if (current_size < HM01B0_IMAGE_SIZE) {
+      if (current_size < current_image_size) {
         APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, current_image + current_size, HM01B0_PIXEL_X_NUM));
       }
       break;
@@ -221,16 +221,14 @@ static void camera_spis_handler(nrfx_spis_evt_t  const * event, void *context) {
 
 //*****************************************************************************
 //
-//! @brief Enable MCLK
+//! @brief Initialize MCLK
 //!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
-//!
-//! This function utilizes a Timer, PPI, and GPIOTE to generate MCLK for HM01B0.
+//! This function initializes a Timer, PPI, and GPIOTE to generate MCLK for HM01B0.
 //!
 //! @return none.
 //
 //*****************************************************************************
-void hm01b0_mclk_enable() {
+void hm01b0_mclk_init() {
   //
   // Set up timer.
   //
@@ -239,7 +237,6 @@ void hm01b0_mclk_enable() {
   int err_code = nrfx_timer_init(&mclk_timer, &timer_config, timer_handler);
   APP_ERROR_CHECK(err_code);
   nrfx_timer_extended_compare(&mclk_timer, NRF_TIMER_CC_CHANNEL0, 1, NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK, false);
-  nrfx_timer_enable(&mclk_timer);
 
   //
   // Configure timer output pin.
@@ -251,26 +248,42 @@ void hm01b0_mclk_enable() {
   nrfx_gpiote_out_init(HM01B0_MCLK, &gpio_config);
   nrfx_gpiote_out_task_enable(HM01B0_MCLK);
 
+  //
   // Set up PPI interface
+  //
   uint32_t mclk_gpio_task_addr = nrfx_gpiote_out_task_addr_get(HM01B0_MCLK);
   uint32_t timer_compare_event_addr = nrfx_timer_compare_event_address_get(&mclk_timer, NRF_TIMER_CC_CHANNEL0);
 
-  /* setup ppi channel so that timer compare event is triggering GPIO toggle */
+  // setup ppi channel so that timer compare event is triggering GPIO toggle
   err_code = nrfx_ppi_channel_alloc(&mclk_ppi_channel);
   APP_ERROR_CHECK(err_code);
 
   err_code = nrfx_ppi_channel_assign(mclk_ppi_channel, timer_compare_event_addr, mclk_gpio_task_addr);
-  APP_ERROR_CHECK(err_code);
-  err_code = nrfx_ppi_channel_enable(mclk_ppi_channel);
   APP_ERROR_CHECK(err_code);
 
 }
 
 //*****************************************************************************
 //
-//! @brief Disable MCLK
+//! @brief Enable MCLK
 //!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
+//! This function enables the timer and PPI channel for MCLK
+//!
+//! @return none.
+//
+//*****************************************************************************
+void hm01b0_mclk_enable() {
+  //
+  // Start the timer, enable PPI
+  //
+  nrfx_timer_enable(&mclk_timer);
+  int err_code = nrfx_ppi_channel_enable(mclk_ppi_channel);
+  APP_ERROR_CHECK(err_code);
+}
+
+//*****************************************************************************
+//
+//! @brief Disable MCLK
 //!
 //! This function disable CTimer to stop MCLK for HM01B0.
 //!
@@ -289,8 +302,6 @@ void hm01b0_mclk_disable() {
 //*****************************************************************************
 //
 //! @brief Initialize interfaces
-//!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
 //!
 //! This function initializes interfaces.
 //!
@@ -322,16 +333,12 @@ int32_t hm01b0_init_if(const nrf_twi_mngr_t* instance) {
 //
 //! @brief Deinitialize interfaces
 //!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
-//!
 //! This function deinitializes interfaces.
 //!
 //! @return err_code code.
 //
 //*****************************************************************************
 int32_t hm01b0_deinit_if(void) {
-  twi_mngr_instance = NULL;
-
   //
   // Deinit SPI.
   //
@@ -346,8 +353,7 @@ int32_t hm01b0_deinit_if(void) {
 //
 //! @brief Get HM01B0 Model ID
 //!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
-//! @param pui16MID             - Pointer to buffer for the read back model ID.
+//! @param model_id           - Pointer to buffer for the read back model ID.
 //!
 //! This function reads back HM01B0 model ID.
 //!
@@ -379,26 +385,22 @@ int32_t hm01b0_get_modelid(uint16_t* model_id) {
 //
 //! @brief Initialize HM01B0
 //!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
-//! @param psScript             - Pointer to HM01B0 initialization script.
-//! @param ui32ScriptCmdNum     - No. of commands in HM01B0 initialization
-//! script.
+//! @param script               - Pointer to HM01B0 initialization script.
+//! @param cmd_num              - No. of commands in HM01B0 initialization script.
 //!
 //! This function initilizes HM01B0 with a given script.
 //!
 //! @return err_code code.
 //
 //*****************************************************************************
-int32_t hm01b0_init_system(const hm_script_t* psScript,
-                            uint32_t ui32ScriptCmdNum) {
-  return hm01b0_load_script(psScript, ui32ScriptCmdNum);
+int32_t hm01b0_init_system(const hm_script_t* script,
+                            uint32_t cmd_num) {
+  return hm01b0_load_script(script, cmd_num);
 }
 
 //*****************************************************************************
 //
 //! @brief Set HM01B0 in the walking 1s test mode
-//!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
 //!
 //! This function sets HM01B0 in the walking 1s test mode.
 //!
@@ -456,8 +458,6 @@ int32_t hm01b0_init_system(const hm_script_t* psScript,
 //
 //! @brief Software reset HM01B0
 //!
-//! @param psCfg        - Pointer to HM01B0 configuration structure.
-//!
 //! This function resets HM01B0 by issuing a reset command.
 //!
 //! @return err_code code.
@@ -472,8 +472,7 @@ int32_t hm01b0_reset_sw(void) {
 //
 //! @brief Get current HM01B0 operation mode.
 //!
-//! @param psCfg        - Pointer to HM01B0 configuration structure.
-//! @param pui8Mode     - Pointer to buffer
+//! @param mode         - Pointer to buffer
 //!                     - for the read back operation mode to be put into
 //!
 //! This function get HM01B0 operation mode.
@@ -497,13 +496,12 @@ int32_t hm01b0_get_mode(uint8_t* mode) {
 //
 //! @brief Set HM01B0 operation mode.
 //!
-//! @param psCfg        - Pointer to HM01B0 configuration structure.
-//! @param ui8Mode      - Operation mode. One of:
+//! @param mode         - Operation mode. One of:
 //!     HM01B0_REG_MODE_SELECT_STANDBY
 //!     HM01B0_REG_MODE_SELECT_STREAMING
 //!     HM01B0_REG_MODE_SELECT_STREAMING_NFRAMES
 //!     HM01B0_REG_MODE_SELECT_STREAMING_HW_TRIGGER
-//! @param ui8FrameCnt  - Frame count for
+//! @param frame_cnt    - Frame count for
 //! HM01B0_REG_MODE_SELECT_STREAMING_NFRAMES.
 //!                     - Discarded if other modes.
 //!
@@ -606,9 +604,8 @@ int32_t hm01b0_set_mode(hm01b0_mode mode,
 //
 //! @brief Read data of one frame from HM01B0.
 //!
-//! @param psCfg            - Pointer to HM01B0 configuration structure.
-//! @param pui8Buffer       - Pointer to the frame buffer.
-//! @param ui32BufferLen    - Framebuffer size.
+//! @param buf              - Pointer to the frame buffer.
+//! @param len              - Framebuffer size.
 //!
 //! This function read data of one frame from HM01B0.
 //!
@@ -618,13 +615,14 @@ int32_t hm01b0_set_mode(hm01b0_mode mode,
 int32_t hm01b0_blocking_read_oneframe(uint8_t *buf, size_t len) {
   int32_t err_code = NRF_SUCCESS;
   current_image = buf;
+  current_image_size = len;
   current_size = 0;
 
   // set mode to streaming, one frame
   hm01b0_set_mode(STREAM_N, 1);
 
   APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, buf, HM01B0_PIXEL_X_NUM));
-  while(current_size < HM01B0_IMAGE_SIZE) {
+  while(current_size < len) {
     __WFI();
   }
 

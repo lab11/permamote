@@ -60,8 +60,6 @@ typedef enum {
 //
 //! @brief Power up HM01B0
 //!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
-//!
 //! This function powers up HM01B0.
 //!
 //! @return none.
@@ -73,9 +71,7 @@ void hm01b0_power_up(void);
 //
 //! @brief Power down HM01B0
 //!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
-//!
-//! This function powers up HM01B0.
+//! This function powers down HM01B0.
 //!
 //! @return none.
 //
@@ -84,11 +80,20 @@ void hm01b0_power_down(void);
 
 //*****************************************************************************
 //
+//! @brief Initialize MCLK
+//!
+//! This function initializes a Timer, PPI, and GPIOTE to generate MCLK for HM01B0.
+//!
+//! @return none.
+//
+//*****************************************************************************
+void hm01b0_mclk_init(void);
+
+//*****************************************************************************
+//
 //! @brief Enable MCLK
 //!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
-//!
-//! This function utilizes CTimer to generate MCLK for HM01B0.
+//! This function enables the timer and PPI channel for MCLK
 //!
 //! @return none.
 //
@@ -98,8 +103,6 @@ void hm01b0_mclk_enable(void);
 //*****************************************************************************
 //
 //! @brief Disable MCLK
-//!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
 //!
 //! This function disable CTimer to stop MCLK for HM01B0.
 //!
@@ -112,11 +115,9 @@ void hm01b0_mclk_disable(void);
 //
 //! @brief Initialize interfaces
 //!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
-//!
 //! This function initializes interfaces.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 int32_t hm01b0_init_if(const nrf_twi_mngr_t* instance);
@@ -125,11 +126,9 @@ int32_t hm01b0_init_if(const nrf_twi_mngr_t* instance);
 //
 //! @brief Deinitialize interfaces
 //!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
-//!
 //! This function deinitializes interfaces.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 int32_t hm01b0_deinit_if(void);
@@ -138,12 +137,11 @@ int32_t hm01b0_deinit_if(void);
 //
 //! @brief Get HM01B0 Model ID
 //!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
-//! @param pui16MID             - Pointer to buffer for the read back model ID.
+//! @param model_id           - Pointer to buffer for the read back model ID.
 //!
 //! This function reads back HM01B0 model ID.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 int32_t hm01b0_get_modelid(uint16_t *model_id);
@@ -152,58 +150,24 @@ int32_t hm01b0_get_modelid(uint16_t *model_id);
 //
 //! @brief Initialize HM01B0
 //!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
-//! @param psScript             - Pointer to HM01B0 initialization script.
-//! @param ui32ScriptCmdNum     - No. of commands in HM01B0 initialization
-//! script.
+//! @param script               - Pointer to HM01B0 initialization script.
+//! @param cmd_num              - No. of commands in HM01B0 initialization script.
 //!
 //! This function initilizes HM01B0 with a given script.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
-int32_t hm01b0_init_system(const hm_script_t* psScript,
-                            uint32_t ui32ScriptCmdNum);
-
-//*****************************************************************************
-//
-//! @brief Set HM01B0 in the walking 1s test mode
-//!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
-//!
-//! This function sets HM01B0 in the walking 1s test mode.
-//!
-//! @return Error code.
-//
-//*****************************************************************************
-//int32_t hm01b0_test_walking1s(hm01b0_cfg_t *psCfg);
-
-//*****************************************************************************
-//
-//! @brief Check the data read from HM01B0 in the walking 1s test mode
-//!
-//! @param pui8Buffer       - Pointer to data buffer.
-//! @param ui32BufferLen    - Buffer length
-//! @param ui32PrintCnt     - Number of mismatched data to be printed out
-//!
-//! This function sets HM01B0 in the walking 1s test mode.
-//!
-//! @return Error code.
-//
-//*****************************************************************************
-//void hm01b0_test_walking1s_check_data_sanity(uint8_t *pui8Buffer,
-//                                             uint32_t ui32BufferLen,
-//                                             uint32_t ui32PrintCnt);
+int32_t hm01b0_init_system(const hm_script_t* script,
+                            uint32_t cmd_num);
 
 //*****************************************************************************
 //
 //! @brief Software reset HM01B0
 //!
-//! @param psCfg        - Pointer to HM01B0 configuration structure.
-//!
 //! This function resets HM01B0 by issuing a reset command.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 int32_t hm01b0_reset_sw(void);
@@ -212,13 +176,12 @@ int32_t hm01b0_reset_sw(void);
 //
 //! @brief Get current HM01B0 operation mode.
 //!
-//! @param psCfg        - Pointer to HM01B0 configuration structure.
-//! @param pui8Mode     - Pointer to buffer
+//! @param mode         - Pointer to buffer
 //!                     - for the read back operation mode to be put into
 //!
 //! This function get HM01B0 operation mode.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 int32_t hm01b0_get_mode(uint8_t* mode);
@@ -227,80 +190,35 @@ int32_t hm01b0_get_mode(uint8_t* mode);
 //
 //! @brief Set HM01B0 operation mode.
 //!
-//! @param psCfg        - Pointer to HM01B0 configuration structure.
-//! @param ui8Mode      - Operation mode. One of:
+//! @param mode         - Operation mode. One of:
 //!     HM01B0_REG_MODE_SELECT_STANDBY
 //!     HM01B0_REG_MODE_SELECT_STREAMING
 //!     HM01B0_REG_MODE_SELECT_STREAMING_NFRAMES
 //!     HM01B0_REG_MODE_SELECT_STREAMING_HW_TRIGGER
-//! @param framecnt     - Frame count for
+//! @param frame_cnt    - Frame count for
 //! HM01B0_REG_MODE_SELECT_STREAMING_NFRAMES.
 //!                     - Discarded if other modes.
 //!
 //! This function set HM01B0 operation mode.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 int32_t hm01b0_set_mode(hm01b0_mode mode, uint8_t frame_cnt);
 
 //*****************************************************************************
 //
-//! @brief Hardware trigger HM01B0 to stream.
-//!
-//! @param psCfg        - Pointer to HM01B0 configuration structure.
-//! @param bTrigger     - True to start streaming
-//!                     - False to stop streaming
-//!
-//! This function triggers HM01B0 to stream by toggling the TRIG pin.
-//!
-//! @return Error code.
-//
-//*****************************************************************************
-//int32_t hm01b0_hardware_trigger_streaming(hm01b0_cfg_t *psCfg, bool bTrigger);
-
-//*****************************************************************************
-//
-//! @brief Set HM01B0 mirror mode.
-//!
-//! @param psCfg        - Pointer to HM01B0 configuration structure.
-//! @param bHmirror     - Horizontal mirror
-//! @param bVmirror     - Vertical mirror
-//!
-//! This function set HM01B0 mirror mode.
-//!
-//! @return Error code.
-//
-//*****************************************************************************
-//int32_t hm01b0_set_mirror(hm01b0_cfg_t *psCfg, bool bHmirror, bool bVmirror);
-
-//*****************************************************************************
-//
 //! @brief Read data of one frame from HM01B0.
 //!
-//! @param psCfg            - Pointer to HM01B0 configuration structure.
-//! @param pui8Buffer       - Pointer to the frame buffer.
-//! @param ui32BufferLen    - Framebuffer size.
+//! @param buf              - Pointer to the frame buffer.
+//! @param len              - Framebuffer size.
 //!
 //! This function read data of one frame from HM01B0.
 //!
-//! @return Error code.
+//! @return err_code code.
 //
 //*****************************************************************************
 int32_t hm01b0_blocking_read_oneframe(uint8_t *buf, size_t len);
-
-//*****************************************************************************
-//
-//! @brief Read data of one frame from HM01B0.
-//!
-//! @param psCfg            - Pointer to HM01B0 configuration structure.
-//!
-//! This function wakes up the camera and captures a single frame.
-//!
-//! @return Error code.
-//
-//*****************************************************************************
-//int32_t hm01b0_single_frame_capture(hm01b0_cfg_t *psCfg);
 
 #ifdef __cplusplus
 }

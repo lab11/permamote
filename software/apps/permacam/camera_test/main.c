@@ -21,8 +21,6 @@
 #include "ab1815.h"
 #include "HM01B0_SERIAL_FULL_8bits_msb_5fps.h"
 
-static uint8_t image_buffer[HM01B0_IMAGE_SIZE];
-
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
 
@@ -56,6 +54,8 @@ void log_init(void)
 }
 
 int main(void) {
+    uint8_t image_buffer[HM01B0_IMAGE_SIZE];
+
 
     // Initialize.
     nrf_power_dcdcen_set(1);
@@ -86,6 +86,7 @@ int main(void) {
     NRF_LOG_INFO("size of buffer:    %x", sizeof(image_buffer));
 
     hm01b0_init_if(&twi_mngr_instance);
+    hm01b0_mclk_init();
 
     nrf_gpio_pin_clear(LED_1);
     hm01b0_power_up();
@@ -96,7 +97,6 @@ int main(void) {
     hm01b0_blocking_read_oneframe(image_buffer, sizeof(image_buffer));
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
-    hm01b0_deinit_if();
 
     // Enter main loop.
     while (1) {
