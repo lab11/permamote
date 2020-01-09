@@ -21,6 +21,8 @@
 #include "ab1815.h"
 #include "HM01B0_SERIAL_FULL_8bits_msb_5fps.h"
 
+static uint8_t image_buffer[HM01B0_IMAGE_SIZE];
+
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
 
@@ -80,41 +82,21 @@ int main(void) {
     ab1815_set_config(ab1815_config);
 
     NRF_LOG_INFO("turning on camera");
+    NRF_LOG_INFO("address of buffer: %x", image_buffer);
+    NRF_LOG_INFO("size of buffer:    %x", sizeof(image_buffer));
 
     hm01b0_init_if(&twi_mngr_instance);
 
     nrf_gpio_pin_clear(LED_1);
     hm01b0_power_up();
-    hm01b0_mclk_enable();
-
-    //uint16_t model_id = 0xFF;
-    //int error = hm01b0_get_modelid(&model_id);
-    //NRF_LOG_INFO("error: %d, model id: 0x%x", error, model_id);
 
     int error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
-    //NRF_LOG_INFO("error: %d", error);
+    NRF_LOG_INFO("error: %d", error);
 
-    hm01b0_blocking_read_oneframe(NULL, 0);
+    hm01b0_blocking_read_oneframe(image_buffer, sizeof(image_buffer));
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
-    hm01b0_mclk_disable();
-
-    nrf_gpio_cfg_output(HM01B0_MCLK);
-    nrf_gpio_cfg_output(HM01B0_PCLKO);
-    nrf_gpio_cfg_output(HM01B0_FVLD);
-    nrf_gpio_cfg_output(HM01B0_LVLD);
-    nrf_gpio_cfg_output(HM01B0_CAM_D0);
-    nrf_gpio_cfg_output(HM01B0_CAM_TRIG);
-    nrf_gpio_cfg_output(HM01B0_CAM_INT);
-    nrf_gpio_pin_clear(HM01B0_MCLK);
-    nrf_gpio_pin_clear(HM01B0_PCLKO);
-    nrf_gpio_pin_clear(HM01B0_FVLD);
-    nrf_gpio_pin_clear(HM01B0_LVLD);
-    nrf_gpio_pin_clear(HM01B0_CAM_D0);
-    nrf_gpio_pin_clear(HM01B0_CAM_TRIG);
-    nrf_gpio_pin_clear(HM01B0_CAM_INT);
-
-    //NRF_LOG_INFO("DONE!!!!");
+    hm01b0_deinit_if();
 
     // Enter main loop.
     while (1) {

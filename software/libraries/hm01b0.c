@@ -13,8 +13,8 @@
 
 #include "custom_board.h"
 
-static uint8_t image_buffer[HM01B0_IMAGE_SIZE];
-static uint8_t* current_index = image_buffer;
+static uint8_t* current_image;
+static uint32_t current_size;
 
 static const nrfx_timer_t mclk_timer = NRFX_TIMER_INSTANCE(1);
 static nrf_ppi_channel_t mclk_ppi_channel;
@@ -43,10 +43,13 @@ static int32_t hm01b0_load_script(const hm_script_t* psScript, uint32_t ui32Scri
 //
 //*****************************************************************************
 int32_t hm01b0_write_reg(uint16_t reg, const uint8_t* buf, size_t len) {
+
+  if (len > 16) return NRF_ERROR_INVALID_LENGTH;
+
   //
   // Create the transaction.
   //
-  uint8_t regb[16];
+  uint8_t regb[18];
   regb[0] = 0xFF & (reg >> 8);
   regb[1] = 0xFF & reg;
   memcpy(regb+2, buf, len);
@@ -100,8 +103,7 @@ int32_t hm01b0_read_reg(uint16_t reg, uint8_t* buf, size_t len) {
 //
 //! @brief Load HM01B0 a given script
 //!
-//! @param psCfg                - Pointer to HM01B0 configuration structure.
-//! @param psScrip              - Pointer to the script to be loaded.
+//! @param psScript             - Pointer to the script to be loaded.
 //! @param ui32ScriptCmdNum     - Number of entries in a given script.
 //!
 //! This function loads HM01B0 a given script.
@@ -136,7 +138,11 @@ static int32_t hm01b0_load_script(const hm_script_t* psScript, uint32_t ui32Scri
 //
 //*****************************************************************************
 void hm01b0_power_up(void) {
+  // Start mclk for camera
+  hm01b0_mclk_enable();
+  // Turn on power gate
   nrf_gpio_pin_clear(HM01B0_ENn);
+  // Delay max turn-on time for camera
   nrf_delay_us(50);
 }
 
@@ -152,7 +158,25 @@ void hm01b0_power_up(void) {
 //
 //*****************************************************************************
 void hm01b0_power_down(void) {
+  // Disable mclk
+  hm01b0_mclk_disable();
+  // Disable power gate to camera
   nrf_gpio_pin_set(HM01B0_ENn);
+  // Clear all digital pins to camera
+  nrf_gpio_cfg_output(HM01B0_MCLK);
+  nrf_gpio_cfg_output(HM01B0_PCLKO);
+  nrf_gpio_cfg_output(HM01B0_FVLD);
+  nrf_gpio_cfg_output(HM01B0_LVLD);
+  nrf_gpio_cfg_output(HM01B0_CAM_D0);
+  nrf_gpio_cfg_output(HM01B0_CAM_TRIG);
+  nrf_gpio_cfg_output(HM01B0_CAM_INT);
+  nrf_gpio_pin_clear(HM01B0_MCLK);
+  nrf_gpio_pin_clear(HM01B0_PCLKO);
+  nrf_gpio_pin_clear(HM01B0_FVLD);
+  nrf_gpio_pin_clear(HM01B0_LVLD);
+  nrf_gpio_pin_clear(HM01B0_CAM_D0);
+  nrf_gpio_pin_clear(HM01B0_CAM_TRIG);
+  nrf_gpio_pin_clear(HM01B0_CAM_INT);
 }
 
 static void timer_handler(nrf_timer_event_t event_type, void *context) {
@@ -166,14 +190,14 @@ static void shift_right_by_2(uint8_t* arr, size_t len) {
   arr[0] = 0;
 }
 
-static void correct_image() {
+static void correct_image(uint8_t* arr) {
   // clear border pixels
   for(size_t i = 0; i < HM01B0_IMAGE_SIZE; i+=HM01B0_PIXEL_X_NUM) {
-    shift_right_by_2(image_buffer+i, HM01B0_PIXEL_X_NUM);
-    image_buffer[i] = 0;
-    image_buffer[i + 1] = 0;
-    image_buffer[i + HM01B0_PIXEL_X_NUM - 2] = 0;
-    image_buffer[i + HM01B0_PIXEL_X_NUM - 1] = 0;
+    shift_right_by_2(arr+i, HM01B0_PIXEL_X_NUM);
+    arr[i] = 0;
+    arr[i + 1] = 0;
+    arr[i + HM01B0_PIXEL_X_NUM - 2] = 0;
+    arr[i + HM01B0_PIXEL_X_NUM - 1] = 0;
   }
 }
 
@@ -182,9 +206,9 @@ static void camera_spis_handler(nrfx_spis_evt_t  const * event, void *context) {
   //TODO actually get correct event type
   switch(event->evt_type) {
     case NRFX_SPIS_XFER_DONE:
-      current_index += HM01B0_PIXEL_X_NUM;
-      if (current_index - image_buffer < HM01B0_IMAGE_SIZE) {
-        APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, current_index, HM01B0_PIXEL_X_NUM));
+      current_size += HM01B0_PIXEL_X_NUM;
+      if (current_size < HM01B0_IMAGE_SIZE) {
+        APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, current_image + current_size, HM01B0_PIXEL_X_NUM));
       }
       break;
     case NRFX_SPIS_BUFFERS_SET_DONE:
@@ -255,12 +279,8 @@ void hm01b0_mclk_enable() {
 //*****************************************************************************
 void hm01b0_mclk_disable() {
   //
-  // Stop the timer.
+  // Stop the timer
   //
-  NRF_POWER->TASKS_LOWPWR = 1;
-  NRF_POWER->TASKS_CONSTLAT = 0;
-  nrfx_spis_uninit(&camera_spis_instance);
-
   nrf_ppi_channel_disable(mclk_ppi_channel);
   nrfx_gpiote_out_task_disable(HM01B0_MCLK);
   nrfx_timer_disable(&mclk_timer);
@@ -294,8 +314,6 @@ int32_t hm01b0_init_if(const nrf_twi_mngr_t* instance) {
   camera_spis_config.mosi_pin = HM01B0_CAM_D0;
   camera_spis_config.csn_pin = HM01B0_LVLD;
   APP_ERROR_CHECK(nrfx_spis_init(&camera_spis_instance, &camera_spis_config, camera_spis_handler, NULL));
-  NRF_LOG_INFO("SIZE: %x, Location: 0x%x", sizeof(image_buffer), image_buffer);
-  current_index = image_buffer;
 
   return NRF_SUCCESS;
 }
@@ -313,6 +331,13 @@ int32_t hm01b0_init_if(const nrf_twi_mngr_t* instance) {
 //*****************************************************************************
 int32_t hm01b0_deinit_if(void) {
   twi_mngr_instance = NULL;
+
+  //
+  // Deinit SPI.
+  //
+  NRF_POWER->TASKS_LOWPWR = 1;
+  NRF_POWER->TASKS_CONSTLAT = 0;
+  nrfx_spis_uninit(&camera_spis_instance);
 
   return 0;
 }
@@ -592,18 +617,19 @@ int32_t hm01b0_set_mode(hm01b0_mode mode,
 //*****************************************************************************
 int32_t hm01b0_blocking_read_oneframe(uint8_t *buf, size_t len) {
   int32_t err_code = NRF_SUCCESS;
+  current_image = buf;
+  current_size = 0;
 
-  // set mode to streaming, and wait a bit for autogain
+  // set mode to streaming, one frame
   hm01b0_set_mode(STREAM_N, 1);
 
-  APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, image_buffer, HM01B0_PIXEL_X_NUM));
-  while(current_index - image_buffer < HM01B0_IMAGE_SIZE) {
+  APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, buf, HM01B0_PIXEL_X_NUM));
+  while(current_size < HM01B0_IMAGE_SIZE) {
     __WFI();
-    //NRF_LOG_INFO("CURRENT_SIZE: 0x%x", current_index-image_buffer);
   }
 
-  NRF_LOG_INFO("SHIFTED", current_index-image_buffer);
-  correct_image();
+  correct_image(buf);
+  current_image = NULL;
 
   return err_code;
 }
