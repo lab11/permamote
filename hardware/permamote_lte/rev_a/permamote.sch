@@ -2985,12 +2985,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <smd name="7" x="0.61" y="0.25" dx="0.38" dy="0.3" layer="1" rot="R180"/>
 <smd name="8" x="0.61" y="0.75" dx="0.38" dy="0.3" layer="1" rot="R180"/>
 <smd name="9" x="0" y="0" dx="0.4" dy="1.7" layer="1" cream="no"/>
-<polygon width="0.0254" layer="31">
-<vertex x="-0.2" y="0.85"/>
-<vertex x="-0.2" y="-0.85"/>
-<vertex x="0.2" y="-0.85"/>
-<vertex x="0.2" y="0.85"/>
-</polygon>
 <wire x1="-1.0414" y1="-1.2954" x2="-1.0414" y2="1.2954" width="0.1524" layer="39"/>
 <wire x1="-1.0414" y1="1.2954" x2="1.0414" y2="1.2954" width="0.1524" layer="39"/>
 <wire x1="1.0414" y1="1.2954" x2="1.0414" y2="-1.2954" width="0.1524" layer="39"/>
@@ -3017,8 +3011,8 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <wire x1="0.7874" y1="-1.0414" x2="0.7874" y2="1.0414" width="0.1524" layer="51"/>
 <wire x1="0.7874" y1="1.0414" x2="-0.7874" y2="1.0414" width="0.1524" layer="51"/>
 <wire x1="-0.7874" y1="1.0414" x2="-0.7874" y2="-1.0414" width="0.1524" layer="51"/>
-<wire x1="-0.6096" y1="0.762" x2="-0.762" y2="0.762" width="0" layer="51" curve="-180"/>
-<wire x1="-0.762" y1="0.762" x2="-0.6096" y2="0.762" width="0" layer="51" curve="-180"/>
+<wire x1="-0.6096" y1="0.762" x2="-0.762" y2="0.762" width="0.01" layer="51" curve="-180"/>
+<wire x1="-0.762" y1="0.762" x2="-0.6096" y2="0.762" width="0.01" layer="51" curve="-180"/>
 <wire x1="-0.254" y1="0" x2="0.254" y2="0" width="0.1524" layer="23"/>
 <wire x1="0" y1="-0.254" x2="0" y2="0.254" width="0.1524" layer="23"/>
 <text x="-0.7366" y="1.905" size="0.3048" layer="25" ratio="6" rot="SR0">&gt;Name</text>
@@ -3140,11 +3134,16 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 </classes>
 <parts>
 <part name="FRAME1" library="lab11-frames" deviceset="LETTER_L_BLANK" device="">
+<attribute name="AUTHOR" value="MEGHNA MANDAVA"/>
 <attribute name="REV" value="A"/>
 <attribute name="TITLE" value="PERMAMOTE_LTE"/>
 </part>
 <part name="GND3" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="FRAME2" library="lab11-frames" deviceset="LETTER_L_BLANK" device=""/>
+<part name="FRAME2" library="lab11-frames" deviceset="LETTER_L_BLANK" device="">
+<attribute name="AUTHOR" value="MEGHNA MANDAVA"/>
+<attribute name="REV" value="A"/>
+<attribute name="TITLE" value="PERMAMOTE_LTE"/>
+</part>
 <part name="U7" library="chips" deviceset="MAX17222" device=""/>
 <part name="C30" library="passives" deviceset="CAPACITOR" device="0603_CAP" value="10uF">
 <attribute name="DIGIKEY" value="490-3896-1-ND"/>
@@ -3169,7 +3168,11 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <part name="BT1" library="batteries" deviceset="LTOHTC" device="1020"/>
 <part name="GND5" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="P+4" library="mote" deviceset="VBAT" device=""/>
-<part name="FRAME3" library="lab11-frames" deviceset="LETTER_L_BLANK" device=""/>
+<part name="FRAME3" library="lab11-frames" deviceset="LETTER_L_BLANK" device="">
+<attribute name="AUTHOR" value="MEGHNA MANDAVA"/>
+<attribute name="REV" value="A"/>
+<attribute name="TITLE" value="PERMAMOTE_LTE"/>
+</part>
 <part name="U8" library="chips" deviceset="MAX44009" device=""/>
 <part name="C24" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="1uF">
 <attribute name="DIGIKEY" value="490-7195-1-ND "/>
@@ -3294,7 +3297,11 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <part name="U3" library="chips" deviceset="EKMB" device="1101111"/>
 <part name="Q1" library="fets" deviceset="PMDXB950UPEL" device=""/>
 <part name="Q2" library="fets" deviceset="PMDXB950UPEL" device=""/>
-<part name="FRAME5" library="lab11-frames" deviceset="LETTER_L_BLANK" device=""/>
+<part name="FRAME5" library="lab11-frames" deviceset="LETTER_L_BLANK" device="">
+<attribute name="AUTHOR" value="MEGHNA MANDAVA"/>
+<attribute name="REV" value="A"/>
+<attribute name="TITLE" value="PERMAMOTE_LTE"/>
+</part>
 <part name="Q3" library="fets" deviceset="PMDXB950UPEL" device=""/>
 <part name="Q4" library="fets" deviceset="PMDXB950UPEL" device=""/>
 <part name="U2" library="chips" deviceset="BQ25505" device=""/>
@@ -3388,7 +3395,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <part name="TP21" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="TP22" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="TP23" library="headers" deviceset="TEST-POINT" device=""/>
-<part name="TP24" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="TP25" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="TP26" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="TP27" library="headers" deviceset="TEST-POINT" device=""/>
@@ -3434,7 +3440,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <part name="U4" library="Particle" deviceset="BGA725L6" device=""/>
 <part name="L2" library="passives" deviceset="INDUCTOR" device="0402" value="5.1nH"/>
 <part name="L4" library="passives" deviceset="INDUCTOR" device="0402" value="1.8nH"/>
-<part name="U5" library="TPD3F303" deviceset="TPD3F303DPVR" device=""/>
 <part name="C1" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.7uF">
 <attribute name="DESCRIPTION" value="CAP CER 4.7UF 10V X5R 0402"/>
 <attribute name="DIGIKEY" value="1276-1480-1-ND"/>
@@ -3478,12 +3483,14 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 </part>
 <part name="+3V8" library="regulators" deviceset="+3V3" device=""/>
 <part name="FRAME4" library="lab11-frames" deviceset="LETTER_L_BLANK" device="">
+<attribute name="AUTHOR" value="MEGHNA MANDAVA"/>
 <attribute name="REV" value="A"/>
 <attribute name="TITLE" value="PERMAMOTE_LTE"/>
 </part>
 <part name="TP30" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="TP31" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="TP32" library="headers" deviceset="TEST-POINT" device=""/>
+<part name="U13" library="TPD3F303" deviceset="TPD3F303DPVR" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -4322,10 +4329,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <text x="119.38" y="88.9" size="2.54" layer="98">SD Card Adapter</text>
 </plain>
 <instances>
-<instance part="U5" gate="A" x="50.8" y="119.38" smashed="yes">
-<attribute name="NAME" x="58.7756" y="125.9586" size="2.0828" layer="95" ratio="6" rot="SR0"/>
-<attribute name="VALUE" x="58.1406" y="100.5586" size="2.0828" layer="96" ratio="6" rot="SR0"/>
-</instance>
 <instance part="J3" gate="G$1" x="187.96" y="111.76" smashed="yes">
 <attribute name="NAME" x="180.34" y="124.46" size="1.27" layer="95"/>
 </instance>
@@ -4406,15 +4409,19 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <instance part="TP32" gate="G$1" x="109.22" y="60.96" smashed="yes">
 <attribute name="NAME" x="106.045" y="60.96" size="1.016" layer="95" ratio="12" align="center-right"/>
 </instance>
+<instance part="U13" gate="A" x="50.8" y="119.38" smashed="yes">
+<attribute name="NAME" x="58.7756" y="125.9586" size="2.0828" layer="95" ratio="6" rot="SR0"/>
+<attribute name="VALUE" x="58.1406" y="100.5586" size="2.0828" layer="96" ratio="6" rot="SR0"/>
+</instance>
 </instances>
 <busses>
 </busses>
 <nets>
 <net name="SIM_1V8" class="0">
 <segment>
-<pinref part="U5" gate="A" pin="VCC"/>
 <wire x1="129.54" y1="109.22" x2="137.16" y2="109.22" width="0.1524" layer="91"/>
 <label x="137.16" y="109.22" size="1.27" layer="95" xref="yes"/>
+<pinref part="U13" gate="A" pin="VCC"/>
 </segment>
 <segment>
 <pinref part="J3" gate="G$1" pin="C1(VCC)"/>
@@ -4424,37 +4431,39 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 </net>
 <net name="SIM_CLK" class="0">
 <segment>
-<pinref part="U5" gate="A" pin="CLK_IN"/>
 <wire x1="129.54" y1="114.3" x2="137.16" y2="114.3" width="0.1524" layer="91"/>
 <label x="137.16" y="114.3" size="1.27" layer="95" xref="yes"/>
+<pinref part="U13" gate="A" pin="CLK_IN"/>
 </segment>
 </net>
 <net name="SIM_IO" class="0">
 <segment>
-<pinref part="U5" gate="A" pin="DATA2_IN"/>
 <wire x1="129.54" y1="111.76" x2="137.16" y2="111.76" width="0.1524" layer="91"/>
 <label x="137.16" y="111.76" size="1.27" layer="95" xref="yes"/>
+<pinref part="U13" gate="A" pin="DATA2_IN"/>
 </segment>
 </net>
 <net name="SIM_RST2" class="0">
 <segment>
-<pinref part="U5" gate="A" pin="DATA1_OUT"/>
 <wire x1="53.34" y1="119.38" x2="50.8" y2="119.38" width="0.1524" layer="91"/>
 <label x="45.72" y="119.38" size="1.27" layer="95" rot="R180" xref="yes"/>
 <wire x1="50.8" y1="119.38" x2="45.72" y2="119.38" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="121.92" x2="50.8" y2="119.38" width="0.1524" layer="91"/>
 <junction x="50.8" y="119.38"/>
 <pinref part="TP30" gate="G$1" pin="TESTPOINT"/>
+<pinref part="U13" gate="A" pin="DATA1_OUT"/>
 </segment>
 <segment>
+<pinref part="J3" gate="G$1" pin="C2(RST)"/>
+<wire x1="175.26" y1="116.84" x2="172.72" y2="116.84" width="0.1524" layer="91"/>
 <label x="172.72" y="116.84" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="SIM_CLK2" class="0">
 <segment>
-<pinref part="U5" gate="A" pin="CLK_OUT"/>
 <wire x1="53.34" y1="116.84" x2="45.72" y2="116.84" width="0.1524" layer="91"/>
 <label x="45.72" y="116.84" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="U13" gate="A" pin="CLK_OUT"/>
 </segment>
 <segment>
 <pinref part="J3" gate="G$1" pin="C3(CLK)"/>
@@ -4464,13 +4473,13 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 </net>
 <net name="SIM_IO2" class="0">
 <segment>
-<pinref part="U5" gate="A" pin="DATA2_OUT"/>
 <wire x1="53.34" y1="114.3" x2="50.8" y2="114.3" width="0.1524" layer="91"/>
 <label x="45.72" y="114.3" size="1.27" layer="95" rot="R180" xref="yes"/>
 <wire x1="50.8" y1="114.3" x2="45.72" y2="114.3" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="114.3" x2="50.8" y2="111.76" width="0.1524" layer="91"/>
 <junction x="50.8" y="114.3"/>
 <pinref part="TP31" gate="G$1" pin="TESTPOINT"/>
+<pinref part="U13" gate="A" pin="DATA2_OUT"/>
 </segment>
 <segment>
 <pinref part="J3" gate="G$1" pin="C7(IO)"/>
@@ -4480,9 +4489,9 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 </net>
 <net name="SIM_RST" class="0">
 <segment>
-<pinref part="U5" gate="A" pin="DATA1_IN"/>
 <wire x1="129.54" y1="116.84" x2="137.16" y2="116.84" width="0.1524" layer="91"/>
 <label x="137.16" y="116.84" size="1.27" layer="95" xref="yes"/>
+<pinref part="U13" gate="A" pin="DATA1_IN"/>
 </segment>
 </net>
 <net name="GND" class="0">
@@ -4509,12 +4518,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <junction x="154.94" y="50.8"/>
 <junction x="93.98" y="50.8"/>
 <junction x="99.06" y="50.8"/>
-</segment>
-</net>
-<net name="N$40" class="0">
-<segment>
-<pinref part="J3" gate="G$1" pin="C2(RST)"/>
-<wire x1="175.26" y1="116.84" x2="172.72" y2="116.84" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="MISO" class="0">
@@ -5983,9 +5986,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <instance part="TP23" gate="G$1" x="203.2" y="73.66" smashed="yes" rot="R180">
 <attribute name="NAME" x="206.375" y="73.66" size="1.016" layer="95" ratio="12" rot="R180" align="center-right"/>
 </instance>
-<instance part="TP24" gate="G$1" x="203.2" y="71.12" smashed="yes" rot="R180">
-<attribute name="NAME" x="206.375" y="71.12" size="1.016" layer="95" ratio="12" rot="R180" align="center-right"/>
-</instance>
 <instance part="TP25" gate="G$1" x="203.2" y="66.04" smashed="yes" rot="R180">
 <attribute name="NAME" x="206.375" y="66.04" size="1.016" layer="95" ratio="12" rot="R180" align="center-right"/>
 </instance>
@@ -6173,13 +6173,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <wire x1="200.66" y1="66.04" x2="198.12" y2="66.04" width="0.1524" layer="91"/>
 <label x="198.12" y="66.04" size="1.27" layer="95" rot="R180" xref="yes"/>
 <pinref part="TP25" gate="G$1" pin="TESTPOINT"/>
-</segment>
-</net>
-<net name="VSEC" class="0">
-<segment>
-<wire x1="200.66" y1="71.12" x2="198.12" y2="71.12" width="0.1524" layer="91"/>
-<label x="198.12" y="71.12" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="TP24" gate="G$1" pin="TESTPOINT"/>
 </segment>
 </net>
 <net name="VCC" class="0">
