@@ -66,7 +66,7 @@
 #define PIR_OUT     NRF_GPIO_PIN_MAP(1,10)
 
 //RTC
-#define RTC_CS      NRF_GPIO_PIN_MAP(1,11)
+#define RTC_CS      NRF_GPIO_PIN_MAP(1,12)
 #define RTC_IRQ1    NRF_GPIO_PIN_MAP(1,13)
 #define RTC_IRQ2    NRF_GPIO_PIN_MAP(1,15)
 #define RTC_IRQ3    NRF_GPIO_PIN_MAP(1,14)
