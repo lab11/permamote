@@ -17,7 +17,7 @@ static uint8_t* current_image;
 static size_t   current_image_size;
 static uint32_t current_size;
 
-static const nrfx_timer_t mclk_timer = NRFX_TIMER_INSTANCE(1);
+static const nrfx_timer_t mclk_timer = NRFX_TIMER_INSTANCE(3);
 static nrf_ppi_channel_t mclk_ppi_channel;
 
 static const nrfx_spis_t camera_spis_instance = NRFX_SPIS_INSTANCE(2);
@@ -135,6 +135,7 @@ static int32_t hm01b0_load_script(const hm_script_t* script, uint32_t cmd_num) {
 //
 //*****************************************************************************
 void hm01b0_power_up(void) {
+  hm01b0_init_if(twi_mngr_instance);
   // Start mclk for camera
   hm01b0_mclk_enable();
   // Turn on power gate
@@ -158,15 +159,15 @@ void hm01b0_power_down(void) {
   // Disable power gate to camera
   nrf_gpio_pin_set(HM01B0_ENn);
   // Clear all digital pins to camera
-  nrf_gpio_cfg_output(HM01B0_MCLK);
+  //nrf_gpio_cfg_output(HM01B0_MCLK);
   nrf_gpio_cfg_output(HM01B0_PCLKO);
   nrf_gpio_cfg_output(HM01B0_FVLD);
   nrf_gpio_cfg_output(HM01B0_LVLD);
   nrf_gpio_cfg_output(HM01B0_CAM_D0);
   nrf_gpio_cfg_output(HM01B0_CAM_TRIG);
   nrf_gpio_cfg_output(HM01B0_CAM_INT);
-  nrf_gpio_pin_clear(HM01B0_MCLK);
-  nrf_gpio_pin_clear(HM01B0_PCLKO);
+  //nrf_gpio_pin_clear(HM01B0_MCLK);
+  //nrf_gpio_pin_clear(HM01B0_PCLKO);
   nrf_gpio_pin_clear(HM01B0_FVLD);
   nrf_gpio_pin_clear(HM01B0_LVLD);
   nrf_gpio_pin_clear(HM01B0_CAM_D0);
@@ -246,7 +247,6 @@ void hm01b0_mclk_init() {
   }
   nrfx_gpiote_out_config_t gpio_config = NRFX_GPIOTE_CONFIG_OUT_TASK_TOGGLE(0);
   nrfx_gpiote_out_init(HM01B0_MCLK, &gpio_config);
-  nrfx_gpiote_out_task_enable(HM01B0_MCLK);
 
   //
   // Set up PPI interface
@@ -276,6 +276,7 @@ void hm01b0_mclk_enable() {
   //
   // Start the timer, enable PPI
   //
+  nrfx_gpiote_out_task_enable(HM01B0_MCLK);
   nrfx_timer_enable(&mclk_timer);
   int err_code = nrfx_ppi_channel_enable(mclk_ppi_channel);
   APP_ERROR_CHECK(err_code);
@@ -318,7 +319,6 @@ int32_t hm01b0_init_if(const nrf_twi_mngr_t* instance) {
   // Enable the constant latency sub power mode to minimize the time it takes
   // for the SPIS peripheral to become active after the CSN line is asserted
   // (when the CPU is in sleep mode).
-  NRF_POWER->TASKS_CONSTLAT = 1;
   nrfx_spis_config_t camera_spis_config = NRFX_SPIS_DEFAULT_CONFIG;
   camera_spis_config.mode = NRF_SPIS_MODE_1;
   camera_spis_config.sck_pin = HM01B0_PCLKO;
