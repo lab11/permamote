@@ -38,6 +38,7 @@
 #include "flash_storage.h"
 
 #include "permamote.h"
+#include "parse.pb.h"
 #include "ab1815.h"
 #include "max44009.h"
 #include "ms5637.h"
@@ -108,7 +109,7 @@ APP_TIMER_DEF(coap_tick);
 
 static uint8_t dfu_jitter_hours = 0;
 static bool seed = false;
-static uint8_t device_id[6];
+uint8_t device_id[6];
 static permamote_state_t state = {0};
 static float sensed_lux;
 
@@ -274,20 +275,17 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
 
 static void send_temp_pres_hum(void) {
   float temperature, pressure, humidity;
-  packet.data_len = sizeof(temperature);
+  Message msg = Message_init_default;
 
   // sense temperature and pressure
   nrf_gpio_pin_clear(MS5637_EN);
   ms5637_start();
   ms5637_get_temperature_and_pressure(&temperature, &pressure);
   nrf_gpio_pin_set(MS5637_EN);
+
   // Prepare temp and pressure packets
-  packet.timestamp = ab1815_get_time_unix();
-  packet.data = (uint8_t*)&temperature;
-  permamote_coap_send(&m_coap_address, "temperature_c", false, &packet);
-  packet.data = (uint8_t*)&pressure;
-  permamote_coap_send(&m_coap_address, "pressure_mbar", false, &packet);
-  NRF_LOG_INFO("Sensed ms5637: temperature: %d, pressure: %d", (int32_t)temperature, (int32_t)pressure);
+  msg.data.temperature_c = temperature;
+  msg.data.pressure_mbar = pressure;
 
   // sense humidity
   nrf_gpio_pin_clear(SI7021_EN);
@@ -295,66 +293,71 @@ static void send_temp_pres_hum(void) {
   si7021_config(si7021_mode3);
   si7021_read_RH_hold(&humidity);
   nrf_gpio_pin_set(SI7021_EN);
+
   // Prepare humidity packet
-  packet.timestamp = ab1815_get_time_unix();
-  packet.data = (uint8_t*)&humidity;
-  permamote_coap_send(&m_coap_address, "humidity_percent", false, &packet);
+  msg.data.humidity_percent = humidity;
+
+  permamote_coap_send(&m_coap_address, "temp_pres_hum", false, &msg);
+
+  NRF_LOG_INFO("Sensed ms5637: temperature: %d, pressure: %d", (int32_t)temperature, (int32_t)pressure);
   NRF_LOG_INFO("Sensed si7021: humidity: %d", (int32_t)humidity);
 }
 
 static void send_voltage(void) {
   // sense voltage
+  Message msg = Message_init_default;
+
   nrf_saadc_value_t adc_samples[3];
   nrf_drv_saadc_sample_convert(0, adc_samples);
   nrf_drv_saadc_sample_convert(1, adc_samples+1);
   nrf_drv_saadc_sample_convert(2, adc_samples+2);
-  float vbat = 0.6 * 6 * (float)adc_samples[0] / ((1 << 10)-1);
-  float vsol = 0.6 * 6 * (float)adc_samples[1] / ((1 << 10)-1);
-  float vsec = 0.6 * 6 * (float)adc_samples[2] / ((1 << 10)-1);
-  // prepare voltage packet
-  packet.timestamp = ab1815_get_time_unix();
-  float v_data[3] = {vbat, vsol, vsec};
-  packet.data = (uint8_t*)v_data;
-  packet.data_len = 3 * sizeof(vbat);
-  permamote_coap_send(&m_coap_address, "voltage", false, &packet);
-  NRF_LOG_INFO("Sensed voltage: vbat*100: %d, vsol*100: %d, vsec*100: %d", (int32_t)(vbat*100), (int32_t)(vsol*100), (int32_t)(vsec*100));
+  msg.data.primary_voltage= 0.6 * 6 * (float)adc_samples[0] / ((1 << 10)-1);
+  msg.data.solar_voltage= 0.6 * 6 * (float)adc_samples[1] / ((1 << 10)-1);
+  msg.data.secondary_voltage= 0.6 * 6 * (float)adc_samples[2] / ((1 << 10)-1);
 
   // sense vbat_ok
-  bool vbat_ok = nrf_gpio_pin_read(VBAT_OK);
-  packet.data = (uint8_t*)&vbat_ok;
-  packet.data_len = sizeof(vbat_ok);
-  permamote_coap_send(&m_coap_address, "vbat_ok", false, &packet);
-  NRF_LOG_INFO("VBAT_OK: %d", vbat_ok);
+  msg.data.vbat_ok = nrf_gpio_pin_read(VBAT_OK);
+
+  permamote_coap_send(&m_coap_address, "voltage", false, &msg);
+
+  NRF_LOG_INFO("Sensed voltage: vbat*100: %d, vsol*100: %d, vsec*100: %d", (int32_t)(msg.data.primary_voltage*100), (int32_t)(msg.data.solar_voltage*100), (int32_t)(msg.data.secondary_voltage*100));
+  NRF_LOG_INFO("VBAT_OK: %d", msg.data.vbat_ok);
 }
 
 void color_read_callback(uint16_t red, uint16_t green, uint16_t blue, uint16_t clear) {
   float cct;
+  Message msg = Message_init_default;
 
   tcs34725_off();
   tcs34725_ir_compensate(&red, &green, &blue, &clear);
-  //cct = tcs34725_calculate_cct(red, green, blue);
   cct = tcs34725_calculate_ct(red, blue);
-  packet.timestamp = ab1815_get_time_unix();
-  packet.data = (uint8_t*)&cct;
-  packet.data_len = sizeof(cct);
+  msg.data.light_cct_k = cct;
+  msg.data.light_counts_red = red;
+  msg.data.light_counts_green = green;
+  msg.data.light_counts_blue = blue;
+  msg.data.light_counts_clear = clear;
   // send
-  permamote_coap_send(&m_coap_address, "light_color_cct_k", false, &packet);
-
-  uint16_t lraw_data[4] = {red, green, blue, clear};
-  packet.data = (uint8_t*)lraw_data;
-  packet.data_len = 4*sizeof(red);
-  permamote_coap_send(&m_coap_address, "light_color_counts", false, &packet);
+  permamote_coap_send(&m_coap_address, "light_color", false, &msg);
 
   NRF_LOG_INFO("Sensed light cct: %u", (uint32_t)cct);
   NRF_LOG_INFO("Sensed light color:\n\tr: %u\n\tg: %u\n\tb: %u", (uint16_t)red, (uint16_t)green, (uint16_t)blue);
 }
 static void send_thread_info(void) {
   otInstance * thread_instance = thread_get_instance();
-  uint16_t rloc16 = otThreadGetRloc16(thread_instance);
-  const otExtAddress * ext_addr = otLinkGetExtendedAddress(thread_instance);
-  uint8_t data[sizeof(rloc16) + sizeof(otExtAddress)];
+  Message msg = Message_init_default;
 
-  char ext_str[64];
+  uint16_t rloc16 = otThreadGetRloc16(thread_instance);
+  msg.data.thread_rloc16 = rloc16;
+  const otExtAddress * ext_addr = otLinkGetExtendedAddress(thread_instance);
+  memcpy(msg.data.thread_ext_addr.bytes, ext_addr, sizeof(otExtAddress));
+  msg.data.thread_ext_addr.size = sizeof(otExtAddress);
+  int8_t avg_rssi, last_rssi;
+  otThreadGetParentAverageRssi(thread_instance, &avg_rssi);
+  msg.data.thread_parent_avg_rssi = avg_rssi;
+  otThreadGetParentLastRssi(thread_instance, &last_rssi);
+  msg.data.thread_parent_last_rssi = last_rssi;
+
+  char ext_str[128];
   snprintf(ext_str, sizeof(ext_str), "%2x:%2x:%2x:%2x:%2x:%2x:%2x:%2x",
           *(ext_addr->m8 + 0),
           *(ext_addr->m8 + 1),
@@ -367,48 +370,28 @@ static void send_thread_info(void) {
 
   NRF_LOG_INFO("rloc16: 0x%x", rloc16);
   NRF_LOG_INFO("ext_addr: %s", ext_str);
+  NRF_LOG_INFO("average rssi: %d", avg_rssi);
+  NRF_LOG_INFO("last rssi: %d", last_rssi);
 
-  memcpy(data, (uint8_t*)&rloc16, sizeof(rloc16));
-  memcpy(data+sizeof(rloc16), ext_addr->m8, sizeof(otExtAddress));
-
-  packet.data = data;
-  packet.data_len = sizeof(data);
-
-  for(size_t i = 0; i < sizeof(data); i++) {
-    printf("%2x", data[i]);
-  }
-  printf("\n");
-
-  permamote_coap_send(&m_coap_address, "thread_info", false, &packet);
+  permamote_coap_send(&m_coap_address, "thread_info", false, &msg);
 }
 
 static void send_discover(void) {
-  const char* addr = PARSE_ADDR;
-  uint8_t addr_len = strlen(addr);
-  uint8_t data[addr_len + 1];
+  Message msg = Message_init_default;
+  strncpy(msg.data.discovery, PARSE_ADDR, sizeof(msg.data.discovery));
 
   NRF_LOG_INFO("Sent discovery");
 
-  data[0] = addr_len;
-  memcpy(data+1, addr, addr_len);
-  packet.timestamp = ab1815_get_time_unix();
-  packet.data = data;
-  packet.data_len = addr_len + 1;
-
-  permamote_coap_send(&m_coap_address, "discovery", false, &packet);
+  permamote_coap_send(&m_coap_address, "discovery", false, &msg);
 }
 
 static void send_version(void) {
-    uint8_t data[32];
+  Message msg = Message_init_default;
+  strncpy(msg.data.git_version, GIT_VERSION, sizeof(msg.data.git_version));
 
-    NRF_LOG_INFO("Sent version");
+  NRF_LOG_INFO("Sent version");
 
-    memcpy(data, GIT_VERSION, strlen(GIT_VERSION));
-    packet.timestamp = ab1815_get_time_unix();
-    packet.data = data;
-    packet.data_len = strlen(GIT_VERSION);
-
-    permamote_coap_send(&m_coap_address, "version", false, &packet);
+  permamote_coap_send(&m_coap_address, "version", false, &msg);
 }
 
 
@@ -452,6 +435,35 @@ void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t acti
 
 void light_interrupt_callback(void) {
     max44009_schedule_read_lux();
+}
+
+void send_light() {
+  Message msg = Message_init_default;
+  float upper = sensed_lux + sensed_lux * 0.1;
+  float lower = sensed_lux - sensed_lux * 0.1;
+  NRF_LOG_INFO("Sensed: lux: %u, upper: %u, lower: %u", (uint32_t)sensed_lux, (uint32_t)upper, (uint32_t)lower);
+  max44009_set_upper_threshold(upper);
+  max44009_set_lower_threshold(lower);
+
+  msg.data.light_lux = sensed_lux;
+  permamote_coap_send(&m_coap_address, "light_lux", false, &msg);
+}
+
+void send_motion() {
+  Message msg = Message_init_default;
+
+  // disable interrupt and turn off PIR
+  NRF_LOG_INFO("TURN off PIR ");
+  nrf_drv_gpiote_in_event_disable(PIR_OUT);
+  nrf_gpio_pin_set(PIR_EN);
+
+  ret_code_t err_code = app_timer_start(pir_backoff, PIR_BACKOFF_PERIOD, NULL);
+  APP_ERROR_CHECK(err_code);
+
+  NRF_LOG_INFO("Saw motion");
+  msg.data.motion = true;
+
+  permamote_coap_send(&m_coap_address, "motion", false, &msg);
 }
 
 /**@brief Function for initializing the nrf log module.
@@ -516,35 +528,12 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info) {
 void state_step(void) {
   otInstance * thread_instance = thread_get_instance();
   if (state.send_light) {
-    float upper = sensed_lux + sensed_lux * 0.1;
-    float lower = sensed_lux - sensed_lux * 0.1;
-    NRF_LOG_INFO("Sensed: lux: %u, upper: %u, lower: %u", (uint32_t)sensed_lux, (uint32_t)upper, (uint32_t)lower);
-    max44009_set_upper_threshold(upper);
-    max44009_set_lower_threshold(lower);
-
-    packet.timestamp = ab1815_get_time_unix();
-    packet.data = (uint8_t*)&sensed_lux;
-    packet.data_len = sizeof(sensed_lux);
-    permamote_coap_send(&m_coap_address, "light_lux", false, &packet);
     state.send_light = false;
+    send_light();
   }
   if (state.send_motion) {
     state.send_motion = false;
-    uint8_t data = 1;
-
-    // disable interrupt and turn off PIR
-    NRF_LOG_INFO("TURN off PIR ");
-    nrf_drv_gpiote_in_event_disable(PIR_OUT);
-    nrf_gpio_pin_set(PIR_EN);
-
-    ret_code_t err_code = app_timer_start(pir_backoff, PIR_BACKOFF_PERIOD, NULL);
-    APP_ERROR_CHECK(err_code);
-
-    NRF_LOG_INFO("Saw motion");
-    packet.timestamp = ab1815_get_time_unix();
-    packet.data = &data;
-    packet.data_len = sizeof(data);
-    permamote_coap_send(&m_coap_address, "motion", false, &packet);
+    send_motion();
   }
   if (state.send_periodic) {
     //NRF_LOG_INFO("poll period: %d", otLinkGetPollPeriod(thread_get_instance()));
@@ -734,8 +723,7 @@ int main(void) {
   uint8_t id[6] = {0};
   get_device_id(id);
   // store ID with fds
-  uint16_t locator = 0x1000;
-  define_flash_variable_array(id, device_id, sizeof(id), locator);
+  define_flash_variable_array(id, device_id, sizeof(id), ID_LOCATOR);
   NRF_LOG_INFO("Device ID: %x:%x:%x:%x:%x:%x", device_id[0], device_id[1],
                 device_id[2], device_id[3], device_id[4], device_id[5]);
 

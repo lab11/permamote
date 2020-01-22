@@ -125,5 +125,6 @@ BOARD_SOURCES += \
 	permamote_coap.c \
 	si7021.c \
 	tcs34725.c \
+	pb_encode.c \
 
 endif

@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "nrf.h"
+#include "nrf_error.h"
 #include "fds.h"
 #include "nrf_log.h"
 
