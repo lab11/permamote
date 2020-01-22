@@ -13,7 +13,6 @@ BOARD_HEADER_PATHS = $(BOARD_DIR)/.
 BOARD_HEADER_PATHS += $(BOARD_DIR)/../../libraries/
 BOARD_LINKER_PATHS = $(BOARD_DIR)/.
 BOARD_SOURCES = $(notdir $(wildcard $(BOARD_DIR)/./*.c))
-BOARD_SOURCES += $(notdir $(wildcard $(BOARD_DIR)/../../libraries/*.c))
 BOARD_AS = $(notdir $(wildcard $(BOARD_DIR)/./*.s))
 
 # Board-specific configurations
@@ -117,5 +116,14 @@ BOARD_SOURCES += \
 	background_dfu_state.c \
 	fds.c \
 	nrf_atfifo.c \
+	ab1815.c \
+	flash_storage.c \
+	icount.c \
+	lis2dw12.c \
+	max44009.c \
+	ms5637.c \
+	permamote_coap.c \
+	si7021.c \
+	tcs34725.c \
 
 endif
