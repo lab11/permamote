@@ -122,7 +122,6 @@ BOARD_SOURCES += \
 	lis2dw12.c \
 	max44009.c \
 	ms5637.c \
-	permamote_coap.c \
 	si7021.c \
 	tcs34725.c \
 	pb_encode.c \
