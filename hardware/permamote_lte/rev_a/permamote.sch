@@ -3228,7 +3228,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 </part>
 <part name="GND16" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="P+12" library="mote" deviceset="VSW" device=""/>
-<part name="P+13" library="mote" deviceset="VBAT" device=""/>
 <part name="J1" library="connector" deviceset="TC2030-JLINK" device="-NL" value="TC2030-JLINK-NL"/>
 <part name="GND17" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="P+9" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
@@ -3491,6 +3490,9 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <part name="TP31" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="TP32" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="U13" library="TPD3F303" deviceset="TPD3F303DPVR" device=""/>
+<part name="GND38" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
+<part name="GND39" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
+<part name="GND40" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -3541,9 +3543,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <attribute name="MPN" x="7.62" y="38.1" size="1.778" layer="96" display="off"/>
 <attribute name="NAME" x="6.35" y="36.83" size="1.778" layer="95" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="8.89" y="36.83" size="1.778" layer="96" ratio="12" rot="R270" align="bottom-center"/>
-</instance>
-<instance part="P+13" gate="VCC" x="48.26" y="48.26" smashed="yes">
-<attribute name="VALUE" x="45.72" y="45.72" size="1.778" layer="96" rot="R90"/>
 </instance>
 <instance part="J1" gate="G$1" x="177.8" y="83.82" smashed="yes">
 <attribute name="NAME" x="167.64" y="91.694" size="1.778" layer="95" ratio="12"/>
@@ -3665,13 +3664,13 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <attribute name="NAME" x="58.42" y="144.78" size="1.778" layer="95"/>
 <attribute name="VALUE" x="58.42" y="88.9" size="1.778" layer="96"/>
 </instance>
-<instance part="C3" gate="G$1" x="154.94" y="129.54" smashed="yes" rot="R90">
-<attribute name="NAME" x="156.21" y="128.27" size="1.778" layer="95" ratio="12" rot="R180" align="bottom-center"/>
-<attribute name="VALUE" x="156.21" y="130.81" size="1.778" layer="96" ratio="12" align="bottom-center"/>
+<instance part="C3" gate="G$1" x="154.94" y="124.46" smashed="yes" rot="R180">
+<attribute name="NAME" x="156.21" y="125.73" size="1.778" layer="95" ratio="12" rot="R270" align="bottom-center"/>
+<attribute name="VALUE" x="153.67" y="125.73" size="1.778" layer="96" ratio="12" rot="R90" align="bottom-center"/>
 </instance>
-<instance part="C4" gate="G$1" x="167.64" y="129.54" smashed="yes" rot="R90">
-<attribute name="NAME" x="168.91" y="128.27" size="1.778" layer="95" ratio="12" rot="R180" align="bottom-center"/>
-<attribute name="VALUE" x="168.91" y="130.81" size="1.778" layer="96" ratio="12" align="bottom-center"/>
+<instance part="C4" gate="G$1" x="167.64" y="124.46" smashed="yes" rot="R180">
+<attribute name="NAME" x="168.91" y="125.73" size="1.778" layer="95" ratio="12" rot="R270" align="bottom-center"/>
+<attribute name="VALUE" x="166.37" y="125.73" size="1.778" layer="96" ratio="12" rot="R90" align="bottom-center"/>
 </instance>
 <instance part="GND33" gate="1" x="215.9" y="124.46" smashed="yes">
 <attribute name="VALUE" x="213.36" y="121.92" size="1.778" layer="96"/>
@@ -3687,6 +3686,15 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <instance part="L4" gate="G$1" x="215.9" y="137.16" smashed="yes" rot="R180">
 <attribute name="NAME" x="216.408" y="139.7" size="1.778" layer="95" ratio="12" rot="R270"/>
 <attribute name="VALUE" x="212.852" y="139.7" size="1.778" layer="96" ratio="12" rot="R270"/>
+</instance>
+<instance part="GND38" gate="1" x="48.26" y="38.1" smashed="yes">
+<attribute name="VALUE" x="45.72" y="35.56" size="1.778" layer="96"/>
+</instance>
+<instance part="GND39" gate="1" x="154.94" y="116.84" smashed="yes">
+<attribute name="VALUE" x="152.4" y="114.3" size="1.778" layer="96"/>
+</instance>
+<instance part="GND40" gate="1" x="167.64" y="116.84" smashed="yes">
+<attribute name="VALUE" x="165.1" y="114.3" size="1.778" layer="96"/>
 </instance>
 </instances>
 <busses>
@@ -3786,6 +3794,21 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <wire x1="175.26" y1="144.78" x2="185.42" y2="144.78" width="0.1524" layer="91"/>
 <pinref part="GND2" gate="1" pin="GND"/>
 <wire x1="185.42" y1="144.78" x2="185.42" y2="139.7" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="GND38" gate="1" pin="GND"/>
+<pinref part="U1" gate="G$1" pin="VBAT"/>
+<wire x1="48.26" y1="40.64" x2="50.8" y2="40.64" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="GND39" gate="1" pin="GND"/>
+<pinref part="C3" gate="G$1" pin="1"/>
+<wire x1="154.94" y1="119.38" x2="154.94" y2="121.92" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="GND40" gate="1" pin="GND"/>
+<pinref part="C4" gate="G$1" pin="1"/>
+<wire x1="167.64" y1="119.38" x2="167.64" y2="121.92" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="VCC" class="0">
@@ -3978,12 +4001,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <wire x1="50.8" y1="73.66" x2="50.8" y2="71.12" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="71.12" x2="76.2" y2="71.12" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="G$1" pin="P0.15"/>
-</segment>
-<segment>
-<pinref part="U1" gate="G$1" pin="VBAT"/>
-<pinref part="P+13" gate="VCC" pin="VBAT"/>
-<wire x1="50.8" y1="40.64" x2="48.26" y2="40.64" width="0.1524" layer="91"/>
-<wire x1="48.26" y1="40.64" x2="48.26" y2="45.72" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SWDIO" class="0">
@@ -4245,27 +4262,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <pinref part="IC1" gate="G$1" pin="VDD_GPIO"/>
 </segment>
 </net>
-<net name="N$8" class="0">
-<segment>
-<pinref part="C3" gate="G$1" pin="2"/>
-<pinref part="C4" gate="G$1" pin="1"/>
-<wire x1="160.02" y1="129.54" x2="165.1" y2="129.54" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$9" class="0">
-<segment>
-<pinref part="C3" gate="G$1" pin="1"/>
-<pinref part="IC1" gate="G$1" pin="ANT"/>
-<wire x1="152.4" y1="129.54" x2="144.78" y2="129.54" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$11" class="0">
-<segment>
-<pinref part="C4" gate="G$1" pin="2"/>
-<pinref part="J2" gate="G$1" pin="ANT"/>
-<wire x1="172.72" y1="129.54" x2="177.8" y2="129.54" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="N$6" class="0">
 <segment>
 <pinref part="U4" gate="G$1" pin="PON"/>
@@ -4278,7 +4274,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <pinref part="U4" gate="G$1" pin="AO"/>
 <wire x1="144.78" y1="139.7" x2="144.78" y2="142.24" width="0.1524" layer="91"/>
 <wire x1="144.78" y1="139.7" x2="144.78" y2="144.78" width="0.1524" layer="91"/>
-<junction x="144.78" y="139.7"/>
 <wire x1="144.78" y1="144.78" x2="149.86" y2="144.78" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -4319,6 +4314,19 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <pinref part="IC1" gate="G$1" pin="P0.28"/>
 <wire x1="121.92" y1="147.32" x2="121.92" y2="152.4" width="0.1524" layer="91"/>
 <label x="121.92" y="152.4" size="1.27" layer="95" rot="R90" xref="yes"/>
+</segment>
+</net>
+<net name="N$8" class="0">
+<segment>
+<pinref part="IC1" gate="G$1" pin="ANT"/>
+<pinref part="C3" gate="G$1" pin="2"/>
+<wire x1="144.78" y1="129.54" x2="154.94" y2="129.54" width="0.1524" layer="91"/>
+<pinref part="C4" gate="G$1" pin="2"/>
+<wire x1="154.94" y1="129.54" x2="167.64" y2="129.54" width="0.1524" layer="91"/>
+<junction x="154.94" y="129.54"/>
+<pinref part="J2" gate="G$1" pin="ANT"/>
+<wire x1="167.64" y1="129.54" x2="177.8" y2="129.54" width="0.1524" layer="91"/>
+<junction x="167.64" y="129.54"/>
 </segment>
 </net>
 </nets>
