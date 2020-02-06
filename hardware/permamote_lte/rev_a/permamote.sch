@@ -3708,32 +3708,14 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <pinref part="IC1" gate="G$1" pin="GND"/>
 </segment>
 <segment>
+<pinref part="GND13" gate="1" pin="GND"/>
 <pinref part="C7" gate="G$1" pin="2"/>
 <wire x1="30.48" y1="17.78" x2="30.48" y2="15.24" width="0.1524" layer="91"/>
-<pinref part="GND13" gate="1" pin="GND"/>
 <wire x1="30.48" y1="15.24" x2="30.48" y2="7.62" width="0.1524" layer="91"/>
-<wire x1="7.62" y1="33.02" x2="7.62" y2="15.24" width="0.1524" layer="91"/>
-<wire x1="7.62" y1="15.24" x2="12.7" y2="15.24" width="0.1524" layer="91"/>
 <junction x="30.48" y="15.24"/>
-<wire x1="12.7" y1="15.24" x2="22.86" y2="15.24" width="0.1524" layer="91"/>
-<wire x1="22.86" y1="15.24" x2="30.48" y2="15.24" width="0.1524" layer="91"/>
-<junction x="12.7" y="15.24"/>
-<junction x="22.86" y="15.24"/>
 <pinref part="C26" gate="G$1" pin="2"/>
-<pinref part="X4" gate="G$1" pin="1"/>
-<wire x1="12.7" y1="30.48" x2="12.7" y2="40.64" width="0.1524" layer="91"/>
-<junction x="12.7" y="30.48"/>
-<wire x1="12.7" y1="40.64" x2="35.56" y2="40.64" width="0.1524" layer="91"/>
-<wire x1="35.56" y1="40.64" x2="35.56" y2="35.56" width="0.1524" layer="91"/>
-<pinref part="U1" gate="G$1" pin="XI"/>
-<wire x1="35.56" y1="35.56" x2="50.8" y2="35.56" width="0.1524" layer="91"/>
-<wire x1="12.7" y1="30.48" x2="12.7" y2="15.24" width="0.1524" layer="91"/>
-<pinref part="X4" gate="G$1" pin="2"/>
-<pinref part="U1" gate="G$1" pin="XO"/>
-<wire x1="50.8" y1="33.02" x2="22.86" y2="33.02" width="0.1524" layer="91"/>
-<wire x1="22.86" y1="33.02" x2="22.86" y2="30.48" width="0.1524" layer="91"/>
-<junction x="22.86" y="30.48"/>
-<wire x1="22.86" y1="30.48" x2="22.86" y2="15.24" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="33.02" x2="7.62" y2="15.24" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="15.24" x2="30.48" y2="15.24" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U1" gate="G$1" pin="VSS"/>
@@ -4327,6 +4309,24 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <pinref part="J2" gate="G$1" pin="ANT"/>
 <wire x1="167.64" y1="129.54" x2="177.8" y2="129.54" width="0.1524" layer="91"/>
 <junction x="167.64" y="129.54"/>
+</segment>
+</net>
+<net name="N$40" class="0">
+<segment>
+<pinref part="X4" gate="G$1" pin="2"/>
+<pinref part="U1" gate="G$1" pin="XO"/>
+<wire x1="50.8" y1="33.02" x2="22.86" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="22.86" y1="33.02" x2="22.86" y2="30.48" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$43" class="0">
+<segment>
+<pinref part="X4" gate="G$1" pin="1"/>
+<wire x1="12.7" y1="30.48" x2="12.7" y2="40.64" width="0.1524" layer="91"/>
+<wire x1="12.7" y1="40.64" x2="35.56" y2="40.64" width="0.1524" layer="91"/>
+<wire x1="35.56" y1="40.64" x2="35.56" y2="35.56" width="0.1524" layer="91"/>
+<pinref part="U1" gate="G$1" pin="XI"/>
+<wire x1="35.56" y1="35.56" x2="50.8" y2="35.56" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
