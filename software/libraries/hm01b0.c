@@ -135,7 +135,7 @@ static int32_t hm01b0_load_script(const hm_script_t* script, uint32_t cmd_num) {
 //
 //*****************************************************************************
 void hm01b0_power_up(void) {
-  hm01b0_init_if(twi_mngr_instance);
+  hm01b0_init_if();
   // Start mclk for camera
   hm01b0_mclk_enable();
   // Turn on power gate
@@ -300,6 +300,13 @@ void hm01b0_mclk_disable() {
   nrfx_timer_disable(&mclk_timer);
 }
 
+void hm01b0_init_i2c(const nrf_twi_mngr_t* instance) {
+  //
+  // Initialize I2C
+  //
+  twi_mngr_instance = instance;
+}
+
 //*****************************************************************************
 //
 //! @brief Initialize interfaces
@@ -309,12 +316,7 @@ void hm01b0_mclk_disable() {
 //! @return err_code code.
 //
 //*****************************************************************************
-int32_t hm01b0_init_if(const nrf_twi_mngr_t* instance) {
-  //
-  // Initialize I2C
-  //
-  twi_mngr_instance = instance;
-
+int32_t hm01b0_init_if(void) {
   // initialize SPI for camera interface.
   // Enable the constant latency sub power mode to minimize the time it takes
   // for the SPIS peripheral to become active after the CSN line is asserted

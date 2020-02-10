@@ -113,6 +113,17 @@ void hm01b0_mclk_disable(void);
 
 //*****************************************************************************
 //
+//! @brief Initialize I2C
+//!
+//! This function passes a pointer to the TWI manager
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
+void hm01b0_init_i2c(const nrf_twi_mngr_t* instance);
+
+//*****************************************************************************
+//
 //! @brief Initialize interfaces
 //!
 //! This function initializes interfaces.
@@ -120,7 +131,7 @@ void hm01b0_mclk_disable(void);
 //! @return err_code code.
 //
 //*****************************************************************************
-int32_t hm01b0_init_if(const nrf_twi_mngr_t* instance);
+int32_t hm01b0_init_if(void);
 
 //*****************************************************************************
 //

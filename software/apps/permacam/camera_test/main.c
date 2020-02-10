@@ -85,7 +85,7 @@ int main(void) {
     NRF_LOG_INFO("address of buffer: %x", image_buffer);
     NRF_LOG_INFO("size of buffer:    %x", sizeof(image_buffer));
 
-    hm01b0_init_if(&twi_mngr_instance);
+    hm01b0_init_i2c(&twi_mngr_instance);
     hm01b0_mclk_init();
 
     nrf_gpio_pin_clear(LED_1);

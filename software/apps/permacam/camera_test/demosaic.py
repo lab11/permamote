@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import colour
 import numpy as np
 from matplotlib import pyplot as plt
