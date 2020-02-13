@@ -3789,14 +3789,13 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <junction x="63.5" y="170.18"/>
 </segment>
 <segment>
-<pinref part="U1" gate="G$1" pin="VCC"/>
-<wire x1="50.8" y1="43.18" x2="7.62" y2="43.18" width="0.1524" layer="91"/>
 <pinref part="C26" gate="G$1" pin="1"/>
-<wire x1="7.62" y1="43.18" x2="7.62" y2="40.64" width="0.1524" layer="91"/>
 <pinref part="P+16" gate="VCC" pin="VCC"/>
 <wire x1="7.62" y1="45.72" x2="7.62" y2="43.18" width="0.1524" layer="91"/>
+<pinref part="U1" gate="G$1" pin="VCC"/>
+<wire x1="7.62" y1="43.18" x2="7.62" y2="40.64" width="0.1524" layer="91"/>
+<wire x1="50.8" y1="43.18" x2="7.62" y2="43.18" width="0.1524" layer="91"/>
 <junction x="7.62" y="43.18"/>
-<wire x1="7.62" y1="45.72" x2="7.62" y2="43.18" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="R10" gate="G$1" pin="2"/>
@@ -4149,11 +4148,9 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 </net>
 <net name="SIM_1V8" class="0">
 <segment>
-<label x="134.62" y="86.36" size="1.27" layer="95" rot="R270" xref="yes"/>
-</segment>
-<segment>
-<wire x1="134.62" y1="86.36" x2="134.62" y2="88.9" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="G$1" pin="SIM_1V8"/>
+<wire x1="134.62" y1="88.9" x2="134.62" y2="86.36" width="0.1524" layer="91"/>
+<label x="134.62" y="86.36" size="1.27" layer="95" rot="R270" xref="yes"/>
 </segment>
 </net>
 <net name="SIM_CLK" class="0">
@@ -4220,11 +4217,9 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 </net>
 <net name="SIM_RST" class="0">
 <segment>
-<label x="124.46" y="86.36" size="1.27" layer="95" rot="R270" xref="yes"/>
-</segment>
-<segment>
 <wire x1="124.46" y1="86.36" x2="124.46" y2="88.9" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="G$1" pin="SIM_RST"/>
+<label x="124.46" y="86.36" size="1.27" layer="95" rot="R270" xref="yes"/>
 </segment>
 </net>
 <net name="!SD_CS" class="0">
@@ -4860,6 +4855,7 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <wire x1="55.88" y1="63.5" x2="63.5" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="63.5" y1="63.5" x2="63.5" y2="50.8" width="0.1524" layer="91"/>
 <pinref part="L3" gate="G$1" pin="2"/>
+<label x="63.5" y="63.5" size="1.778" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="N$12" class="0">
@@ -5466,6 +5462,7 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <wire x1="220.98" y1="142.24" x2="213.36" y2="142.24" width="0.1524" layer="91"/>
 <junction x="213.36" y="142.24"/>
 <pinref part="Q7" gate=".2" pin="S"/>
+<junction x="185.42" y="147.32"/>
 </segment>
 <segment>
 <pinref part="P+10" gate="VCC" pin="VCC"/>
