@@ -3066,34 +3066,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 </deviceset>
 </devicesets>
 </library>
-<library name="regulators">
-<description>LAB11 - Regulators.</description>
-<packages>
-</packages>
-<symbols>
-<symbol name="+3V3">
-<wire x1="1.27" y1="-1.905" x2="0" y2="0" width="0.254" layer="94"/>
-<wire x1="0" y1="0" x2="-1.27" y2="-1.905" width="0.254" layer="94"/>
-<text x="-2.54" y="-5.08" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
-<pin name="+3V3" x="0" y="-2.54" visible="off" length="short" direction="sup" rot="R90"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="+3V3" prefix="+3V3">
-<description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
-<gates>
-<gate name="P1" symbol="+3V3" x="0" y="0"/>
-</gates>
-<devices>
-<device name="">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 <library name="umich">
 <packages>
 </packages>
@@ -3433,8 +3405,8 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <part name="BAT1" library="batteries" deviceset="2477THMCOINCELLCLIP" device=""/>
 <part name="GND32" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="IC1" library="nRF9160" deviceset="NRF9160" device=""/>
-<part name="C3" library="passives" deviceset="CAPACITOR" device="0402_CAP"/>
-<part name="C4" library="passives" deviceset="CAPACITOR" device="0402_CAP"/>
+<part name="C3" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="DNP"/>
+<part name="C4" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="DNP"/>
 <part name="GND33" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="U4" library="Particle" deviceset="BGA725L6" device=""/>
 <part name="L2" library="passives" deviceset="INDUCTOR" device="0402" value="5.1nH"/>
@@ -3480,7 +3452,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <part name="U10" library="chips" deviceset="SIP32510" device="">
 <attribute name="DESCRIPTION" value="IC LOAD SWITCH SOT23-6"/>
 </part>
-<part name="+3V8" library="regulators" deviceset="+3V3" device=""/>
 <part name="FRAME4" library="lab11-frames" deviceset="LETTER_L_BLANK" device="">
 <attribute name="AUTHOR" value="MEGHNA MANDAVA"/>
 <attribute name="REV" value="A"/>
@@ -3493,6 +3464,7 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <part name="GND38" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND39" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND40" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
+<part name="P+13" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -3675,9 +3647,9 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <instance part="GND33" gate="1" x="215.9" y="124.46" smashed="yes">
 <attribute name="VALUE" x="213.36" y="121.92" size="1.778" layer="96"/>
 </instance>
-<instance part="U4" gate="G$1" x="162.56" y="149.86" smashed="yes" rot="R180">
-<attribute name="NAME" x="172.72" y="133.35" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="172.72" y="170.18" size="1.778" layer="96" rot="MR0"/>
+<instance part="U4" gate="G$1" x="167.64" y="149.86" smashed="yes" rot="R180">
+<attribute name="NAME" x="177.8" y="133.35" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="177.8" y="170.18" size="1.778" layer="96" rot="MR0"/>
 </instance>
 <instance part="L2" gate="G$1" x="226.06" y="149.86" smashed="yes" rot="R90">
 <attribute name="NAME" x="228.6" y="149.352" size="1.778" layer="95" ratio="12" rot="R180"/>
@@ -3769,11 +3741,11 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <segment>
 <pinref part="GND1" gate="1" pin="GND"/>
 <pinref part="U4" gate="G$1" pin="GND@1"/>
-<wire x1="142.24" y1="154.94" x2="149.86" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="154.94" x2="154.94" y2="154.94" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U4" gate="G$1" pin="GND@4"/>
-<wire x1="175.26" y1="144.78" x2="185.42" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="180.34" y1="144.78" x2="185.42" y2="144.78" width="0.1524" layer="91"/>
 <pinref part="GND2" gate="1" pin="GND"/>
 <wire x1="185.42" y1="144.78" x2="185.42" y2="139.7" width="0.1524" layer="91"/>
 </segment>
@@ -3824,6 +3796,7 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <pinref part="P+16" gate="VCC" pin="VCC"/>
 <wire x1="7.62" y1="45.72" x2="7.62" y2="43.18" width="0.1524" layer="91"/>
 <junction x="7.62" y="43.18"/>
+<wire x1="7.62" y1="45.72" x2="7.62" y2="43.18" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="R10" gate="G$1" pin="2"/>
@@ -3843,7 +3816,17 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <pinref part="P+8" gate="VCC" pin="VCC"/>
 <pinref part="U4" gate="G$1" pin="VCC"/>
 <wire x1="137.16" y1="152.4" x2="137.16" y2="149.86" width="0.1524" layer="91"/>
-<wire x1="137.16" y1="149.86" x2="149.86" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="137.16" y1="149.86" x2="154.94" y2="149.86" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="P+24" gate="VCC" pin="VCC"/>
+<pinref part="C37" gate="G$1" pin="1"/>
+<wire x1="20.32" y1="119.38" x2="53.34" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="20.32" y1="116.84" x2="20.32" y2="119.38" width="0.1524" layer="91"/>
+<junction x="20.32" y="119.38"/>
+<wire x1="20.32" y1="119.38" x2="12.7" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="12.7" y1="119.38" x2="12.7" y2="124.46" width="0.1524" layer="91"/>
+<pinref part="IC1" gate="G$1" pin="VDD_GPIO"/>
 </segment>
 </net>
 <net name="SCL" class="0">
@@ -4168,8 +4151,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <segment>
 <label x="134.62" y="86.36" size="1.27" layer="95" rot="R270" xref="yes"/>
 </segment>
-</net>
-<net name="N$33" class="0">
 <segment>
 <wire x1="134.62" y1="86.36" x2="134.62" y2="88.9" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="G$1" pin="SIM_1V8"/>
@@ -4182,25 +4163,23 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <label x="129.54" y="86.36" size="1.27" layer="95" rot="R270" xref="yes"/>
 </segment>
 </net>
-<net name="N$42" class="0">
-<segment>
-<wire x1="124.46" y1="86.36" x2="124.46" y2="88.9" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="SIM_RST"/>
-</segment>
-</net>
 <net name="N$2" class="0">
 <segment>
 <pinref part="L1" gate="G$1" pin="1"/>
 <pinref part="U4" gate="G$1" pin="AI"/>
-<wire x1="182.88" y1="149.86" x2="175.26" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="182.88" y1="149.86" x2="180.34" y2="149.86" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="GPS_EN" class="0">
 <segment>
 <wire x1="144.78" y1="114.3" x2="147.32" y2="114.3" width="0.1524" layer="91"/>
 <label x="147.32" y="114.3" size="1.27" layer="95" xref="yes"/>
-<label x="180.34" y="154.94" size="1.27" layer="95" xref="yes"/>
 <pinref part="IC1" gate="G$1" pin="MAGPIO0"/>
+</segment>
+<segment>
+<pinref part="U4" gate="G$1" pin="PON"/>
+<wire x1="190.5" y1="154.94" x2="180.34" y2="154.94" width="0.1524" layer="91"/>
+<label x="190.5" y="154.94" size="1.778" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="N$4" class="0">
@@ -4232,39 +4211,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <pinref part="IC1" gate="G$1" pin="P0.19"/>
 </segment>
 </net>
-<net name="N$7" class="0">
-<segment>
-<pinref part="P+24" gate="VCC" pin="VCC"/>
-<pinref part="C37" gate="G$1" pin="1"/>
-<wire x1="20.32" y1="119.38" x2="53.34" y2="119.38" width="0.1524" layer="91"/>
-<wire x1="20.32" y1="116.84" x2="20.32" y2="119.38" width="0.1524" layer="91"/>
-<junction x="20.32" y="119.38"/>
-<wire x1="20.32" y1="119.38" x2="12.7" y2="119.38" width="0.1524" layer="91"/>
-<wire x1="12.7" y1="119.38" x2="12.7" y2="124.46" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="VDD_GPIO"/>
-</segment>
-</net>
-<net name="N$6" class="0">
-<segment>
-<pinref part="U4" gate="G$1" pin="PON"/>
-<wire x1="180.34" y1="154.94" x2="175.26" y2="154.94" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$1" class="0">
-<segment>
-<pinref part="IC1" gate="G$1" pin="GPS"/>
-<pinref part="U4" gate="G$1" pin="AO"/>
-<wire x1="144.78" y1="139.7" x2="144.78" y2="142.24" width="0.1524" layer="91"/>
-<wire x1="144.78" y1="139.7" x2="144.78" y2="144.78" width="0.1524" layer="91"/>
-<wire x1="144.78" y1="144.78" x2="149.86" y2="144.78" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$3" class="0">
-<segment>
-<pinref part="IC1" gate="G$1" pin="SIM_DET"/>
-<wire x1="127" y1="88.9" x2="127" y2="86.36" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="SIM_IO" class="0">
 <segment>
 <pinref part="IC1" gate="G$1" pin="SIM_IO"/>
@@ -4275,6 +4221,10 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <net name="SIM_RST" class="0">
 <segment>
 <label x="124.46" y="86.36" size="1.27" layer="95" rot="R270" xref="yes"/>
+</segment>
+<segment>
+<wire x1="124.46" y1="86.36" x2="124.46" y2="88.9" width="0.1524" layer="91"/>
+<pinref part="IC1" gate="G$1" pin="SIM_RST"/>
 </segment>
 </net>
 <net name="!SD_CS" class="0">
@@ -4327,6 +4277,15 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <wire x1="35.56" y1="40.64" x2="35.56" y2="35.56" width="0.1524" layer="91"/>
 <pinref part="U1" gate="G$1" pin="XI"/>
 <wire x1="35.56" y1="35.56" x2="50.8" y2="35.56" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$1" class="0">
+<segment>
+<pinref part="IC1" gate="G$1" pin="GPS"/>
+<wire x1="144.78" y1="139.7" x2="149.86" y2="139.7" width="0.1524" layer="91"/>
+<wire x1="149.86" y1="139.7" x2="149.86" y2="144.78" width="0.1524" layer="91"/>
+<pinref part="U4" gate="G$1" pin="AO"/>
+<wire x1="149.86" y1="144.78" x2="154.94" y2="144.78" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
@@ -4397,9 +4356,6 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <attribute name="NAME" x="73.66" y="79.248" size="1.778" layer="95"/>
 <attribute name="VALUE" x="73.66" y="66.294" size="1.778" layer="96"/>
 </instance>
-<instance part="+3V8" gate="P1" x="60.96" y="88.9" smashed="yes">
-<attribute name="VALUE" x="58.42" y="83.82" size="1.778" layer="96" rot="R90"/>
-</instance>
 <instance part="FRAME4" gate="G$1" x="0" y="0" smashed="yes"/>
 <instance part="FRAME4" gate="G$2" x="152.4" y="0" smashed="yes">
 <attribute name="LAST_DATE_TIME" x="165.1" y="1.27" size="2.54" layer="94" font="vector"/>
@@ -4420,6 +4376,9 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <instance part="U13" gate="A" x="50.8" y="119.38" smashed="yes">
 <attribute name="NAME" x="58.7756" y="125.9586" size="2.0828" layer="95" ratio="6" rot="SR0"/>
 <attribute name="VALUE" x="58.1406" y="100.5586" size="2.0828" layer="96" ratio="6" rot="SR0"/>
+</instance>
+<instance part="P+13" gate="VCC" x="60.96" y="88.9" smashed="yes">
+<attribute name="VALUE" x="58.42" y="86.36" size="1.778" layer="96" rot="R90"/>
 </instance>
 </instances>
 <busses>
@@ -4615,7 +4574,7 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <label x="58.42" y="71.12" size="1.27" layer="95" font="vector" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="+3V3" class="0">
+<net name="VCC" class="0">
 <segment>
 <pinref part="R19" gate="G$1" pin="2"/>
 <pinref part="U10" gate="G$1" pin="VSUPP"/>
@@ -4623,8 +4582,8 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <wire x1="68.58" y1="73.66" x2="66.04" y2="73.66" width="0.1524" layer="91"/>
 <wire x1="66.04" y1="73.66" x2="66.04" y2="83.82" width="0.1524" layer="91"/>
 <wire x1="66.04" y1="83.82" x2="60.96" y2="83.82" width="0.1524" layer="91"/>
-<pinref part="+3V8" gate="P1" pin="+3V3"/>
-<wire x1="60.96" y1="83.82" x2="60.96" y2="86.36" width="0.1524" layer="91"/>
+<pinref part="P+13" gate="VCC" pin="VCC"/>
+<wire x1="60.96" y1="86.36" x2="60.96" y2="83.82" width="0.1524" layer="91"/>
 <junction x="60.96" y="83.82"/>
 </segment>
 </net>
