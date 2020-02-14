@@ -215,7 +215,7 @@ void ntp_jitter_callback(void* m) {
 
 void __attribute__((weak)) dns_response_handler(void         * p_context,
                                  const char   * p_hostname,
-                                 otIp6Address * p_resolved_address,
+                                 const otIp6Address * p_resolved_address,
                                  uint32_t       ttl,
                                  otError        error)
 {
@@ -742,6 +742,7 @@ int main(void) {
 
   thread_init(&thread_config);
   otInstance* thread_instance = thread_get_instance();
+  thread_coap_client_init(thread_instance);
   coap_dfu_init(thread_instance);
   //thread_coap_client_init(thread_instance);
   for(uint8_t i = 0; i < NUM_ADDRESSES; i++) {

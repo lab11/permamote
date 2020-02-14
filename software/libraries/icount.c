@@ -17,7 +17,7 @@
 
 float * voltage_p;
 size_t period;
-static nrf_drv_timer_t counter = NRF_DRV_TIMER_INSTANCE(0);
+static nrf_drv_timer_t counter = NRF_DRV_TIMER_INSTANCE(3);
 static nrf_drv_rtc_t rtc = NRF_DRV_RTC_INSTANCE(0);
 void pin_dummy_handler(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {}
 void timer_dummy_handler(nrf_timer_event_t event_type, void * p_context){}

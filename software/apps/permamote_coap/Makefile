@@ -2,7 +2,7 @@ PROJECT_NAME = $(shell basename "$(realpath ./)")
 
 # Configurations
 NRF_IC = nrf52840
-SDK_VERSION = 15
+SDK_VERSION = 16
 SOFTDEVICE_MODEL = blank
 USE_THREAD = 1
 USE_BOOTLOADER = 1

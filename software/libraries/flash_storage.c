@@ -31,7 +31,7 @@ static void wait_for_fds_ready(void)
 static void fds_evt_handler(fds_evt_t const * p_fds_evt) {
     switch (p_fds_evt->id) {
         case FDS_EVT_INIT:
-            if (p_fds_evt->result == FDS_SUCCESS)
+            if (p_fds_evt->result == NRF_SUCCESS)
             {
                 m_fds_initialized = true;
             }
@@ -43,7 +43,7 @@ static void fds_evt_handler(fds_evt_t const * p_fds_evt) {
 
 void flash_storage_init() {
     ret_code_t rc = fds_register(fds_evt_handler);
-    if (rc != FDS_SUCCESS) {
+    if (rc != NRF_SUCCESS) {
         // Registering of the FDS event handler has failed.
         NRF_LOG_INFO("FDS register failed");
     } else {
@@ -53,7 +53,7 @@ void flash_storage_init() {
 
     wait_for_fds_ready();
 
-    if (rc != FDS_SUCCESS) {
+    if (rc != NRF_SUCCESS) {
         NRF_LOG_INFO("FDS init failed");
     } else {
         NRF_LOG_INFO("FDS init OK");
@@ -95,7 +95,7 @@ int define_flash_variable_int(int initial_value, uint16_t record_key) {
     fds_find_token_t ftok;
 
     memset(&ftok, 0x00, sizeof(fds_find_token_t)); // Zero the token
-    if (fds_record_find(DEFAULT_FILE_ID, record_key, &record_desc, &ftok) == FDS_SUCCESS) {
+    if (fds_record_find(DEFAULT_FILE_ID, record_key, &record_desc, &ftok) == NRF_SUCCESS) {
         fds_record_open(&record_desc, &flash_record);
         return_value = *((int *)flash_record.p_data);
         fds_record_close(&record_desc);
@@ -114,7 +114,7 @@ float define_flash_variable_float(float initial_value, uint16_t record_key) {
     fds_find_token_t ftok;
 
     memset(&ftok, 0x00, sizeof(fds_find_token_t)); // Zero the token
-    if (fds_record_find(DEFAULT_FILE_ID, record_key, &record_desc, &ftok) == FDS_SUCCESS) {
+    if (fds_record_find(DEFAULT_FILE_ID, record_key, &record_desc, &ftok) == NRF_SUCCESS) {
         fds_record_open(&record_desc, &flash_record);
         return_value = *((float *)flash_record.p_data);
         fds_record_close(&record_desc);
@@ -126,14 +126,14 @@ float define_flash_variable_float(float initial_value, uint16_t record_key) {
 }
 
 void define_flash_variable_array(const uint8_t *initial_value, uint8_t *dest, const size_t length, uint16_t record_key) {
-    ret_code_t rc = FDS_SUCCESS;
+    ret_code_t rc = NRF_SUCCESS;
     fds_flash_record_t flash_record;
     fds_record_desc_t record_desc;
     fds_find_token_t ftok;
 
     memset(&ftok, 0x00, sizeof(fds_find_token_t)); // Zero the token
     rc = fds_record_find(DEFAULT_FILE_ID, record_key, &record_desc, &ftok);
-    if (rc == FDS_SUCCESS) {
+    if (rc == NRF_SUCCESS) {
         rc = fds_record_open(&record_desc, &flash_record);
         APP_ERROR_CHECK(rc);
         memcpy(dest, flash_record.p_data, flash_record.p_header->length_words*4);
