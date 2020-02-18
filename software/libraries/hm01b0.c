@@ -17,6 +17,7 @@ static uint8_t* current_image;
 static size_t   current_image_size;
 static uint32_t current_size;
 
+static bool _initialized = false;
 static const nrfx_timer_t mclk_timer = NRFX_TIMER_INSTANCE(3);
 static nrf_ppi_channel_t mclk_ppi_channel;
 
@@ -317,6 +318,10 @@ void hm01b0_init_i2c(const nrf_twi_mngr_t* instance) {
 //
 //*****************************************************************************
 int32_t hm01b0_init_if(void) {
+  if (_initialized) {
+    nrfx_spis_uninit(&camera_spis_instance);
+  }
+
   // initialize SPI for camera interface.
   // Enable the constant latency sub power mode to minimize the time it takes
   // for the SPIS peripheral to become active after the CSN line is asserted
@@ -327,6 +332,8 @@ int32_t hm01b0_init_if(void) {
   camera_spis_config.mosi_pin = HM01B0_CAM_D0;
   camera_spis_config.csn_pin = HM01B0_LVLD;
   APP_ERROR_CHECK(nrfx_spis_init(&camera_spis_instance, &camera_spis_config, camera_spis_handler, NULL));
+
+  _initialized = true;
 
   return NRF_SUCCESS;
 }
@@ -346,8 +353,10 @@ int32_t hm01b0_deinit_if(void) {
   //
   NRF_POWER->TASKS_LOWPWR = 1;
   NRF_POWER->TASKS_CONSTLAT = 0;
-  nrfx_spis_uninit(&camera_spis_instance);
-
+  if (_initialized) {
+    nrfx_spis_uninit(&camera_spis_instance);
+  }
+  _initialized = false;
   return 0;
 }
 

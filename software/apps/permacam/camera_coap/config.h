@@ -1,4 +1,4 @@
-#define COAP_SERVER_HOSTNAME "coap.permamote.com"
+#define COAP_SERVER_HOSTNAME "coap-test.permamote.com"
 #define NTP_SERVER_HOSTNAME "us.pool.ntp.org"
 #define UPDATE_SERVER_HOSTNAME "dfu.permamote.com"
 #define DNS_SERVER_ADDR "fdaa:bb:1::2"

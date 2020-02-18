@@ -16,11 +16,13 @@
 #include "nrf_log_default_backends.h"
 #include "nrf_drv_spi.h"
 #include "app_timer.h"
+#include "app_scheduler.h"
 
 #include <openthread/message.h>
 #include "simple_thread.h"
 #include "thread_ntp.h"
 #include "thread_coap.h"
+#include "thread_coap_block.h"
 #include "thread_dns.h"
 #include "device_id.h"
 #include "flash_storage.h"
@@ -69,6 +71,7 @@ typedef struct{
   bool send_motion;
   bool send_periodic;
   bool has_pic;
+  bool sending_pic;
   bool update_time;
   bool up_time_done;
   bool resolve_addr;
@@ -82,6 +85,8 @@ static uint8_t dfu_jitter_hours = 0;
 static bool seed = false;
 uint8_t device_id[6];
 permacam_state_t state = {0};
+
+static block_info b_info = {0};
 
 uint8_t enables[7] = {
    HM01B0_ENn,
@@ -207,7 +212,16 @@ void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t acti
   state.send_motion = true;
 }
 
+void picture_sent_callback(uint8_t* data, size_t len) {
+    NRF_LOG_INFO("DONE!");
+    state.sending_pic = false;
+}
+
 void take_picture() {
+    if (state.sending_pic) {
+      NRF_LOG_INFO("waiting to finish sending picture");
+      return;
+    }
     if (state.has_pic) {
       free(state.ptr);
     }
@@ -227,6 +241,18 @@ void take_picture() {
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
     state.has_pic = true;
+
+    // Send picture to endpoint
+    state.sending_pic = true;
+
+    memset(&b_info, 0, sizeof(b_info));
+    b_info.code = OT_COAP_CODE_PUT;
+    b_info.data_addr = state.ptr;
+    b_info.data_len = HM01B0_IMAGE_SIZE;
+    b_info.block_size = OT_COAP_BLOCK_SIZE_512;
+    b_info.callback = picture_sent_callback;
+
+    start_blockwise_transfer(thread_get_instance(), &m_coap_address, "image_raw", &b_info, block_response_handler);
 }
 
 void state_step(void) {
@@ -305,7 +331,7 @@ void state_step(void) {
   if (state.up_time_done) {
     // if not performing a dfu, return poll period to default
     if (!state.performing_dfu) {
-      otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
+      otLinkSetPollPeriod(thread_get_instance(), 100);
     }
     // if we haven't performed initial setup of rand
     if (!seed) {
@@ -366,51 +392,39 @@ int main(void) {
 
     sensors_init(&twi_mngr_instance, &spi_instance);
 
+    // setup thread
+    thread_config_t thread_config = {
+      .channel = 25,
+      .panid = 0xFACE,
+      .sed = true,
+      .poll_period = 100,
+      .child_period = DEFAULT_CHILD_TIMEOUT,
+      .autocommission = true,
+    };
+    thread_init(&thread_config);
+    thread_coap_client_init(thread_get_instance());
+
+    APP_SCHED_INIT(SCHED_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
     ret_code_t err_code = app_timer_init();
     APP_ERROR_CHECK(err_code);
 
     err_code = app_timer_create(&camera_timer, APP_TIMER_MODE_REPEATED, periodic_sensor_read_callback);
     APP_ERROR_CHECK(err_code);
+    err_code = app_timer_start(camera_timer, SENSOR_PERIOD, NULL);
+    APP_ERROR_CHECK(err_code);
+
     err_code = app_timer_create(&pir_backoff, APP_TIMER_MODE_SINGLE_SHOT, pir_backoff_callback);
     APP_ERROR_CHECK(err_code);
     err_code = app_timer_create(&pir_delay, APP_TIMER_MODE_SINGLE_SHOT, pir_enable_callback);
     APP_ERROR_CHECK(err_code);
     err_code = app_timer_create(&ntp_jitter, APP_TIMER_MODE_SINGLE_SHOT, ntp_jitter_callback);
     APP_ERROR_CHECK(err_code);
-    err_code = app_timer_start(camera_timer, SENSOR_PERIOD, NULL);
-    APP_ERROR_CHECK(err_code);
 
-    //state.ptr = malloc(HM01B0_IMAGE_SIZE);
-    //NRF_LOG_INFO("turning on camera");
-    //NRF_LOG_INFO("address of buffer: %x", state.ptr);
-    //NRF_LOG_INFO("size of buffer:    %x", HM01B0_IMAGE_SIZE);
-
-    //nrf_gpio_pin_clear(LED_1);
-    //hm01b0_power_up();
-
-    //int error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
-    //NRF_LOG_INFO("error: %d", error);
-
-    //hm01b0_blocking_read_oneframe(state.ptr, HM01B0_IMAGE_SIZE);
-    //nrf_gpio_pin_set(LED_1);
-    //hm01b0_power_down();
-
-    //free(state.ptr);
-
-    // setup thread
-    thread_config_t thread_config = {
-      .channel = 25,
-      .panid = 0xFACE,
-      .sed = true,
-      .poll_period = DEFAULT_POLL_PERIOD,
-      .child_period = DEFAULT_CHILD_TIMEOUT,
-      .autocommission = true,
-    };
-    thread_init(&thread_config);
 
     // Enter main loop.
     while (1) {
         thread_process();
+        app_sched_execute();
         state_step();
         if (NRF_LOG_PROCESS() == false)
         {
@@ -419,69 +433,3 @@ int main(void) {
     }
 }
 
-//int main(void) {
-//    // Initialize.
-//    nrf_power_dcdcen_set(1);
-//
-//    log_init();
-//
-//    twi_init(&twi_mngr_instance);
-//
-//    ret_code_t err_code = app_timer_init();
-//    APP_ERROR_CHECK(err_code);
-//
-//    //err_code = app_timer_create(&camera_timer, APP_TIMER_MODE_REPEATED, periodic_sensor_read_callback);
-//    //APP_ERROR_CHECK(err_code);
-//    //err_code = app_timer_create(&pir_backoff, APP_TIMER_MODE_SINGLE_SHOT, pir_backoff_callback);
-//    //APP_ERROR_CHECK(err_code);
-//    //err_code = app_timer_create(&pir_delay, APP_TIMER_MODE_SINGLE_SHOT, pir_enable_callback);
-//    //APP_ERROR_CHECK(err_code);
-//    //err_code = app_timer_create(&ntp_jitter, APP_TIMER_MODE_SINGLE_SHOT, ntp_jitter_callback);
-//    //APP_ERROR_CHECK(err_code);
-//    //err_code = app_timer_start(camera_timer, SENSOR_PERIOD, NULL);
-//    //APP_ERROR_CHECK(err_code);
-//
-//    hm01b0_init_i2c(&twi_mngr_instance);
-//    hm01b0_mclk_init();
-//    hm01b0_power_down();
-//
-//    // set up rtc/camera
-//    //sensors_init(&twi_mngr_instance, &spi_instance);
-//
-//    state.ptr = malloc(HM01B0_IMAGE_SIZE);
-//    NRF_LOG_INFO("turning on camera");
-//    NRF_LOG_INFO("address of buffer: %x", state.ptr);
-//    NRF_LOG_INFO("size of buffer:    %x", HM01B0_IMAGE_SIZE);
-//    nrf_gpio_pin_clear(LED_1);
-//    hm01b0_power_up();
-//
-//    int error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
-//    NRF_LOG_INFO("error: %d", error);
-//
-//    hm01b0_blocking_read_oneframe(state.ptr, HM01B0_IMAGE_SIZE);
-//    nrf_gpio_pin_set(LED_1);
-//    hm01b0_power_down();
-//    free(state.ptr);
-//
-//    // setup thread
-//    thread_config_t thread_config = {
-//      .channel = 25,
-//      .panid = 0xFACE,
-//      .sed = true,
-//      .poll_period = DEFAULT_POLL_PERIOD,
-//      .child_period = DEFAULT_CHILD_TIMEOUT,
-//      .autocommission = true,
-//    };
-//    //thread_init(&thread_config);
-//
-//    // Enter main loop.
-//    while (1) {
-//        //led_toggle(LED);
-//        //thread_process();
-//        //state_step();
-//        if (NRF_LOG_PROCESS() == false)
-//        {
-//          thread_sleep();
-//        }
-//    }
-//}

@@ -78,6 +78,7 @@ BOARD_SOURCES += \
 	device_id.c\
 	simple_thread.c\
 	thread_coap.c\
+	thread_coap_block.c\
 	thread_dns.c\
 	thread_ntp.c\
 	nrf_fstorage.c \
