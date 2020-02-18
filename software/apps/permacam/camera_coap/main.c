@@ -8,6 +8,7 @@
 #include "nrf_sdh.h"
 #include "nrf_soc.h"
 #include "nrf_gpio.h"
+#include "nrf_drv_gpiote.h"
 #include "nrf_power.h"
 #include "nrf_twi_mngr.h"
 #include "nrf_log.h"
@@ -30,17 +31,56 @@
 #include "ab1815.h"
 #include "HM01B0_SERIAL_FULL_8bits_msb_5fps.h"
 
+#include "init.h"
 #include "config.h"
 
 APP_TIMER_DEF(camera_timer);
+APP_TIMER_DEF(pir_backoff);
+APP_TIMER_DEF(pir_delay);
+APP_TIMER_DEF(ntp_jitter);
+
+#define SCHED_QUEUE_SIZE 32
+#define SCHED_EVENT_DATA_SIZE APP_TIMER_SCHED_EVENT_DATA_SIZE
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
 
+/*
+ * Permamote specific declarations for packet structure, state machine
+ * ==========================
+ * */
+typedef struct {
+  uint8_t voltage;
+  uint8_t camera;
+  uint8_t discover;
+} permamote_sensor_period_t;
+uint32_t period_count = 0;
+uint32_t hours_count = 0;
+
+static permamote_sensor_period_t sensor_period = {
+  .voltage = VOLTAGE_PERIOD,
+  .camera = CAMERA_PERIOD,
+  .discover = DISCOVER_PERIOD,
+};
+
 typedef struct{
-  bool take_pic;
+  uint8_t* ptr;
+  bool send_light;
+  bool send_motion;
+  bool send_periodic;
+  bool has_pic;
+  bool update_time;
+  bool up_time_done;
+  bool resolve_addr;
+  bool resolve_wait;
+  bool dfu_trigger;
+  bool performing_dfu;
+  bool do_reset;
 } permacam_state_t;
 
+static uint8_t dfu_jitter_hours = 0;
+static bool seed = false;
+uint8_t device_id[6];
 permacam_state_t state = {0};
 
 uint8_t enables[7] = {
@@ -51,36 +91,129 @@ uint8_t enables[7] = {
    I2C_SCL
 };
 
-void camera_timer_callback(void* context) {
-    state.take_pic = true;
+
+/*
+ * ntp and coap endpoint addresses, to be populated by DNS
+ * ========================================================
+ * */
+static otIp6Address unspecified_ipv6 = {0};
+static otIp6Address m_ntp_address;
+static otIp6Address m_coap_address;
+static otIp6Address m_up_address;
+#define NUM_ADDRESSES 3
+static otIp6Address* addresses[NUM_ADDRESSES] = {&m_ntp_address, &m_coap_address, &m_up_address};
+
+/*
+ * methods to manage addresses
+ * ==========================
+ * */
+static bool are_addresses_resolved(void) {
+  bool resolved = true;
+  for (size_t i = 0; i < NUM_ADDRESSES; i++) {
+    resolved &= !otIp6IsAddressEqual(addresses[i], &unspecified_ipv6);
+  }
+  return resolved;
 }
 
-void twi_init(const nrf_twi_mngr_t * twi_instance) {
-  ret_code_t err_code;
-
-  const nrf_drv_twi_config_t twi_config = {
-    .scl                = I2C_SCL,
-    .sda                = I2C_SDA,
-    .frequency          = NRF_TWI_FREQ_400K,
-  };
-
-  err_code = nrf_twi_mngr_init(twi_instance, &twi_config);
-  APP_ERROR_CHECK(err_code);
-}
-
-void log_init(void)
+static void address_print(const otIp6Address *addr)
 {
-    ret_code_t err_code = NRF_LOG_INIT(NULL);
-    APP_ERROR_CHECK(err_code);
+    char ipstr[40];
+    snprintf(ipstr, sizeof(ipstr), "%x:%x:%x:%x:%x:%x:%x:%x",
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 0)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 1)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 2)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 3)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 4)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 5)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 6)),
+             uint16_big_decode((uint8_t *)(addr->mFields.m16 + 7)));
 
-    NRF_LOG_DEFAULT_BACKENDS_INIT();
+    NRF_LOG_INFO("%s\r\n", (uint32_t)ipstr);
 }
 
-void state_step(){
-  if (state.take_pic) {
-    uint8_t image_buffer[HM01B0_IMAGE_SIZE];
+static void addresses_print(otInstance * aInstance)
+{
+    for (const otNetifAddress *addr = otIp6GetUnicastAddresses(aInstance); addr; addr = addr->mNext)
+    {
+        address_print(&addr->mAddress);
+    }
+}
+
+void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * p_context) {
+    NRF_LOG_INFO("State changed! Flags: 0x%08lx Current role: %d",
+                 flags, otThreadGetDeviceRole(p_context));
+
+    if (flags & OT_CHANGED_IP6_ADDRESS_ADDED && otThreadGetDeviceRole(p_context) == 2) {
+      NRF_LOG_INFO("We have internet connectivity!");
+      addresses_print(p_context);
+      state.update_time = true;
+    }
+}
+
+void ntp_response_handler(void* context, uint64_t time, otError error) {
+  struct timeval tv = {.tv_sec = (uint32_t)time & UINT32_MAX};
+  if (error == OT_ERROR_NONE) {
+    ab1815_set_time(unix_to_ab1815(tv));
+    NRF_LOG_INFO("ntp time: %lu.%lu", (uint32_t)time & UINT32_MAX);
+  }
+  else {
+    NRF_LOG_INFO("ntp error: %d", error);
+  }
+  state.up_time_done = true;
+}
+
+void rtc_callback(void) {
+  hours_count++;
+  if (hours_count % NTP_UPDATE_HOURS == 0) {
+    uint32_t r = rand();
+    float jitter = r / (float) RAND_MAX * (NTP_UPDATE_MAX - NTP_UPDATE_MIN) + NTP_UPDATE_MIN;
+    NRF_LOG_INFO("jitter: %u", (uint32_t) jitter);
+    ret_code_t err_code = app_timer_start(ntp_jitter, APP_TIMER_TICKS(jitter), NULL);
+    APP_ERROR_CHECK(err_code);
+  }
+  if (hours_count % DFU_CHECK_HOURS == dfu_jitter_hours) {
+    dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * DFU_CHECK_HOURS);
+    NRF_LOG_INFO("jitter: %u", (uint32_t) dfu_jitter_hours);
+    NRF_LOG_INFO("going for DFU");
+    state.dfu_trigger = true;
+  }
+}
+
+void ntp_jitter_callback(void* m) {
+    state.update_time = true;
+}
+
+void periodic_sensor_read_callback(void* m){
+    state.send_periodic = true;
+}
+
+void pir_backoff_callback(void* m) {
+  // turn on and wait for stable
+  NRF_LOG_INFO("TURN ON PIR");
+
+  nrf_gpio_pin_clear(PIR_EN);
+  ret_code_t err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
+  APP_ERROR_CHECK(err_code);
+
+}
+
+void pir_enable_callback(void* m) {
+  // enable interrupt
+  NRF_LOG_INFO("TURN ON PIR callback");
+  nrf_drv_gpiote_in_event_enable(PIR_OUT, 1);
+}
+
+void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
+  state.send_motion = true;
+}
+
+void take_picture() {
+    if (state.has_pic) {
+      free(state.ptr);
+    }
+    state.ptr = malloc(HM01B0_IMAGE_SIZE);
     NRF_LOG_INFO("turning on camera");
-    NRF_LOG_INFO("address of buffer: %x", image_buffer);
+    NRF_LOG_INFO("address of buffer: %x", state.ptr);
     NRF_LOG_INFO("size of buffer:    %x", HM01B0_IMAGE_SIZE);
 
 
@@ -90,10 +223,137 @@ void state_step(){
     int error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
     NRF_LOG_INFO("error: %d", error);
 
-    hm01b0_blocking_read_oneframe(image_buffer, HM01B0_IMAGE_SIZE);
+    hm01b0_blocking_read_oneframe(state.ptr, HM01B0_IMAGE_SIZE);
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
-    state.take_pic = false;
+    state.has_pic = true;
+}
+
+void state_step(void) {
+  otInstance * thread_instance = thread_get_instance();
+  //if (state.send_light) {
+  //  state.send_light = false;
+  //  send_light();
+  //}
+  //if (state.send_motion) {
+  //  state.send_motion = false;
+  //  send_motion();
+  //}
+  if (state.send_periodic) {
+    ab1815_tickle_watchdog();
+
+    period_count ++;
+    if (period_count % sensor_period.voltage == 0) {
+      //send_voltage();
+    }
+    if (period_count % sensor_period.camera == 0) {
+      //max44009_schedule_read_lux();
+      take_picture();
+    }
+    if (period_count % sensor_period.discover == 0) {
+      //send_discover();
+      //send_thread_info();
+    }
+
+    //if (state.dfu_trigger == true && state.performing_dfu == false) {
+    //  state.dfu_trigger = false;
+    //  state.performing_dfu = true;
+
+    //  // Send discovery packet and version before updating
+    //  send_discover();
+    //  send_version();
+
+    //  otLinkSetPollPeriod(thread_instance, DFU_POLL_PERIOD);
+    //  coap_remote_t remote;
+    //  memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
+    //  remote.port_number = OT_DEFAULT_COAP_PORT;
+    //  ret_code_t err_code = app_timer_start(dfu_monitor, DFU_MONITOR_PERIOD, NULL);
+    //  APP_ERROR_CHECK(err_code);
+    //  int result = coap_dfu_trigger(&remote);
+    //  NRF_LOG_INFO("result: %d", result);
+    //  if (result == NRF_ERROR_INVALID_STATE) {
+    //      coap_dfu_reset_state();
+    //      nrf_dfu_settings_progress_reset();
+    //  }
+    //}
+
+    state.send_periodic = false;
+  }
+  if (state.update_time) {
+    state.update_time = false;
+    NRF_LOG_INFO("RTC UPDATE");
+    otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
+
+    // resolve dns if needed
+    if (!are_addresses_resolved()) {
+      state.resolve_addr = true;
+    }
+    else {
+      // dns is resolved!
+      // request ntp time update
+      otError error = thread_ntp_request(thread_instance, &m_ntp_address, NULL, ntp_response_handler);
+      NRF_LOG_INFO("sent ntp poll!");
+      NRF_LOG_INFO("error: %d", error);
+      uint32_t poll = otLinkGetPollPeriod(thread_get_instance());
+      if (poll != RECV_POLL_PERIOD) {
+        NRF_LOG_INFO("poll: %u", poll);
+        otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
+      }
+
+    }
+  }
+  if (state.up_time_done) {
+    // if not performing a dfu, return poll period to default
+    if (!state.performing_dfu) {
+      otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
+    }
+    // if we haven't performed initial setup of rand
+    if (!seed) {
+      srand((uint32_t)time & UINT32_MAX);
+      // set jitter for next dfu check
+      dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * DFU_CHECK_HOURS);
+      NRF_LOG_INFO("JITTER: %u", dfu_jitter_hours);
+      // send version and discover because why not
+      //send_discover();
+      //send_thread_info();
+      //send_version();
+      seed = true;
+    }
+  }
+  if (state.resolve_addr) {
+      NRF_LOG_INFO("Resolving Addresses");
+      thread_dns_hostname_resolve(thread_instance,
+          DNS_SERVER_ADDR,
+          NTP_SERVER_HOSTNAME,
+          dns_response_handler,
+          (void*) &m_ntp_address);
+      thread_dns_hostname_resolve(thread_instance,
+          DNS_SERVER_ADDR,
+          COAP_SERVER_HOSTNAME,
+          dns_response_handler,
+          (void*) &m_coap_address);
+      thread_dns_hostname_resolve(thread_instance,
+          DNS_SERVER_ADDR,
+          UPDATE_SERVER_HOSTNAME,
+          dns_response_handler,
+          (void*) &m_up_address);
+      state.resolve_addr = false;
+      state.resolve_wait = true;
+  }
+  if (state.resolve_wait) {
+    bool resolved = are_addresses_resolved();
+    if (resolved)
+    {
+      state.update_time = true;
+      state.resolve_wait = false;
+    }
+  }
+
+  if (state.do_reset) {
+    static volatile int i = 0;
+    if (i++ > 100) {
+      NVIC_SystemReset();
+    }
   }
 }
 
@@ -102,36 +362,40 @@ int main(void) {
     nrf_power_dcdcen_set(1);
     log_init();
 
-    nrf_gpio_cfg_output(LED_1);
-    nrf_gpio_cfg_output(LED_2);
-    nrf_gpio_cfg_output(LED_3);
-    nrf_gpio_pin_set(LED_1);
-    nrf_gpio_pin_set(LED_2);
-    nrf_gpio_pin_set(LED_3);
-    for (int i = 0; i < 7; i++) {
-      nrf_gpio_cfg_output(enables[i]);
-      nrf_gpio_pin_set(enables[i]);
-    }
-
     twi_init(&twi_mngr_instance);
+
+    sensors_init(&twi_mngr_instance, &spi_instance);
 
     ret_code_t err_code = app_timer_init();
     APP_ERROR_CHECK(err_code);
-    err_code = app_timer_create(&camera_timer, APP_TIMER_MODE_REPEATED, camera_timer_callback);
+
+    err_code = app_timer_create(&camera_timer, APP_TIMER_MODE_REPEATED, periodic_sensor_read_callback);
+    APP_ERROR_CHECK(err_code);
+    err_code = app_timer_create(&pir_backoff, APP_TIMER_MODE_SINGLE_SHOT, pir_backoff_callback);
+    APP_ERROR_CHECK(err_code);
+    err_code = app_timer_create(&pir_delay, APP_TIMER_MODE_SINGLE_SHOT, pir_enable_callback);
+    APP_ERROR_CHECK(err_code);
+    err_code = app_timer_create(&ntp_jitter, APP_TIMER_MODE_SINGLE_SHOT, ntp_jitter_callback);
     APP_ERROR_CHECK(err_code);
     err_code = app_timer_start(camera_timer, SENSOR_PERIOD, NULL);
     APP_ERROR_CHECK(err_code);
 
-    // setup RTC
-    ab1815_init(&spi_instance);
-    ab1815_control_t ab1815_config;
-    ab1815_get_config(&ab1815_config);
-    ab1815_config.auto_rst = 1;
-    ab1815_set_config(ab1815_config);
+    //state.ptr = malloc(HM01B0_IMAGE_SIZE);
+    //NRF_LOG_INFO("turning on camera");
+    //NRF_LOG_INFO("address of buffer: %x", state.ptr);
+    //NRF_LOG_INFO("size of buffer:    %x", HM01B0_IMAGE_SIZE);
 
-    hm01b0_init_if(&twi_mngr_instance);
-    hm01b0_mclk_init();
-    hm01b0_power_down();
+    //nrf_gpio_pin_clear(LED_1);
+    //hm01b0_power_up();
+
+    //int error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
+    //NRF_LOG_INFO("error: %d", error);
+
+    //hm01b0_blocking_read_oneframe(state.ptr, HM01B0_IMAGE_SIZE);
+    //nrf_gpio_pin_set(LED_1);
+    //hm01b0_power_down();
+
+    //free(state.ptr);
 
     // setup thread
     thread_config_t thread_config = {
@@ -146,7 +410,6 @@ int main(void) {
 
     // Enter main loop.
     while (1) {
-        //led_toggle(LED);
         thread_process();
         state_step();
         if (NRF_LOG_PROCESS() == false)
@@ -155,3 +418,70 @@ int main(void) {
         }
     }
 }
+
+//int main(void) {
+//    // Initialize.
+//    nrf_power_dcdcen_set(1);
+//
+//    log_init();
+//
+//    twi_init(&twi_mngr_instance);
+//
+//    ret_code_t err_code = app_timer_init();
+//    APP_ERROR_CHECK(err_code);
+//
+//    //err_code = app_timer_create(&camera_timer, APP_TIMER_MODE_REPEATED, periodic_sensor_read_callback);
+//    //APP_ERROR_CHECK(err_code);
+//    //err_code = app_timer_create(&pir_backoff, APP_TIMER_MODE_SINGLE_SHOT, pir_backoff_callback);
+//    //APP_ERROR_CHECK(err_code);
+//    //err_code = app_timer_create(&pir_delay, APP_TIMER_MODE_SINGLE_SHOT, pir_enable_callback);
+//    //APP_ERROR_CHECK(err_code);
+//    //err_code = app_timer_create(&ntp_jitter, APP_TIMER_MODE_SINGLE_SHOT, ntp_jitter_callback);
+//    //APP_ERROR_CHECK(err_code);
+//    //err_code = app_timer_start(camera_timer, SENSOR_PERIOD, NULL);
+//    //APP_ERROR_CHECK(err_code);
+//
+//    hm01b0_init_i2c(&twi_mngr_instance);
+//    hm01b0_mclk_init();
+//    hm01b0_power_down();
+//
+//    // set up rtc/camera
+//    //sensors_init(&twi_mngr_instance, &spi_instance);
+//
+//    state.ptr = malloc(HM01B0_IMAGE_SIZE);
+//    NRF_LOG_INFO("turning on camera");
+//    NRF_LOG_INFO("address of buffer: %x", state.ptr);
+//    NRF_LOG_INFO("size of buffer:    %x", HM01B0_IMAGE_SIZE);
+//    nrf_gpio_pin_clear(LED_1);
+//    hm01b0_power_up();
+//
+//    int error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
+//    NRF_LOG_INFO("error: %d", error);
+//
+//    hm01b0_blocking_read_oneframe(state.ptr, HM01B0_IMAGE_SIZE);
+//    nrf_gpio_pin_set(LED_1);
+//    hm01b0_power_down();
+//    free(state.ptr);
+//
+//    // setup thread
+//    thread_config_t thread_config = {
+//      .channel = 25,
+//      .panid = 0xFACE,
+//      .sed = true,
+//      .poll_period = DEFAULT_POLL_PERIOD,
+//      .child_period = DEFAULT_CHILD_TIMEOUT,
+//      .autocommission = true,
+//    };
+//    //thread_init(&thread_config);
+//
+//    // Enter main loop.
+//    while (1) {
+//        //led_toggle(LED);
+//        //thread_process();
+//        //state_step();
+//        if (NRF_LOG_PROCESS() == false)
+//        {
+//          thread_sleep();
+//        }
+//    }
+//}

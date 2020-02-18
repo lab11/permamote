@@ -13,8 +13,7 @@
 #define NUM_SLAAC_ADDRESSES      6     /**< Number of SLAAC addresses. */
 
 #define VOLTAGE_PERIOD      5
-#define TPH_PERIOD          5
-#define COLOR_PERIOD        15
+#define CAMERA_PERIOD       1
 #define DISCOVER_PERIOD     15
 #define SENSOR_PERIOD       APP_TIMER_TICKS(60*1000)
 #define PIR_BACKOFF_PERIOD  APP_TIMER_TICKS(2*60*1000)
