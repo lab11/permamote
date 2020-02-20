@@ -1,6 +1,3 @@
-/* Blink
- */
-
 #include <stdbool.h>
 #include <stdint.h>
 #include "nrf.h"
@@ -215,6 +212,7 @@ void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t acti
 void picture_sent_callback(uint8_t* data, size_t len) {
     NRF_LOG_INFO("DONE!");
     state.sending_pic = false;
+    otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
 }
 
 void take_picture() {
@@ -251,6 +249,8 @@ void take_picture() {
     b_info.data_len = HM01B0_IMAGE_SIZE;
     b_info.block_size = OT_COAP_BLOCK_SIZE_512;
     b_info.callback = picture_sent_callback;
+
+    otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
 
     start_blockwise_transfer(thread_get_instance(), &m_coap_address, "image_raw", &b_info, block_response_handler);
 }
@@ -330,8 +330,9 @@ void state_step(void) {
   }
   if (state.up_time_done) {
     // if not performing a dfu, return poll period to default
-    if (!state.performing_dfu) {
-      otLinkSetPollPeriod(thread_get_instance(), 100);
+    if (!state.performing_dfu && !state.sending_pic) {
+      otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
+      state.up_time_done = false;
     }
     // if we haven't performed initial setup of rand
     if (!seed) {
@@ -397,7 +398,7 @@ int main(void) {
       .channel = 25,
       .panid = 0xFACE,
       .sed = true,
-      .poll_period = 100,
+      .poll_period = DEFAULT_POLL_PERIOD,
       .child_period = DEFAULT_CHILD_TIMEOUT,
       .autocommission = true,
     };
