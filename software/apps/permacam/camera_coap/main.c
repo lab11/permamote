@@ -279,6 +279,8 @@ void take_picture() {
     NRF_LOG_INFO("len: 0x%x", len);
 
     memset(&b_info, 0, sizeof(b_info));
+    const char* path = "image_raw";
+    memcpy(b_info.path, path, strnlen(path, sizeof(b_info.path)));
     b_info.code = OT_COAP_CODE_PUT;
     b_info.data_addr = state.ptr;
     b_info.data_len = len;
@@ -287,7 +289,7 @@ void take_picture() {
 
     otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
 
-    start_blockwise_transfer(thread_get_instance(), &m_coap_address, "image_raw", &b_info, block_response_handler);
+    start_blockwise_transfer(thread_get_instance(), &m_coap_address, &b_info, block_response_handler);
 }
 
 void state_step(void) {

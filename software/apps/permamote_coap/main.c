@@ -80,13 +80,6 @@ static permamote_sensor_period_t sensor_period = {
   .discover = DISCOVER_PERIOD,
 };
 
-static permamote_packet_t packet = {
-    .id = NULL,
-    .id_len = 0,
-    .data = NULL,
-    .data_len = 0,
-};
-
 typedef struct{
   bool send_light;
   bool send_motion;
@@ -726,9 +719,6 @@ int main(void) {
   define_flash_variable_array(id, device_id, sizeof(id), ID_LOCATOR);
   NRF_LOG_INFO("Device ID: %x:%x:%x:%x:%x:%x", device_id[0], device_id[1],
                 device_id[2], device_id[3], device_id[4], device_id[5]);
-
-  packet.id = device_id;
-  packet.id_len = sizeof(device_id);
 
   // setup thread
   thread_config_t thread_config = {
