@@ -37,6 +37,9 @@ message Data {
   bytes  thread_ext_addr = 51;
   uint32 thread_parent_avg_rssi = 52;
   uint32 thread_parent_last_rssi = 53;
+
+  // Image
+  bytes  image_raw = 70;
 }
 
 message Message {
