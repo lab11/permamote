@@ -25,6 +25,7 @@
 #include "flash_storage.h"
 
 #include "permacam.h"
+#include "permamote_coap.h"
 
 #include "hm01b0.h"
 #include "ab1815.h"
@@ -142,6 +143,24 @@ static void addresses_print(otInstance * aInstance)
     {
         address_print(&addr->mAddress);
     }
+}
+
+static void send_discover(void) {
+  Message msg = Message_init_default;
+  strncpy(msg.data.discovery, PARSE_ADDR, sizeof(msg.data.discovery));
+
+  NRF_LOG_INFO("Sent discovery");
+
+  permamote_coap_send(&m_coap_address, "discovery", DEVICE_TYPE, false, &msg);
+}
+
+static void send_version(void) {
+  Message msg = Message_init_default;
+  strncpy(msg.data.git_version, GIT_VERSION, sizeof(msg.data.git_version));
+
+  NRF_LOG_INFO("Sent version");
+
+  permamote_coap_send(&m_coap_address, "version", DEVICE_TYPE, false, &msg);
 }
 
 bool write_image_bytes(pb_ostream_t *stream, const pb_field_t *field, void * const *arg)
@@ -314,7 +333,7 @@ void state_step(void) {
       take_picture();
     }
     if (period_count % sensor_period.discover == 0) {
-      //send_discover();
+      send_discover();
       //send_thread_info();
     }
 
@@ -378,9 +397,9 @@ void state_step(void) {
       dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * DFU_CHECK_HOURS);
       NRF_LOG_INFO("JITTER: %u", dfu_jitter_hours);
       // send version and discover because why not
-      //send_discover();
+      send_discover();
       //send_thread_info();
-      //send_version();
+      send_version();
       seed = true;
     }
   }

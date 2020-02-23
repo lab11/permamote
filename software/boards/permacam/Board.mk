@@ -13,7 +13,7 @@ BOARD_HEADER_PATHS = $(BOARD_DIR)/.
 BOARD_HEADER_PATHS += $(BOARD_DIR)/../../libraries/
 BOARD_LINKER_PATHS = $(BOARD_DIR)/.
 BOARD_SOURCES = $(notdir $(wildcard $(BOARD_DIR)/./*.c))
-BOARD_SOURCES += max44009.c hm01b0.c
+BOARD_SOURCES += max44009.c hm01b0.c permamote_coap.c
 BOARD_AS = $(notdir $(wildcard $(BOARD_DIR)/./*.s))
 
 # Board-specific configurations
