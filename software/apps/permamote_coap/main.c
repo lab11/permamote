@@ -290,7 +290,7 @@ static void send_temp_pres_hum(void) {
   // Prepare humidity packet
   msg.data.humidity_percent = humidity;
 
-  permamote_coap_send(&m_coap_address, "temp_pres_hum", false, &msg);
+  permamote_coap_send(&m_coap_address, "temp_pres_hum", DEVICE_TYPE, false, &msg);
 
   NRF_LOG_INFO("Sensed ms5637: temperature: %d, pressure: %d", (int32_t)temperature, (int32_t)pressure);
   NRF_LOG_INFO("Sensed si7021: humidity: %d", (int32_t)humidity);
@@ -311,7 +311,7 @@ static void send_voltage(void) {
   // sense vbat_ok
   msg.data.vbat_ok = nrf_gpio_pin_read(VBAT_OK);
 
-  permamote_coap_send(&m_coap_address, "voltage", false, &msg);
+  permamote_coap_send(&m_coap_address, "voltage", DEVICE_TYPE, false, &msg);
 
   NRF_LOG_INFO("Sensed voltage: vbat*100: %d, vsol*100: %d, vsec*100: %d", (int32_t)(msg.data.primary_voltage*100), (int32_t)(msg.data.solar_voltage*100), (int32_t)(msg.data.secondary_voltage*100));
   NRF_LOG_INFO("VBAT_OK: %d", msg.data.vbat_ok);
@@ -330,7 +330,7 @@ void color_read_callback(uint16_t red, uint16_t green, uint16_t blue, uint16_t c
   msg.data.light_counts_blue = blue;
   msg.data.light_counts_clear = clear;
   // send
-  permamote_coap_send(&m_coap_address, "light_color", false, &msg);
+  permamote_coap_send(&m_coap_address, "light_color", DEVICE_TYPE, false, &msg);
 
   NRF_LOG_INFO("Sensed light cct: %u", (uint32_t)cct);
   NRF_LOG_INFO("Sensed light color:\n\tr: %u\n\tg: %u\n\tb: %u", (uint16_t)red, (uint16_t)green, (uint16_t)blue);
@@ -366,7 +366,7 @@ static void send_thread_info(void) {
   NRF_LOG_INFO("average rssi: %d", avg_rssi);
   NRF_LOG_INFO("last rssi: %d", last_rssi);
 
-  permamote_coap_send(&m_coap_address, "thread_info", false, &msg);
+  permamote_coap_send(&m_coap_address, "thread_info", DEVICE_TYPE, false, &msg);
 }
 
 static void send_discover(void) {
@@ -375,7 +375,7 @@ static void send_discover(void) {
 
   NRF_LOG_INFO("Sent discovery");
 
-  permamote_coap_send(&m_coap_address, "discovery", false, &msg);
+  permamote_coap_send(&m_coap_address, "discovery", DEVICE_TYPE, false, &msg);
 }
 
 static void send_version(void) {
@@ -384,7 +384,7 @@ static void send_version(void) {
 
   NRF_LOG_INFO("Sent version");
 
-  permamote_coap_send(&m_coap_address, "version", false, &msg);
+  permamote_coap_send(&m_coap_address, "version", DEVICE_TYPE, false, &msg);
 }
 
 
@@ -439,7 +439,7 @@ void send_light() {
   max44009_set_lower_threshold(lower);
 
   msg.data.light_lux = sensed_lux;
-  permamote_coap_send(&m_coap_address, "light_lux", false, &msg);
+  permamote_coap_send(&m_coap_address, "light_lux", DEVICE_TYPE, false, &msg);
 }
 
 void send_motion() {
@@ -456,7 +456,7 @@ void send_motion() {
   NRF_LOG_INFO("Saw motion");
   msg.data.motion = true;
 
-  permamote_coap_send(&m_coap_address, "motion", false, &msg);
+  permamote_coap_send(&m_coap_address, "motion", DEVICE_TYPE, false, &msg);
 }
 
 /**@brief Function for initializing the nrf log module.
@@ -747,6 +747,7 @@ int main(void) {
   max44009_schedule_read_lux();
   max44009_enable_interrupt();
 
+  state.dfu_trigger = true;
   while (1) {
     coap_dfu_process();
     thread_process();

@@ -1,3 +1,5 @@
+#define DEVICE_TYPE "Permamote"
+
 #define COAP_SERVER_HOSTNAME "coap.permamote.com"
 #define NTP_SERVER_HOSTNAME "us.pool.ntp.org"
 #define UPDATE_SERVER_HOSTNAME "dfu.permamote.com"

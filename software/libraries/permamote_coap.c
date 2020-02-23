@@ -28,7 +28,7 @@ void permamote_response_handler (void* context, otMessage* message, const
 }
 
 otError permamote_coap_send(otIp6Address* dest_addr,
-    const char* path, bool confirmable, Message* msg) {
+    const char* path, const char* device_type, bool confirmable, Message* msg) {
   if (otIp6IsAddressEqual(dest_addr, &unspecified_ipv6)) {
     return OT_ERROR_ADDRESS_QUERY;
   }
@@ -37,7 +37,6 @@ otError permamote_coap_send(otIp6Address* dest_addr,
   Header header = Header_init_default;
   header.version = PERMAMOTE_PACKET_VERSION;
   memcpy(header.id.bytes, device_id, sizeof(device_id));
-  const char* device_type = "Permamote";
   strncpy(header.device_type, device_type, sizeof(header.device_type));
   header.id.size = sizeof(device_id);
   struct timeval time = ab1815_get_time_unix();

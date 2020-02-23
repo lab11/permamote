@@ -18,4 +18,4 @@ typedef struct {
   uint8_t* data;
 } permamote_packet_t;
 
-otError permamote_coap_send(otIp6Address* dest, const char* path, bool confirmable, Message* msg);
+otError permamote_coap_send(otIp6Address* dest, const char* path, const char* device_type, bool confirmable, Message* msg);
