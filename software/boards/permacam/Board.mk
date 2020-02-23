@@ -106,6 +106,7 @@ BOARD_SOURCES += \
 	crc32.c \
 	pb_common.c\
 	pb_decode.c\
+	pb_encode.c\
 	dfu-cc.pb.c \
 	nrf_dfu_flash.c \
 	nrf_dfu_settings.c \

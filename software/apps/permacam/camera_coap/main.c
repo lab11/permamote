@@ -33,6 +33,9 @@
 #include "init.h"
 #include "config.h"
 
+#include "parse.pb.h"
+#include "pb_encode.h"
+
 APP_TIMER_DEF(camera_timer);
 APP_TIMER_DEF(pir_backoff);
 APP_TIMER_DEF(pir_delay);
@@ -141,6 +144,14 @@ static void addresses_print(otInstance * aInstance)
     }
 }
 
+bool write_image_bytes(pb_ostream_t *stream, const pb_field_t *field, void * const *arg)
+{
+    if (!pb_encode_tag_for_field(stream, field))
+        return false;
+
+    return pb_encode_string(stream, state.ptr+256, HM01B0_IMAGE_SIZE);
+}
+
 void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * p_context) {
     NRF_LOG_INFO("State changed! Flags: 0x%08lx Current role: %d",
                  flags, otThreadGetDeviceRole(p_context));
@@ -223,9 +234,9 @@ void take_picture() {
     if (state.has_pic) {
       free(state.ptr);
     }
-    state.ptr = malloc(HM01B0_IMAGE_SIZE);
+    state.ptr = malloc(HM01B0_IMAGE_SIZE + 256);
     NRF_LOG_INFO("turning on camera");
-    NRF_LOG_INFO("address of buffer: %x", state.ptr);
+    NRF_LOG_INFO("address of buffer: %x", state.ptr + 256);
     NRF_LOG_INFO("size of buffer:    %x", HM01B0_IMAGE_SIZE);
 
 
@@ -235,7 +246,7 @@ void take_picture() {
     int error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
     NRF_LOG_INFO("error: %d", error);
 
-    hm01b0_blocking_read_oneframe(state.ptr, HM01B0_IMAGE_SIZE);
+    hm01b0_blocking_read_oneframe(state.ptr + 256, HM01B0_IMAGE_SIZE);
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
     state.has_pic = true;
@@ -243,10 +254,34 @@ void take_picture() {
     // Send picture to endpoint
     state.sending_pic = true;
 
+    Message msg = Message_init_default;
+    pb_callback_t callback;
+    callback.funcs.encode = write_image_bytes;
+    msg.data.image_raw = callback;
+
+    Header header = Header_init_default;
+    header.version = 1;
+    const char* device_type = "Permacam";
+    memcpy(header.id.bytes, device_id, sizeof(device_id));
+    strncpy(header.device_type, device_type, sizeof(header.device_type));
+    header.id.size = sizeof(device_id);
+    struct timeval time = ab1815_get_time_unix();
+    header.tv_sec = time.tv_sec;
+    header.tv_usec = time.tv_usec;
+    header.seq_no = 0;
+
+    memcpy(&(msg.header), &header, sizeof(header));
+
+    pb_ostream_t stream;
+    stream = pb_ostream_from_buffer(state.ptr, HM01B0_IMAGE_SIZE+ 256);
+    pb_encode(&stream, Message_fields, &msg);
+    size_t len = stream.bytes_written;
+    NRF_LOG_INFO("len: 0x%x", len);
+
     memset(&b_info, 0, sizeof(b_info));
     b_info.code = OT_COAP_CODE_PUT;
     b_info.data_addr = state.ptr;
-    b_info.data_len = HM01B0_IMAGE_SIZE;
+    b_info.data_len = len;
     b_info.block_size = OT_COAP_BLOCK_SIZE_512;
     b_info.callback = picture_sent_callback;
 
