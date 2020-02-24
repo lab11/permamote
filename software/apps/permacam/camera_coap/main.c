@@ -444,10 +444,19 @@ int main(void) {
     // Initialize.
     nrf_power_dcdcen_set(1);
     log_init();
+    flash_storage_init();
 
     twi_init(&twi_mngr_instance);
 
     sensors_init(&twi_mngr_instance, &spi_instance);
+
+    NRF_LOG_INFO("GIT Version: %s", GIT_VERSION);
+    uint8_t id[6] = {0};
+    get_device_id(id);
+    // store ID with fds
+    define_flash_variable_array(id, device_id, sizeof(id), ID_LOCATOR);
+    NRF_LOG_INFO("Device ID: %x:%x:%x:%x:%x:%x", device_id[0], device_id[1],
+                device_id[2], device_id[3], device_id[4], device_id[5]);
 
     // setup thread
     thread_config_t thread_config = {

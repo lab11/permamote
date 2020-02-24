@@ -119,6 +119,7 @@ BOARD_SOURCES += \
 	background_dfu_operation.c \
 	background_dfu_state.c \
 	fds.c \
+	flash_storage.c \
 	nrf_atfifo.c \
 	ab1815.c \
 
