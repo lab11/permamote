@@ -16,6 +16,7 @@
 #include "app_scheduler.h"
 
 #include <openthread/message.h>
+#include <openthread/random_noncrypto.h>
 #include "simple_thread.h"
 #include "thread_ntp.h"
 #include "thread_coap.h"
@@ -239,7 +240,7 @@ void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t acti
   state.send_motion = true;
 }
 
-void picture_sent_callback(uint8_t* data, size_t len) {
+void picture_sent_callback(uint8_t code, otError result) {
     NRF_LOG_INFO("DONE!");
     state.sending_pic = false;
     otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
@@ -287,7 +288,8 @@ void take_picture() {
     struct timeval time = ab1815_get_time_unix();
     header.tv_sec = time.tv_sec;
     header.tv_usec = time.tv_usec;
-    header.seq_no = 0;
+    static uint32_t seq_no = 0;
+    header.seq_no = seq_no++;
 
     memcpy(&(msg.header), &header, sizeof(header));
 
@@ -305,6 +307,7 @@ void take_picture() {
     b_info.data_len = len;
     b_info.block_size = OT_COAP_BLOCK_SIZE_512;
     b_info.callback = picture_sent_callback;
+    b_info.etag = otRandomNonCryptoGetUint32();
 
     otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
 
