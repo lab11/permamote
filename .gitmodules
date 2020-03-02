@@ -4,3 +4,6 @@
 [submodule "software/nrf52x-base"]
 	path = software/nrf52x-base
 	url = https://github.com/lab11/nrf52x-base.git
+[submodule "software/libraries/jpec"]
+	path = software/libraries/jpec
+	url = https://github.com/Moodstocks/jpec.git

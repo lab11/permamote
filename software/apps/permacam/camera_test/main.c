@@ -21,6 +21,8 @@
 #include "ab1815.h"
 #include "HM01B0_SERIAL_FULL_8bits_msb_5fps.h"
 
+#include "jpec.h"
+
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
 
@@ -54,7 +56,7 @@ void log_init(void)
 }
 
 int main(void) {
-    uint8_t image_buffer[HM01B0_IMAGE_SIZE];
+    uint8_t* image_buffer = malloc(HM01B0_IMAGE_SIZE);
 
 
     // Initialize.
@@ -83,7 +85,7 @@ int main(void) {
 
     NRF_LOG_INFO("turning on camera");
     NRF_LOG_INFO("address of buffer: %x", image_buffer);
-    NRF_LOG_INFO("size of buffer:    %x", sizeof(image_buffer));
+    NRF_LOG_INFO("size of buffer:    %x", HM01B0_IMAGE_SIZE);
 
     hm01b0_init_i2c(&twi_mngr_instance);
     hm01b0_mclk_init();
@@ -94,9 +96,25 @@ int main(void) {
     int error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
     NRF_LOG_INFO("error: %d", error);
 
-    hm01b0_blocking_read_oneframe(image_buffer, sizeof(image_buffer));
+    //hm01b0_set_mode(STREAMING, 0);
+
+    nrf_delay_ms(1000);
+
+    //hm01b0_set_mode(STANDBY, 0);
+    //nrf_delay_ms(500);
+
+    hm01b0_blocking_read_oneframe(image_buffer, HM01B0_IMAGE_SIZE);
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
+
+    // Compress the image
+    image_buffer = realloc(image_buffer, 320*320);
+    jpec_enc_t *e = jpec_enc_new(image_buffer, 320, 320);
+
+    int len;
+    const uint8_t *jpeg = jpec_enc_run(e, &len);
+    NRF_LOG_INFO("jpeg location: %p", jpeg);
+    NRF_LOG_INFO("length: 0x%x", len);
 
     // Enter main loop.
     while (1) {

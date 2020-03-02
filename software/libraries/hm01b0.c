@@ -141,6 +141,7 @@ void hm01b0_power_up(void) {
   hm01b0_mclk_enable();
   // Turn on power gate
   nrf_gpio_pin_clear(HM01B0_ENn);
+  nrf_gpio_cfg_input(HM01B0_FVLD, NRF_GPIO_PIN_NOPULL);
   // Delay max turn-on time for camera
   nrf_delay_us(50);
 }
@@ -200,6 +201,16 @@ static void correct_image(uint8_t* arr) {
     arr[i + 1] = 0;
     arr[i + HM01B0_PIXEL_X_NUM - 2] = 0;
     arr[i + HM01B0_PIXEL_X_NUM - 1] = 0;
+  }
+}
+
+// Helper function to shear off 2-pixel border
+// TODO fix magic numbers
+void reshape_to_320(uint8_t* arr) {
+  size_t j = 2 + 324*2;
+  for(size_t i = 0; i < 320; i++) {
+    memcpy(arr + i*320, arr + j, 320);
+    j = j + 324;
   }
 }
 
@@ -630,7 +641,11 @@ int32_t hm01b0_blocking_read_oneframe(uint8_t *buf, size_t len) {
   current_size = 0;
 
   // set mode to streaming, one frame
-  hm01b0_set_mode(STREAM_N, 1);
+  hm01b0_set_mode(STREAMING, 1);
+
+  while(!nrf_gpio_pin_read(HM01B0_FVLD)) {
+
+  }
 
   APP_ERROR_CHECK(nrfx_spis_buffers_set(&camera_spis_instance, NULL, 0, buf, HM01B0_PIXEL_X_NUM));
   while(current_size < len) {
@@ -638,6 +653,7 @@ int32_t hm01b0_blocking_read_oneframe(uint8_t *buf, size_t len) {
   }
 
   correct_image(buf);
+  reshape_to_320(buf);
   current_image = NULL;
 
   return err_code;
