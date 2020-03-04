@@ -109,7 +109,8 @@ int main(void) {
 
     // Compress the image
     image_buffer = realloc(image_buffer, HM01B0_FULL_FRAME_IMAGE_SIZE);
-    jpec_enc_t *e = jpec_enc_new(image_buffer, HM01B0_FULL_FRAME_PIXEL_X_NUM, HM01B0_FULL_FRAME_PIXEL_Y_NUM);
+    downsample_160(image_buffer);
+    jpec_enc_t *e = jpec_enc_new(image_buffer, 320, 320);
 
     int len;
     const uint8_t *jpeg = jpec_enc_run(e, &len);
