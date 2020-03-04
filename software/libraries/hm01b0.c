@@ -195,7 +195,7 @@ static void shift_right_by_2(uint8_t* arr, size_t len) {
 // Helper function to correct an image captured over SPI
 static void correct_image(uint8_t* arr) {
   // clear border pixels
-  for(size_t i = 0; i < HM01B0_IMAGE_SIZE; i+=HM01B0_PIXEL_X_NUM) {
+  for(size_t i = 0; i < HM01B0_RAW_IMAGE_SIZE; i+=HM01B0_PIXEL_X_NUM) {
     shift_right_by_2(arr+i, HM01B0_PIXEL_X_NUM);
     arr[i] = 0;
     arr[i + 1] = 0;
@@ -207,10 +207,33 @@ static void correct_image(uint8_t* arr) {
 // Helper function to shear off 2-pixel border
 // TODO fix magic numbers
 void reshape_to_320(uint8_t* arr) {
-  size_t j = 2 + 324*2;
-  for(size_t i = 0; i < 320; i++) {
-    memcpy(arr + i*320, arr + j, 320);
-    j = j + 324;
+  size_t j = 2 + HM01B0_PIXEL_X_NUM*2;
+  for(size_t i = 0; i < HM01B0_FULL_FRAME_PIXEL_Y_NUM; i++) {
+    memcpy(arr + i*HM01B0_FULL_FRAME_PIXEL_X_NUM, arr + j, HM01B0_FULL_FRAME_PIXEL_X_NUM);
+    j = j + HM01B0_PIXEL_X_NUM;
+  }
+}
+
+// helper to address flattened buffer
+uint8_t* idex(uint8_t* arr, size_t x, size_t y) {
+  return arr + x + y * HM01B0_FULL_FRAME_PIXEL_X_NUM;
+}
+
+// downsample to 160x160 image
+void downsample_160(uint8_t* arr) {
+  for (size_t x = 0; x < HM01B0_FULL_FRAME_PIXEL_X_NUM; x += 4) {
+    for (size_t y = 0; y < HM01B0_FULL_FRAME_PIXEL_Y_NUM; y += 4) {
+      size_t i = x / 2;
+      size_t j = y / 2;
+      uint8_t blue =    ((uint32_t) *idex(arr, x+0, y+0) + *idex(arr, x+2, y+0) + *idex(arr, x+0, y+2) + *idex(arr, x+2, y+2)) / 4;
+      uint8_t greenr =  ((uint32_t) *idex(arr, x+1, y+0) + *idex(arr, x+0, y+3) + *idex(arr, x+2, y+1) + *idex(arr, x+3, y+2)) / 4;
+      uint8_t greenl =  ((uint32_t) *idex(arr, x+0, y+1) + *idex(arr, x+1, y+2) + *idex(arr, x+3, y+0) + *idex(arr, x+2, y+3)) / 4;
+      uint8_t red =     ((uint32_t) *idex(arr, x+1, y+1) + *idex(arr, x+3, y+1) + *idex(arr, x+1, y+3) + *idex(arr, x+3, y+3)) / 4;
+      *idex(arr, i, j)     = blue;
+      *idex(arr, i, j+1)   = greenr;
+      *idex(arr, i+1, j)   = greenl;
+      *idex(arr, i+1, j+1) = red;
+    }
   }
 }
 

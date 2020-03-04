@@ -56,7 +56,7 @@ void log_init(void)
 }
 
 int main(void) {
-    uint8_t* image_buffer = malloc(HM01B0_IMAGE_SIZE);
+    uint8_t* image_buffer = malloc(HM01B0_RAW_IMAGE_SIZE);
 
 
     // Initialize.
@@ -85,7 +85,7 @@ int main(void) {
 
     NRF_LOG_INFO("turning on camera");
     NRF_LOG_INFO("address of buffer: %x", image_buffer);
-    NRF_LOG_INFO("size of buffer:    %x", HM01B0_IMAGE_SIZE);
+    NRF_LOG_INFO("size of buffer:    %x", HM01B0_RAW_IMAGE_SIZE);
 
     hm01b0_init_i2c(&twi_mngr_instance);
     hm01b0_mclk_init();
@@ -103,13 +103,13 @@ int main(void) {
     //hm01b0_set_mode(STANDBY, 0);
     //nrf_delay_ms(500);
 
-    hm01b0_blocking_read_oneframe(image_buffer, HM01B0_IMAGE_SIZE);
+    hm01b0_blocking_read_oneframe(image_buffer, HM01B0_RAW_IMAGE_SIZE);
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
 
     // Compress the image
-    image_buffer = realloc(image_buffer, 320*320);
-    jpec_enc_t *e = jpec_enc_new(image_buffer, 320, 320);
+    image_buffer = realloc(image_buffer, HM01B0_FULL_FRAME_IMAGE_SIZE);
+    jpec_enc_t *e = jpec_enc_new(image_buffer, HM01B0_FULL_FRAME_PIXEL_X_NUM, HM01B0_FULL_FRAME_PIXEL_Y_NUM);
 
     int len;
     const uint8_t *jpeg = jpec_enc_run(e, &len);
