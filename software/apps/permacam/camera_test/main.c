@@ -96,21 +96,18 @@ int main(void) {
     int error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
     NRF_LOG_INFO("error: %d", error);
 
-    //hm01b0_set_mode(STREAMING, 0);
-
     nrf_delay_ms(1000);
-
-    //hm01b0_set_mode(STANDBY, 0);
-    //nrf_delay_ms(500);
 
     hm01b0_blocking_read_oneframe(image_buffer, HM01B0_RAW_IMAGE_SIZE);
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
 
-    // Compress the image
-    image_buffer = realloc(image_buffer, HM01B0_FULL_FRAME_IMAGE_SIZE);
+    // Downsample the image
     downsample_160(image_buffer);
-    jpec_enc_t *e = jpec_enc_new(image_buffer, 320, 320);
+    image_buffer = realloc(image_buffer, 160*160);
+
+    // Compress and encode as jpeg
+    jpec_enc_t *e = jpec_enc_new(image_buffer, 160, 160);
 
     int len;
     const uint8_t *jpeg = jpec_enc_run(e, &len);

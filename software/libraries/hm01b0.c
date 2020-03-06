@@ -235,6 +235,10 @@ void downsample_160(uint8_t* arr) {
       *idex(arr, i+1, j+1) = red;
     }
   }
+  for (size_t i = 0; i < 160; i ++) {
+    memcpy(arr + i * 160, arr + i * 320, 160);
+  }
+
 }
 
 // SPIS handler to auto-increment on every line read in
