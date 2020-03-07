@@ -4,6 +4,7 @@
 #include "nrf_gpio.h"
 #include "nrfx_gpiote.h"
 #include "nrfx_timer.h"
+#include "nrfx_gpiote.h"
 #include "nrf_clock.h"
 #include "nrfx_ppi.h"
 #include "nrfx_spi.h"
@@ -16,6 +17,7 @@
 static uint8_t* current_image;
 static size_t   current_image_size;
 static uint32_t current_size;
+static uint32_t fvld_count;
 
 static bool _initialized = false;
 static const nrfx_timer_t mclk_timer = NRFX_TIMER_INSTANCE(3);
@@ -649,6 +651,37 @@ int32_t hm01b0_set_mode(hm01b0_mode mode,
 //  return ui32Err;
 //}
 
+static void fvld_interrupt_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
+    fvld_count ++;
+}
+
+int32_t hm01b0_wait_for_autoexposure(void) {
+  int32_t error = 0;
+  fvld_count = 0;
+
+  // set mode to streaming
+  error = hm01b0_set_mode(STREAMING, 1);
+  if(error) return error;
+
+  // set up interrupt for FVLD
+  if (!nrfx_gpiote_is_init()) {
+    nrfx_gpiote_init();
+  }
+  nrfx_gpiote_in_config_t int_gpio_config = NRFX_GPIOTE_CONFIG_IN_SENSE_LOTOHI(0);
+  int_gpio_config.pull = NRF_GPIO_PIN_NOPULL;
+  error = nrfx_gpiote_in_init(HM01B0_FVLD, &int_gpio_config, fvld_interrupt_handler);
+  if (error) return error;
+  nrfx_gpiote_in_event_enable(HM01B0_FVLD, 1);
+
+  // wait for 5 frames
+  while(fvld_count < 5) {
+    __WFI();
+    NRF_LOG_INFO("FVLD count: %d", fvld_count);
+  }
+
+  return hm01b0_set_mode(STANDBY, 1);
+}
+
 //*****************************************************************************
 //
 //! @brief Read data of one frame from HM01B0.
@@ -667,7 +700,7 @@ int32_t hm01b0_blocking_read_oneframe(uint8_t *buf, size_t len) {
   current_image_size = len;
   current_size = 0;
 
-  // set mode to streaming, one frame
+  // set mode to streaming
   hm01b0_set_mode(STREAMING, 1);
 
   while(!nrf_gpio_pin_read(HM01B0_FVLD)) {
@@ -682,6 +715,8 @@ int32_t hm01b0_blocking_read_oneframe(uint8_t *buf, size_t len) {
   correct_image(buf);
   reshape_to_320(buf);
   current_image = NULL;
+
+  hm01b0_set_mode(STANDBY, 0);
 
   return err_code;
 }

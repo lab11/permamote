@@ -222,6 +222,17 @@ int32_t hm01b0_set_mode(hm01b0_mode mode, uint8_t frame_cnt);
 
 //*****************************************************************************
 //
+//! @brief Wait for sensor to set auto exposure
+//!
+//! This function waits for 5 exposures, allowing autogain settings to adjust
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
+int32_t hm01b0_wait_for_autoexposure(void);
+
+//*****************************************************************************
+//
 //! @brief Read data of one frame from HM01B0.
 //!
 //! @param buf              - Pointer to the frame buffer.
