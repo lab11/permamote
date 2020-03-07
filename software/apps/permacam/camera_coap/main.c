@@ -38,6 +38,8 @@
 #include "parse.pb.h"
 #include "pb_encode.h"
 
+#include "jpec.h"
+
 APP_TIMER_DEF(camera_timer);
 APP_TIMER_DEF(pir_backoff);
 APP_TIMER_DEF(pir_delay);
@@ -69,6 +71,8 @@ static permamote_sensor_period_t sensor_period = {
 
 typedef struct{
   uint8_t* ptr;
+  size_t   len;
+  uint8_t*  message_buf;
   bool send_light;
   bool send_motion;
   bool send_periodic;
@@ -169,7 +173,7 @@ bool write_image_bytes(pb_ostream_t *stream, const pb_field_t *field, void * con
     if (!pb_encode_tag_for_field(stream, field))
         return false;
 
-    return pb_encode_string(stream, state.ptr+256, HM01B0_IMAGE_SIZE);
+    return pb_encode_string(stream, state.ptr, state.len);
 }
 
 void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * p_context) {
@@ -243,6 +247,15 @@ void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t acti
 void picture_sent_callback(uint8_t code, otError result) {
     NRF_LOG_INFO("DONE!");
     state.sending_pic = false;
+    // free state pointers
+    if (state.ptr) {
+      free(state.ptr);
+      state.ptr = NULL;
+    }
+    if (state.message_buf) {
+      free(state.message_buf);
+      state.message_buf = NULL;
+    }
     otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
 }
 
@@ -252,12 +265,19 @@ void take_picture() {
       return;
     }
     if (state.has_pic) {
-      free(state.ptr);
+      if (state.ptr) {
+        free(state.ptr);
+        state.ptr = NULL;
+      }
+      if (state.message_buf) {
+        free(state.message_buf);
+        state.message_buf = NULL;
+      }
     }
-    state.ptr = malloc(HM01B0_IMAGE_SIZE + 256);
+    state.ptr = malloc(HM01B0_RAW_IMAGE_SIZE);
     NRF_LOG_INFO("turning on camera");
-    NRF_LOG_INFO("address of buffer: %x", state.ptr + 256);
-    NRF_LOG_INFO("size of buffer:    %x", HM01B0_IMAGE_SIZE);
+    NRF_LOG_INFO("address of buffer: %x", state.ptr);
+    NRF_LOG_INFO("size of buffer:    %x", HM01B0_RAW_IMAGE_SIZE);
 
 
     nrf_gpio_pin_clear(LED_1);
@@ -266,10 +286,16 @@ void take_picture() {
     int error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
     NRF_LOG_INFO("error: %d", error);
 
-    hm01b0_blocking_read_oneframe(state.ptr + 256, HM01B0_IMAGE_SIZE);
+    hm01b0_blocking_read_oneframe(state.ptr, HM01B0_RAW_IMAGE_SIZE);
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
     state.has_pic = true;
+
+    // Compress and encode as jpeg
+    jpec_enc_t *e = jpec_enc_new(state.ptr, 320, 320);
+    const uint8_t *jpeg = jpec_enc_run(e, &state.len);
+    free(state.ptr);
+    state.ptr = jpeg;
 
     // Send picture to endpoint
     state.sending_pic = true;
@@ -277,7 +303,7 @@ void take_picture() {
     Message msg = Message_init_default;
     pb_callback_t callback;
     callback.funcs.encode = write_image_bytes;
-    msg.data.image_raw = callback;
+    msg.data.image_jpeg = callback;
 
     Header header = Header_init_default;
     header.version = 1;
@@ -294,16 +320,17 @@ void take_picture() {
     memcpy(&(msg.header), &header, sizeof(header));
 
     pb_ostream_t stream;
-    stream = pb_ostream_from_buffer(state.ptr, HM01B0_IMAGE_SIZE+ 256);
+    state.message_buf = malloc(state.len + 256);
+    stream = pb_ostream_from_buffer(state.message_buf, state.len + 256);
     pb_encode(&stream, Message_fields, &msg);
     size_t len = stream.bytes_written;
     NRF_LOG_INFO("len: 0x%x", len);
 
     memset(&b_info, 0, sizeof(b_info));
-    const char* path = "image_raw";
+    const char* path = "image_jpeg";
     memcpy(b_info.path, path, strnlen(path, sizeof(b_info.path)));
     b_info.code = OT_COAP_CODE_PUT;
-    b_info.data_addr = state.ptr;
+    b_info.data_addr = state.message_buf;
     b_info.data_len = len;
     b_info.block_size = OT_COAP_BLOCK_SIZE_512;
     b_info.callback = picture_sent_callback;
