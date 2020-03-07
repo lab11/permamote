@@ -39,7 +39,8 @@ message Data {
   uint32 thread_parent_last_rssi = 53;
 
   // Image
-  bytes  image_raw = 70;
+  bytes  image_raw  = 70;
+  bytes  image_jpeg = 71;
 }
 
 message Message {
