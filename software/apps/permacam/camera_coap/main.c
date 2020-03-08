@@ -70,7 +70,8 @@ static permamote_sensor_period_t sensor_period = {
 };
 
 typedef struct{
-  uint8_t* ptr;
+  const uint8_t* jpeg;
+  jpec_enc_t* jpeg_state;
   size_t   len;
   uint8_t*  message_buf;
   bool send_light;
@@ -173,7 +174,7 @@ bool write_image_bytes(pb_ostream_t *stream, const pb_field_t *field, void * con
     if (!pb_encode_tag_for_field(stream, field))
         return false;
 
-    return pb_encode_string(stream, state.ptr, state.len);
+    return pb_encode_string(stream, state.message_buf, state.len);
 }
 
 void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * p_context) {
@@ -248,9 +249,9 @@ void picture_sent_callback(uint8_t code, otError result) {
     NRF_LOG_INFO("DONE!");
     state.sending_pic = false;
     // free state pointers
-    if (state.ptr) {
-      free(state.ptr);
-      state.ptr = NULL;
+    if (state.jpeg) {
+      jpec_enc_del(state.jpeg_state);
+      state.jpeg = NULL;
     }
     if (state.message_buf) {
       free(state.message_buf);
@@ -264,19 +265,17 @@ void take_picture() {
       NRF_LOG_INFO("waiting to finish sending picture");
       return;
     }
-    if (state.has_pic) {
-      if (state.ptr) {
-        free(state.ptr);
-        state.ptr = NULL;
-      }
-      if (state.message_buf) {
-        free(state.message_buf);
-        state.message_buf = NULL;
-      }
+    if (state.jpeg) {
+      jpec_enc_del(state.jpeg_state);
+      state.jpeg = NULL;
     }
-    state.ptr = malloc(HM01B0_RAW_IMAGE_SIZE);
+    if (state.message_buf) {
+      free(state.message_buf);
+      state.message_buf = NULL;
+    }
+    uint8_t* image_buffer = malloc(HM01B0_RAW_IMAGE_SIZE);
     NRF_LOG_INFO("turning on camera");
-    NRF_LOG_INFO("address of buffer: %x", state.ptr);
+    NRF_LOG_INFO("address of buffer: %x", image_buffer);
     NRF_LOG_INFO("size of buffer:    %x", HM01B0_RAW_IMAGE_SIZE);
 
 
@@ -286,16 +285,18 @@ void take_picture() {
     int error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
     NRF_LOG_INFO("error: %d", error);
 
-    hm01b0_blocking_read_oneframe(state.ptr, HM01B0_RAW_IMAGE_SIZE);
+    error = hm01b0_wait_for_autoexposure();
+    APP_ERROR_CHECK(error);
+    error = hm01b0_blocking_read_oneframe(image_buffer, HM01B0_RAW_IMAGE_SIZE);
+    APP_ERROR_CHECK(error);
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
     state.has_pic = true;
 
     // Compress and encode as jpeg
-    jpec_enc_t *e = jpec_enc_new(state.ptr, 320, 320);
-    const uint8_t *jpeg = jpec_enc_run(e, &state.len);
-    free(state.ptr);
-    state.ptr = jpeg;
+    state.jpeg_state = jpec_enc_new(image_buffer, 320, 320);
+    state.jpeg = jpec_enc_run(state.jpeg_state, (int*) &state.len);
+    free(image_buffer);
 
     // Send picture to endpoint
     state.sending_pic = true;

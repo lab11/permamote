@@ -4,7 +4,6 @@
 #include "nrf_gpio.h"
 #include "nrfx_gpiote.h"
 #include "nrfx_timer.h"
-#include "nrfx_gpiote.h"
 #include "nrf_clock.h"
 #include "nrfx_ppi.h"
 #include "nrfx_spi.h"
@@ -31,6 +30,9 @@ int32_t hm01b0_write_reg(uint16_t reg, const uint8_t* buf, size_t len);
 int32_t hm01b0_read_reg(uint16_t reg, uint8_t* buf, size_t len);
 static int32_t hm01b0_load_script(const hm_script_t* psScript, uint32_t ui32ScriptCmdNum);
 
+static void fvld_interrupt_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
+    fvld_count ++;
+}
 
 //*****************************************************************************
 //
@@ -358,6 +360,8 @@ void hm01b0_init_i2c(const nrf_twi_mngr_t* instance) {
 //
 //*****************************************************************************
 int32_t hm01b0_init_if(void) {
+  int32_t error = NRF_SUCCESS;
+
   if (_initialized) {
     nrfx_spis_uninit(&camera_spis_instance);
   }
@@ -371,7 +375,17 @@ int32_t hm01b0_init_if(void) {
   camera_spis_config.sck_pin = HM01B0_PCLKO;
   camera_spis_config.mosi_pin = HM01B0_CAM_D0;
   camera_spis_config.csn_pin = HM01B0_LVLD;
-  APP_ERROR_CHECK(nrfx_spis_init(&camera_spis_instance, &camera_spis_config, camera_spis_handler, NULL));
+  error = nrfx_spis_init(&camera_spis_instance, &camera_spis_config, camera_spis_handler, NULL);
+  if (error) return error;
+
+  // set up interrupt for FVLD
+  if (!nrfx_gpiote_is_init()) {
+    nrfx_gpiote_init();
+  }
+  nrfx_gpiote_in_config_t int_gpio_config = NRFX_GPIOTE_CONFIG_IN_SENSE_LOTOHI(0);
+  int_gpio_config.pull = NRF_GPIO_PIN_NOPULL;
+  error = nrfx_gpiote_in_init(HM01B0_FVLD, &int_gpio_config, fvld_interrupt_handler);
+  if (error) return error;
 
   _initialized = true;
 
@@ -651,10 +665,6 @@ int32_t hm01b0_set_mode(hm01b0_mode mode,
 //  return ui32Err;
 //}
 
-static void fvld_interrupt_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
-    fvld_count ++;
-}
-
 int32_t hm01b0_wait_for_autoexposure(void) {
   int32_t error = 0;
   fvld_count = 0;
@@ -663,14 +673,7 @@ int32_t hm01b0_wait_for_autoexposure(void) {
   error = hm01b0_set_mode(STREAMING, 1);
   if(error) return error;
 
-  // set up interrupt for FVLD
-  if (!nrfx_gpiote_is_init()) {
-    nrfx_gpiote_init();
-  }
-  nrfx_gpiote_in_config_t int_gpio_config = NRFX_GPIOTE_CONFIG_IN_SENSE_LOTOHI(0);
-  int_gpio_config.pull = NRF_GPIO_PIN_NOPULL;
-  error = nrfx_gpiote_in_init(HM01B0_FVLD, &int_gpio_config, fvld_interrupt_handler);
-  if (error) return error;
+  // enable event for FVLD interrupt
   nrfx_gpiote_in_event_enable(HM01B0_FVLD, 1);
 
   // wait for 5 frames
@@ -678,6 +681,8 @@ int32_t hm01b0_wait_for_autoexposure(void) {
     __WFI();
     NRF_LOG_INFO("FVLD count: %d", fvld_count);
   }
+
+  nrfx_gpiote_in_event_disable(HM01B0_FVLD);
 
   return hm01b0_set_mode(STANDBY, 1);
 }
