@@ -26,7 +26,7 @@
 #include "flash_storage.h"
 
 #include "permacam.h"
-#include "permamote_coap.h"
+#include "gateway_coap.h"
 
 #include "hm01b0.h"
 #include "ab1815.h"
@@ -73,6 +73,7 @@ typedef struct{
   const uint8_t* jpeg;
   jpec_enc_t* jpeg_state;
   size_t   len;
+  uint8_t jpeg_quality;
   uint8_t*  message_buf;
   bool send_light;
   bool send_motion;
@@ -157,7 +158,7 @@ static void send_discover(void) {
 
   NRF_LOG_INFO("Sent discovery");
 
-  permamote_coap_send(&m_coap_address, "discovery", DEVICE_TYPE, false, &msg);
+  gateway_coap_send(&m_coap_address, "discovery", DEVICE_TYPE, false, &msg);
 }
 
 static void send_version(void) {
@@ -166,7 +167,7 @@ static void send_version(void) {
 
   NRF_LOG_INFO("Sent version");
 
-  permamote_coap_send(&m_coap_address, "version", DEVICE_TYPE, false, &msg);
+  gateway_coap_send(&m_coap_address, "version", DEVICE_TYPE, false, &msg);
 }
 
 bool write_image_bytes(pb_ostream_t *stream, const pb_field_t *field, void * const *arg)
@@ -174,7 +175,7 @@ bool write_image_bytes(pb_ostream_t *stream, const pb_field_t *field, void * con
     if (!pb_encode_tag_for_field(stream, field))
         return false;
 
-    return pb_encode_string(stream, state.message_buf, state.len);
+    return pb_encode_string(stream, state.jpeg, state.len);
 }
 
 void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * p_context) {
@@ -249,14 +250,11 @@ void picture_sent_callback(uint8_t code, otError result) {
     NRF_LOG_INFO("DONE!");
     state.sending_pic = false;
     // free state pointers
-    if (state.jpeg) {
-      jpec_enc_del(state.jpeg_state);
-      state.jpeg = NULL;
-    }
-    if (state.message_buf) {
-      free(state.message_buf);
-      state.message_buf = NULL;
-    }
+    jpec_enc_del(state.jpeg_state);
+    state.jpeg_state = NULL;
+    state.jpeg = NULL;
+    free(state.message_buf);
+    state.message_buf = NULL;
     otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
 }
 
@@ -265,19 +263,11 @@ void take_picture() {
       NRF_LOG_INFO("waiting to finish sending picture");
       return;
     }
-    if (state.jpeg) {
-      jpec_enc_del(state.jpeg_state);
-      state.jpeg = NULL;
-    }
-    if (state.message_buf) {
-      free(state.message_buf);
-      state.message_buf = NULL;
-    }
+
     uint8_t* image_buffer = malloc(HM01B0_RAW_IMAGE_SIZE);
     NRF_LOG_INFO("turning on camera");
     NRF_LOG_INFO("address of buffer: %x", image_buffer);
     NRF_LOG_INFO("size of buffer:    %x", HM01B0_RAW_IMAGE_SIZE);
-
 
     nrf_gpio_pin_clear(LED_1);
     hm01b0_power_up();
@@ -289,14 +279,18 @@ void take_picture() {
     APP_ERROR_CHECK(error);
     error = hm01b0_blocking_read_oneframe(image_buffer, HM01B0_RAW_IMAGE_SIZE);
     APP_ERROR_CHECK(error);
+    realloc(image_buffer, HM01B0_FULL_FRAME_IMAGE_SIZE);
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
     state.has_pic = true;
-
+    NRF_LOG_INFO("TOOK PICTURE");
     // Compress and encode as jpeg
-    state.jpeg_state = jpec_enc_new(image_buffer, 320, 320);
+    state.jpeg_quality = 90;
+    state.jpeg_state = jpec_enc_new2(image_buffer, 320, 320, state.jpeg_quality);
     state.jpeg = jpec_enc_run(state.jpeg_state, (int*) &state.len);
+    NRF_LOG_INFO("jpeg: location %x, size %x", state.jpeg, state.len);
     free(image_buffer);
+    NRF_LOG_INFO("JPEG COMPRESS");
 
     // Send picture to endpoint
     state.sending_pic = true;
@@ -305,6 +299,7 @@ void take_picture() {
     pb_callback_t callback;
     callback.funcs.encode = write_image_bytes;
     msg.data.image_jpeg = callback;
+    msg.data.image_jpeg_quality = state.jpeg_quality;
 
     Header header = Header_init_default;
     header.version = 1;
@@ -322,6 +317,7 @@ void take_picture() {
 
     pb_ostream_t stream;
     state.message_buf = malloc(state.len + 256);
+    NRF_LOG_INFO("message_buf: location %x, size %x", state.message_buf, state.len + 256);
     stream = pb_ostream_from_buffer(state.message_buf, state.len + 256);
     pb_encode(&stream, Message_fields, &msg);
     size_t len = stream.bytes_written;
