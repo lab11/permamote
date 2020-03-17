@@ -41,6 +41,7 @@ message Data {
   // Image
   bytes  image_raw  = 70;
   bytes  image_jpeg = 71;
+  uint32 image_jpeg_quality = 72;
 }
 
 message Message {
