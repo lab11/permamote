@@ -40,13 +40,16 @@ def rgb_clip(image):
 
 def on_message(client, userdata, msg):
     try:
-        print('got message')
         data = json.loads(msg.payload.decode('utf-8'))
+        print('got message ' + data['_meta']['topic'])
+        seq_no = 0
+        if 'seq_no' in data:
+            seq_no = data['seq_no']
         if data['_meta']['topic'] == 'image_jpeg':
-            fname = 'jpeg/image_mono_' + str(data['image_jpeg_quality']) +'_'+ str(data['seq_no']) + '.jpeg'
+            fname = 'jpeg/image_mono_' + str(data['image_jpeg_quality']) +'_'+ str(seq_no) + '.jpeg'
             with open(fname, "wb") as f:
                 f.write(base64.b64decode(data['image_jpeg']))
-            fname = 'jpeg/image_color_' + str(data['image_jpeg_quality']) +'_'+ str(data['seq_no']) + '.jpeg'
+            fname = 'jpeg/image_color_' + str(data['image_jpeg_quality']) +'_'+ str(seq_no) + '.jpeg'
             jpeg = Image.open(BytesIO(base64.b64decode(data['image_jpeg'])))
             jpeg_np = np.array(jpeg.getdata()).reshape(jpeg.size[0], jpeg.size[1]) / 0xff
             image_arr = cctf_encoding(demosaicing_CFA_Bayer_Menon2007(jpeg_np, 'BGGR'))

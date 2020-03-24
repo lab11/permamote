@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "nrf_error.h"
 #include "nrf_delay.h"
 #include "nrf_log.h"

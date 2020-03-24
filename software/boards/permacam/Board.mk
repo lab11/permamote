@@ -17,7 +17,7 @@ BOARD_HEADER_PATHS += $(BOARD_DIR)/../../libraries/jpec/src
 BOARD_LINKER_PATHS = $(BOARD_DIR)/.
 BOARD_SOURCES = $(notdir $(wildcard $(BOARD_DIR)/./*.c))
 BOARD_SOURCES += $(notdir $(wildcard ./*.c))
-BOARD_SOURCES += max44009.c hm01b0.c permamote_coap.c
+BOARD_SOURCES += max44009.c hm01b0.c gateway_coap.c
 BOARD_SOURCES += buf.c  conf.c  enc.c  huff.c
 BOARD_AS = $(notdir $(wildcard $(BOARD_DIR)/./*.s))
 
