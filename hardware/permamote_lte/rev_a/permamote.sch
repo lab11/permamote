@@ -3550,8 +3550,8 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <attribute name="NAME" x="180.34" y="132.588" size="1.27" layer="95"/>
 <attribute name="VALUE" x="182.88" y="127" size="1.27" layer="96"/>
 </instance>
-<instance part="GND35" gate="1" x="180.34" y="114.3" smashed="yes">
-<attribute name="VALUE" x="177.8" y="111.76" size="1.778" layer="96"/>
+<instance part="GND35" gate="1" x="180.34" y="116.84" smashed="yes">
+<attribute name="VALUE" x="177.8" y="114.3" size="1.778" layer="96"/>
 </instance>
 <instance part="GND1" gate="1" x="142.24" y="152.4" smashed="yes">
 <attribute name="VALUE" x="139.7" y="149.86" size="1.778" layer="96"/>
@@ -3669,7 +3669,7 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <segment>
 <pinref part="GND35" gate="1" pin="GND"/>
 <pinref part="J2" gate="G$1" pin="P$2"/>
-<wire x1="180.34" y1="116.84" x2="180.34" y2="124.46" width="0.1524" layer="91"/>
+<wire x1="180.34" y1="119.38" x2="180.34" y2="124.46" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="GND28" gate="1" pin="GND"/>
@@ -4117,9 +4117,11 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 </net>
 <net name="GPS_EN" class="0">
 <segment>
-<wire x1="144.78" y1="114.3" x2="147.32" y2="114.3" width="0.1524" layer="91"/>
-<label x="147.32" y="114.3" size="1.27" layer="95" xref="yes"/>
+<label x="149.86" y="111.76" size="1.27" layer="95" xref="yes"/>
 <pinref part="U5" gate="G$1" pin="MAGPIO0"/>
+<wire x1="144.78" y1="114.3" x2="147.32" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="147.32" y1="114.3" x2="147.32" y2="111.76" width="0.1524" layer="91"/>
+<wire x1="147.32" y1="111.76" x2="149.86" y2="111.76" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U4" gate="G$1" pin="PON"/>
