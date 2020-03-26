@@ -62,16 +62,16 @@ int sensors_init(const nrf_twi_mngr_t* twi_mngr_instance, const nrf_drv_spi_t* s
   max44009_init(twi_mngr_instance);
 
   // setup light sensor
-  //const max44009_config_t config = {
-  //  .continuous = 0,
-  //  .manual = 0,
-  //  .cdr = 0,
-  //  .int_time = 10,
-  //};
+  const max44009_config_t config = {
+    .continuous = 0,
+    .manual = 0,
+    .cdr = 0,
+    .int_time = 10,
+  };
 
-  //max44009_set_read_lux_callback(light_sensor_read_callback);
-  //max44009_set_interrupt_callback(light_interrupt_callback);
-  //max44009_config(config);
+  max44009_set_read_lux_callback(light_sensor_read_callback);
+  max44009_set_interrupt_callback(light_interrupt_callback);
+  max44009_config(config);
 
   hm01b0_init_i2c(twi_mngr_instance);
   hm01b0_mclk_init();

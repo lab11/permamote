@@ -30,6 +30,7 @@
 
 #include "hm01b0.h"
 #include "ab1815.h"
+#include "max44009.h"
 #include "HM01B0_SERIAL_FULL_8bits_msb_5fps.h"
 
 #include "init.h"
@@ -75,13 +76,13 @@ typedef struct{
   size_t   len;
   uint8_t jpeg_quality;
   uint8_t*  message_buf;
+  float sensed_lux;
   bool send_light;
   bool send_motion;
   bool send_periodic;
-  bool has_pic;
   bool sending_pic;
   bool update_time;
-  bool up_time_done;
+  bool update_time_wait;
   bool resolve_addr;
   bool resolve_wait;
   bool dfu_trigger;
@@ -198,7 +199,7 @@ void ntp_response_handler(void* context, uint64_t time, otError error) {
   else {
     NRF_LOG_INFO("ntp error: %d", error);
   }
-  state.up_time_done = true;
+  state.update_time_wait = false;
 }
 
 void rtc_callback(void) {
@@ -226,6 +227,23 @@ void periodic_sensor_read_callback(void* m){
     state.send_periodic = true;
 }
 
+void light_sensor_read_callback(float lux) {
+  state.sensed_lux = lux;
+  state.send_light = true;
+}
+
+void send_light() {
+  Message msg = Message_init_default;
+  float upper = state.sensed_lux + state.sensed_lux * 0.1;
+  float lower = state.sensed_lux - state.sensed_lux * 0.1;
+  NRF_LOG_INFO("Sensed: lux: %u, upper: %u, lower: %u", (uint32_t)state.sensed_lux, (uint32_t)upper, (uint32_t)lower);
+  max44009_set_upper_threshold(upper);
+  max44009_set_lower_threshold(lower);
+
+  msg.data.light_lux = state.sensed_lux;
+  gateway_coap_send(&m_coap_address, "light_lux", DEVICE_TYPE, false, &msg);
+}
+
 void pir_backoff_callback(void* m) {
   // turn on and wait for stable
   NRF_LOG_INFO("TURN ON PIR");
@@ -245,6 +263,47 @@ void pir_enable_callback(void* m) {
 void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
   state.send_motion = true;
 }
+
+void light_interrupt_callback(void) {
+    max44009_schedule_read_lux();
+}
+
+void send_motion() {
+  Message msg = Message_init_default;
+
+  // disable interrupt and turn off PIR
+  NRF_LOG_INFO("TURN off PIR ");
+  nrf_drv_gpiote_in_event_disable(PIR_OUT);
+  nrf_gpio_pin_set(PIR_EN);
+
+  ret_code_t err_code = app_timer_start(pir_backoff, PIR_BACKOFF_PERIOD, NULL);
+  APP_ERROR_CHECK(err_code);
+
+  NRF_LOG_INFO("Saw motion");
+  msg.data.motion = true;
+
+  gateway_coap_send(&m_coap_address, "motion", DEVICE_TYPE, false, &msg);
+}
+
+
+void timer_init(void) {
+  APP_SCHED_INIT(SCHED_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
+  ret_code_t err_code = app_timer_init();
+  APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&camera_timer, APP_TIMER_MODE_REPEATED, periodic_sensor_read_callback);
+  APP_ERROR_CHECK(err_code);
+  err_code = app_timer_start(camera_timer, SENSOR_PERIOD, NULL);
+  APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&pir_backoff, APP_TIMER_MODE_SINGLE_SHOT, pir_backoff_callback);
+  APP_ERROR_CHECK(err_code);
+  err_code = app_timer_create(&pir_delay, APP_TIMER_MODE_SINGLE_SHOT, pir_enable_callback);
+  APP_ERROR_CHECK(err_code);
+  err_code = app_timer_create(&ntp_jitter, APP_TIMER_MODE_SINGLE_SHOT, ntp_jitter_callback);
+  APP_ERROR_CHECK(err_code);
+}
+
 
 void picture_sent_callback(uint8_t code, otError result) {
     NRF_LOG_INFO("DONE!");
@@ -282,7 +341,6 @@ void take_picture() {
     realloc(image_buffer, HM01B0_FULL_FRAME_IMAGE_SIZE);
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
-    state.has_pic = true;
     NRF_LOG_INFO("TOOK PICTURE");
     // Compress and encode as jpeg
     state.jpeg_quality = 90;
@@ -340,15 +398,18 @@ void take_picture() {
 
 void state_step(void) {
   otInstance * thread_instance = thread_get_instance();
-  //if (state.send_light) {
-  //  state.send_light = false;
-  //  send_light();
-  //}
-  //if (state.send_motion) {
-  //  state.send_motion = false;
-  //  send_motion();
-  //}
+  if (state.send_light) {
+    state.send_light = false;
+    send_light();
+  }
+  if (state.send_motion) {
+    state.send_motion = false;
+    send_motion();
+  }
   if (state.send_periodic) {
+      uint32_t poll = otLinkGetPollPeriod(thread_get_instance());
+    NRF_LOG_INFO("### state vars: utw: %d, rw: %d, pd: %d, sp: %d, poll: %d", state.update_time_wait, state.resolve_wait, state.performing_dfu, state.sending_pic, poll);
+
     ab1815_tickle_watchdog();
 
     period_count ++;
@@ -356,7 +417,7 @@ void state_step(void) {
       //send_voltage();
     }
     if (period_count % sensor_period.camera == 0) {
-      //max44009_schedule_read_lux();
+      max44009_schedule_read_lux();
       take_picture();
     }
     if (period_count % sensor_period.discover == 0) {
@@ -390,6 +451,7 @@ void state_step(void) {
   }
   if (state.update_time) {
     state.update_time = false;
+    state.update_time_wait = true;
     NRF_LOG_INFO("RTC UPDATE");
     otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
 
@@ -411,12 +473,8 @@ void state_step(void) {
 
     }
   }
-  if (state.up_time_done) {
-    // if not performing a dfu, return poll period to default
-    if (!state.performing_dfu && !state.sending_pic) {
-      otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
-      state.up_time_done = false;
-    }
+  if (state.update_time && !state.update_time_wait) {
+    state.update_time_wait = false;
     // if we haven't performed initial setup of rand
     if (!seed) {
       srand((uint32_t)time & UINT32_MAX);
@@ -458,6 +516,10 @@ void state_step(void) {
       state.resolve_wait = false;
     }
   }
+  // if not performing a dfu, return poll period to default
+  if (!state.update_time_wait && !state.resolve_wait && !state.performing_dfu && !state.sending_pic) {
+    otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
+  }
 
   if (state.do_reset) {
     static volatile int i = 0;
@@ -472,10 +534,11 @@ int main(void) {
     nrf_power_dcdcen_set(1);
     log_init();
     flash_storage_init();
-
     twi_init(&twi_mngr_instance);
 
     sensors_init(&twi_mngr_instance, &spi_instance);
+
+    timer_init();
 
     NRF_LOG_INFO("GIT Version: %s", GIT_VERSION);
     uint8_t id[6] = {0};
@@ -497,22 +560,11 @@ int main(void) {
     thread_init(&thread_config);
     thread_coap_client_init(thread_get_instance());
 
-    APP_SCHED_INIT(SCHED_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
-    ret_code_t err_code = app_timer_init();
+    // enable interrupts for pir, light sensor
+    ret_code_t err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
     APP_ERROR_CHECK(err_code);
-
-    err_code = app_timer_create(&camera_timer, APP_TIMER_MODE_REPEATED, periodic_sensor_read_callback);
-    APP_ERROR_CHECK(err_code);
-    err_code = app_timer_start(camera_timer, SENSOR_PERIOD, NULL);
-    APP_ERROR_CHECK(err_code);
-
-    err_code = app_timer_create(&pir_backoff, APP_TIMER_MODE_SINGLE_SHOT, pir_backoff_callback);
-    APP_ERROR_CHECK(err_code);
-    err_code = app_timer_create(&pir_delay, APP_TIMER_MODE_SINGLE_SHOT, pir_enable_callback);
-    APP_ERROR_CHECK(err_code);
-    err_code = app_timer_create(&ntp_jitter, APP_TIMER_MODE_SINGLE_SHOT, ntp_jitter_callback);
-    APP_ERROR_CHECK(err_code);
-
+    max44009_schedule_read_lux();
+    max44009_enable_interrupt();
 
     // Enter main loop.
     while (1) {
