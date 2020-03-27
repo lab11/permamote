@@ -147,7 +147,6 @@ void hm01b0_power_up(void) {
   hm01b0_mclk_enable();
   // Turn on power gate
   nrf_gpio_pin_clear(HM01B0_ENn);
-  nrf_gpio_cfg_input(HM01B0_FVLD, NRF_GPIO_PIN_NOPULL);
   // Delay max turn-on time for camera
   nrf_delay_us(50);
 }
@@ -166,17 +165,12 @@ void hm01b0_power_down(void) {
   hm01b0_mclk_disable();
   // Disable power gate to camera
   nrf_gpio_pin_set(HM01B0_ENn);
-  // Clear all digital pins to camera
-  //nrf_gpio_cfg_output(HM01B0_MCLK);
+  // Clear digital pins to camera
   nrf_gpio_cfg_output(HM01B0_PCLKO);
-  nrf_gpio_cfg_output(HM01B0_FVLD);
   nrf_gpio_cfg_output(HM01B0_LVLD);
   nrf_gpio_cfg_output(HM01B0_CAM_D0);
   nrf_gpio_cfg_output(HM01B0_CAM_TRIG);
   nrf_gpio_cfg_output(HM01B0_CAM_INT);
-  //nrf_gpio_pin_clear(HM01B0_MCLK);
-  //nrf_gpio_pin_clear(HM01B0_PCLKO);
-  nrf_gpio_pin_clear(HM01B0_FVLD);
   nrf_gpio_pin_clear(HM01B0_LVLD);
   nrf_gpio_pin_clear(HM01B0_CAM_D0);
   nrf_gpio_pin_clear(HM01B0_CAM_TRIG);
@@ -364,14 +358,11 @@ void hm01b0_init_i2c(const nrf_twi_mngr_t* instance) {
 int32_t hm01b0_init_if(void) {
   int32_t error = NRF_SUCCESS;
 
-  if (_initialized) {
-    nrfx_spis_uninit(&camera_spis_instance);
-  }
-
   // initialize SPI for camera interface.
   // Enable the constant latency sub power mode to minimize the time it takes
   // for the SPIS peripheral to become active after the CSN line is asserted
   // (when the CPU is in sleep mode).
+  NRF_POWER->TASKS_CONSTLAT = 1;
   nrfx_spis_config_t camera_spis_config = NRFX_SPIS_DEFAULT_CONFIG;
   camera_spis_config.mode = NRF_SPIS_MODE_1;
   camera_spis_config.sck_pin = HM01B0_PCLKO;
@@ -411,6 +402,7 @@ int32_t hm01b0_deinit_if(void) {
   NRF_POWER->TASKS_CONSTLAT = 0;
   if (_initialized) {
     nrfx_spis_uninit(&camera_spis_instance);
+    nrfx_gpiote_in_uninit(HM01B0_FVLD);
   }
   _initialized = false;
   return 0;
@@ -710,6 +702,7 @@ int32_t hm01b0_blocking_read_oneframe(uint8_t *buf, size_t len) {
   // set mode to streaming
   hm01b0_set_mode(STREAMING, 1);
 
+  //nrf_gpio_cfg_input(HM01B0_FVLD, NRF_GPIO_PIN_NOPULL);
   while(!nrf_gpio_pin_read(HM01B0_FVLD)) {
 
   }
