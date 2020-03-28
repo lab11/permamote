@@ -10,15 +10,20 @@
 #include "nrfx_ppi.h"
 #include "nrfx_spi.h"
 #include "nrfx_spis.h"
+#include "app_timer.h"
+#include "app_scheduler.h"
 
 #include "hm01b0.h"
 
 #include "custom_board.h"
 
+APP_TIMER_DEF(ae_watchdog);
+
 static uint8_t* current_image;
 static size_t   current_image_size;
 static uint32_t current_size;
 static uint32_t fvld_count;
+static bool     watchdog_triggered = false;
 
 static bool _initialized = false;
 static const nrfx_timer_t mclk_timer = NRFX_TIMER_INSTANCE(3);
@@ -34,6 +39,10 @@ static int32_t hm01b0_load_script(const hm_script_t* psScript, uint32_t ui32Scri
 
 static void fvld_interrupt_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
     fvld_count ++;
+}
+
+void auto_exposure_watchdog_handler(void* m){
+    watchdog_triggered = true;
 }
 
 //*****************************************************************************
@@ -148,7 +157,7 @@ void hm01b0_power_up(void) {
   // Turn on power gate
   nrf_gpio_pin_clear(HM01B0_ENn);
   // Delay max turn-on time for camera
-  nrf_delay_us(50);
+  nrf_delay_us(60);
 }
 
 //*****************************************************************************
@@ -344,6 +353,9 @@ void hm01b0_init_i2c(const nrf_twi_mngr_t* instance) {
   // Initialize I2C
   //
   twi_mngr_instance = instance;
+
+  // create watchdog timer
+  app_timer_create(&ae_watchdog, APP_TIMER_MODE_SINGLE_SHOT, auto_exposure_watchdog_handler);
 }
 
 //*****************************************************************************
@@ -663,22 +675,39 @@ int32_t hm01b0_wait_for_autoexposure(void) {
   int32_t error = 0;
   fvld_count = 0;
 
-  // set mode to streaming
-  error = hm01b0_set_mode(STREAMING, 1);
-  if(error) return error;
+  error = app_timer_start(ae_watchdog, APP_TIMER_TICKS(3000), NULL);
+  watchdog_triggered = false;
+  APP_ERROR_CHECK(error);
+  //if(error) return error;
 
   // enable event for FVLD interrupt
   nrfx_gpiote_in_event_enable(HM01B0_FVLD, 1);
 
+  // set mode to streaming
+  error = hm01b0_set_mode(STREAMING, 0);
+  if(error) return error;
+
   // wait for 5 frames
-  while(fvld_count < 5) {
-    __WFI();
+  while(fvld_count < 4) {
+    app_sched_execute();
     NRF_LOG_INFO("FVLD count: %d", fvld_count);
+    if (watchdog_triggered) {
+      error = NRF_ERROR_TIMEOUT;
+      break;
+    }
+    __WFI();
   }
 
   nrfx_gpiote_in_event_disable(HM01B0_FVLD);
 
-  return hm01b0_set_mode(STANDBY, 1);
+  error = app_timer_stop(ae_watchdog);
+
+  if (error) {
+    hm01b0_set_mode(STANDBY, 1);
+    return error;
+  } else {
+    return hm01b0_set_mode(STANDBY, 1);
+  }
 }
 
 //*****************************************************************************
@@ -702,7 +731,6 @@ int32_t hm01b0_blocking_read_oneframe(uint8_t *buf, size_t len) {
   // set mode to streaming
   hm01b0_set_mode(STREAMING, 1);
 
-  //nrf_gpio_cfg_input(HM01B0_FVLD, NRF_GPIO_PIN_NOPULL);
   while(!nrf_gpio_pin_read(HM01B0_FVLD)) {
 
   }

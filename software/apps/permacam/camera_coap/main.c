@@ -83,6 +83,7 @@ typedef struct{
   bool sending_pic;
   bool update_time;
   bool update_time_wait;
+  bool update_time_done;
   bool resolve_addr;
   bool resolve_wait;
   bool dfu_trigger;
@@ -200,6 +201,7 @@ void ntp_response_handler(void* context, uint64_t time, otError error) {
     NRF_LOG_INFO("ntp error: %d", error);
   }
   state.update_time_wait = false;
+  state.update_time_done = true;
 }
 
 void rtc_callback(void) {
@@ -318,6 +320,8 @@ void picture_sent_callback(uint8_t code, otError result) {
 }
 
 void take_picture() {
+    int error = NRF_SUCCESS;
+
     if (state.sending_pic) {
       NRF_LOG_INFO("waiting to finish sending picture");
       return;
@@ -329,13 +333,21 @@ void take_picture() {
     NRF_LOG_INFO("size of buffer:    %x", HM01B0_RAW_IMAGE_SIZE);
 
     nrf_gpio_pin_clear(LED_1);
-    hm01b0_power_up();
+    for (size_t i = 0; i < 3; i++) {
+      hm01b0_power_up();
 
-    int error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
-    NRF_LOG_INFO("error: %d", error);
+      error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
+      NRF_LOG_INFO("error: %d", error);
 
-    error = hm01b0_wait_for_autoexposure();
+      error = hm01b0_wait_for_autoexposure();
+      if (error == NRF_SUCCESS) break;
+      else if (error == NRF_ERROR_TIMEOUT) {
+        NRF_LOG_INFO("AUTO EXPOSURE TIMEOUT");
+      }
+      hm01b0_power_down();
+    }
     APP_ERROR_CHECK(error);
+
     error = hm01b0_blocking_read_oneframe(image_buffer, HM01B0_RAW_IMAGE_SIZE);
     APP_ERROR_CHECK(error);
     realloc(image_buffer, HM01B0_FULL_FRAME_IMAGE_SIZE);
@@ -473,8 +485,8 @@ void state_step(void) {
 
     }
   }
-  if (state.update_time && !state.update_time_wait) {
-    state.update_time_wait = false;
+  if (state.update_time_done) {
+    state.update_time_done = false;
     // if we haven't performed initial setup of rand
     if (!seed) {
       srand((uint32_t)time & UINT32_MAX);
@@ -535,10 +547,9 @@ int main(void) {
     log_init();
     flash_storage_init();
     twi_init(&twi_mngr_instance);
+    timer_init();
 
     sensors_init(&twi_mngr_instance, &spi_instance);
-
-    timer_init();
 
     NRF_LOG_INFO("GIT Version: %s", GIT_VERSION);
     uint8_t id[6] = {0};
