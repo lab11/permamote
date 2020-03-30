@@ -387,7 +387,7 @@ int32_t hm01b0_init_if(void) {
   if (!nrfx_gpiote_is_init()) {
     nrfx_gpiote_init();
   }
-  nrfx_gpiote_in_config_t int_gpio_config = NRFX_GPIOTE_CONFIG_IN_SENSE_LOTOHI(0);
+  nrfx_gpiote_in_config_t int_gpio_config = NRFX_GPIOTE_CONFIG_IN_SENSE_LOTOHI(1);
   int_gpio_config.pull = NRF_GPIO_PIN_NOPULL;
   error = nrfx_gpiote_in_init(HM01B0_FVLD, &int_gpio_config, fvld_interrupt_handler);
   if (error) return error;

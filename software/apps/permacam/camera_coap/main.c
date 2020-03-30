@@ -314,8 +314,6 @@ void picture_sent_callback(uint8_t code, otError result) {
     jpec_enc_del(state.jpeg_state);
     state.jpeg_state = NULL;
     state.jpeg = NULL;
-    free(state.message_buf);
-    state.message_buf = NULL;
     otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
 }
 
@@ -365,47 +363,26 @@ void take_picture() {
     // Send picture to endpoint
     state.sending_pic = true;
 
-    Message msg = Message_init_default;
+    static Message msg = Message_init_default;
     pb_callback_t callback;
     callback.funcs.encode = write_image_bytes;
     msg.data.image_jpeg = callback;
     msg.data.image_jpeg_quality = state.jpeg_quality;
 
-    Header header = Header_init_default;
-    header.version = 1;
     const char* device_type = "Permacam";
-    memcpy(header.id.bytes, device_id, sizeof(device_id));
-    strncpy(header.device_type, device_type, sizeof(header.device_type));
-    header.id.size = sizeof(device_id);
-    struct timeval time = ab1815_get_time_unix();
-    header.tv_sec = time.tv_sec;
-    header.tv_usec = time.tv_usec;
-    static uint32_t seq_no = 0;
-    header.seq_no = seq_no++;
-
-    memcpy(&(msg.header), &header, sizeof(header));
-
-    pb_ostream_t stream;
-    state.message_buf = malloc(state.len + 256);
-    NRF_LOG_INFO("message_buf: location %x, size %x", state.message_buf, state.len + 256);
-    stream = pb_ostream_from_buffer(state.message_buf, state.len + 256);
-    pb_encode(&stream, Message_fields, &msg);
-    size_t len = stream.bytes_written;
-    NRF_LOG_INFO("len: 0x%x", len);
 
     memset(&b_info, 0, sizeof(b_info));
     const char* path = "image_jpeg";
     memcpy(b_info.path, path, strnlen(path, sizeof(b_info.path)));
     b_info.code = OT_COAP_CODE_PUT;
-    b_info.data_addr = state.message_buf;
-    b_info.data_len = len;
+    b_info.data_addr = state.jpeg;
     b_info.block_size = OT_COAP_BLOCK_SIZE_512;
-    b_info.callback = picture_sent_callback;
+    b_info.data_len = state.len;
     b_info.etag = otRandomNonCryptoGetUint32();
 
     otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
-
-    start_blockwise_transfer(thread_get_instance(), &m_coap_address, &b_info, block_response_handler);
+    error = gateway_coap_block_send(&m_coap_address, &b_info, device_type, &msg, picture_sent_callback);
+    APP_ERROR_CHECK(error);
 }
 
 void state_step(void) {
