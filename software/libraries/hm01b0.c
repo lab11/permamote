@@ -422,6 +422,143 @@ int32_t hm01b0_deinit_if(void) {
 
 //*****************************************************************************
 //
+//! @brief Get HM01B0 Gain Settings
+//!
+//! @param again - Pointer to buffer for the read back analog gain.
+//! @param dgain - Pointer to buffer for the read back digital gain.
+//!
+//! This function reads back HM01B0 gain settings.
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
+int32_t hm01b0_get_gain(uint8_t *again, uint8_t *dgainh, uint8_t *dgainl) {
+  uint8_t data[1];
+  int err_code;
+
+  *again = 0;
+  *dgainh = 0;
+  *dgainl = 0;
+
+  err_code =
+      hm01b0_read_reg(HM01B0_REG_ANALOG_GAIN, data, sizeof(data));
+  if (err_code == NRF_SUCCESS) {
+    *again |= (data[0] >> 4) & 0x3;
+  } else return err_code;
+
+  err_code =
+      hm01b0_read_reg(HM01B0_REG_DIGITAL_GAIN_H, data, sizeof(data));
+  if (err_code == NRF_SUCCESS) {
+    *dgainh |= (data[0] & 0x3);
+  } else return err_code;
+
+  err_code =
+      hm01b0_read_reg(HM01B0_REG_DIGITAL_GAIN_L, data, sizeof(data));
+  if (err_code == NRF_SUCCESS) {
+    *dgainl |= (data[0] & 0x3F);
+  }
+
+  return err_code;
+}
+
+//*****************************************************************************
+//
+//! @brief Get HM01B0 Integration Setting
+//!
+//! @param integration - Pointer to buffer for the read back integration setting.
+//!
+//! This function reads back HM01B0 integration settings.
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
+int32_t hm01b0_get_integration(uint16_t *integration) {
+  uint8_t data[1];
+  int err_code;
+
+  *integration = 0;
+
+  err_code =
+      hm01b0_read_reg(HM01B0_REG_INTEGRATION_H, data, sizeof(data));
+  if (err_code == NRF_SUCCESS) {
+    *integration |= data[0] << 8;
+  } else return err_code;
+
+  err_code =
+      hm01b0_read_reg(HM01B0_REG_INTEGRATION_L, data, sizeof(data));
+  if (err_code == NRF_SUCCESS) {
+    *integration |= (data[0]);
+  }
+
+  return err_code;
+}
+
+int32_t hm01b0_set_integration(uint16_t integration) {
+  int err_code;
+  uint8_t data[2];
+
+  data[0] = (integration >> 8) & 0xFF;
+  data[1] = integration & 0xFF;
+
+  err_code =
+    hm01b0_write_reg(HM01B0_REG_INTEGRATION_H, data, 1);
+  if (err_code != NRF_SUCCESS) {
+    return err_code;
+  }
+
+  err_code =
+    hm01b0_write_reg(HM01B0_REG_INTEGRATION_L, data + 1, 1);
+  if (err_code != NRF_SUCCESS) {
+    return err_code;
+  }
+
+  uint8_t cmu_enable = 0;
+  err_code =
+    hm01b0_write_reg(HM01B0_REG_CMU_UPDATE, &cmu_enable, 1);
+
+  return err_code;
+}
+
+//*****************************************************************************
+//
+//! @brief Enable HM01B0 Auto Exposure
+//!
+//! This function enables HM01B0 auto exposure.
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
+int32_t hm01b0_enable_ae(void) {
+  int err_code;
+  uint8_t enable = 1;
+
+  err_code =
+    hm01b0_write_reg(HM01B0_REG_AE_CTRL, &enable, 1);
+
+  return err_code;
+}
+
+//*****************************************************************************
+//
+//! @brief Disable HM01B0 Auto Exposure
+//!
+//! This function disables HM01B0 auto exposure.
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
+int32_t hm01b0_disable_ae(void) {
+  int err_code;
+  uint8_t disable = 0;
+
+  err_code =
+    hm01b0_write_reg(HM01B0_REG_AE_CTRL, &disable, 1);
+
+  return err_code;
+}
+
+//*****************************************************************************
+//
 //! @brief Get HM01B0 Model ID
 //!
 //! @param model_id           - Pointer to buffer for the read back model ID.

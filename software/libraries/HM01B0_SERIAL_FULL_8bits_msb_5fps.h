@@ -327,7 +327,7 @@ const hm_script_t sHM01B0InitScript[] = {
         0x2106,
         0x14,
     },
-    // W 24 2108 02 2 1 ; max AGain in full
+    // W 24 2107 02 2 1 ; min INTG
     {
         0x2107,
         0x02,

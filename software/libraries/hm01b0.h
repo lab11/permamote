@@ -25,6 +25,16 @@
 #define HM01B0_REG_SW_RESET (0x0103)
 #define HM01B0_REG_GRP_PARAM_HOLD (0x0104)
 
+#define HM01B0_REG_INTEGRATION_H  (0x0202)
+#define HM01B0_REG_INTEGRATION_L  (0x0203)
+#define HM01B0_REG_ANALOG_GAIN    (0x0205)
+#define HM01B0_REG_DIGITAL_GAIN_H (0x020E)
+#define HM01B0_REG_DIGITAL_GAIN_L (0x020F)
+
+#define HM01B0_REG_AE_CTRL        (0x2100)
+
+#define HM01B0_REG_CMU_UPDATE     (0x0104)
+
 #define HM01B0_REG_I2C_ID_SEL (0x3400)
 #define HM01B0_REG_I2C_ID_REG (0x3401)
 
@@ -146,6 +156,68 @@ int32_t hm01b0_init_if(void);
 //
 //*****************************************************************************
 int32_t hm01b0_deinit_if(void);
+
+//*****************************************************************************
+//
+//! @brief Get HM01B0 Gain Settings
+//!
+//! @param again - Pointer to buffer for the read back analog gain.
+//! @param dgain - Pointer to buffer for the read back digital gain.
+//!
+//! This function reads back HM01B0 gain settings.
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
+int32_t hm01b0_get_gain(uint8_t *again, uint8_t *dgainh, uint8_t *dgainl);
+
+//*****************************************************************************
+//
+//! @brief Get HM01B0 Integration Setting
+//!
+//! @param integration - Pointer to buffer for the read back integration setting.
+//!
+//! This function reads back HM01B0 integration settings.
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
+int32_t hm01b0_get_integration(uint16_t *integration);
+
+//*****************************************************************************
+//
+//! @brief Set HM01B0 Integration Setting
+//!
+//! @param integration - integration setting.
+//!
+//! This function writes HM01B0 integration settings.
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
+int32_t hm01b0_set_integration(uint16_t integration);
+
+//*****************************************************************************
+//
+//! @brief Enable HM01B0 Auto Exposure
+//!
+//! This function enables HM01B0 auto exposure.
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
+int32_t hm01b0_enable_ae(void);
+
+//*****************************************************************************
+//
+//! @brief Disable HM01B0 Auto Exposure
+//!
+//! This function disables HM01B0 auto exposure.
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
+int32_t hm01b0_disable_ae(void);
 
 //*****************************************************************************
 //
