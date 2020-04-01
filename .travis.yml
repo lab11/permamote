@@ -1,0 +1,21 @@
+sudo: required
+language: c
+
+os: linux
+dist: bionic
+
+install:
+  - sudo add-apt-repository ppa:team-gcc-arm-embedded/ppa -y
+  - sudo apt update
+  - sudo apt install gcc-arm-embedded -y
+  - sudo apt install python3 python3-pip python3-setuptools -y
+  - git clone https://github.com/NordicSemiconductor/pc-nrfutil.git
+  - cd pc-nrfutil
+  - python3 setup.py install
+  - cd -
+
+jobs:
+  include:
+    - stage: "build"
+      script:
+      - TRAVIS_BUILD_DIR=software/apps .travis/build_dir.sh
