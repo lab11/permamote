@@ -18,4 +18,4 @@ jobs:
   include:
     - stage: "build"
       script:
-      - APPS_DIR=software/apps .travis/build_dir.sh
+      - .travis/build_dir.sh
