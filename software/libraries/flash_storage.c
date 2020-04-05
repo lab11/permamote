@@ -145,6 +145,10 @@ void define_flash_variable_array(const uint8_t *initial_value, uint8_t *dest, co
     }
 }
 
+void define_flash_variable_string(const char* initial_value, char* dest, uint16_t record_key) {
+  define_flash_variable_array((uint8_t*) initial_value, (uint8_t*) dest, strnlen(initial_value, MAX_STR_LEN), record_key);
+}
+
 ret_code_t flash_update_int(const uint16_t record_key, const int value) {
     return fds_update(DEFAULT_FILE_ID, record_key, &value, sizeof(int));
 }
@@ -156,3 +160,9 @@ ret_code_t flash_update_float(const uint16_t record_key, const float value) {
 ret_code_t flash_update_array(const uint16_t record_key, const char* value, const size_t length) {
     return fds_update(DEFAULT_FILE_ID, record_key, &value, length);
 }
+
+ret_code_t flash_update_string(const uint16_t record_key, const char* value) {
+    return fds_update(DEFAULT_FILE_ID, record_key, &value, strnlen(value, MAX_STR_LEN));
+}
+
+
