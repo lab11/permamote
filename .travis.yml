@@ -1,0 +1,21 @@
+sudo: required
+language: c
+
+os: linux
+dist: bionic
+
+env:
+  - APPS_DIR=software/apps PK=.travis/dummy.pem
+
+install:
+  - sudo add-apt-repository ppa:team-gcc-arm-embedded/ppa -y
+  - sudo apt update
+  - sudo apt install gcc-arm-embedded -y
+  - sudo apt install python python-pip python-setuptools -y
+  - sudo pip install nrfutil --ignore-installed PyYAML
+
+jobs:
+  include:
+    - stage: "build"
+      script:
+      - APPS_DIR=software/apps .travis/build_dir.sh
