@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include "nrf.h"
 
+#define MAX_STR_LEN 256
+
 void flash_storage_init();
 
 int define_flash_variable_int(const int initial_value, uint16_t record_key);

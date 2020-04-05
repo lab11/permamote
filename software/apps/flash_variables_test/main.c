@@ -13,17 +13,10 @@
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
-#include "simple_thread.h"
 #include "nrf_atfifo.h"
 
 #include "fds.h"
 #include "flash_storage.h"
-
-#define DEFAULT_CHILD_TIMEOUT    40 /**< Thread child timeout [s]. */
-#define DEFAULT_POLL_PERIOD      1000 /**< Thread Sleepy End Device polling period when MQTT-SN Asleep. [ms] */
-#define NUM_SLAAC_ADDRESSES      4 /**< Number of SLAAC addresses. */
-
-#define MAX_STR_LEN 256
 
 /**@brief Function for initializing the nrf log module.
  */

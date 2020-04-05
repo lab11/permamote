@@ -22,16 +22,8 @@
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
-#include "nrf_dfu_utils.h"
-#include "nrf_dfu_settings.h"
-#include "coap_dfu.h"
-#include "coap_api.h"
-#include "background_dfu_state.h"
-#include "fds.h"
 
 #include "permamote.h"
-
-#include <openthread/message.h>
 
 //#define SAADC_SAMPLE_RATE 488 // every 1/2048th of a second
 #define SAADC_SAMPLE_FREQ 4096 // every 1/4096th of a second

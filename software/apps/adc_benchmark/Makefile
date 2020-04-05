@@ -4,7 +4,7 @@ PROJECT_NAME = $(shell basename "$(realpath ./)")
 NRF_IC = nrf52840
 SDK_VERSION = 15
 SOFTDEVICE_MODEL = blank
-USE_THREAD = 1
+USE_THREAD = 0
 #USE_BOOTLOADER = 1
 
 # Source and header files

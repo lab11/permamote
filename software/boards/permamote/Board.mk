@@ -74,57 +74,61 @@ BOARD_SOURCES += \
 	SEGGER_RTT_Syscalls_GCC.c\
 	SEGGER_RTT_printf.c\
 	device_id.c\
-	simple_thread.c\
-	thread_coap.c\
-	thread_dns.c\
-	thread_ntp.c\
-	gateway_coap.c\
 	nrf_fstorage.c \
 	nrf_fstorage_nvmc.c \
-	nrf_crypto_ecc.c \
-	nrf_crypto_ecdsa.c \
-	nrf_crypto_hash.c \
-	nrf_crypto_init.c \
-	nrf_crypto_shared.c \
-	sha256.c \
-	cc310_bl_backend_hash.c \
-	cc310_bl_backend_ecc.c \
-	cc310_bl_backend_ecdsa.c \
-	cc310_bl_backend_init.c \
-	cc310_bl_backend_shared.c \
-	coap.c\
-	coap_block.c\
-	coap_message.c\
-	coap_option.c\
-	coap_queue.c\
-	coap_resource.c\
-	coap_observe.c\
-	coap_transport_ot.c\
-	coap_dfu.c\
 	crc32.c \
 	pb_common.c\
 	pb_decode.c\
-	dfu-cc.pb.c \
-	nrf_dfu_flash.c \
-	nrf_dfu_settings.c \
-	nrf_dfu_utils.c \
-	nrf_dfu_req_handler.c \
-	nrf_dfu_handling_error.c \
-	nrf_dfu_validation.c \
-	nrf_dfu_ver_validation.c \
-	background_dfu_block.c \
-	background_dfu_operation.c \
-	background_dfu_state.c \
+	pb_encode.c \
 	fds.c \
 	nrf_atfifo.c \
-	ab1815.c \
 	flash_storage.c \
-	icount.c \
-	lis2dw12.c \
+	ab1815.c \
 	max44009.c \
-	ms5637.c \
 	si7021.c \
+	ms5637.c \
 	tcs34725.c \
-	pb_encode.c \
+	lis2dw12.c
+
+
+ifeq ($(USE_THREAD), 1)
+	BOARD_SOURCES += \
+		simple_thread.c\
+		thread_coap.c\
+		thread_dns.c\
+		thread_ntp.c\
+		gateway_coap.c \
+		nrf_crypto_ecc.c \
+		nrf_crypto_ecdsa.c \
+		nrf_crypto_hash.c \
+		nrf_crypto_init.c \
+		nrf_crypto_shared.c \
+		sha256.c \
+		cc310_bl_backend_hash.c \
+		cc310_bl_backend_ecc.c \
+		cc310_bl_backend_ecdsa.c \
+		cc310_bl_backend_init.c \
+		cc310_bl_backend_shared.c \
+		coap_dfu.c\
+		dfu-cc.pb.c \
+		nrf_dfu_flash.c \
+		nrf_dfu_settings.c \
+		nrf_dfu_utils.c \
+		nrf_dfu_req_handler.c \
+		nrf_dfu_handling_error.c \
+		nrf_dfu_validation.c \
+		nrf_dfu_ver_validation.c \
+		background_dfu_block.c \
+		background_dfu_operation.c \
+		background_dfu_state.c \
+		coap.c\
+		coap_block.c\
+		coap_message.c\
+		coap_option.c\
+		coap_queue.c\
+		coap_resource.c\
+		coap_observe.c\
+		coap_transport_ot.c
+endif
 
 endif
