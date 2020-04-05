@@ -6,7 +6,8 @@ do
   cd $directory
   if [ ! -f Makefile ]; then
     echo "No Makefile in this directory -- skipping"
-    exit 0
+    cd -
+    continue
   fi
   if make -j PRIVATE_KEY=$TRAVIS_BUILD_DIR/$PK
   then
@@ -14,6 +15,6 @@ do
   else
     cd -
     exit 1
-    fi
-    cd -
+  fi
+  cd -
 done
