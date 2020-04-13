@@ -13,6 +13,7 @@
 #define HM01B0_FULL_FRAME_PIXEL_Y_NUM (320)
 #define HM01B0_RAW_IMAGE_SIZE (HM01B0_PIXEL_X_NUM * HM01B0_PIXEL_Y_NUM)
 #define HM01B0_FULL_FRAME_IMAGE_SIZE (HM01B0_FULL_FRAME_PIXEL_X_NUM * HM01B0_FULL_FRAME_PIXEL_Y_NUM)
+#define HM01B0_MCLK_FREQ (8E6)
 
 #define HM01B0_REG_MODEL_ID_H (0x0000)
 #define HM01B0_REG_MODEL_ID_L (0x0001)
@@ -33,8 +34,6 @@
 
 #define HM01B0_REG_AE_CTRL        (0x2100)
 
-#define HM01B0_REG_CMU_UPDATE     (0x0104)
-
 #define HM01B0_REG_I2C_ID_SEL (0x3400)
 #define HM01B0_REG_I2C_ID_REG (0x3401)
 
@@ -53,9 +52,15 @@
 #define HM01B0_REG_IMAGE_ORIENTATION_HVMIRROR \
   (HM01B0_REG_IMAGE_ORIENTATION_HMIRROR | HM01B0_REG_IMAGE_ORIENTATION_HVMIRROR)
 
-// #define HM01B0_REG_GRP_PARAM_HOLD                       (0x0104)
+#define HM01B0_REG_GRP_PARAM_HOLD                       (0x0104)
 #define HM01B0_REG_GRP_PARAM_HOLD_CONSUME (0x00)
 #define HM01B0_REG_GRP_PARAM_HOLD_HOLD (0x01)
+
+#define HM01B0_REG_FRAME_LENGTH_LINES_H 0x0340
+#define HM01B0_REG_FRAME_LENGTH_LINES_L 0x0341
+
+#define HM01B0_REG_LINE_LENGTH_PCK_H 0x0342
+#define HM01B0_REG_LINE_LENGTH_PCK_L 0x0343
 
 typedef struct {
   uint16_t ui16Reg;
@@ -218,6 +223,46 @@ int32_t hm01b0_enable_ae(void);
 //
 //*****************************************************************************
 int32_t hm01b0_disable_ae(void);
+
+//*****************************************************************************
+//
+//! @brief Get HM01B0 frame PCK length
+//!
+//! @param pck_length - Pointer to buffer for the read back PCK length setting.
+//!
+//! This function reads back HM01B0 PCK length setting.
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
+int32_t hm01b0_get_line_pck_length(uint16_t *pck_length);
+
+//*****************************************************************************
+//
+//! @brief Get HM01B0 frame lines length
+//!
+//! @param lines_length - Pointer to buffer for the read back lines length setting.
+//!
+//! This function reads back HM01B0 lines length setting.
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
+int32_t hm01b0_get_frame_lines_length(uint16_t *lines_length);
+
+//*****************************************************************************
+//
+//! @brief Get HM01B0 exposure time
+//!
+//! @param integration - integration setting
+//! @param pck_length - pck length setting
+//!
+//! This function calculates exposure time from integration time and pck_length
+//!
+//! @return calculated exposure time in seconds.
+//
+//*****************************************************************************
+float hm01b0_get_exposure_time(uint16_t integration, uint16_t pck_length);
 
 //*****************************************************************************
 //

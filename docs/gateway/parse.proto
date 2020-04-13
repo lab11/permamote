@@ -40,10 +40,11 @@ message Data {
   uint32 thread_parent_last_rssi = 53;
 
   // Image
-  bytes  image_raw  = 70;
-  bytes  image_jpeg = 71;
-  uint32 image_jpeg_quality = 72;
-  int32 image_exposure = 73;
+  bytes   image_raw  = 70;
+  bytes   image_jpeg = 71;
+  uint32  image_jpeg_quality = 72;
+  int32   image_ev = 73;
+  float   image_exposure_time = 74;
   uint32  image_id = 80;
 }
 

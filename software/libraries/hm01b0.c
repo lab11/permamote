@@ -512,9 +512,9 @@ int32_t hm01b0_set_integration(uint16_t integration) {
     return err_code;
   }
 
-  uint8_t cmu_enable = 0;
+  uint8_t consume = HM01B0_REG_GRP_PARAM_HOLD_CONSUME;
   err_code =
-    hm01b0_write_reg(HM01B0_REG_CMU_UPDATE, &cmu_enable, 1);
+    hm01b0_write_reg(HM01B0_REG_GRP_PARAM_HOLD, &consume, 1);
 
   return err_code;
 }
@@ -555,6 +555,64 @@ int32_t hm01b0_disable_ae(void) {
     hm01b0_write_reg(HM01B0_REG_AE_CTRL, &disable, 1);
 
   return err_code;
+}
+
+int32_t hm01b0_get_line_pck_length(uint16_t *pck_length) {
+  uint8_t data[1];
+  int err_code;
+
+  *pck_length = 0;
+
+  err_code =
+      hm01b0_read_reg(HM01B0_REG_LINE_LENGTH_PCK_H, data, sizeof(data));
+  if (err_code == NRF_SUCCESS) {
+    *pck_length |= data[0] << 8;
+  } else return err_code;
+
+  err_code =
+      hm01b0_read_reg(HM01B0_REG_LINE_LENGTH_PCK_L, data, sizeof(data));
+  if (err_code == NRF_SUCCESS) {
+    *pck_length |= (data[0]);
+  }
+
+  return err_code;
+}
+
+int32_t hm01b0_get_frame_lines_length(uint16_t *lines_length) {
+  uint8_t data[1];
+  int err_code;
+
+  *lines_length= 0;
+
+  err_code =
+      hm01b0_read_reg(HM01B0_REG_FRAME_LENGTH_LINES_H, data, sizeof(data));
+  if (err_code == NRF_SUCCESS) {
+    *lines_length |= data[0] << 8;
+  } else return err_code;
+
+  err_code =
+      hm01b0_read_reg(HM01B0_REG_FRAME_LENGTH_LINES_L, data, sizeof(data));
+  if (err_code == NRF_SUCCESS) {
+    *lines_length |= (data[0]);
+  }
+
+  return err_code;
+}
+
+//*****************************************************************************
+//
+//! @brief Get HM01B0 exposure time
+//!
+//! @param integration - integration setting
+//! @param pck_length - pck length setting
+//!
+//! This function calculates exposure time from integration time and pck_length
+//!
+//! @return calculated exposure time in seconds.
+//
+//*****************************************************************************
+float hm01b0_get_exposure_time(uint16_t integration, uint16_t pck_length) {
+  return (float) integration * (float) pck_length / (float) HM01B0_MCLK_FREQ;
 }
 
 //*****************************************************************************
