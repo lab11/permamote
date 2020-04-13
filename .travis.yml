@@ -19,3 +19,4 @@ jobs:
     - stage: "build"
       script:
       - .travis/build_dir.sh
+      - APPS_DIR=software/apps/permacam .travis/build_dir.sh
