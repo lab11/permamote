@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <math.h>
 
 #include "nrf_error.h"
 #include "nrf_delay.h"
@@ -432,13 +433,12 @@ int32_t hm01b0_deinit_if(void) {
 //! @return err_code code.
 //
 //*****************************************************************************
-int32_t hm01b0_get_gain(uint8_t *again, uint8_t *dgainh, uint8_t *dgainl) {
+int32_t hm01b0_get_gain(uint8_t *again, uint16_t *dgain) {
   uint8_t data[1];
   int err_code;
 
   *again = 0;
-  *dgainh = 0;
-  *dgainl = 0;
+  *dgain = 0;
 
   err_code =
       hm01b0_read_reg(HM01B0_REG_ANALOG_GAIN, data, sizeof(data));
@@ -449,13 +449,13 @@ int32_t hm01b0_get_gain(uint8_t *again, uint8_t *dgainh, uint8_t *dgainl) {
   err_code =
       hm01b0_read_reg(HM01B0_REG_DIGITAL_GAIN_H, data, sizeof(data));
   if (err_code == NRF_SUCCESS) {
-    *dgainh |= (data[0] & 0x3);
+    *dgain |= (data[0] & 0x3) << 8;
   } else return err_code;
 
   err_code =
       hm01b0_read_reg(HM01B0_REG_DIGITAL_GAIN_L, data, sizeof(data));
   if (err_code == NRF_SUCCESS) {
-    *dgainl |= (data[0] & 0x3F);
+    *dgain |= data[0];
   }
 
   return err_code;
@@ -493,6 +493,17 @@ int32_t hm01b0_get_integration(uint16_t *integration) {
   return err_code;
 }
 
+//*****************************************************************************
+//
+//! @brief Set HM01B0 Integration Setting
+//!
+//! @param integration - integration setting.
+//!
+//! This function writes HM01B0 integration settings.
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
 int32_t hm01b0_set_integration(uint16_t integration) {
   int err_code;
   uint8_t data[2];
@@ -508,6 +519,52 @@ int32_t hm01b0_set_integration(uint16_t integration) {
 
   err_code =
     hm01b0_write_reg(HM01B0_REG_INTEGRATION_L, data + 1, 1);
+  if (err_code != NRF_SUCCESS) {
+    return err_code;
+  }
+
+  uint8_t consume = HM01B0_REG_GRP_PARAM_HOLD_CONSUME;
+  err_code =
+    hm01b0_write_reg(HM01B0_REG_GRP_PARAM_HOLD, &consume, 1);
+
+  return err_code;
+}
+
+//*****************************************************************************
+//
+//! @brief Set HM01B0 Gain Settings
+//!
+//! @param again -  analog gain.
+//! @param dgain -  digital gain.
+//!
+//! This function sets HM01B0 gain settings.
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
+int32_t hm01b0_set_gain(uint8_t again, uint16_t dgain) {
+  int err_code;
+  uint8_t data[2];
+
+  data[0] = again << 4;
+
+  err_code =
+    hm01b0_write_reg(HM01B0_REG_ANALOG_GAIN, data, 1);
+  if (err_code != NRF_SUCCESS) {
+    return err_code;
+  }
+
+  data[0] = (dgain >> 8) & 0xFF;
+  data[1] = dgain & 0xFF;
+
+  err_code =
+    hm01b0_write_reg(HM01B0_REG_DIGITAL_GAIN_H, data, 1);
+  if (err_code != NRF_SUCCESS) {
+    return err_code;
+  }
+
+  err_code =
+    hm01b0_write_reg(HM01B0_REG_DIGITAL_GAIN_L, data + 1, 1);
   if (err_code != NRF_SUCCESS) {
     return err_code;
   }
@@ -557,6 +614,17 @@ int32_t hm01b0_disable_ae(void) {
   return err_code;
 }
 
+//*****************************************************************************
+//
+//! @brief Get HM01B0 frame PCK length
+//!
+//! @param pck_length - Pointer to buffer for the read back PCK length setting.
+//!
+//! This function reads back HM01B0 PCK length setting.
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
 int32_t hm01b0_get_line_pck_length(uint16_t *pck_length) {
   uint8_t data[1];
   int err_code;
@@ -578,6 +646,17 @@ int32_t hm01b0_get_line_pck_length(uint16_t *pck_length) {
   return err_code;
 }
 
+//*****************************************************************************
+//
+//! @brief Get HM01B0 frame lines length
+//!
+//! @param lines_length - Pointer to buffer for the read back lines length setting.
+//!
+//! This function reads back HM01B0 lines length setting.
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
 int32_t hm01b0_get_frame_lines_length(uint16_t *lines_length) {
   uint8_t data[1];
   int err_code;
@@ -612,8 +691,39 @@ int32_t hm01b0_get_frame_lines_length(uint16_t *lines_length) {
 //
 //*****************************************************************************
 float hm01b0_get_exposure_time(uint16_t integration, uint16_t pck_length) {
-  return (float) integration * (float) pck_length / (float) HM01B0_MCLK_FREQ;
+  return (float) integration * (float) pck_length / ((float) HM01B0_MCLK_FREQ / 8);
 }
+
+//*****************************************************************************
+//
+//! @brief Get HM01B0 integration value from exposure time
+//!
+//! @param exposure_time - desired exposure time in seconds
+//! @param pck_length - current pck length setting
+//!
+//! This function calculates integration value from desired exposure_time
+//!
+//! @return integration value
+//
+//*****************************************************************************
+uint16_t hm01b0_exposure_to_integration(float exposure_time, uint16_t pck_length) {
+  uint16_t integration = 2;
+
+  if (pck_length == 0) pck_length = 1;
+
+  float integration_f = exposure_time * ((float)HM01B0_MCLK_FREQ / 8) / pck_length;
+  // cap at uint16_t maximum
+  if (integration_f > 65535) {
+    integration_f = 65535;
+  }
+  // Minimum is 2 lines integration time
+  if (integration_f > 2) {
+    integration = (uint16_t) roundf(integration_f);
+  }
+
+  return integration;
+}
+
 
 //*****************************************************************************
 //

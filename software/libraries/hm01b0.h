@@ -174,7 +174,7 @@ int32_t hm01b0_deinit_if(void);
 //! @return err_code code.
 //
 //*****************************************************************************
-int32_t hm01b0_get_gain(uint8_t *again, uint8_t *dgainh, uint8_t *dgainl);
+int32_t hm01b0_get_gain(uint8_t *again, uint16_t *dgain);
 
 //*****************************************************************************
 //
@@ -201,6 +201,20 @@ int32_t hm01b0_get_integration(uint16_t *integration);
 //
 //*****************************************************************************
 int32_t hm01b0_set_integration(uint16_t integration);
+
+//*****************************************************************************
+//
+//! @brief Set HM01B0 Gain Settings
+//!
+//! @param again -  analog gain.
+//! @param dgain -  digital gain.
+//!
+//! This function sets HM01B0 gain settings.
+//!
+//! @return err_code code.
+//
+//*****************************************************************************
+int32_t hm01b0_set_gain(uint8_t again, uint16_t dgain);
 
 //*****************************************************************************
 //
@@ -263,6 +277,20 @@ int32_t hm01b0_get_frame_lines_length(uint16_t *lines_length);
 //
 //*****************************************************************************
 float hm01b0_get_exposure_time(uint16_t integration, uint16_t pck_length);
+
+//*****************************************************************************
+//
+//! @brief Get HM01B0 integration value from exposure time
+//!
+//! @param exposure_time - desired exposure time in seconds
+//! @param pck_length - current pck length setting
+//!
+//! This function calculates integration value from desired exposure_time
+//!
+//! @return integration value
+//
+//*****************************************************************************
+uint16_t hm01b0_exposure_to_integration(float exposure_time, uint16_t pck_length);
 
 //*****************************************************************************
 //
