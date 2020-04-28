@@ -5,6 +5,7 @@ NRF_IC = nrf52840
 SDK_VERSION = 16
 SOFTDEVICE_MODEL = blank
 USE_THREAD = 1
+USE_GATEWAY = 1
 USE_BOOTLOADER = 1
 PROTO_DIR = ../../../docs/gateway/
 
