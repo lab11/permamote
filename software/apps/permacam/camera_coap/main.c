@@ -154,22 +154,13 @@ static void addresses_print(otInstance * aInstance)
     }
 }
 
-static void send_discover(void) {
-  Message msg = Message_init_default;
-  strncpy(msg.data.discovery, PARSE_ADDR, sizeof(msg.data.discovery));
-
-  NRF_LOG_INFO("Sent discovery");
-
-  gateway_coap_send(&m_coap_address, "discovery", DEVICE_TYPE, false, &msg);
-}
-
 static void send_version(void) {
   Message msg = Message_init_default;
   strncpy(msg.data.git_version, GIT_VERSION, sizeof(msg.data.git_version));
 
   NRF_LOG_INFO("Sent version");
 
-  gateway_coap_send(&m_coap_address, "version", DEVICE_TYPE, false, &msg);
+  gateway_coap_send(&m_coap_address, "version", false, &msg);
 }
 
 bool write_image_bytes(pb_ostream_t *stream, const pb_field_t *field, void * const *arg)
@@ -243,7 +234,7 @@ void send_light() {
   max44009_set_lower_threshold(lower);
 
   msg.data.light_lux = state.sensed_lux;
-  gateway_coap_send(&m_coap_address, "light_lux", DEVICE_TYPE, false, &msg);
+  gateway_coap_send(&m_coap_address, "light_lux", false, &msg);
 }
 
 void pir_backoff_callback(void* m) {
@@ -284,7 +275,7 @@ void send_motion() {
   NRF_LOG_INFO("Saw motion");
   msg.data.motion = true;
 
-  gateway_coap_send(&m_coap_address, "motion", DEVICE_TYPE, false, &msg);
+  gateway_coap_send(&m_coap_address, "motion", false, &msg);
 }
 
 
@@ -348,7 +339,11 @@ void take_picture() {
 
     error = hm01b0_blocking_read_oneframe(image_buffer, HM01B0_RAW_IMAGE_SIZE);
     APP_ERROR_CHECK(error);
-    realloc(image_buffer, HM01B0_FULL_FRAME_IMAGE_SIZE);
+    image_buffer = realloc(image_buffer, HM01B0_FULL_FRAME_IMAGE_SIZE);
+    if(!image_buffer) {
+      NRF_LOG_INFO("failed to reallocate!");
+      return;
+    }
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
     NRF_LOG_INFO("TOOK PICTURE");
@@ -369,8 +364,6 @@ void take_picture() {
     msg.data.image_jpeg = callback;
     msg.data.image_jpeg_quality = state.jpeg_quality;
 
-    const char* device_type = "Permacam";
-
     memset(&b_info, 0, sizeof(b_info));
     const char* path = "image_jpeg";
     memcpy(b_info.path, path, strnlen(path, sizeof(b_info.path)));
@@ -381,7 +374,7 @@ void take_picture() {
     b_info.etag = otRandomNonCryptoGetUint32();
 
     otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
-    error = gateway_coap_block_send(&m_coap_address, &b_info, device_type, &msg, picture_sent_callback);
+    error = gateway_coap_block_send(&m_coap_address, &b_info, &msg, picture_sent_callback);
     APP_ERROR_CHECK(error);
 }
 
@@ -410,7 +403,6 @@ void state_step(void) {
       take_picture();
     }
     if (period_count % sensor_period.discover == 0) {
-      send_discover();
       //send_thread_info();
     }
 
@@ -470,8 +462,6 @@ void state_step(void) {
       // set jitter for next dfu check
       dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * DFU_CHECK_HOURS);
       NRF_LOG_INFO("JITTER: %u", dfu_jitter_hours);
-      // send version and discover because why not
-      send_discover();
       //send_thread_info();
       send_version();
       seed = true;

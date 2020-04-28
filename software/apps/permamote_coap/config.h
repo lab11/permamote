@@ -1,10 +1,9 @@
-#define DEVICE_TYPE "Permamote"
-
 #define COAP_SERVER_HOSTNAME "coap.permamote.com"
 #define NTP_SERVER_HOSTNAME "us.pool.ntp.org"
 #define UPDATE_SERVER_HOSTNAME "dfu.permamote.com"
 #define DNS_SERVER_ADDR "fdaa:bb:1::2"
-#define PARSE_ADDR "lab11.github.io/permamote/gateway/"
+#define GATEWAY_PARSE_ADDR "lab11.github.io/permamote/gateway/"
+#define GATEWAY_DEVICE_TYPE "Permamote"
 
 #define ID_LOCATOR 0x1000
 

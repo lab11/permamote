@@ -14,6 +14,8 @@
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
 #include "nrf_drv_spi.h"
+#include "app_timer.h"
+#include "app_scheduler.h"
 
 #include "permacam.h"
 
@@ -22,6 +24,9 @@
 #include "HM01B0_SERIAL_FULL_8bits_msb_5fps.h"
 
 #include "jpec.h"
+
+#define SCHED_QUEUE_SIZE 32
+#define SCHED_EVENT_DATA_SIZE APP_TIMER_SCHED_EVENT_DATA_SIZE
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
 static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
@@ -62,6 +67,10 @@ int main(void) {
     // Initialize.
     nrf_power_dcdcen_set(1);
     log_init();
+
+    APP_SCHED_INIT(SCHED_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
+    ret_code_t err_code = app_timer_init();
+    APP_ERROR_CHECK(err_code);
 
     nrf_gpio_cfg_output(LED_1);
     nrf_gpio_cfg_output(LED_2);

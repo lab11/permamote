@@ -59,7 +59,6 @@ static nrf_drv_spi_t spi_instance = NRF_DRV_SPI_INSTANCE(1);
 typedef struct {
   uint8_t voltage;
   uint8_t camera;
-  uint8_t discover;
 } permamote_sensor_period_t;
 
 typedef enum {
@@ -79,7 +78,6 @@ uint32_t hours_count = 0;
 static permamote_sensor_period_t sensor_period = {
   .voltage = VOLTAGE_PERIOD,
   .camera = CAMERA_PERIOD,
-  .discover = DISCOVER_PERIOD,
 };
 
 typedef struct{
@@ -169,14 +167,7 @@ static void addresses_print(otInstance * aInstance)
     }
 }
 
-static void send_discover(void) {
-  Message msg = Message_init_default;
-  strncpy(msg.data.discovery, PARSE_ADDR, sizeof(msg.data.discovery));
-
-  NRF_LOG_INFO("Sent discovery");
-
-  gateway_coap_send(&m_coap_address, "discovery", DEVICE_TYPE, false, &msg);
-}
+void take_picture();
 
 static void send_version(void) {
   Message msg = Message_init_default;
@@ -184,7 +175,7 @@ static void send_version(void) {
 
   NRF_LOG_INFO("Sent version");
 
-  gateway_coap_send(&m_coap_address, "git_version", DEVICE_TYPE, false, &msg);
+  gateway_coap_send(&m_coap_address, "git_version", false, &msg);
 }
 
 bool write_image_bytes(pb_ostream_t *stream, const pb_field_t *field, void * const *arg)
@@ -258,7 +249,7 @@ void send_light() {
   max44009_set_lower_threshold(lower);
 
   msg.data.light_lux = state.sensed_lux;
-  gateway_coap_send(&m_coap_address, "light_lux", DEVICE_TYPE, false, &msg);
+  gateway_coap_send(&m_coap_address, "light_lux", false, &msg);
 }
 
 void pir_backoff_callback(void* m) {
@@ -299,7 +290,7 @@ void send_motion() {
   NRF_LOG_INFO("Saw motion");
   msg.data.motion = true;
 
-  gateway_coap_send(&m_coap_address, "motion", DEVICE_TYPE, false, &msg);
+  gateway_coap_send(&m_coap_address, "motion", false, &msg);
 }
 
 
@@ -357,6 +348,9 @@ void take_picture() {
 
     int8_t exposure = state.exposures[state.current_exposure];
     uint16_t integration_time;
+    static uint8_t again;
+    static uint16_t dgain;
+
     NRF_LOG_INFO("exposure: %d", exposure);
     if (state.current_exposure == 0) {
       state.current_image_id = otRandomNonCryptoGetUint8();
@@ -367,15 +361,24 @@ void take_picture() {
       }
 
       hm01b0_get_integration(&integration_time);
+      hm01b0_get_gain(&again, &dgain);
       state.last_integration = integration_time;
-      NRF_LOG_INFO("ae integration: %x", state.last_integration);
+      NRF_LOG_INFO("ae integration: 0x%0xx", state.last_integration);
+      NRF_LOG_INFO("ae again: 0x%x, dgain: 0x%x", again, dgain);
     }
     else {
       hm01b0_disable_ae();
-      if (exposure < 0) {
-        integration_time = state.last_integration << abs(exposure);
+      if (exposure > 0) {
+        integration_time = state.last_integration << exposure;
       } else {
-        integration_time = state.last_integration >> exposure;
+        if  (state.last_integration >> abs(exposure) == 0) {
+          // Need to increase gain
+          NRF_LOG_INFO("WARN: integration time too small for exposure");
+          integration_time = state.last_integration;
+          //integration_time = state.last_integration >> (abs(exposure + 1));
+        } else {
+          integration_time = state.last_integration >> abs(exposure);
+        }
       }
       hm01b0_set_integration(integration_time);
       NRF_LOG_INFO("integration: %x, %d", integration_time, integration_time);
@@ -391,7 +394,11 @@ void take_picture() {
 
     error = hm01b0_blocking_read_oneframe(image_buffer, HM01B0_RAW_IMAGE_SIZE);
     APP_ERROR_CHECK(error);
-    realloc(image_buffer, HM01B0_FULL_FRAME_IMAGE_SIZE);
+    image_buffer = realloc(image_buffer, HM01B0_FULL_FRAME_IMAGE_SIZE);
+    if(!image_buffer) {
+      NRF_LOG_INFO("failed to reallocate!");
+      return;
+    }
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
     NRF_LOG_INFO("TOOK PICTURE");
@@ -400,8 +407,8 @@ void take_picture() {
     state.jpeg_quality = 90;
     state.jpeg_state = jpec_enc_new2(image_buffer, 320, 320, state.jpeg_quality);
     state.jpeg = jpec_enc_run(state.jpeg_state, (int*) &state.len);
-    NRF_LOG_INFO("jpeg: location %x, size %x", state.jpeg, state.len);
     free(image_buffer);
+    NRF_LOG_INFO("jpeg: location %x, size %x", state.jpeg, state.len);
     NRF_LOG_INFO("JPEG COMPRESS");
 
     // Send picture to endpoint
@@ -416,8 +423,6 @@ void take_picture() {
     msg.data.image_exposure_time = exp_time;
     msg.data.image_id = state.current_image_id;
 
-    const char* device_type = "Permacam";
-
     memset(&b_info, 0, sizeof(b_info));
     const char* path = "image_jpeg";
     memcpy(b_info.path, path, strnlen(path, sizeof(b_info.path)));
@@ -428,7 +433,7 @@ void take_picture() {
     b_info.etag = otRandomNonCryptoGetUint32();
 
     otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
-    error = gateway_coap_block_send(&m_coap_address, &b_info, device_type, &msg, picture_sent_callback);
+    error = gateway_coap_block_send(&m_coap_address, &b_info, &msg, picture_sent_callback);
     APP_ERROR_CHECK(error);
 }
 
@@ -452,10 +457,6 @@ void state_step(void) {
     if (period_count % sensor_period.camera == 0) {
       max44009_schedule_read_lux();
       take_picture();
-    }
-    if (period_count % sensor_period.discover == 0) {
-      send_discover();
-      //send_thread_info();
     }
 
     //if (state.dfu_trigger == true && state.performing_dfu == false) {
@@ -514,9 +515,6 @@ void state_step(void) {
       // set jitter for next dfu check
       dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * DFU_CHECK_HOURS);
       NRF_LOG_INFO("JITTER: %u", dfu_jitter_hours);
-      // send version and discover because why not
-      send_discover();
-      //send_thread_info();
       send_version();
       seed = true;
     }
@@ -573,8 +571,8 @@ int main(void) {
     sensors_init(&twi_mngr_instance, &spi_instance);
 
     state.exposures[0] = EV_0;
-    state.exposures[1] = EV_n1;
-    state.exposures[2] = EV_1;
+    state.exposures[1] = EV_n2;
+    state.exposures[2] = EV_2;
 
     NRF_LOG_INFO("GIT Version: %s", GIT_VERSION);
     uint8_t id[6] = {0};

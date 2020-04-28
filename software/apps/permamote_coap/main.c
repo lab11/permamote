@@ -108,7 +108,6 @@ static float sensed_lux;
 
 // forward declaration
 static void send_thread_info(void);
-static void send_discover(void);
 static void send_version(void);
 
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 5, 0);
@@ -290,7 +289,7 @@ static void send_temp_pres_hum(void) {
   // Prepare humidity packet
   msg.data.humidity_percent = humidity;
 
-  gateway_coap_send(&m_coap_address, "temp_pres_hum", DEVICE_TYPE, false, &msg);
+  gateway_coap_send(&m_coap_address, "temp_pres_hum", false, &msg);
 
   NRF_LOG_INFO("Sensed ms5637: temperature: %d, pressure: %d", (int32_t)temperature, (int32_t)pressure);
   NRF_LOG_INFO("Sensed si7021: humidity: %d", (int32_t)humidity);
@@ -311,7 +310,7 @@ static void send_voltage(void) {
   // sense vbat_ok
   msg.data.vbat_ok = nrf_gpio_pin_read(VBAT_OK);
 
-  gateway_coap_send(&m_coap_address, "voltage", DEVICE_TYPE, false, &msg);
+  gateway_coap_send(&m_coap_address, "voltage", false, &msg);
 
   NRF_LOG_INFO("Sensed voltage: vbat*100: %d, vsol*100: %d, vsec*100: %d", (int32_t)(msg.data.primary_voltage*100), (int32_t)(msg.data.solar_voltage*100), (int32_t)(msg.data.secondary_voltage*100));
   NRF_LOG_INFO("VBAT_OK: %d", msg.data.vbat_ok);
@@ -330,7 +329,7 @@ void color_read_callback(uint16_t red, uint16_t green, uint16_t blue, uint16_t c
   msg.data.light_counts_blue = blue;
   msg.data.light_counts_clear = clear;
   // send
-  gateway_coap_send(&m_coap_address, "light_color", DEVICE_TYPE, false, &msg);
+  gateway_coap_send(&m_coap_address, "light_color", false, &msg);
 
   NRF_LOG_INFO("Sensed light cct: %u", (uint32_t)cct);
   NRF_LOG_INFO("Sensed light color:\n\tr: %u\n\tg: %u\n\tb: %u", (uint16_t)red, (uint16_t)green, (uint16_t)blue);
@@ -366,16 +365,7 @@ static void send_thread_info(void) {
   NRF_LOG_INFO("average rssi: %d", avg_rssi);
   NRF_LOG_INFO("last rssi: %d", last_rssi);
 
-  gateway_coap_send(&m_coap_address, "thread_info", DEVICE_TYPE, false, &msg);
-}
-
-static void send_discover(void) {
-  Message msg = Message_init_default;
-  strncpy(msg.data.discovery, PARSE_ADDR, sizeof(msg.data.discovery));
-
-  NRF_LOG_INFO("Sent discovery");
-
-  gateway_coap_send(&m_coap_address, "discovery", DEVICE_TYPE, false, &msg);
+  gateway_coap_send(&m_coap_address, "thread_info", false, &msg);
 }
 
 static void send_version(void) {
@@ -384,7 +374,7 @@ static void send_version(void) {
 
   NRF_LOG_INFO("Sent version");
 
-  gateway_coap_send(&m_coap_address, "version", DEVICE_TYPE, false, &msg);
+  gateway_coap_send(&m_coap_address, "version", false, &msg);
 }
 
 
@@ -439,7 +429,7 @@ void send_light() {
   max44009_set_lower_threshold(lower);
 
   msg.data.light_lux = sensed_lux;
-  gateway_coap_send(&m_coap_address, "light_lux", DEVICE_TYPE, false, &msg);
+  gateway_coap_send(&m_coap_address, "light_lux", false, &msg);
 }
 
 void send_motion() {
@@ -456,7 +446,7 @@ void send_motion() {
   NRF_LOG_INFO("Saw motion");
   msg.data.motion = true;
 
-  gateway_coap_send(&m_coap_address, "motion", DEVICE_TYPE, false, &msg);
+  gateway_coap_send(&m_coap_address, "motion", false, &msg);
 }
 
 /**@brief Function for initializing the nrf log module.
@@ -556,7 +546,6 @@ void state_step(void) {
       max44009_schedule_read_lux();
     }
     if (period_count % sensor_period.discover == 0) {
-      send_discover();
       send_thread_info();
     }
 
@@ -565,7 +554,6 @@ void state_step(void) {
       state.performing_dfu = true;
 
       // Send discovery packet and version before updating
-      send_discover();
       send_version();
 
       otLinkSetPollPeriod(thread_instance, DFU_POLL_PERIOD);
@@ -619,7 +607,6 @@ void state_step(void) {
       dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * DFU_CHECK_HOURS);
       NRF_LOG_INFO("JITTER: %u", dfu_jitter_hours);
       // send version and discover because why not
-      send_discover();
       send_thread_info();
       send_version();
       seed = true;
