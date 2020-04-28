@@ -100,8 +100,6 @@ ifeq ($(USE_THREAD), 1)
 		thread_coap_block.c\
 		thread_dns.c\
 		thread_ntp.c\
-		gateway_coap.c \
-		gateway_coap.c \
 		nrf_crypto_ecc.c \
 		nrf_crypto_ecdsa.c \
 		nrf_crypto_hash.c \
@@ -133,6 +131,11 @@ ifeq ($(USE_THREAD), 1)
 		coap_resource.c\
 		coap_observe.c\
 		coap_transport_ot.c
+endif
+
+ifeq ($(USE_GATEWAY), 1)
+	BOARD_SOURCES += \
+		gateway_coap.c
 endif
 
 endif
