@@ -44,21 +44,6 @@ your own OpenThread network.
 
 Cloning
 -------
-Submodules of this repo depend on Git LFS, so you should install that:
-
-On mac:
-```
-brew install git-lfs
-```
-On ubuntu/debian:
-```
-sudo apt-get install git-lfs
-```
-Then:
-```
-git lfs install
-```
-
 To clone both this repository and the required submodules,
 clone with the `--recurse-submodules` option:
 

@@ -19,29 +19,25 @@ This application is configured to use Nordic's [background
 bootloader](
    https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v15.3.0/lib_background_dfu.html
     ).
-Before flashing this app, make sure to generate keys, copy the keys, and flash the bootloader once.
+Before flashing this app, make sure to generate keys and place them in the [`software/boards/keys`](https://github.com/lab11/permamote/tree/master/software/boards/keys) directory.
 
 To generate keys, follow Nordic's process [here](
     https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.thread_zigbee.v3.0.0/thread_example_dfu.html
     ).
 ```
+cd software/boards/keys
 nrfutil keys generate private.pem
 nrfutil keys display --key pk --format code private.pem --out_file public.c
-cp private.pem public.c ../bg_bootloader/.
 ```
-
-Navigate to the
-[`bg_bootloader`](https://github.com/lab11/permamote/tree/master/software/apps/bg_bootloader) directory and:
-```
-make flash
-```
-
-You should see a red LED turn on. This means the bootloader has successfully been flashed and recognizes that there is not yet a valid application installed.
 
 Next, navigate to the [`permamote_coap`](https://github.com/lab11/permamote/tree/master/software/apps/permamote_coap) application and flash this app, with a device ID:
 ```
 make flash ID=C0:98:E5:11:XX:XX
 ```
 Replace XX:XX with your desired ID.
+
+If you see a red LED turn on, this means the bootloader has successfully been
+flashed but there is not yet a valid application installed. Check that you have
+properly generated keys and that you hav e run `make clean` before flashing.
 
 
