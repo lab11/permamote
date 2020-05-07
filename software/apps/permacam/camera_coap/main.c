@@ -328,11 +328,11 @@ void take_picture() {
     error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
     NRF_LOG_INFO("error: %d", error);
 
+    error = hm01b0_wait_for_autoexposure();
+    if (error == NRF_ERROR_TIMEOUT) {
+      NRF_LOG_INFO("AUTO EXPOSURE TIMEOUT");
+    }
 
-      error = hm01b0_wait_for_autoexposure();
-      if (error == NRF_ERROR_TIMEOUT) {
-        NRF_LOG_INFO("AUTO EXPOSURE TIMEOUT");
-      }
     uint16_t pck, integration_time;
     float exposure;
     hm01b0_get_line_pck_length(&pck);
@@ -370,6 +370,7 @@ void take_picture() {
     msg.data.image_ev = 0;
     msg.data.image_exposure_time = exposure;
     msg.data.image_id = state.current_image_id;
+    msg.data.image_is_demosaiced = false;
 
     memset(&b_info, 0, sizeof(b_info));
     const char* path = "image_jpeg";

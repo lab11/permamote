@@ -395,6 +395,7 @@ void take_picture() {
     msg.data.image_ev = state.current_exposure;
     msg.data.image_exposure_time = exposure;
     msg.data.image_id = state.current_image_id;
+    msg.data.image_is_demosaiced = false;
 
     memset(&b_info, 0, sizeof(b_info));
     const char* path = "image_jpeg";
