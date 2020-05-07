@@ -67,7 +67,6 @@ uint32_t hours_count = 0;
 static permamote_sensor_period_t sensor_period = {
   .voltage = VOLTAGE_PERIOD,
   .camera = CAMERA_PERIOD,
-  .discover = DISCOVER_PERIOD,
 };
 
 typedef struct{
@@ -75,7 +74,7 @@ typedef struct{
   jpec_enc_t* jpeg_state;
   size_t   len;
   uint8_t jpeg_quality;
-  uint8_t*  message_buf;
+  uint8_t current_image_id;
   float sensed_lux;
   bool send_light;
   bool send_motion;
@@ -154,13 +153,15 @@ static void addresses_print(otInstance * aInstance)
     }
 }
 
+void take_picture();
+
 static void send_version(void) {
   Message msg = Message_init_default;
   strncpy(msg.data.git_version, GIT_VERSION, sizeof(msg.data.git_version));
 
   NRF_LOG_INFO("Sent version");
 
-  gateway_coap_send(&m_coap_address, "version", false, &msg);
+  gateway_coap_send(&m_coap_address, "git_version", false, &msg);
 }
 
 bool write_image_bytes(pb_ostream_t *stream, const pb_field_t *field, void * const *arg)
@@ -322,20 +323,22 @@ void take_picture() {
     NRF_LOG_INFO("size of buffer:    %x", HM01B0_RAW_IMAGE_SIZE);
 
     nrf_gpio_pin_clear(LED_1);
-    for (size_t i = 0; i < 3; i++) {
-      hm01b0_power_up();
+    hm01b0_power_up();
 
-      error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
-      NRF_LOG_INFO("error: %d", error);
+    error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
+    NRF_LOG_INFO("error: %d", error);
+
 
       error = hm01b0_wait_for_autoexposure();
-      if (error == NRF_SUCCESS) break;
-      else if (error == NRF_ERROR_TIMEOUT) {
+      if (error == NRF_ERROR_TIMEOUT) {
         NRF_LOG_INFO("AUTO EXPOSURE TIMEOUT");
       }
-      hm01b0_power_down();
-    }
-    APP_ERROR_CHECK(error);
+    uint16_t pck, integration_time;
+    float exposure;
+    hm01b0_get_line_pck_length(&pck);
+    hm01b0_get_integration(&integration_time);
+    exposure = hm01b0_get_exposure_time(integration_time, pck);
+    state.current_image_id = otRandomNonCryptoGetUint8();
 
     error = hm01b0_blocking_read_oneframe(image_buffer, HM01B0_RAW_IMAGE_SIZE);
     APP_ERROR_CHECK(error);
@@ -347,12 +350,13 @@ void take_picture() {
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
     NRF_LOG_INFO("TOOK PICTURE");
+
     // Compress and encode as jpeg
     state.jpeg_quality = 90;
     state.jpeg_state = jpec_enc_new2(image_buffer, 320, 320, state.jpeg_quality);
     state.jpeg = jpec_enc_run(state.jpeg_state, (int*) &state.len);
-    NRF_LOG_INFO("jpeg: location %x, size %x", state.jpeg, state.len);
     free(image_buffer);
+    NRF_LOG_INFO("jpeg: location %x, size %x", state.jpeg, state.len);
     NRF_LOG_INFO("JPEG COMPRESS");
 
     // Send picture to endpoint
@@ -363,6 +367,9 @@ void take_picture() {
     callback.funcs.encode = write_image_bytes;
     msg.data.image_jpeg = callback;
     msg.data.image_jpeg_quality = state.jpeg_quality;
+    msg.data.image_ev = 0;
+    msg.data.image_exposure_time = exposure;
+    msg.data.image_id = state.current_image_id;
 
     memset(&b_info, 0, sizeof(b_info));
     const char* path = "image_jpeg";
@@ -389,9 +396,6 @@ void state_step(void) {
     send_motion();
   }
   if (state.send_periodic) {
-      uint32_t poll = otLinkGetPollPeriod(thread_get_instance());
-    NRF_LOG_INFO("### state vars: utw: %d, rw: %d, pd: %d, sp: %d, poll: %d", state.update_time_wait, state.resolve_wait, state.performing_dfu, state.sending_pic, poll);
-
     ab1815_tickle_watchdog();
 
     period_count ++;

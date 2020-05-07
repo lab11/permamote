@@ -15,6 +15,9 @@ BOARD_LINKER_PATHS = $(BOARD_DIR)/.
 BOARD_SOURCES = $(notdir $(wildcard $(BOARD_DIR)/./*.c))
 BOARD_AS = $(notdir $(wildcard $(BOARD_DIR)/./*.s))
 
+KEY_DIR = $(BOARD_DIR)/../keys/
+PRIVATE_KEY = $(KEY_DIR)/private.pem
+
 # Board-specific configurations
 USE_BLE = 0
 

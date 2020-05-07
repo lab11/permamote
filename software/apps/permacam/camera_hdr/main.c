@@ -61,19 +61,11 @@ typedef struct {
   uint8_t camera;
 } permamote_sensor_period_t;
 
-typedef enum {
-  EV_n4 = -4,
-  EV_n2 = -2,
-  EV_n1 = -1,
-  EV_0 = 0,
-  EV_1 = 1,
-  EV_2 = 2,
-  EV_4 = 4,
-} exposure_t;
-#define NUM_EXPOSURES 3
+static float exposures[7] = { 1/1000.0, 1/500.0, 1/250.0, 1/125.0, 1/60.0, 1/30.0, 1/8.0};
+#define NUM_EXPOSURES 7
 
-uint32_t period_count = 0;
-uint32_t hours_count = 0;
+static uint32_t period_count = 0;
+static uint32_t hours_count = 0;
 
 static permamote_sensor_period_t sensor_period = {
   .voltage = VOLTAGE_PERIOD,
@@ -88,7 +80,6 @@ typedef struct{
   uint8_t current_image_id;
   uint8_t current_exposure;
   uint16_t last_integration;
-  exposure_t exposures[NUM_EXPOSURES];
   float sensed_lux;
   bool send_light;
   bool send_motion;
@@ -182,7 +173,7 @@ bool write_image_bytes(pb_ostream_t *stream, const pb_field_t *field, void * con
 {
     if (!pb_encode_tag_for_field(stream, field))
         return false;
-    NRF_LOG_INFO("ptr: %p, len: %d", state.jpeg, state.len);
+
     return pb_encode_string(stream, state.jpeg, state.len);
 }
 
@@ -345,52 +336,34 @@ void take_picture() {
 
     error = hm01b0_init_system(sHM01B0InitScript, sizeof(sHM01B0InitScript)/sizeof(hm_script_t));
     NRF_LOG_INFO("error: %d", error);
+    //hm01b0_disable_ae();
 
-    int8_t exposure = state.exposures[state.current_exposure];
-    uint16_t integration_time;
-    static uint8_t again;
-    static uint16_t dgain;
+    uint16_t pck;
+    hm01b0_get_line_pck_length(&pck);
+    float exposure = exposures[state.current_exposure];
+    uint16_t integration_time = hm01b0_exposure_to_integration(exposure, pck);
+    static uint8_t again = 0;
+    static uint16_t dgain = 0x100;
+    hm01b0_set_gain(again, dgain);
+    hm01b0_set_integration(integration_time);
 
-    NRF_LOG_INFO("exposure: %d", exposure);
+    printf("\texposure: %f\n", exposure);
+    printf("\tintegration: %x\n", integration_time);
+    exposure = hm01b0_get_exposure_time(integration_time, pck);
+    printf("\tactual exposure_time: %f, pck: %x\n", exposure, pck);
+
     if (state.current_exposure == 0) {
-      state.current_image_id = otRandomNonCryptoGetUint8();
-
       error = hm01b0_wait_for_autoexposure();
       if (error == NRF_ERROR_TIMEOUT) {
         NRF_LOG_INFO("AUTO EXPOSURE TIMEOUT");
       }
 
-      hm01b0_get_integration(&integration_time);
-      hm01b0_get_gain(&again, &dgain);
-      state.last_integration = integration_time;
-      NRF_LOG_INFO("ae integration: 0x%0xx", state.last_integration);
-      NRF_LOG_INFO("ae again: 0x%x, dgain: 0x%x", again, dgain);
+      state.current_image_id = otRandomNonCryptoGetUint8();
     }
-    else {
-      hm01b0_disable_ae();
-      if (exposure > 0) {
-        integration_time = state.last_integration << exposure;
-      } else {
-        if  (state.last_integration >> abs(exposure) == 0) {
-          // Need to increase gain
-          NRF_LOG_INFO("WARN: integration time too small for exposure");
-          integration_time = state.last_integration;
-          //integration_time = state.last_integration >> (abs(exposure + 1));
-        } else {
-          integration_time = state.last_integration >> abs(exposure);
-        }
-      }
-      hm01b0_set_integration(integration_time);
-      NRF_LOG_INFO("integration: %x, %d", integration_time, integration_time);
-      hm01b0_wait_for_autoexposure();
+    error = hm01b0_wait_for_autoexposure();
+    if (error == NRF_ERROR_TIMEOUT) {
+      NRF_LOG_INFO("AUTO EXPOSURE TIMEOUT");
     }
-    state.current_exposure++;
-    if (state.current_exposure >= NUM_EXPOSURES) state.current_exposure = 0;
-
-    uint16_t pck;
-    hm01b0_get_line_pck_length(&pck);
-    float exp_time = hm01b0_get_exposure_time(integration_time, pck);
-    printf("\texposure_time: %f, pck: %x\n", exp_time, pck);
 
     error = hm01b0_blocking_read_oneframe(image_buffer, HM01B0_RAW_IMAGE_SIZE);
     APP_ERROR_CHECK(error);
@@ -404,7 +377,7 @@ void take_picture() {
     NRF_LOG_INFO("TOOK PICTURE");
 
     // Compress and encode as jpeg
-    state.jpeg_quality = 90;
+    state.jpeg_quality = 95;
     state.jpeg_state = jpec_enc_new2(image_buffer, 320, 320, state.jpeg_quality);
     state.jpeg = jpec_enc_run(state.jpeg_state, (int*) &state.len);
     free(image_buffer);
@@ -419,8 +392,8 @@ void take_picture() {
     callback.funcs.encode = write_image_bytes;
     msg.data.image_jpeg = callback;
     msg.data.image_jpeg_quality = state.jpeg_quality;
-    msg.data.image_ev = exposure;
-    msg.data.image_exposure_time = exp_time;
+    msg.data.image_ev = state.current_exposure;
+    msg.data.image_exposure_time = exposure;
     msg.data.image_id = state.current_image_id;
 
     memset(&b_info, 0, sizeof(b_info));
@@ -435,6 +408,9 @@ void take_picture() {
     otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
     error = gateway_coap_block_send(&m_coap_address, &b_info, &msg, picture_sent_callback);
     APP_ERROR_CHECK(error);
+
+    state.current_exposure++;
+    if (state.current_exposure >= NUM_EXPOSURES) state.current_exposure = 0;
 }
 
 void state_step(void) {
@@ -569,10 +545,6 @@ int main(void) {
     timer_init();
 
     sensors_init(&twi_mngr_instance, &spi_instance);
-
-    state.exposures[0] = EV_0;
-    state.exposures[1] = EV_n2;
-    state.exposures[2] = EV_2;
 
     NRF_LOG_INFO("GIT Version: %s", GIT_VERSION);
     uint8_t id[6] = {0};
