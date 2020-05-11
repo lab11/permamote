@@ -77,7 +77,7 @@ typedef struct{
   jpec_enc_t* jpeg_state;
   size_t   len;
   uint8_t jpeg_quality;
-  uint8_t current_image_id;
+  uint16_t current_image_id;
   uint8_t current_exposure;
   uint16_t last_integration;
   float sensed_lux;
@@ -358,7 +358,7 @@ void take_picture() {
         NRF_LOG_INFO("AUTO EXPOSURE TIMEOUT");
       }
 
-      state.current_image_id = otRandomNonCryptoGetUint8();
+      state.current_image_id = otRandomNonCryptoGetUint16();
     }
     error = hm01b0_wait_for_autoexposure();
     if (error == NRF_ERROR_TIMEOUT) {

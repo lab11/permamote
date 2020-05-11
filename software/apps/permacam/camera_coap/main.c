@@ -74,7 +74,7 @@ typedef struct{
   jpec_enc_t* jpeg_state;
   size_t   len;
   uint8_t jpeg_quality;
-  uint8_t current_image_id;
+  uint16_t current_image_id;
   float sensed_lux;
   bool send_light;
   bool send_motion;
@@ -338,7 +338,7 @@ void take_picture() {
     hm01b0_get_line_pck_length(&pck);
     hm01b0_get_integration(&integration_time);
     exposure = hm01b0_get_exposure_time(integration_time, pck);
-    state.current_image_id = otRandomNonCryptoGetUint8();
+    state.current_image_id = otRandomNonCryptoGetUint16();
 
     error = hm01b0_blocking_read_oneframe(image_buffer, HM01B0_RAW_IMAGE_SIZE);
     APP_ERROR_CHECK(error);
