@@ -47,6 +47,10 @@ message Data {
   float   image_exposure_time = 74;
   bool    image_is_demosaiced = 75;
   uint32  image_id = 80;
+
+  // Time to Send
+  uint64 time_to_send_s = 100;
+  uint32 time_to_send_us = 101;
 }
 
 message Message {

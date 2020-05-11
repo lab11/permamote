@@ -69,12 +69,23 @@ static permamote_sensor_period_t sensor_period = {
   .camera = CAMERA_PERIOD,
 };
 
+#define NUM_QUALITIES 7
+
+#define OFFSET 256
+static uint8_t image_buffer[HM01B0_RAW_IMAGE_SIZE + OFFSET];
+
 typedef struct{
+  uint8_t* buffer;
+  uint8_t* raw_image;
   const uint8_t* jpeg;
-  jpec_enc_t* jpeg_state;
   size_t   len;
-  uint8_t jpeg_quality;
+  jpec_enc_t* jpeg_state;
+  int8_t jpeg_quality;
+  uint8_t qualities[NUM_QUALITIES];
+  uint8_t current_quality;
   uint16_t current_image_id;
+  struct timeval time_sent;
+  float exposure;
   float sensed_lux;
   bool send_light;
   bool send_motion;
@@ -116,6 +127,8 @@ static otIp6Address m_coap_address;
 static otIp6Address m_up_address;
 #define NUM_ADDRESSES 3
 static otIp6Address* addresses[NUM_ADDRESSES] = {&m_ntp_address, &m_coap_address, &m_up_address};
+
+void send_jpeg();
 
 /*
  * methods to manage addresses
@@ -164,12 +177,31 @@ static void send_version(void) {
   gateway_coap_send(&m_coap_address, "git_version", false, &msg);
 }
 
-bool write_image_bytes(pb_ostream_t *stream, const pb_field_t *field, void * const *arg)
+static void send_time_diff(struct timeval tv) {
+  Message msg = Message_init_default;
+  msg.data.time_to_send_s = tv.tv_sec;
+  msg.data.time_to_send_us = tv.tv_usec;
+  msg.data.image_id = state.current_image_id;
+  msg.data.image_jpeg_quality = state.current_quality;
+  NRF_LOG_INFO("Time to send: %ld:%d", msg.data.time_to_send_s, msg.data.time_to_send_us);
+
+  gateway_coap_send(&m_coap_address, "time_to_send_image", false, &msg);
+}
+
+bool write_jpeg_bytes(pb_ostream_t *stream, const pb_field_t *field, void * const *arg)
 {
     if (!pb_encode_tag_for_field(stream, field))
         return false;
 
     return pb_encode_string(stream, state.jpeg, state.len);
+}
+
+bool write_raw_bytes(pb_ostream_t *stream, const pb_field_t *field, void * const *arg)
+{
+    if (!pb_encode_tag_for_field(stream, field))
+        return false;
+
+    return pb_encode_string(stream, state.raw_image, state.len);
 }
 
 void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * p_context) {
@@ -301,12 +333,101 @@ void timer_init(void) {
 
 void picture_sent_callback(uint8_t code, otError result) {
     NRF_LOG_INFO("DONE!");
-    state.sending_pic = false;
+
+    // send a "time_to_send" packet
+    struct timeval done_time = ab1815_get_time_unix();
+    struct timeval time_diff;
+    time_diff.tv_sec = state.time_sent.tv_sec - done_time.tv_sec;
+    time_diff.tv_usec = state.time_sent.tv_usec - done_time.tv_usec;
+    memset(&state.time_sent, 0, sizeof(struct timeval));
+    send_time_diff(time_diff);
+
     // free state pointers
+    if (state.current_quality >= NUM_QUALITIES) {
+      NRF_LOG_INFO("SUPER DONE!");
+      otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
+      //free(state.buffer);
+      //state.buffer = NULL;
+      state.raw_image = NULL;
+      state.current_quality = 0;
+      state.jpeg_quality = state.qualities[0];
+      state.sending_pic = false;
+      return;
+    }
+
+    state.len = 0;
+    state.jpeg_quality = state.qualities[state.current_quality++];
+
+    if (state.current_quality >= NUM_QUALITIES) {
+      // send raw!
+      state.len = HM01B0_FULL_FRAME_IMAGE_SIZE;
+      NRF_LOG_INFO("SEND RAW");
+      NRF_LOG_INFO("raw: location %x, size %x", state.raw_image, state.len);
+      static Message msg = Message_init_default;
+      pb_callback_t callback;
+      callback.funcs.encode = write_raw_bytes;
+      msg.data.image_raw = callback;
+      msg.data.image_ev = 0;
+      msg.data.image_exposure_time = state.exposure;
+      msg.data.image_id = state.current_image_id;
+      msg.data.image_is_demosaiced = false;
+
+      memset(&b_info, 0, sizeof(b_info));
+
+      const char* path = "image_raw";
+      memcpy(b_info.path, path, strnlen(path, sizeof(b_info.path)));
+      b_info.data_len = state.len;
+      b_info.code = OT_COAP_CODE_PUT;
+      b_info.block_size = OT_COAP_BLOCK_SIZE_512;
+      b_info.etag = otRandomNonCryptoGetUint32();
+
+      state.time_sent = ab1815_get_time_unix();
+      otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
+      int error = gateway_coap_block_send(&m_coap_address, &b_info, &msg, picture_sent_callback, state.buffer);
+      APP_ERROR_CHECK(error);
+    }
+    else {
+      send_jpeg();
+    }
+}
+
+void send_jpeg() {
+    // Compress and encode as jpeg
+    NRF_LOG_INFO("JPEG COMPRESS");
+    NRF_LOG_INFO("SEND JPEG IMAGE, quality: %d", state.jpeg_quality);
+    state.jpeg_state = jpec_enc_new2(state.raw_image, 320, 320, state.jpeg_quality);
+    state.jpeg = jpec_enc_run(state.jpeg_state, (int*) &state.len);
+    NRF_LOG_INFO("jpeg: location %x, size %x", state.jpeg, state.len);
+
+    // Send picture to endpoint
+    state.sending_pic = true;
+    static Message msg = Message_init_default;
+    pb_callback_t callback;
+    callback.funcs.encode = write_jpeg_bytes;
+    msg.data.image_jpeg = callback;
+    msg.data.image_jpeg_quality = state.jpeg_quality;
+    msg.data.image_ev = 0;
+    msg.data.image_exposure_time = state.exposure;
+    msg.data.image_id = state.current_image_id;
+    msg.data.image_is_demosaiced = false;
+
+    memset(&b_info, 0, sizeof(b_info));
+
+    const char* raw_path = "image_jpeg";
+    memcpy(b_info.path, raw_path, strnlen(raw_path, sizeof(b_info.path)));
+    b_info.data_len = state.len;
+    b_info.code = OT_COAP_CODE_PUT;
+    b_info.block_size = OT_COAP_BLOCK_SIZE_512;
+    b_info.etag = otRandomNonCryptoGetUint32();
+
+
+    state.time_sent = ab1815_get_time_unix();
+    otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
+    int error = gateway_coap_block_send(&m_coap_address, &b_info, &msg, picture_sent_callback, NULL);
+    APP_ERROR_CHECK(error);
+
     jpec_enc_del(state.jpeg_state);
     state.jpeg_state = NULL;
-    state.jpeg = NULL;
-    otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
 }
 
 void take_picture() {
@@ -317,9 +438,10 @@ void take_picture() {
       return;
     }
 
-    uint8_t* image_buffer = malloc(HM01B0_RAW_IMAGE_SIZE);
+
+    state.raw_image = state.buffer + OFFSET;
     NRF_LOG_INFO("turning on camera");
-    NRF_LOG_INFO("address of buffer: %x", image_buffer);
+    NRF_LOG_INFO("address of buffer: %x", state.raw_image);
     NRF_LOG_INFO("size of buffer:    %x", HM01B0_RAW_IMAGE_SIZE);
 
     nrf_gpio_pin_clear(LED_1);
@@ -334,54 +456,34 @@ void take_picture() {
     }
 
     uint16_t pck, integration_time;
-    float exposure;
     hm01b0_get_line_pck_length(&pck);
     hm01b0_get_integration(&integration_time);
-    exposure = hm01b0_get_exposure_time(integration_time, pck);
+    state.exposure = hm01b0_get_exposure_time(integration_time, pck);
     state.current_image_id = otRandomNonCryptoGetUint16();
 
-    error = hm01b0_blocking_read_oneframe(image_buffer, HM01B0_RAW_IMAGE_SIZE);
+    error = hm01b0_blocking_read_oneframe(state.raw_image, HM01B0_RAW_IMAGE_SIZE);
     APP_ERROR_CHECK(error);
-    image_buffer = realloc(image_buffer, HM01B0_FULL_FRAME_IMAGE_SIZE);
-    if(!image_buffer) {
-      NRF_LOG_INFO("failed to reallocate!");
-      return;
-    }
+    //image_buffer = realloc(image_buffer, offset + HM01B0_FULL_FRAME_IMAGE_SIZE);
+    //if(!image_buffer) {
+    //  NRF_LOG_INFO("failed to reallocate!");
+    //  return;
+    //}
     nrf_gpio_pin_set(LED_1);
     hm01b0_power_down();
     NRF_LOG_INFO("TOOK PICTURE");
 
-    // Compress and encode as jpeg
-    state.jpeg_quality = 90;
-    state.jpeg_state = jpec_enc_new2(image_buffer, 320, 320, state.jpeg_quality);
-    state.jpeg = jpec_enc_run(state.jpeg_state, (int*) &state.len);
-    free(image_buffer);
-    NRF_LOG_INFO("jpeg: location %x, size %x", state.jpeg, state.len);
-    NRF_LOG_INFO("JPEG COMPRESS");
+    //if (state.jpeg_quality == 0) {
+    //  // Send raw image
+    //  NRF_LOG_INFO("SEND RAW IMAGE");
+    //  state.buffer = image_buffer;
+    //  state.len = HM01B0_FULL_FRAME_IMAGE_SIZE;
 
-    // Send picture to endpoint
-    state.sending_pic = true;
-
-    static Message msg = Message_init_default;
-    pb_callback_t callback;
-    callback.funcs.encode = write_image_bytes;
-    msg.data.image_jpeg = callback;
-    msg.data.image_jpeg_quality = state.jpeg_quality;
-    msg.data.image_ev = 0;
-    msg.data.image_exposure_time = exposure;
-    msg.data.image_id = state.current_image_id;
-    msg.data.image_is_demosaiced = false;
-
-    memset(&b_info, 0, sizeof(b_info));
-    const char* path = "image_jpeg";
-    memcpy(b_info.path, path, strnlen(path, sizeof(b_info.path)));
-    b_info.code = OT_COAP_CODE_PUT;
-    b_info.block_size = OT_COAP_BLOCK_SIZE_512;
-    b_info.etag = otRandomNonCryptoGetUint32();
-
-    otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
-    error = gateway_coap_block_send(&m_coap_address, &b_info, &msg, picture_sent_callback, NULL);
-    APP_ERROR_CHECK(error);
+    //  msg.data.image_raw = callback;
+    //  const char* raw_path = "image_raw";
+    //  memcpy(b_info.path, raw_path, strnlen(raw_path, sizeof(b_info.path)));
+    //}
+    send_jpeg();
+    state.current_quality++;
 }
 
 void state_step(void) {
@@ -546,6 +648,18 @@ int main(void) {
     APP_ERROR_CHECK(err_code);
     max44009_schedule_read_lux();
     max44009_enable_interrupt();
+
+    state.qualities[0] = 30;
+    state.qualities[1] = 50;
+    state.qualities[2] = 70;
+    state.qualities[3] = 80;
+    state.qualities[4] = 90;
+    state.qualities[5] = 93;
+    state.qualities[6] = 0;
+    state.current_quality = 0;
+    state.jpeg_quality = state.qualities[0];
+
+    state.buffer = image_buffer;
 
     // Enter main loop.
     while (1) {
