@@ -2158,8 +2158,10 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="DESCRIPTION" value=" Antenna GPS 1.4dBi Gain 1578MHz SMD T/R " x="2.286" y="56.896" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="DIGI-KEY_PART_NUMBER" value="WM15009CT-ND" x="2.286" y="56.896" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="DIGI-KEY_PURCHASE_URL" value="https://www.digikey.com/product-detail/en/molex/1462350001/WM15009CT-ND/6159255?utm_source=snapeda&amp;utm_medium=aggregator&amp;utm_campaign=symbol" x="2.286" y="56.896" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="DIGIKEY" value="WM15009CT-ND" x="2.286" y="56.896" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MF" value="Molex" x="2.286" y="56.896" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MP" value="1462350001" x="2.286" y="56.896" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="MPN" value="1462350001" x="2.286" y="56.896" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="5.207" y="56.896" size="0.8128" layer="25" font="vector" ratio="12" rot="R90"/>
 <attribute name="PACKAGE" value="None" x="2.286" y="56.896" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="VALUE" x="7.366" y="53.086" size="1.778" layer="27" rot="R90"/>
@@ -2171,6 +2173,9 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="NAME" x="11.938" y="9.398" size="1.778" layer="22" font="vector" ratio="12" rot="MR90"/>
 </element>
 <element name="U5" library="chips" package="NRF9160" value="NRF9160" x="13.716" y="31.75" smashed="yes" rot="R90">
+<attribute name="DIGIKEY" value="1490-1076-1-ND" x="13.716" y="31.75" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="MANUFACTURER" value="Nordic Semiconductor" x="13.716" y="31.75" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="MPN" value="NRF9160-SICA-R7" x="13.716" y="31.75" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="2.794" y="46.228" size="0.8128" layer="25" font="vector" ratio="12" rot="R90"/>
 <attribute name="VALUE" x="15.621" y="31.877" size="0.8128" layer="25" font="vector" ratio="12" rot="R90"/>
 </element>
@@ -2181,6 +2186,9 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="NAME" x="10.922" y="54.864" size="0.8128" layer="25" font="vector" ratio="12" rot="R180" align="bottom-center"/>
 </element>
 <element name="U4" library="chips" package="LNA-TSLP-6-2-ORIG" value="BGA725L6" x="5.588" y="49.403" smashed="yes" rot="R90">
+<attribute name="DIGIKEY" value="BGA725L6E6327FTSA1CT-ND" x="5.588" y="49.403" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="MANUFACTURER" value=" Infineon Technologies" x="5.588" y="49.403" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="MPN" value="BGA725L6E6327FTSA1" x="5.588" y="49.403" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="7.663" y="49.792" size="0.8128" layer="25" font="vector" ratio="12" rot="R180"/>
 <attribute name="VALUE" x="6.388" y="48.903" size="0.5" layer="27" rot="R90" align="top-left"/>
 </element>
@@ -2261,7 +2269,9 @@ Quickturn PCB 4 Layer .DRU</description>
 <element name="TP31" library="headers" package="PAD.03X.03" value="TEST-POINT" x="11.684" y="32.004" smashed="yes" rot="MR270"/>
 <element name="TP32" library="headers" package="PAD.03X.03" value="TEST-POINT" x="21.336" y="35.941" smashed="yes"/>
 <element name="U13" library="chips" package="DPV8_1P7X0P4" value="TPD3F303DPVR" x="17.272" y="37.465" smashed="yes" rot="R90">
+<attribute name="DIGIKEY" value="296-28299-1-ND" x="17.272" y="37.465" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MANUFACTURER_PART_NUMBER" value="TPD3F303DPVR" x="17.272" y="37.465" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="MPN" value="TPD3F303DPVR" x="17.272" y="37.465" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="15.621" y="38.7604" size="0.8128" layer="25" font="vector" ratio="12" rot="SR0"/>
 <attribute name="VENDOR" value="Texas Instruments" x="17.272" y="37.465" size="1.778" layer="27" rot="R90" display="off"/>
 </element>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.5.0">
+<eagle version="9.6.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -3351,14 +3351,25 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 </part>
 <part name="J4" library="connector" deviceset="U.FL-R-SMT" device=""/>
 <part name="GND28" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="ANT1" library="chips" deviceset="1462350001" device=""/>
+<part name="ANT1" library="chips" deviceset="1462350001" device="">
+<attribute name="DIGIKEY" value="WM15009CT-ND"/>
+<attribute name="MPN" value="1462350001"/>
+</part>
 <part name="BAT1" library="batteries" deviceset="2477THMCOINCELLCLIP" device=""/>
 <part name="GND32" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="U5" library="chips" deviceset="NRF9160" device=""/>
+<part name="U5" library="chips" deviceset="NRF9160" device="">
+<attribute name="DIGIKEY" value="1490-1076-1-ND"/>
+<attribute name="MANUFACTURER" value="Nordic Semiconductor"/>
+<attribute name="MPN" value="NRF9160-SICA-R7"/>
+</part>
 <part name="C20" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="DNP"/>
 <part name="C21" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="DNP"/>
 <part name="GND33" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="U4" library="chips" deviceset="BGA725L6" device=""/>
+<part name="U4" library="chips" deviceset="BGA725L6" device="">
+<attribute name="DIGIKEY" value="BGA725L6E6327FTSA1CT-ND"/>
+<attribute name="MANUFACTURER" value=" Infineon Technologies"/>
+<attribute name="MPN" value="BGA725L6E6327FTSA1"/>
+</part>
 <part name="L2" library="passives" deviceset="INDUCTOR" device="0402" value="5.1nH">
 <attribute name="DIGIKEY" value="490-6564-1-ND"/>
 <attribute name="MPN" value="LQG15HN5N1S02D"/>
@@ -3416,7 +3427,10 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <part name="TP30" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="TP31" library="headers" deviceset="TEST-POINT" device=""/>
 <part name="TP32" library="headers" deviceset="TEST-POINT" device=""/>
-<part name="U13" library="chips" deviceset="TPD3F303DPVR" device=""/>
+<part name="U13" library="chips" deviceset="TPD3F303DPVR" device="">
+<attribute name="DIGIKEY" value="296-28299-1-ND"/>
+<attribute name="MPN" value="TPD3F303DPVR"/>
+</part>
 <part name="GND38" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND39" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND40" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
@@ -3587,6 +3601,8 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <instance part="ANT1" gate="G$1" x="238.76" y="162.56" smashed="yes">
 <attribute name="NAME" x="228.86041875" y="165.869590625" size="1.27291875" layer="95"/>
 <attribute name="VALUE" x="228.7332" y="163.83295" size="1.27295" layer="96"/>
+<attribute name="DIGIKEY" x="238.76" y="162.56" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="238.76" y="162.56" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="GND32" gate="1" x="88.9" y="43.18" smashed="yes" rot="R90">
 <attribute name="VALUE" x="91.44" y="40.64" size="1.778" layer="96" rot="R90"/>
@@ -3594,6 +3610,9 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <instance part="U5" gate="G$1" x="96.52" y="121.92" smashed="yes">
 <attribute name="NAME" x="58.42" y="144.78" size="1.778" layer="95"/>
 <attribute name="VALUE" x="58.42" y="88.9" size="1.778" layer="96"/>
+<attribute name="DIGIKEY" x="96.52" y="121.92" size="1.778" layer="96" display="off"/>
+<attribute name="MANUFACTURER" x="96.52" y="121.92" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="96.52" y="121.92" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="C20" gate="G$1" x="154.94" y="124.46" smashed="yes" rot="R180">
 <attribute name="NAME" x="156.21" y="125.73" size="1.778" layer="95" ratio="12" rot="R270" align="bottom-center"/>
@@ -3609,6 +3628,9 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <instance part="U4" gate="G$1" x="167.64" y="149.86" smashed="yes" rot="R180">
 <attribute name="NAME" x="177.8" y="133.35" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="177.8" y="170.18" size="1.778" layer="96" rot="MR0"/>
+<attribute name="DIGIKEY" x="167.64" y="149.86" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MPN" x="167.64" y="149.86" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MANUFACTURER" x="167.64" y="149.86" size="1.778" layer="96" rot="R180" display="off"/>
 </instance>
 <instance part="L2" gate="G$1" x="226.06" y="149.86" smashed="yes" rot="R90">
 <attribute name="NAME" x="228.6" y="149.352" size="1.778" layer="95" ratio="12" rot="R180"/>
@@ -4336,6 +4358,8 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <instance part="U13" gate="A" x="50.8" y="119.38" smashed="yes">
 <attribute name="NAME" x="58.7756" y="125.9586" size="2.0828" layer="95" ratio="6" rot="SR0"/>
 <attribute name="VALUE" x="58.1406" y="100.5586" size="2.0828" layer="96" ratio="6" rot="SR0"/>
+<attribute name="DIGIKEY" x="50.8" y="119.38" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="50.8" y="119.38" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="P+13" gate="VCC" x="60.96" y="88.9" smashed="yes">
 <attribute name="VALUE" x="58.42" y="86.36" size="1.778" layer="96" rot="R90"/>
