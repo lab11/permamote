@@ -43,6 +43,18 @@ def on_message(client, userdata, msg):
                 array = np.frombuffer(base64.b64decode(data['image_raw']), dtype=np.uint8).reshape(320,320)
                 fname = args.save_dir +  '/image_raw_'+ str(image_id) + '.npy'
                 np.save(fname, array)
+        elif data['_meta']['topic'] == 'time_to_send_image':
+            quality = 0
+            if 'image_jpeg_quality' in data:
+                quality = data['image_jpeg_quality']
+            fname = args.save_dir +  '/time_to_send_' + str(quality) +'_'+ str(image_id) + '.txt'
+            seconds = 0
+            if 'time_to_send_s' in data:
+                seconds = float(data['time_to_send_s']['low'])
+            if 'time_to_send_us' in data:
+                seconds += data['time_to_send_us'] / 1E6
+            with open(fname, "w") as f:
+                f.write(str(seconds))
     except Exception as e:
         print(e)
 

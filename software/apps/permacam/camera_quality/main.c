@@ -182,10 +182,10 @@ static void send_time_diff(struct timeval tv) {
   msg.data.time_to_send_s = tv.tv_sec;
   msg.data.time_to_send_us = tv.tv_usec;
   msg.data.image_id = state.current_image_id;
-  msg.data.image_jpeg_quality = state.current_quality;
+  msg.data.image_jpeg_quality = state.jpeg_quality;
   NRF_LOG_INFO("Time to send: %ld:%d", msg.data.time_to_send_s, msg.data.time_to_send_us);
 
-  gateway_coap_send(&m_coap_address, "time_to_send_image", false, &msg);
+  gateway_coap_send(&m_coap_address, "time_to_send_image", true, &msg);
 }
 
 bool write_jpeg_bytes(pb_ostream_t *stream, const pb_field_t *field, void * const *arg)
@@ -336,9 +336,22 @@ void picture_sent_callback(uint8_t code, otError result) {
 
     // send a "time_to_send" packet
     struct timeval done_time = ab1815_get_time_unix();
+    NRF_LOG_INFO("sent time: %ld:%d", state.time_sent.tv_sec, state.time_sent.tv_usec);
+    NRF_LOG_INFO("done time: %ld:%d", done_time.tv_sec, done_time.tv_usec);
     struct timeval time_diff;
-    time_diff.tv_sec = state.time_sent.tv_sec - done_time.tv_sec;
-    time_diff.tv_usec = state.time_sent.tv_usec - done_time.tv_usec;
+    time_diff.tv_sec = done_time.tv_sec - state.time_sent.tv_sec;
+    int64_t diff_usec = done_time.tv_usec - state.time_sent.tv_usec;
+    if (diff_usec >= 0) {
+      time_diff.tv_usec = done_time.tv_usec - state.time_sent.tv_usec;
+    } else {
+      if (done_time.tv_sec >= 1) {
+        time_diff.tv_sec--;
+        diff_usec += 1000000;
+        time_diff.tv_usec = diff_usec;
+      } else {
+        time_diff.tv_usec = 0;
+      }
+    }
     memset(&state.time_sent, 0, sizeof(struct timeval));
     send_time_diff(time_diff);
 
