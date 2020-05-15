@@ -5,6 +5,7 @@ NRF_IC = nrf52840
 SDK_VERSION = 16
 SOFTDEVICE_MODEL = blank
 USE_THREAD = 1
+USE_GATEWAY = 0
 PROTO_DIR = ../../../../docs/gateway/
 
 SDK_VARS += __STACK_SIZE=0x10000 __HEAP_SIZE=0x25000
@@ -12,7 +13,6 @@ SDK_VARS += __STACK_SIZE=0x10000 __HEAP_SIZE=0x25000
 # Source and header files
 APP_HEADER_PATHS += .
 APP_SOURCE_PATHS += .
-APP_SOURCES += parse.proto
 
 NRF_BASE_DIR ?= ../../../nrf52x-base
 # Include board Makefile (if any)
