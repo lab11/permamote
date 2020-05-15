@@ -407,7 +407,7 @@ void take_picture() {
     b_info.etag = otRandomNonCryptoGetUint32();
 
     otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
-    error = gateway_coap_block_send(&m_coap_address, &b_info, &msg, picture_sent_callback);
+    error = gateway_coap_block_send(&m_coap_address, &b_info, &msg, picture_sent_callback, NULL);
     APP_ERROR_CHECK(error);
 
     state.current_exposure++;
