@@ -3345,7 +3345,10 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <part name="GND1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND2" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="P+8" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="VCC" device=""/>
-<part name="L3" library="passives" deviceset="INDUCTOR" device="0402" value="7.5nH"/>
+<part name="L3" library="passives" deviceset="INDUCTOR" device="0402" value="7.5nH">
+<attribute name="DIGIKEY" value="490-6565-1-ND"/>
+<attribute name="MPN" value="LQG15HN7N5J02D"/>
+</part>
 <part name="J4" library="connector" deviceset="U.FL-R-SMT" device=""/>
 <part name="GND28" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="ANT1" library="chips" deviceset="1462350001" device=""/>
@@ -3356,8 +3359,14 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <part name="C21" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="DNP"/>
 <part name="GND33" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="U4" library="chips" deviceset="BGA725L6" device=""/>
-<part name="L2" library="passives" deviceset="INDUCTOR" device="0402" value="5.1nH"/>
-<part name="L1" library="passives" deviceset="INDUCTOR" device="0402" value="1.8nH"/>
+<part name="L2" library="passives" deviceset="INDUCTOR" device="0402" value="5.1nH">
+<attribute name="DIGIKEY" value="490-6564-1-ND"/>
+<attribute name="MPN" value="LQG15HN5N1S02D"/>
+</part>
+<part name="L1" library="passives" deviceset="INDUCTOR" device="0402" value="1.8nH">
+<attribute name="DIGIKEY" value="490-2613-1-ND"/>
+<attribute name="MPN" value="LQG15HS1N8S02D"/>
+</part>
 <part name="C16" library="passives" deviceset="CAPACITOR" device="0402_CAP" value="4.7uF">
 <attribute name="DESCRIPTION" value="CAP CER 4.7UF 10V X5R 0402"/>
 <attribute name="DIGIKEY" value="1276-1480-1-ND"/>
@@ -3565,6 +3574,8 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <instance part="L3" gate="G$1" x="190.5" y="149.86" smashed="yes" rot="R90">
 <attribute name="NAME" x="193.04" y="149.352" size="1.778" layer="95" ratio="12" rot="R180"/>
 <attribute name="VALUE" x="193.04" y="152.908" size="1.778" layer="96" ratio="12" rot="R180"/>
+<attribute name="DIGIKEY" x="190.5" y="149.86" size="1.778" layer="96" rot="R90" display="off"/>
+<attribute name="MPN" x="190.5" y="149.86" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="J4" gate="G$1" x="203.2" y="149.86" smashed="yes">
 <attribute name="NAME" x="203.2" y="152.908" size="1.27" layer="95"/>
@@ -3602,10 +3613,14 @@ Basic schematic elements and footprints for 0201, 0402, 0603, 1206, and PTH resi
 <instance part="L2" gate="G$1" x="226.06" y="149.86" smashed="yes" rot="R90">
 <attribute name="NAME" x="228.6" y="149.352" size="1.778" layer="95" ratio="12" rot="R180"/>
 <attribute name="VALUE" x="228.6" y="152.908" size="1.778" layer="96" ratio="12" rot="R180"/>
+<attribute name="DIGIKEY" x="226.06" y="149.86" size="1.778" layer="96" rot="R90" display="off"/>
+<attribute name="MPN" x="226.06" y="149.86" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="L1" gate="G$1" x="215.9" y="137.16" smashed="yes" rot="R180">
 <attribute name="NAME" x="216.408" y="139.7" size="1.778" layer="95" ratio="12" rot="R270"/>
 <attribute name="VALUE" x="212.852" y="139.7" size="1.778" layer="96" ratio="12" rot="R270"/>
+<attribute name="DIGIKEY" x="215.9" y="137.16" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MPN" x="215.9" y="137.16" size="1.778" layer="96" rot="R180" display="off"/>
 </instance>
 <instance part="GND38" gate="1" x="48.26" y="38.1" smashed="yes">
 <attribute name="VALUE" x="45.72" y="35.56" size="1.778" layer="96"/>
