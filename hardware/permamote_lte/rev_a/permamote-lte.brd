@@ -2204,7 +2204,7 @@ Quickturn PCB 4 Layer .DRU</description>
 </element>
 <element name="C16" library="passives" package="0402_CAP" value="4.7uF" x="19.431" y="36.83" smashed="yes" rot="R270">
 <attribute name="DIGIKEY" value="445-5947-1-ND" x="48.133" y="52.832" size="1.778" layer="27" rot="R270" display="off"/>
-<attribute name="MPN" value="C1005X5R0J475K050BC" x="48.133" y="52.832" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="MPN" value="C1005X5R0J475K050BC " x="48.133" y="52.832" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="18.923" y="34.798" size="0.8128" layer="25" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
 <element name="J1" library="connector" package="DM3AT-SF-PEJM5" value="DM3AT-SF-PEJM5" x="18.923" y="43.434" smashed="yes" rot="MR180">
@@ -2216,19 +2216,19 @@ Quickturn PCB 4 Layer .DRU</description>
 <attribute name="VALUE" x="23.123" y="42.734" size="1.016" layer="28" font="vector" ratio="12" rot="MR180" align="bottom-center"/>
 </element>
 <element name="R11" library="passives" package="0402_RES" value="10k" x="20.574" y="36.83" smashed="yes" rot="R90">
-<attribute name="DIGIKEY" value="311-10KJRCT-ND" x="-5.207" y="8.89" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="DIGIKEY" value="311-10KJRCT-ND " x="-5.207" y="8.89" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="RC0402JR-0710KL" x="-5.207" y="8.89" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="20.955" y="34.925" size="0.8128" layer="25" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 <attribute name="VALUE" x="21.971" y="36.83" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
 <element name="R12" library="passives" package="0402_RES" value="10k" x="24.003" y="39.624" smashed="yes" rot="R270">
-<attribute name="DIGIKEY" value="311-10KJRCT-ND" x="45.974" y="64.389" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="DIGIKEY" value="311-10KJRCT-ND " x="45.974" y="64.389" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="RC0402JR-0710KL" x="45.974" y="64.389" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="NAME" x="25.4" y="39.243" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="22.606" y="39.624" size="1.016" layer="27" font="vector" ratio="12" rot="R270" align="bottom-center"/>
 </element>
 <element name="R13" library="passives" package="0402_RES" value="10k" x="22.225" y="39.243" smashed="yes">
-<attribute name="DIGIKEY" value="311-10KJRCT-ND" x="0.635" y="57.404" size="1.778" layer="27" display="off"/>
+<attribute name="DIGIKEY" value="311-10KJRCT-ND " x="0.635" y="57.404" size="1.778" layer="27" display="off"/>
 <attribute name="MPN" value="RC0402JR-0710KL" x="0.635" y="57.404" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="20.32" y="38.862" size="0.8128" layer="25" font="vector" ratio="12" align="bottom-center"/>
 <attribute name="VALUE" x="22.225" y="37.846" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center"/>
