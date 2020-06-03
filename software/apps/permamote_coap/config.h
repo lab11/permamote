@@ -1,4 +1,4 @@
-#define COAP_SERVER_HOSTNAME "coap.permamote.com"
+#define COAP_SERVER_HOSTNAME "coap-test.permamote.com"
 #define NTP_SERVER_HOSTNAME "us.pool.ntp.org"
 #define UPDATE_SERVER_HOSTNAME "dfu.permamote.com"
 #define DNS_SERVER_ADDR "fdaa:bb:1::2"
@@ -11,7 +11,6 @@
 #define DEFAULT_POLL_PERIOD      60000 /**< Thread Sleepy End Device polling period when Asleep. [ms] */
 #define DFU_POLL_PERIOD          15
 #define RECV_POLL_PERIOD         15    /**< Thread Sleepy End Device polling period when expecting response. [ms] */
-#define NUM_SLAAC_ADDRESSES      6     /**< Number of SLAAC addresses. */
 
 #define VOLTAGE_PERIOD      5
 #define TPH_PERIOD          5
