@@ -62,6 +62,7 @@ BOARD_SOURCES += \
 	nrf_queue.c\
 	nrf_drv_clock.c\
 	nrf_nvmc.c\
+	nrfx_nvmc.c\
 	nrf_drv_ppi.c\
 	nrfx_gpiote.c\
 	nrfx_saadc.c\
