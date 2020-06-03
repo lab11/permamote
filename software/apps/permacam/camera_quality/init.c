@@ -26,7 +26,7 @@ int sensors_init(const nrf_twi_mngr_t* twi_mngr_instance, const nrf_drv_spi_t* s
   nrf_gpio_pin_set(LED_2);
   nrf_gpio_pin_set(LED_3);
   nrf_gpio_pin_set(HM01B0_ENn);
-  nrf_gpio_pin_clear(MAX44009_EN);
+  nrf_gpio_pin_set(MAX44009_EN);
   nrf_gpio_pin_clear(PIR_EN);
 
   nrf_gpio_cfg_output(SPI_MISO);
@@ -59,19 +59,19 @@ int sensors_init(const nrf_twi_mngr_t* twi_mngr_instance, const nrf_drv_spi_t* s
   ab1815_set_watchdog(1, 18, _1_4HZ);
 
   // init sensors
-  max44009_init(twi_mngr_instance);
+  //max44009_init(twi_mngr_instance);
 
   // setup light sensor
-  const max44009_config_t config = {
-    .continuous = 0,
-    .manual = 0,
-    .cdr = 0,
-    .int_time = 10,
-  };
+  //const max44009_config_t config = {
+  //  .continuous = 0,
+  //  .manual = 0,
+  //  .cdr = 0,
+  //  .int_time = 10,
+  //};
 
-  max44009_set_read_lux_callback(light_sensor_read_callback);
-  max44009_set_interrupt_callback(light_interrupt_callback);
-  max44009_config(config);
+  //max44009_set_read_lux_callback(light_sensor_read_callback);
+  //max44009_set_interrupt_callback(light_interrupt_callback);
+  //max44009_config(config);
 
   hm01b0_init_i2c(twi_mngr_instance);
   hm01b0_mclk_init();
@@ -107,14 +107,14 @@ void saadc_handler(nrf_drv_saadc_evt_t const * p_event) {
 void adc_init(void) {
   // set up voltage ADC
   nrf_saadc_channel_config_t primary_channel_config =
-    NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN5);
+    NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(VPRIMARY);
   primary_channel_config.burst = NRF_SAADC_BURST_ENABLED;
 
   nrf_saadc_channel_config_t solar_channel_config =
-    NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN6);
+    NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(VSOL);
 
   nrf_saadc_channel_config_t secondary_channel_config =
-    NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN7);
+    NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(VSECONDARY);
 
   nrf_drv_saadc_init(NULL, saadc_handler);
 

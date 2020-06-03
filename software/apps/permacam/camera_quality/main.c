@@ -6,6 +6,7 @@
 #include "nrf_soc.h"
 #include "nrf_gpio.h"
 #include "nrf_drv_gpiote.h"
+#include "nrf_drv_saadc.h"
 #include "nrf_power.h"
 #include "nrf_twi_mngr.h"
 #include "nrf_log.h"
@@ -253,22 +254,22 @@ void periodic_sensor_read_callback(void* m){
     state.send_periodic = true;
 }
 
-void light_sensor_read_callback(float lux) {
-  state.sensed_lux = lux;
-  state.send_light = true;
-}
+//void light_sensor_read_callback(float lux) {
+//  state.sensed_lux = lux;
+//  state.send_light = true;
+//}
 
-void send_light() {
-  Message msg = Message_init_default;
-  float upper = state.sensed_lux + state.sensed_lux * 0.1;
-  float lower = state.sensed_lux - state.sensed_lux * 0.1;
-  NRF_LOG_INFO("Sensed: lux: %u, upper: %u, lower: %u", (uint32_t)state.sensed_lux, (uint32_t)upper, (uint32_t)lower);
-  max44009_set_upper_threshold(upper);
-  max44009_set_lower_threshold(lower);
-
-  msg.data.light_lux = state.sensed_lux;
-  gateway_coap_send(&m_coap_address, "light_lux", false, &msg);
-}
+//void send_light() {
+//  Message msg = Message_init_default;
+//  float upper = state.sensed_lux + state.sensed_lux * 0.1;
+//  float lower = state.sensed_lux - state.sensed_lux * 0.1;
+//  NRF_LOG_INFO("Sensed: lux: %u, upper: %u, lower: %u", (uint32_t)state.sensed_lux, (uint32_t)upper, (uint32_t)lower);
+//  max44009_set_upper_threshold(upper);
+//  max44009_set_lower_threshold(lower);
+//
+//  msg.data.light_lux = state.sensed_lux;
+//  gateway_coap_send(&m_coap_address, "light_lux", false, &msg);
+//}
 
 void pir_backoff_callback(void* m) {
   // turn on and wait for stable
@@ -278,6 +279,27 @@ void pir_backoff_callback(void* m) {
   ret_code_t err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
   APP_ERROR_CHECK(err_code);
 
+}
+
+static void send_voltage(void) {
+  // sense voltage
+  Message msg = Message_init_default;
+
+  nrf_saadc_value_t adc_samples[3];
+  nrf_drv_saadc_sample_convert(0, adc_samples);
+  nrf_drv_saadc_sample_convert(1, adc_samples+1);
+  nrf_drv_saadc_sample_convert(2, adc_samples+2);
+  msg.data.primary_voltage= 0.6 * 6 * (float)adc_samples[0] / ((1 << 10)-1);
+  msg.data.solar_voltage= 0.6 * 6 * (float)adc_samples[1] / ((1 << 10)-1);
+  msg.data.secondary_voltage= 0.6 * 6 * (float)adc_samples[2] / ((1 << 10)-1);
+
+  // sense vbat_ok
+  msg.data.vbat_ok = nrf_gpio_pin_read(VBAT_OK);
+
+  gateway_coap_send(&m_coap_address, "voltage", false, &msg);
+
+  NRF_LOG_INFO("Sensed voltage: vbat*100: %d, vsol*100: %d, vsec*100: %d", (int32_t)(msg.data.primary_voltage*100), (int32_t)(msg.data.solar_voltage*100), (int32_t)(msg.data.secondary_voltage*100));
+  NRF_LOG_INFO("VBAT_OK: %d", msg.data.vbat_ok);
 }
 
 void pir_enable_callback(void* m) {
@@ -290,9 +312,9 @@ void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t acti
   state.send_motion = true;
 }
 
-void light_interrupt_callback(void) {
-    max44009_schedule_read_lux();
-}
+//void light_interrupt_callback(void) {
+//    max44009_schedule_read_lux();
+//}
 
 void send_motion() {
   Message msg = Message_init_default;
@@ -501,10 +523,10 @@ void take_picture() {
 
 void state_step(void) {
   otInstance * thread_instance = thread_get_instance();
-  if (state.send_light) {
-    state.send_light = false;
-    send_light();
-  }
+  //if (state.send_light) {
+  //  state.send_light = false;
+  //  //send_light();
+  //}
   if (state.send_motion) {
     state.send_motion = false;
     send_motion();
@@ -514,10 +536,10 @@ void state_step(void) {
 
     period_count ++;
     if (period_count % sensor_period.voltage == 0) {
-      //send_voltage();
+      send_voltage();
     }
     if (period_count % sensor_period.camera == 0) {
-      max44009_schedule_read_lux();
+      //max44009_schedule_read_lux();
       take_picture();
     }
     if (period_count % sensor_period.discover == 0) {
@@ -637,6 +659,7 @@ int main(void) {
     sensors_init(&twi_mngr_instance, &spi_instance);
 
     NRF_LOG_INFO("GIT Version: %s", GIT_VERSION);
+    adc_init();
     uint8_t id[6] = {0};
     get_device_id(id);
     // store ID with fds
@@ -644,6 +667,7 @@ int main(void) {
     NRF_LOG_INFO("Device ID: %x:%x:%x:%x:%x:%x", device_id[0], device_id[1],
                 device_id[2], device_id[3], device_id[4], device_id[5]);
 
+    //struct timeval start_time = ab1815_get_time_unix();
     // setup thread
     thread_config_t thread_config = {
       .channel = 25,
@@ -655,12 +679,17 @@ int main(void) {
     };
     thread_init(&thread_config);
     thread_coap_client_init(thread_get_instance());
+    //struct timeval end_time = ab1815_get_time_unix();
+    //float diff_time = end_time.tv_sec - start_time.tv_sec + (float)(end_time.tv_usec - start_time.tv_usec)/1E6;
+    //printf("start itime: %lld:%ld\n", start_time.tv_sec, start_time.tv_usec);
+    //printf("start etime: %lld:%ld\n", end_time.tv_sec, end_time.tv_usec);
+    //printf("init time: %f\n", diff_time);
 
     // enable interrupts for pir, light sensor
     ret_code_t err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
     APP_ERROR_CHECK(err_code);
-    max44009_schedule_read_lux();
-    max44009_enable_interrupt();
+    //max44009_schedule_read_lux();
+    //max44009_enable_interrupt();
 
     state.qualities[0] = 30;
     state.qualities[1] = 50;
