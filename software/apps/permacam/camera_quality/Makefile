@@ -10,7 +10,7 @@ USE_BOOTLOADER = 1
 BOOTLOADER = bg_bootloader
 PROTO_DIR = ../../../../docs/gateway/
 
-SDK_VARS += __HEAP_SIZE=0x10000
+SDK_VARS += __HEAP_SIZE=0x15000
 
 # Source and header files
 APP_HEADER_PATHS += .

@@ -7,3 +7,6 @@
 [submodule "software/libraries/jpec"]
 	path = software/libraries/jpec
 	url = https://github.com/Moodstocks/jpec.git
+[submodule "software/permacam_processing/mAP"]
+	path = software/permacam_processing/mAP
+	url = https://github.com/Cartucho/mAP.git

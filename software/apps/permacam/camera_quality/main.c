@@ -79,6 +79,7 @@ typedef struct{
   uint8_t* buffer;
   uint8_t* raw_image;
   const uint8_t* jpeg;
+  uint8_t* jbuffer;
   size_t   len;
   jpec_enc_t* jpeg_state;
   int8_t jpeg_quality;
@@ -432,6 +433,9 @@ void send_jpeg() {
     NRF_LOG_INFO("SEND JPEG IMAGE, quality: %d", state.jpeg_quality);
     state.jpeg_state = jpec_enc_new2(state.raw_image, 320, 320, state.jpeg_quality);
     state.jpeg = jpec_enc_run(state.jpeg_state, (int*) &state.len);
+    state.jbuffer = realloc(state.jpeg, state.len+256);
+    state.jpeg = memmove(state.jpeg + 256, state.jpeg, state.len);
+
     NRF_LOG_INFO("jpeg: location %x, size %x", state.jpeg, state.len);
 
     // Send picture to endpoint
@@ -458,7 +462,7 @@ void send_jpeg() {
 
     state.time_sent = ab1815_get_time_unix();
     otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
-    int error = gateway_coap_block_send(&m_coap_address, &b_info, &msg, picture_sent_callback, NULL);
+    int error = gateway_coap_block_send(&m_coap_address, &b_info, &msg, picture_sent_callback, state.jbuffer);
     APP_ERROR_CHECK(error);
 
     jpec_enc_del(state.jpeg_state);
