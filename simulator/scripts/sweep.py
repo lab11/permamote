@@ -113,7 +113,6 @@ if not os.path.exists(save_dir):
 def run_simulation(a):
     # modify config
     a[0][a[1]][a[2]] = a[3]
-    print("parameters: ", a[1], a[2], a[3])
     # run simulation with altered
     simulator = EHSim(a[0]['config'], a[0]['workload'], a[0]['dataset'])
     return simulator.simulate()
@@ -124,8 +123,8 @@ def sweep_var2(config):
     print(t, name)
     setup_array = []
     for value in config['sweep']['var2']['values']:
+        print('\t' + str(value))
         setup_array.append([config.copy(), t, name, value])
-    print(np.array(setup_array)[:,1:])
     with Pool(5) as p:
         results = p.map(run_simulation, setup_array)
     return results
@@ -134,14 +133,14 @@ def sweep(config):
     copy_config = config.copy()
     t = copy_config['sweep']['var1']['type']
     results = {}
-    for value in copy_config['sweep']['var1']['values']:
+    for i, value in enumerate(copy_config['sweep']['var1']['values']):
         if copy_config['sweep']['var1']['group']:
             # sweep all variables together
             for x in copy_config['sweep']['var1']['variables']:
-                for y in copy_config['sweep']['var1']['variables'][x]:
-                    print(x, y)
-                    copy_config[t][x] = y
-                    results[value] = sweep_var2(copy_config)
+                y = copy_config['sweep']['var1']['variables'][x][i]
+                print(t, x, y)
+                copy_config[t][x] = y
+            results[value] = sweep_var2(copy_config)
         else:
             # sweep single variable together
             pass
