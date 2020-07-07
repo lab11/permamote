@@ -334,7 +334,7 @@ class EHSim:
             self.outgoing += _outgoing_energy() + self.primary_leakage_power + self.secondary_leakage_power
             second += 1
 
-            if (second % 10*SECONDS_IN_DAY == 0):
+            if (second % (10*SECONDS_IN_DAY) == 0):
                 print('simulating day ' + str(second/SECONDS_IN_DAY))
                 #tr.print_diff()
                 if second/SECONDS_IN_DAY >= 3:
