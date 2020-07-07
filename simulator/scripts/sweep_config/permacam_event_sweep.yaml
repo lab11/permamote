@@ -29,7 +29,7 @@ sweep:
         - 10.000667
         - 23.010167
   var2:
-    name: 'period_s'
+    name: 'backoff_s'
     type: 'workload'
     group: False
     values:
