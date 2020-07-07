@@ -7,6 +7,7 @@ import yaml
 import importlib
 from copy import deepcopy
 import numpy as np
+import pandas as pd
 from simulate import EHSim
 import matplotlib.pyplot as plt
 from glob import glob
@@ -115,7 +116,9 @@ def run_simulation(a):
     a[0][a[1]][a[2]] = a[3]
     # run simulation with altered
     simulator = EHSim(a[0]['config'], a[0]['workload'], a[0]['dataset'])
-    return simulator.simulate()
+    results = simulator.simulate()
+    results[a[2]] = a[3]
+    return results
 
 def sweep_var2(config):
     name = config['sweep']['var2']['name']
@@ -132,7 +135,8 @@ def sweep_var2(config):
 def sweep(config):
     copy_config = config.copy()
     t = copy_config['sweep']['var1']['type']
-    results = {}
+    name = copy_config['sweep']['var1']['name']
+    results = []
     for i, value in enumerate(copy_config['sweep']['var1']['values']):
         if copy_config['sweep']['var1']['group']:
             # sweep all variables together
@@ -140,7 +144,10 @@ def sweep(config):
                 y = copy_config['sweep']['var1']['variables'][x][i]
                 print(t, x, y)
                 copy_config[t][x] = y
-            results[value] = sweep_var2(copy_config)
+            mapped_result = sweep_var2(copy_config)
+            for result in mapped_result:
+                result[name] = value
+                results.append(result)
         else:
             # sweep single variable together
             pass
@@ -171,5 +178,6 @@ with open(args.config_file, 'r') as c_file, \
 top_config = {'config':config,'workload':workload,'dataset':dataset,'sweep':sweep_cfg}
 #sweep_var2(top_config)
 results = sweep(top_config)
-with open('test.pkl', 'wb') as f:
-    pickle.dump(results, f, protocol=pickle.HIGHEST_PROTOCOL)
+df = pd.DataFrame(results)
+print(df)
+df.to_pickle('test.pkl')
