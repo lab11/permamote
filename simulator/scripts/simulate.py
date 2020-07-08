@@ -228,14 +228,12 @@ class EHSim:
                     event_energy_remaining = self.event_energy
                     event_period_remaining = self.event_period_full
                 else:
-                    pass
-                    #self.missed_events.append([self.trace_start_time+second, 1])
+                    self.num_missed_events += 1
             elif self._is_time_to_transmit(second + self.trace_start_seconds):
                 # we're already working on an event, or we're not online to do
                 # event, count it as a miss and try next time
                 if currently_performing or not currently_online:
-                    pass
-                    #self.missed_events.append([self.trace_start_time+second, 1])
+                    self.num_missed_events += 1
                 # reset event energy/period state and start new event
                 else:
                     actual_period = 0
@@ -262,12 +260,14 @@ class EHSim:
                     currently_performing = False
                     # successfully completed event
                     #self.missed_events.append([self.trace_start_time+second, 0])
+                    self.num_events += 1
                     #events.append(start_time+second)
                     #self.event_ttc.append(actual_period)
                 # if atomic, count not finishing as failure
                 elif self.atomic:
                     currently_performing = 0
                     #self.missed_events.append([self.trace_start_time+second, 1])
+                    self.num_missed_events += 1
             actual_period += 1
 
             ###
@@ -376,7 +376,7 @@ class EHSim:
         #lifetime_years = minute/60/24/365
 
         #np.save('seq_no-Ligeiro-c098e5d00047_sim', events)
-        return {'lifetime':self.lifetime_estimate_years, 'used_energy': used_energy, 'possible_energy':possible_energy} #'missed_events':self.missed_events[:,1], 'time_online':self.fraction_online, 'event_ttc':self.event_ttc}
+        return {'lifetime':self.lifetime_estimate_years, 'used_energy': used_energy, 'possible_energy':possible_energy,'events_success':self.num_events,'events_missed':self.num_missed_events} #'missed_events':self.missed_events[:,1], 'time_online':self.fraction_online, 'event_ttc':self.event_ttc}
 
     def __init__(self, platform_config, workload_config, dataset_config):
         # declare class vars
@@ -415,7 +415,8 @@ class EHSim:
         self.secondary_soc = []
         self.outgoing = 0
         self.incoming = 0
-        self.missed_events = []
+        self.num_events = 0
+        self.num_missed_events = 0
         self.event_ttc = []
         self.fraction_online = 0
         self.fraction_energy_utilized = 0
@@ -510,12 +511,12 @@ if __name__ == "__main__":
             exit(1)
     simulator = EHSim(config, workload, dataset)
     pprint(vars(simulator))
-    simulator.simulate()
+    result = simulator.simulate()
+    print(result)
     print('percent energy utilized: \t{0:.2f}%'.format(100 * simulator.fraction_energy_utilized))
     print('percent online: \t\t{0:.2f}%'.format(100 * simulator.fraction_online))
     print('percent successful events: \t{0:.2f}%'.format(100 * simulator.fraction_successful_events))
     #print(np.sum(simulator.missed_events[:,1]))
     #print(np.sum(simulator.seconds_end))
     #print(simulator.missed_events.shape[0])
-    exit(0)
 
