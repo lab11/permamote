@@ -128,7 +128,7 @@ def sweep_var2(config):
     for value in config['sweep']['var2']['values']:
         print('\t' + str(value))
         setup_array.append([config.copy(), t, name, value])
-    with Pool(5) as p:
+    with Pool(6) as p:
         results = p.map(run_simulation, setup_array)
     return results
 
