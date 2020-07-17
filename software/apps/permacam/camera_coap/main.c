@@ -75,10 +75,13 @@ typedef struct{
   size_t   len;
   uint8_t jpeg_quality;
   uint16_t current_image_id;
+  struct timeval time_sent;
   float sensed_lux;
   bool send_light;
   bool send_motion;
   bool send_periodic;
+  bool send_picture;
+  uint8_t picture_timeout;
   bool sending_pic;
   bool update_time;
   bool update_time_wait;
@@ -162,6 +165,17 @@ static void send_version(void) {
   NRF_LOG_INFO("Sent version");
 
   gateway_coap_send(&m_coap_address, "git_version", false, &msg);
+}
+
+static void send_time_diff(struct timeval tv) {
+  Message msg = Message_init_default;
+  msg.data.time_to_send_s = tv.tv_sec;
+  msg.data.time_to_send_us = tv.tv_usec;
+  msg.data.image_id = state.current_image_id;
+  msg.data.image_jpeg_quality = state.jpeg_quality;
+  NRF_LOG_INFO("Time to send: %ld:%d", msg.data.time_to_send_s, msg.data.time_to_send_us);
+
+  gateway_coap_send(&m_coap_address, "time_to_send_image", true, &msg);
 }
 
 bool write_image_bytes(pb_ostream_t *stream, const pb_field_t *field, void * const *arg)
@@ -256,10 +270,13 @@ void pir_enable_callback(void* m) {
 
 void pir_interrupt_callback(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
   state.send_motion = true;
+  if (!CAMERA_PERIODIC && state.picture_timeout == 0) {
+    state.send_picture = true;
+  }
 }
 
 void light_interrupt_callback(void) {
-    max44009_schedule_read_lux();
+    //max44009_schedule_read_lux();
 }
 
 void send_motion() {
@@ -301,12 +318,35 @@ void timer_init(void) {
 
 void picture_sent_callback(uint8_t code, otError result) {
     NRF_LOG_INFO("DONE!");
+
     state.sending_pic = false;
     // free state pointers
     jpec_enc_del(state.jpeg_state);
     state.jpeg_state = NULL;
     state.jpeg = NULL;
     otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
+
+    // send a "time_to_send" packet
+    struct timeval done_time = ab1815_get_time_unix();
+    NRF_LOG_INFO("sent time: %ld:%d", state.time_sent.tv_sec, state.time_sent.tv_usec);
+    NRF_LOG_INFO("done time: %ld:%d", done_time.tv_sec, done_time.tv_usec);
+    struct timeval time_diff;
+    time_diff.tv_sec = done_time.tv_sec - state.time_sent.tv_sec;
+    int64_t diff_usec = done_time.tv_usec - state.time_sent.tv_usec;
+    if (diff_usec >= 0) {
+      time_diff.tv_usec = done_time.tv_usec - state.time_sent.tv_usec;
+    } else {
+      if (done_time.tv_sec >= 1) {
+        time_diff.tv_sec--;
+        diff_usec += 1000000;
+        time_diff.tv_usec = diff_usec;
+      } else {
+        time_diff.tv_usec = 0;
+      }
+    }
+
+    memset(&state.time_sent, 0, sizeof(struct timeval));
+    send_time_diff(time_diff);
 }
 
 void take_picture() {
@@ -375,10 +415,12 @@ void take_picture() {
     memset(&b_info, 0, sizeof(b_info));
     const char* path = "image_jpeg";
     memcpy(b_info.path, path, strnlen(path, sizeof(b_info.path)));
+    b_info.data_len = state.len;
     b_info.code = OT_COAP_CODE_PUT;
     b_info.block_size = OT_COAP_BLOCK_SIZE_512;
     b_info.etag = otRandomNonCryptoGetUint32();
 
+    state.time_sent = ab1815_get_time_unix();
     otLinkSetPollPeriod(thread_get_instance(), RECV_POLL_PERIOD);
     error = gateway_coap_block_send(&m_coap_address, &b_info, &msg, picture_sent_callback, NULL);
     APP_ERROR_CHECK(error);
@@ -394,16 +436,28 @@ void state_step(void) {
     state.send_motion = false;
     send_motion();
   }
+  if (!CAMERA_PERIODIC && state.send_picture) {
+    state.send_picture = false;
+    state.picture_timeout = CAMERA_PERIOD;
+    max44009_schedule_read_lux();
+    take_picture();
+  }
   if (state.send_periodic) {
     ab1815_tickle_watchdog();
 
     period_count ++;
-    if (period_count % sensor_period.voltage == 0) {
-      //send_voltage();
+
+    // decrement camera timeout
+    if (!CAMERA_PERIODIC && state.picture_timeout > 0) {
+      state.picture_timeout--;
     }
-    if (period_count % sensor_period.camera == 0) {
+    if (CAMERA_PERIODIC && period_count % sensor_period.camera == 0) {
       max44009_schedule_read_lux();
       take_picture();
+    }
+
+    if (period_count % sensor_period.voltage == 0) {
+      //send_voltage();
     }
     if (period_count % sensor_period.discover == 0) {
       //send_thread_info();
@@ -545,7 +599,7 @@ int main(void) {
     ret_code_t err_code = app_timer_start(pir_delay, PIR_DELAY, NULL);
     APP_ERROR_CHECK(err_code);
     max44009_schedule_read_lux();
-    max44009_enable_interrupt();
+    //max44009_enable_interrupt();
 
     // Enter main loop.
     while (1) {

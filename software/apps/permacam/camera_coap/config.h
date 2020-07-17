@@ -14,6 +14,7 @@
 #define RECV_POLL_PERIOD         15    /**< Thread Sleepy End Device polling period when expecting response. [ms] */
 #define NUM_SLAAC_ADDRESSES      6     /**< Number of SLAAC addresses. */
 
+#define CAMERA_PERIODIC     false
 #define VOLTAGE_PERIOD      5
 #define CAMERA_PERIOD       1
 #define DISCOVER_PERIOD     15
