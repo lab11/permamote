@@ -159,11 +159,11 @@ ret_code_t flash_update_float(const uint16_t record_key, const float value) {
 }
 
 ret_code_t flash_update_array(const uint16_t record_key, const char* value, const size_t length) {
-    return fds_update(DEFAULT_FILE_ID, record_key, &value, length);
+    return fds_update(DEFAULT_FILE_ID, record_key, value, length);
 }
 
 ret_code_t flash_update_string(const uint16_t record_key, const char* value) {
-    return fds_update(DEFAULT_FILE_ID, record_key, &value, strnlen(value, MAX_STR_LEN));
+    return fds_update(DEFAULT_FILE_ID, record_key, value, strnlen(value, MAX_STR_LEN));
 }
 
 

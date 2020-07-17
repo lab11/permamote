@@ -22,7 +22,7 @@ const hm_script_t sHM01B0InitScript[] = {
     // ;*************************************************************************
     // ; Sensor: HM01B0
     // ; I2C ID: 24
-    // ; Resolution: 324x244
+    // ; Resolution: 324x324
     // ; Lens:
     // ; Flicker:
     // ; Frequency:
