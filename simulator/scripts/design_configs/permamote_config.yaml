@@ -5,25 +5,26 @@ design_config:
   using_harvester: True
   opportunistic: False
   operating_voltage_V: 3.3
-  boost_efficiency: 0.8
-  frontend_efficiency: 0.8
+  boost_efficiency: 0.9
+  frontend_efficiency: 0.9
 
 secondary_config:
   type: "battery"
   capacity_mAh: 10
   nominal_voltage_V: 2.4
-  secondary_start_percent: 50.25,
-  secondary_max_percent: 50.93,
-  secondary_min_percent: 43.25,
+  secondary_start_percent: 50.25
+  secondary_max_percent: 50.93
+  secondary_min_percent: 43.25
   esr_ohm: 0.1
-  leakage_constant: 1.E5
+  leakage_constant: 10000
 
 primary_config:
   name : "primary"
   #capacity_mAh : 30    #CR927
   #capacity_mAh : 240   #CR2032
-  capacity_mAh : 480    #2 CR2032
+  #capacity_mAh : 480    #2 CR2032
   #capacity_mAh : 1500  #CR123A
+  capacity_mAh : 1000 #CR2477
   nominal_voltage_V : 3
   leakage_percent_year : 1
 
