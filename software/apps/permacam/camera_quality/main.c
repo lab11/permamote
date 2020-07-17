@@ -396,7 +396,11 @@ void picture_sent_callback(uint8_t code, otError result) {
 
     if (state.current_quality >= NUM_QUALITIES) {
       // send raw!
+#ifdef DOWNSAMPLE
+      state.len = 160*160;
+#else
       state.len = HM01B0_FULL_FRAME_IMAGE_SIZE;
+#endif
       NRF_LOG_INFO("SEND RAW");
       NRF_LOG_INFO("raw: location %x, size %x", state.raw_image, state.len);
       static Message msg = Message_init_default;
@@ -431,7 +435,11 @@ void send_jpeg() {
     // Compress and encode as jpeg
     NRF_LOG_INFO("JPEG COMPRESS");
     NRF_LOG_INFO("SEND JPEG IMAGE, quality: %d", state.jpeg_quality);
+#ifdef DOWNSAMPLE
+    state.jpeg_state = jpec_enc_new2(state.raw_image, 160, 160, state.jpeg_quality);
+#else
     state.jpeg_state = jpec_enc_new2(state.raw_image, 320, 320, state.jpeg_quality);
+#endif
     state.jpeg = jpec_enc_run(state.jpeg_state, (int*) &state.len);
     state.jbuffer = realloc(state.jpeg, state.len+256);
     state.jpeg = memmove(state.jpeg + 256, state.jpeg, state.len);
@@ -521,6 +529,11 @@ void take_picture() {
     //  const char* raw_path = "image_raw";
     //  memcpy(b_info.path, raw_path, strnlen(raw_path, sizeof(b_info.path)));
     //}
+
+#ifdef DOWNSAMPLE
+    // downsample to 160x160
+    downsample_160(state.raw_image);
+#endif
     send_jpeg();
     state.current_quality++;
 }

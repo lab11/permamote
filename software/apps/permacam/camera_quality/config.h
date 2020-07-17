@@ -1,4 +1,3 @@
-
 #define COAP_SERVER_HOSTNAME "coap-test.permamote.com"
 #define NTP_SERVER_HOSTNAME "us.pool.ntp.org"
 #define UPDATE_SERVER_HOSTNAME "dfu.permamote.com"
@@ -27,3 +26,4 @@
 #define NTP_UPDATE_MIN      2*1000
 #define DFU_CHECK_HOURS     24
 
+//#define DOWNSAMPLE 1
