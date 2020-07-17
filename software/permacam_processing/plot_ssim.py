@@ -8,6 +8,10 @@ import numpy as np
 import pandas as pd
 from skimage import img_as_float
 from skimage.metrics import structural_similarity as ssim
+font = {'family' : 'Arial',
+        'weight' : 'medium',
+        'size'   : 8}
+matplotlib.rc('font', **font)
 
 parser = argparse.ArgumentParser(description='Process quality series of Permacam images and generate accuracy measurements')
 parser.add_argument('save_dir', help='Optional save detected images to file in dir')
@@ -41,43 +45,22 @@ for x, i in enumerate(sorted(ids)):
 print(all_arrays)
 print(all_arrays.shape)
 
-fig, ax = plt.subplots(1, figsize=(8,4))
+fig, ax = plt.subplots(1, figsize=(4,2))
 ind = np.arange(len(qualities)-1)
 width = 0.25
+#medianprops = dict(linewidth=0.5)
+medianprops = dict(linewidth=2)
+whiskerprops = dict(linewidth=0.5)
+capprops = dict(linewidth=0.5)
+boxprops = dict(linewidth=0.5)
 for y, q in enumerate(qualities[qualities < 100]):
-    bplot = ax.boxplot(all_arrays[y,:], positions=[y], widths=0.25, showfliers=False, patch_artist=True, manage_ticks=False)
+    bplot = ax.boxplot(all_arrays[y,:], positions=[y], widths=0.25, showfliers=False, manage_ticks=False, boxprops=boxprops, whiskerprops=whiskerprops, capprops=capprops, medianprops=medianprops)
 
 ax.set_xticks(ind)
 ax.set_xticklabels([str(x) for x in qualities[qualities < 100]])
-ax.set_ylim(0.65, 1)
+ax.set_ylim(0.6, 1)
 ax.set_ylabel('SSIM')
 ax.set_xlabel('JPEG quality factor')
-ax.grid(True, axis='y')
+ax.grid(True, which='both',axis='y')
 plt.tight_layout()
-plt.savefig('test.pdf')
-
-
-#arrays = np.zeros((len(qualities[qualities < 100]), 2, 3))
-#for i, q in enumerate(sorted(qualities[qualities < 100])):
-#    pixel_accuracys[q] = np.array(pixel_accuracys[q])
-#    all_averaged = np.mean(pixel_accuracys[q], 0)
-#    all_averaged[1] = np.sqrt(all_averaged[1])
-#    arrays[i] = all_averaged
-#
-#print(arrays)
-#
-#fig, ax = plt.subplots(1,figsize=(8,4))
-#plt.xlabel("JPEG Quality vs accuracy")
-#ax.set_ylabel('Image Relative accuracy (%)')
-#ind = np.arange(len(qualities)-1)
-#print(ind)
-#width = 0.05
-#ax.accuracybar(ind - width, arrays[:,0,0], yerr=arrays[:,1,0], color='red')
-#ax.accuracybar(ind, arrays[:,0,1], yerr=arrays[:,1,1], color='green')
-#ax.accuracybar(ind + width, arrays[:,0,2], yerr=arrays[:,1,2], color='blue')
-#ax.set_xticks(ind)
-#ax.set_xticklabels([str(x) for x in qualities[qualities < 100]])
-#plt.show()
-#exit()
-
-
+plt.savefig('jpeg_ssim.pdf')

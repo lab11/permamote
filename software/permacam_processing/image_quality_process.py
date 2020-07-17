@@ -8,10 +8,6 @@ import colour
 import numpy as np
 import pandas as pd
 import os
-import matplotlib
-import matplotlib.pyplot as plt
-matplotlib.rcParams.update({'errorbar.capsize': 2})
-from imageai.Detection import ObjectDetection
 
 from colour_demosaicing import (
     demosaicing_CFA_Bayer_bilinear,
@@ -24,10 +20,9 @@ parser = argparse.ArgumentParser(description='Process quality series of Permacam
 parser.add_argument('save_dir', help='Optional save detected images to file in dir')
 args = parser.parse_args()
 
-jpegs = glob(args.save_dir + '/image_*.jpeg')
+jpegs = glob(args.save_dir + '/image_mono*.jpeg')
 raws = glob(args.save_dir + '/image_raw*.npy')
 manifest_fname = args.save_dir + '/manifest.pkl'
-detect_fname = args.save_dir + '/detect.pkl'
 data = None
 if not os.path.isfile(manifest_fname) :
     print('Generating')
@@ -39,6 +34,8 @@ if not os.path.isfile(manifest_fname) :
     data['raw'] = []
     data['time'] = []
     data['image_array'] = []
+    d = None
+    fname = None
     for f in jpegs:
         data['filename'].append(f)
         i = int(f.split('_')[-1].split('.')[0])
@@ -56,11 +53,15 @@ if not os.path.isfile(manifest_fname) :
         d = np.array(jpeg.getdata()).reshape(jpeg.size[0], jpeg.size[1]) / 0xff
         d = cctf_encoding(demosaicing_CFA_Bayer_Menon2007(d, 'BGGR'))
         d = exposure.rescale_intensity(d, (0,1))
-        #d = exposure.adjust_gamma(d, 1.5)
+        d = exposure.adjust_gamma(d, 1.5)
         #d = (d * 255).astype(np.uint8)
         fname = f.replace('mono', 'jpeg_demosaiced').replace('.jpeg', '.npy')
+
         np.save(fname, d)
         data['image_array'].append(fname)
+        result = Image.fromarray((d * 255).astype(np.uint8))
+        result.save(fname.replace('npy','jpeg'), format='JPEG')
+
     for f in raws:
         data['filename'].append(f)
         i = int(f.split('_')[-1].split('.')[0])
@@ -77,101 +78,24 @@ if not os.path.isfile(manifest_fname) :
         d = np.load(f) / float(0xff)
         d = cctf_encoding(demosaicing_CFA_Bayer_Menon2007(d, 'BGGR'))
         d = exposure.rescale_intensity(d, (0,1))
-        #d = exposure.adjust_gamma(d, 1.5)
+        d = exposure.adjust_gamma(d, 1.5)
         #d = (d * 255).astype(np.uint8)
         fname = f.replace('raw', 'demosaiced')
+
         np.save(fname, d)
         data['image_array'].append(fname)
+        result = Image.fromarray((d * 255).astype(np.uint8))
+        result.save(fname.replace('npy','jpeg'), format='JPEG')
 
     data = pd.DataFrame(data)
+    qualities = set(np.unique(data['quality']).flatten())
+    for i in data['id']:
+        avail_qual = set(data[data['id'] == i]['quality'])
+        if (avail_qual != qualities):
+            data = data[data['id'] != i]
     data.to_pickle(manifest_fname)
-    print(data)
-    print(np.unique(data['id']).shape)
 else:
-    print('Loading from file')
     data = pd.read_pickle(manifest_fname)
-    print(data)
-    print(np.unique(data['id']).shape)
 
-if not os.path.isfile(detect_fname) :
-    detector = ObjectDetection()
-    detector.setModelTypeAsYOLOv3()
-    detector.setModelPath("yolo.h5")
-    detector.loadModel()
-
-    detects = []
-
-    for index, row in data.iterrows():
-        image_array = (np.load(row['image_array']) * 255).astype(np.uint8)
-        print(image_array)
-        print(row['filename'])
-        result_fname = args.save_dir + '/detection_' + str(row['quality']) + '_' + str(row['id']) + '.jpeg'
-        detections = detector.detectObjectsFromImage(input_image=image_array, input_type="array", output_image_path=result_fname, minimum_percentage_probability=40)
-        for eachObject in detections:
-            print(eachObject["name"] , " : ", eachObject["percentage_probability"], " : ", eachObject["box_points"] )
-            print("--------------------------------")
-            eachObject['image_id'] = row['id']
-            eachObject['quality'] = row['quality']
-            detects.append(eachObject)
-
-    dt = pd.DataFrame(detects)
-    dt.to_pickle(detect_fname)
-
-quality_group = data.groupby('quality')
-print("mean:")
-print(quality_group['size', 'time'].mean())
-print("median:")
-print(quality_group['size', 'time'].median())
-print("std:")
-print(quality_group['size', 'time'].std())
-print("min:")
-print(quality_group['size', 'time'].min())
-print("max:")
-print(quality_group['size', 'time'].max())
-
-
-fig, ax = plt.subplots(1,figsize=(8,4))
-plt.xlabel("Image Quality")
-
-size_color = 'tab:blue'
-time_color = 'tab:red'
-energy_color = 'tab:green'
-ax.set_ylabel('Image Size (kB)')
-gm = quality_group.mean()
-e = quality_group.std()['size']
-ax.errorbar(gm.index, gm['size']/1E3, yerr=e/1E3, color=size_color)
-fig.canvas.draw()
-labels = ax.get_xticks().tolist()
-labels = [str(int(x)) for x in labels]
-labels[labels.index('100')] = 'raw'
-ax.set_xticklabels(labels)
-ax.grid(True)
-plt.tight_layout()
-plt.savefig('size_v_quality.png', dpi=180)
-
-fig, ax = plt.subplots(1,figsize=(8,4))
-plt.xlabel("Image Quality")
-ax.set_ylabel('Time to Send (s)')
-e = quality_group.std()['time']
-ax.errorbar(gm.index, gm['time'], yerr=e, color=time_color)
-fig.canvas.draw()
-labels = ax.get_xticks().tolist()
-labels = [str(int(x)) for x in labels]
-labels[labels.index('100')] = 'raw'
-ax.set_xticklabels(labels)
-ax.grid(True)
-plt.tight_layout()
-plt.savefig('time_v_quality.png', dpi=180)
-
-fig, ax = plt.subplots(1,figsize=(8,4))
-plt.xlabel("Image Quality")
-ax.set_ylabel('Estimated Energy (J)')
-ax.plot(gm.index, gm['time']*4.8E-3*3.3, color=energy_color)
-fig.canvas.draw()
-labels = ax.get_xticks().tolist()
-labels = [str(int(x)) for x in labels]
-labels[labels.index('100')] = 'raw'
-ax.set_xticklabels(labels)
-ax.grid(True)
-plt.tight_layout()
-plt.savefig('energy_v_quality.png', dpi=180)
+print(data)
+print(len(np.unique(data['id'])))

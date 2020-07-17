@@ -12,10 +12,10 @@ import numpy as np
 from pathlib import Path
 import argparse
 
-parser = argparse.ArgumentParser(description='Demosaic Permacam images and republish color images')
+parser = argparse.ArgumentParser(description='Demosaic Permacam images and save arrays')
 parser.add_argument('-s', '--subscribe_host', default='localhost', help='Optional mqtt hostname to subscribe/publish from/to, default is localhost')
 parser.add_argument('-t', '--topic', default='device/Permacam/#', help='Optional mqtt topic to subscribe/publish from/to, default is "device/Permacam/#"')
-parser.add_argument('-d', '--save_dir', help='Optional save detected images to file in dir')
+parser.add_argument('save_dir', help='Save detected images to file in dir')
 args = parser.parse_args()
 
 Path(args.save_dir).mkdir(parents=True, exist_ok=True)
