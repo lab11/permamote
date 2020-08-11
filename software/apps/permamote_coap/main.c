@@ -91,6 +91,9 @@ typedef struct{
   bool dfu_trigger;
   bool performing_dfu;
   bool do_reset;
+  bool has_internet;
+  bool external_route_added;
+  uint16_t offline_count;
 } permamote_state_t;
 
 APP_TIMER_DEF(periodic_sensor_timer);
@@ -202,6 +205,7 @@ void rtc_callback(void) {
 }
 
 void ntp_jitter_callback(void* m) {
+    state.resolve_addr = true;
     state.update_time = true;
 }
 
@@ -214,9 +218,6 @@ void __attribute__((weak)) dns_response_handler(void         * p_context,
     if (error != OT_ERROR_NONE)
     {
         NRF_LOG_INFO("DNS response error %d.", error);
-        // retry dns resolve
-        // TODO not the place for this!
-        state.resolve_addr = true;
         return;
     }
 
@@ -237,13 +238,24 @@ void ntp_response_handler(void* context, uint64_t time, otError error) {
 }
 
 void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * p_context) {
-    NRF_LOG_INFO("State changed! Flags: 0x%08lx Current role: %d",
-                 flags, otThreadGetDeviceRole(p_context));
+    uint8_t role = otThreadGetDeviceRole(p_context);
 
-    if (flags & OT_CHANGED_IP6_ADDRESS_ADDED && otThreadGetDeviceRole(p_context) == 2) {
+    NRF_LOG_INFO("State changed! Flags: 0x%08lx Current role: %d",
+                 flags, role)
+
+    if (flags & OT_CHANGED_IP6_ADDRESS_ADDED && role == 2) {
       NRF_LOG_INFO("We have internet connectivity!");
       addresses_print(p_context);
+      state.external_route_added = true;
+      state.resolve_addr = true;
       state.update_time = true;
+    }
+    if (state.external_route_added && role == 2) {
+      state.has_internet = true;
+      state.offline_count = 0;
+    }
+    else if (role == 1) {
+      state.has_internet = false;
     }
 }
 
@@ -510,109 +522,62 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info) {
 
 void state_step(void) {
   otInstance * thread_instance = thread_get_instance();
-  if (state.send_light) {
-    state.send_light = false;
-    send_light();
-  }
-  if (state.send_motion) {
-    state.send_motion = false;
-    send_motion();
-  }
+  bool ready_to_send = state.has_internet && are_addresses_resolved();
+
   if (state.send_periodic) {
-    //NRF_LOG_INFO("poll period: %d", otLinkGetPollPeriod(thread_get_instance()));
-    //ab1815_time_t time;
-    //ab1815_get_time(&time);
-    //NRF_LOG_INFO("time: %d:%02d:%02d, %d/%d/20%02d", time.hours, time.minutes, time.seconds, time.months, time.date, time.years);
-    //if (otThreadGetDeviceRole(thread_get_instance()) == 2) {
-    //  ab1815_tickle_watchdog();
-    //}
-    //if(time.years == 0 && state == IDLE) {
-    //  NRF_LOG_INFO("VERY INVALID TIME");
-    //  state = UPDATE_TIME;
-    //  return;
-    //}
     ab1815_tickle_watchdog();
-
-
     period_count ++;
-    if (period_count % sensor_period.voltage == 0) {
-      send_voltage();
-    }
-    if (period_count % sensor_period.temp_pres_hum == 0) {
-      send_temp_pres_hum();
-    }
-    if (period_count % sensor_period.color == 0) {
-      send_color();
-      max44009_schedule_read_lux();
-    }
-    if (period_count % sensor_period.discover == 0) {
-      send_thread_info();
-    }
 
-    if (state.dfu_trigger == true && state.performing_dfu == false) {
-      state.dfu_trigger = false;
-      state.performing_dfu = true;
+    if (!ready_to_send) {
+      // keep a count of how long device has been offline
+      state.offline_count++;
+      // attempt a reset if it's been too long
+      if (state.offline_count > MAX_OFFLINE_MINS) {
+        state.do_reset = true;
+      }
+    }
+    else {
+      if (period_count % sensor_period.voltage == 0) {
+        send_voltage();
+      }
+      if (period_count % sensor_period.temp_pres_hum == 0) {
+        send_temp_pres_hum();
+      }
+      if (period_count % sensor_period.color == 0) {
+        send_color();
+        max44009_schedule_read_lux();
+      }
+      if (period_count % sensor_period.discover == 0) {
+        send_thread_info();
+      }
 
-      // Send discovery packet and version before updating
-      send_version();
+      if (state.dfu_trigger == true && state.performing_dfu == false) {
+        state.dfu_trigger = false;
+        state.performing_dfu = true;
 
-      otLinkSetPollPeriod(thread_instance, DFU_POLL_PERIOD);
-      coap_remote_t remote;
-      memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
-      remote.port_number = OT_DEFAULT_COAP_PORT;
-      ret_code_t err_code = app_timer_start(dfu_monitor, DFU_MONITOR_PERIOD, NULL);
-      APP_ERROR_CHECK(err_code);
-      int result = coap_dfu_trigger(&remote);
-      NRF_LOG_INFO("result: %d", result);
-      if (result == NRF_ERROR_INVALID_STATE) {
+        // Send discovery packet and version before updating
+        send_version();
+
+        otLinkSetPollPeriod(thread_instance, DFU_POLL_PERIOD);
+        coap_remote_t remote;
+        memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
+        remote.port_number = OT_DEFAULT_COAP_PORT;
+        ret_code_t err_code = app_timer_start(dfu_monitor, DFU_MONITOR_PERIOD, NULL);
+        APP_ERROR_CHECK(err_code);
+        int result = coap_dfu_trigger(&remote);
+        NRF_LOG_INFO("result: %d", result);
+        if (result == NRF_ERROR_INVALID_STATE) {
           coap_dfu_reset_state();
           nrf_dfu_settings_progress_reset();
+        }
       }
     }
 
     state.send_periodic = false;
   }
-  if (state.update_time) {
-    state.update_time = false;
-    NRF_LOG_INFO("RTC UPDATE");
-    otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
 
-    // resolve dns if needed
-    if (!are_addresses_resolved()) {
-      state.resolve_addr = true;
-    }
-    else {
-      // dns is resolved!
-      // request ntp time update
-      otError error = thread_ntp_request(thread_instance, &m_ntp_address, NULL, ntp_response_handler);
-      NRF_LOG_INFO("sent ntp poll!");
-      NRF_LOG_INFO("error: %d", error);
-      uint32_t poll = otLinkGetPollPeriod(thread_get_instance());
-      if (poll != RECV_POLL_PERIOD) {
-        NRF_LOG_INFO("poll: %u", poll);
-        otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
-      }
-
-    }
-  }
-  if (state.up_time_done) {
-    // if not performing a dfu, return poll period to default
-    if (!state.performing_dfu) {
-      otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
-    }
-    // if we haven't performed initial setup of rand
-    if (!seed) {
-      srand((uint32_t)time & UINT32_MAX);
-      // set jitter for next dfu check
-      dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * DFU_CHECK_HOURS);
-      NRF_LOG_INFO("JITTER: %u", dfu_jitter_hours);
-      // send version and discover because why not
-      send_thread_info();
-      send_version();
-      seed = true;
-    }
-  }
-  if (state.resolve_addr) {
+  if (state.has_internet) {
+    if (state.resolve_addr) {
       NRF_LOG_INFO("Resolving Addresses");
       thread_dns_hostname_resolve(thread_instance,
           DNS_SERVER_ADDR,
@@ -631,13 +596,53 @@ void state_step(void) {
           (void*) &m_up_address);
       state.resolve_addr = false;
       state.resolve_wait = true;
+      otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
+    }
+    if (state.resolve_wait) {
+      if (are_addresses_resolved())
+      {
+        state.resolve_wait = false;
+        otLinkSetPollPeriod(thread_instance, DEFAULT_POLL_PERIOD);
+      }
+    }
   }
-  if (state.resolve_wait) {
-    bool resolved = are_addresses_resolved();
-    if (resolved)
-    {
-      state.update_time = true;
-      state.resolve_wait = false;
+
+  if (ready_to_send) {
+    if (state.send_light) {
+      state.send_light = false;
+      send_light();
+    }
+    if (state.send_motion) {
+      state.send_motion = false;
+      send_motion();
+    }
+
+    if (state.update_time && !state.resolve_wait && !state.resolve_addr && are_addresses_resolved()) {
+      state.update_time = false;
+      NRF_LOG_INFO("RTC UPDATE");
+
+      // request ntp time update
+      otError error = thread_ntp_request(thread_instance, &m_ntp_address, NULL, ntp_response_handler);
+      NRF_LOG_INFO("sent ntp poll!");
+      NRF_LOG_INFO("error: %d", error);
+      otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
+    }
+    if (state.up_time_done) {
+      // if not performing a dfu, return poll period to default
+      if (!state.performing_dfu) {
+        otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
+      }
+      // if we haven't performed initial setup of rand
+      if (!seed) {
+        srand((uint32_t)time & UINT32_MAX);
+        // set jitter for next dfu check
+        dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * DFU_CHECK_HOURS);
+        NRF_LOG_INFO("JITTER: %u", dfu_jitter_hours);
+        // send version and discover because why not
+        send_thread_info();
+        send_version();
+        seed = true;
+      }
     }
   }
 

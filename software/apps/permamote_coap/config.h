@@ -25,4 +25,4 @@
 #define NTP_UPDATE_MAX      5*1000
 #define NTP_UPDATE_MIN      2*1000
 #define DFU_CHECK_HOURS     24
-
+#define MAX_OFFLINE_MINS    60*24 // one day
