@@ -59,6 +59,7 @@ static otIp6Address m_coap_address;
 static otIp6Address m_up_address;
 #define NUM_ADDRESSES 3
 static otIp6Address* addresses[NUM_ADDRESSES] = {&m_ntp_address, &m_coap_address, &m_up_address};
+static bool addr_fail[NUM_ADDRESSES] = {0};
 
 /*
  * Permamote specific declarations for packet structure, state machine
@@ -124,6 +125,14 @@ static bool are_addresses_resolved(void) {
   bool resolved = true;
   for (size_t i = 0; i < NUM_ADDRESSES; i++) {
     resolved &= !otIp6IsAddressEqual(addresses[i], &unspecified_ipv6);
+  }
+  return resolved;
+}
+
+static bool did_resolution_fail(void) {
+  bool resolved = true;
+  for (size_t i = 0; i < NUM_ADDRESSES; i++) {
+    resolved |= addr_fail[i];
   }
   return resolved;
 }
@@ -218,6 +227,13 @@ void __attribute__((weak)) dns_response_handler(void         * p_context,
     if (error != OT_ERROR_NONE)
     {
         NRF_LOG_INFO("DNS response error %d.", error);
+        uint8_t i = 0;
+        for(i=0; i < NUM_ADDRESSES; i++) {
+          if (p_context == addresses[i]) {
+            break;
+          }
+        }
+        addr_fail[i] = true;
         return;
     }
 
@@ -527,6 +543,8 @@ void state_step(void) {
   if (state.send_periodic) {
     ab1815_tickle_watchdog();
     period_count ++;
+    uint32_t poll = otLinkGetPollPeriod(thread_get_instance());
+    NRF_LOG_INFO("poll period: %d", poll);
 
     if (!ready_to_send) {
       // keep a count of how long device has been offline
@@ -599,7 +617,7 @@ void state_step(void) {
       otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
     }
     if (state.resolve_wait) {
-      if (are_addresses_resolved())
+      if (are_addresses_resolved() || did_resolution_fail())
       {
         state.resolve_wait = false;
         otLinkSetPollPeriod(thread_instance, DEFAULT_POLL_PERIOD);
