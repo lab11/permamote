@@ -102,6 +102,7 @@ APP_TIMER_DEF(pir_backoff);
 APP_TIMER_DEF(pir_delay);
 APP_TIMER_DEF(ntp_jitter);
 APP_TIMER_DEF(dfu_monitor);
+APP_TIMER_DEF(dns_delay);
 APP_TIMER_DEF(coap_tick);
 
 static uint8_t dfu_jitter_hours = 0;
@@ -130,7 +131,7 @@ static bool are_addresses_resolved(void) {
 }
 
 static bool did_resolution_fail(void) {
-  bool resolved = true;
+  bool resolved = false;
   for (size_t i = 0; i < NUM_ADDRESSES; i++) {
     resolved |= addr_fail[i];
   }
@@ -263,8 +264,9 @@ void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * 
       NRF_LOG_INFO("We have internet connectivity!");
       addresses_print(p_context);
       state.external_route_added = true;
-      state.resolve_addr = true;
-      state.update_time = true;
+      APP_ERROR_CHECK(app_timer_start(dns_delay, APP_TIMER_TICKS(5000), NULL));
+      //state.resolve_addr = true;
+      //state.update_time = true;
     }
     if (state.external_route_added && role == 2) {
       state.has_internet = true;
@@ -579,7 +581,7 @@ void state_step(void) {
         otLinkSetPollPeriod(thread_instance, DFU_POLL_PERIOD);
         coap_remote_t remote;
         memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
-        remote.port_number = OT_DEFAULT_COAP_PORT;
+        remote.port_number = DFU_UDP_PORT;
         ret_code_t err_code = app_timer_start(dfu_monitor, DFU_MONITOR_PERIOD, NULL);
         APP_ERROR_CHECK(err_code);
         int result = coap_dfu_trigger(&remote);
@@ -597,6 +599,7 @@ void state_step(void) {
   if (state.has_internet) {
     if (state.resolve_addr) {
       NRF_LOG_INFO("Resolving Addresses");
+      otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
       thread_dns_hostname_resolve(thread_instance,
           DNS_SERVER_ADDR,
           NTP_SERVER_HOSTNAME,
@@ -614,7 +617,6 @@ void state_step(void) {
           (void*) &m_up_address);
       state.resolve_addr = false;
       state.resolve_wait = true;
-      otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
     }
     if (state.resolve_wait) {
       if (are_addresses_resolved() || did_resolution_fail())
@@ -692,6 +694,9 @@ void timer_init(void)
   APP_ERROR_CHECK(err_code);
 
   err_code = app_timer_create(&dfu_monitor, APP_TIMER_MODE_REPEATED, dfu_monitor_callback);
+  APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&dns_delay, APP_TIMER_MODE_SINGLE_SHOT, ntp_jitter_callback);
   APP_ERROR_CHECK(err_code);
 
   err_code = app_timer_create(&coap_tick, APP_TIMER_MODE_REPEATED, app_coap_time_tick);
