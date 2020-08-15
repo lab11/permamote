@@ -581,7 +581,7 @@ void state_step(void) {
         otLinkSetPollPeriod(thread_instance, DFU_POLL_PERIOD);
         coap_remote_t remote;
         memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
-        remote.port_number = DFU_UDP_PORT;
+        remote.port_number = 5683;
         ret_code_t err_code = app_timer_start(dfu_monitor, DFU_MONITOR_PERIOD, NULL);
         APP_ERROR_CHECK(err_code);
         int result = coap_dfu_trigger(&remote);
