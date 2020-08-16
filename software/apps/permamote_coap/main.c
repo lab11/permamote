@@ -225,16 +225,17 @@ void __attribute__((weak)) dns_response_handler(void         * p_context,
                                  uint32_t       ttl,
                                  otError        error)
 {
+    uint8_t i = 0;
+    for(i=0; i < NUM_ADDRESSES; i++) {
+      if (p_context == addresses[i]) {
+        break;
+      }
+    }
+    addr_fail[i] = error != OT_ERROR_NONE;
+
     if (error != OT_ERROR_NONE)
     {
         NRF_LOG_INFO("DNS response error %d.", error);
-        uint8_t i = 0;
-        for(i=0; i < NUM_ADDRESSES; i++) {
-          if (p_context == addresses[i]) {
-            break;
-          }
-        }
-        addr_fail[i] = true;
         return;
     }
 
