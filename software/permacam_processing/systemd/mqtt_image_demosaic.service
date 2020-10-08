@@ -3,7 +3,7 @@ Description=Subscribe to permacam images, demosaic, and republish
 After=mosquitto.service coap-gateway-mqtt.service
 
 [Service]
-ExecStart=/home/ubuntu/permamote/software/permacam-processing/mqtt_image_demosaic.py "-s localhost" "-p localhost"
+ExecStart=/home/ubuntu/permamote/software/permacam_processing/mqtt_image_demosaic.py
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
