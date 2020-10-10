@@ -1,0 +1,13 @@
+[Unit]
+Description=Subscribe to permacam images, perform yolov3 detection, and republish
+After=networking.service 
+
+[Service]
+ExecStart=/home/ubuntu/permamote/software/permacam_processing/mqtt_image_detect.py "-s coap-test.permamote.com" "-p coap-test.permamote.com"
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=mqtt-image-detect
+
+[Install]
+WantedBy=multi-user.target

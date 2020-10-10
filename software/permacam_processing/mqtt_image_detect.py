@@ -24,7 +24,7 @@ args = parser.parse_args()
 from imageai.Detection import ObjectDetection
 detector = ObjectDetection()
 detector.setModelTypeAsYOLOv3()
-detector.setModelPath("yolo.h5")
+detector.setModelPath("/etc/imageai/yolo.h5")
 detector.loadModel()
 
 if args.save_dir:
@@ -72,6 +72,13 @@ def on_message(client, userdata, msg):
             new_data['image_id'] = data['image_id']
             new_data['image_jpeg_quality'] = data['image_jpeg_quality']
             new_data['seq_no'] = data['seq_no']
+            
+            new_data['_meta']['topic'] = 'image_detection_jpeg'
+            new_data['image_jpeg'] = im_str 
+            new_data['image_is_demosaiced'] = 1
+            publish.single(new_topic, json.dumps(new_data), hostname=args.publish_host.strip())
+            new_data.pop('image_jpeg')
+            new_data.pop('image_is_demosaiced')
             new_data['_meta']['topic'] = 'image_detections'
             for detection in detections:
                 new_data['image_detection'] = detection['name']
@@ -92,6 +99,6 @@ client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect(args.subscribe_host)
+client.connect(args.subscribe_host.strip())
 
 client.loop_forever()
