@@ -86,7 +86,7 @@ typedef struct{
   bool send_motion;
   bool send_periodic;
   bool update_time;
-  bool up_time_done;
+  bool up_time_wait;
   bool resolve_addr;
   bool resolve_wait;
   bool dfu_trigger;
@@ -180,8 +180,6 @@ void dfu_monitor_callback(void* m) {
   coap_dfu_diagnostic_get(&dfu_state);
   NRF_LOG_INFO("state: %s", background_dfu_state_to_string(dfu_state.state));
   NRF_LOG_INFO("prev state: %s", background_dfu_state_to_string(dfu_state.prev_state));
-  uint32_t poll = otLinkGetPollPeriod(thread_get_instance());
-  NRF_LOG_INFO("poll period: %d", poll);
 
   // if this state combination, there isn't a new image for us, or server not
   // responding, so return to normal operation
@@ -191,7 +189,6 @@ void dfu_monitor_callback(void* m) {
     //app_timer_stop(coap_tick);
     coap_dfu_reset_state();
     nrf_dfu_settings_progress_reset();
-    otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
     app_timer_stop(dfu_monitor);
     NRF_LOG_INFO("Aborted DFU operation: Image already installed or server not responding");
   }
@@ -252,22 +249,34 @@ void ntp_response_handler(void* context, uint64_t time, otError error) {
   else {
     NRF_LOG_INFO("ntp error: %d", error);
   }
-  state.up_time_done = true;
+  state.up_time_wait = false;
+
+  // if we haven't performed initial setup of rand
+  if (!seed) {
+    srand((uint32_t)time & UINT32_MAX);
+    // set jitter for next dfu check
+    dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * DFU_CHECK_HOURS);
+    NRF_LOG_INFO("JITTER: %u", dfu_jitter_hours);
+    // send version and discover because why not
+    send_thread_info();
+    send_version();
+    seed = true;
+  }
 }
 
-void __attribute__((weak)) thread_state_changed_callback(uint32_t flags, void * p_context) {
+void thread_state_changed_callback(uint32_t flags, void * p_context) {
     uint8_t role = otThreadGetDeviceRole(p_context);
 
     NRF_LOG_INFO("State changed! Flags: 0x%08lx Current role: %d",
-                 flags, role)
+        flags, role)
 
-    if (flags & OT_CHANGED_IP6_ADDRESS_ADDED && role == 2) {
-      NRF_LOG_INFO("We have internet connectivity!");
-      addresses_print(p_context);
-      state.external_route_added = true;
-      APP_ERROR_CHECK(app_timer_start(dns_delay, APP_TIMER_TICKS(5000), NULL));
-      //state.resolve_addr = true;
-      //state.update_time = true;
+      if (flags & OT_CHANGED_IP6_ADDRESS_ADDED && role == 2) {
+        NRF_LOG_INFO("We have internet connectivity!");
+        addresses_print(p_context);
+        state.external_route_added = true;
+        APP_ERROR_CHECK(app_timer_start(dns_delay, APP_TIMER_TICKS(5000), NULL));
+        //state.resolve_addr = true;
+        //state.update_time = true;
     }
     if (state.external_route_added && role == 2) {
       state.has_internet = true;
@@ -542,11 +551,11 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info) {
 void state_step(void) {
   otInstance * thread_instance = thread_get_instance();
   bool ready_to_send = state.has_internet && are_addresses_resolved();
+  uint32_t poll = otLinkGetPollPeriod(thread_get_instance());
 
   if (state.send_periodic) {
     ab1815_tickle_watchdog();
     period_count ++;
-    uint32_t poll = otLinkGetPollPeriod(thread_get_instance());
     NRF_LOG_INFO("poll period: %d", poll);
 
     if (!ready_to_send) {
@@ -579,7 +588,6 @@ void state_step(void) {
         // Send discovery packet and version before updating
         send_version();
 
-        otLinkSetPollPeriod(thread_instance, DFU_POLL_PERIOD);
         coap_remote_t remote;
         memcpy(&remote.addr, &m_up_address, OT_IP6_ADDRESS_SIZE);
         remote.port_number = 5683;
@@ -600,7 +608,6 @@ void state_step(void) {
   if (state.has_internet) {
     if (state.resolve_addr) {
       NRF_LOG_INFO("Resolving Addresses");
-      otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
       thread_dns_hostname_resolve(thread_instance,
           DNS_SERVER_ADDR,
           NTP_SERVER_HOSTNAME,
@@ -623,7 +630,6 @@ void state_step(void) {
       if (are_addresses_resolved() || did_resolution_fail())
       {
         state.resolve_wait = false;
-        otLinkSetPollPeriod(thread_instance, DEFAULT_POLL_PERIOD);
       }
     }
   }
@@ -640,31 +646,24 @@ void state_step(void) {
 
     if (state.update_time && !state.resolve_wait && !state.resolve_addr && are_addresses_resolved()) {
       state.update_time = false;
+      state.up_time_wait = true;
       NRF_LOG_INFO("RTC UPDATE");
 
       // request ntp time update
       otError error = thread_ntp_request(thread_instance, &m_ntp_address, NULL, ntp_response_handler);
       NRF_LOG_INFO("sent ntp poll!");
       NRF_LOG_INFO("error: %d", error);
+    }
+  }
+
+  // manage poll period. if we are waiting for any transfer (dns, ntp, etc.) we want a fast poll rate, otherwise, a slow one.
+  if(state.resolve_wait || state.up_time_wait || state.performing_dfu) {
+    if (poll != RECV_POLL_PERIOD) {
       otLinkSetPollPeriod(thread_instance, RECV_POLL_PERIOD);
     }
-    if (state.up_time_done) {
-      // if not performing a dfu, return poll period to default
-      if (!state.performing_dfu) {
-        otLinkSetPollPeriod(thread_get_instance(), DEFAULT_POLL_PERIOD);
-      }
-      // if we haven't performed initial setup of rand
-      if (!seed) {
-        srand((uint32_t)time & UINT32_MAX);
-        // set jitter for next dfu check
-        dfu_jitter_hours = (int)(rand() / (float) RAND_MAX * DFU_CHECK_HOURS);
-        NRF_LOG_INFO("JITTER: %u", dfu_jitter_hours);
-        // send version and discover because why not
-        send_thread_info();
-        send_version();
-        seed = true;
-      }
-    }
+
+  } else if (poll != DEFAULT_POLL_PERIOD){
+    otLinkSetPollPeriod(thread_instance, DEFAULT_POLL_PERIOD);
   }
 
   if (state.do_reset) {
