@@ -97,6 +97,7 @@ BOARD_SOURCES += \
 	flash_storage.c \
 	ab1815.c \
 	max44009.c \
+	grideye.c \
 
 ifeq ($(USE_THREAD), 1)
 	BOARD_SOURCES += \
