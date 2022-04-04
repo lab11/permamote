@@ -1,8 +1,8 @@
 design_config:
   name: "design"
   using_primary: True
-  using_secondary: True
-  using_harvester: True
+  using_secondary: False
+  using_harvester: False
   opportunistic: False
   operating_voltage_V: 3.3
   boost_efficiency: 0.8

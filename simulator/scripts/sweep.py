@@ -4,7 +4,6 @@ import os
 import pickle
 import argparse
 import yaml
-import importlib
 from copy import deepcopy
 import numpy as np
 import pandas as pd
@@ -111,46 +110,59 @@ if not os.path.exists(save_dir):
 #        #        plt.xlabel(' '.join(parameter_sweep[0].split('_')[1:]))
 #        #        plt.savefig(save_dir + titlestr.replace(' ', '_'))
 
-def run_simulation(a):
+def run_simulation(a, i, total):
+    print('starting simulation {}/{}'.format(i, total))
     # modify config
-    a[0][a[1]][a[2]] = a[3]
+    location = a[0][a[1]]
+    for x in a[2][:-1]:
+        location = location[x]
+    location[a[2][-1]] = a[3]
     # run simulation with altered
-    simulator = EHSim(a[0]['config'], a[0]['workload'], a[0]['dataset'])
+    simulator = EHSim(a[0]['design'], a[0]['workload'], a[0]['dataset'])
     results = simulator.simulate()
-    results[a[2]] = a[3]
+    results[a[2][-1]] = a[3]
     return results
 
-def sweep_var2(config):
-    name = config['sweep']['var2']['name']
-    t = config['sweep']['var2']['type']
-    print(t, name)
+def sweep_var(config, var):
+    path = config['sweep'][var]['path']
+    t = config['sweep'][var]['type']
+    print(t, path)
     setup_array = []
-    for value in config['sweep']['var2']['values']:
+    for i, value in enumerate(config['sweep'][var]['values']):
         print('\t' + str(value))
-        setup_array.append([config.copy(), t, name, value])
+        setup_array.append(([config.copy(), t, path, value], i, len(config['sweep'][var]['values'])))
+    #return [run_simulation(x) for x in setup_array]
     with Pool(6) as p:
-        results = p.map(run_simulation, setup_array)
+        print(list(range(0,len(setup_array))))
+        print([len(setup_array)]*len(setup_array))
+        results = p.starmap(run_simulation, setup_array)
     return results
 
 def sweep(config):
     copy_config = config.copy()
     t = copy_config['sweep']['var1']['type']
-    name = copy_config['sweep']['var1']['name']
+    path = copy_config['sweep']['var1']['path']
     results = []
-    for i, value in enumerate(copy_config['sweep']['var1']['values']):
-        if copy_config['sweep']['var1']['group']:
-            # sweep all variables together
-            for x in copy_config['sweep']['var1']['variables']:
-                y = copy_config['sweep']['var1']['variables'][x][i]
-                print(t, x, y)
-                copy_config[t][x] = y
-            mapped_result = sweep_var2(copy_config)
-            for result in mapped_result:
-                result[name] = value
-                results.append(result)
-        else:
-            # sweep single variable together
-            pass
+
+    if 'var2' in copy_config['sweep']:
+        for i, value in enumerate(copy_config['sweep']['var1']['values']):
+            if copy_config['sweep']['var1']['group']:
+                # sweep all variables together
+                for x in copy_config['sweep']['var1']['variables']:
+                    y = copy_config['sweep']['var1']['variables'][x][i]
+                    print(t, x, y)
+                    copy_config[t][x] = y
+                mapped_result = sweep_var(copy_config, 'var2')
+                for result in mapped_result:
+                    result[path[-1]] = value
+                    results.append(result)
+            else:
+                # sweep single variable together
+                pass
+
+    else:
+        results = sweep_var(copy_config, 'var1')
+
     return results
 
 print('starting sweep')
@@ -175,7 +187,7 @@ with open(args.config_file, 'r') as c_file, \
 #print(dataset)
 #print(sweep_cfg)
 
-top_config = {'config':config,'workload':workload,'dataset':dataset,'sweep':sweep_cfg}
+top_config = {'design':config,'workload':workload,'dataset':dataset,'sweep':sweep_cfg}
 #sweep_var2(top_config)
 results = sweep(top_config)
 df = pd.DataFrame(results)

@@ -6,6 +6,9 @@ import numpy as np
 from glob import glob
 from multiprocessing import Pool
 import arrow
+import matplotlib
+matplotlib.use('TKAgg')
+import matplotlib.pyplot as plt
 
 HALF_MINUTES_IN_WEEK = 7*24*60*2
 HALF_MINUTES_IN_DAY = 24*60*2
@@ -19,9 +22,13 @@ def parse(fname):
     print(fname)
     basename = fname.split('/')[1].split('_')[0]
     a = np.loadtxt(fname, delimiter='\t', dtype=str)[:-1]
+
     # strip header
     if(a[0,0].strip() == 'sec'):
         a = a[1:, :]
+
+    a = a[:int(int(len(a) / (60*60*24/30)) * 60*60*24/30)]
+    unfixed = a[:,1].astype(float)
 
     # get starting time:
     start_time_string = ''
@@ -31,7 +38,7 @@ def parse(fname):
     start_time = arrow.get(start_time_string, 'YYYY M D H m s')
     b = np.ndarray(a.shape[0] + 1, dtype=float)
     # first element of array is start timestamp
-    b[0] = start_time.timestamp
+    b[0] = start_time.timestamp()
 
     # get rid of date/time information
     c = a[:,1].astype(float)
@@ -57,6 +64,10 @@ def parse(fname):
         else:
             c[start:stop] = c[replace_start:(replace_start + span_len)]
     b[1:] = c
+
+    plt.plot(b[1:].reshape(-1, int(60*60*24/30)).mean(axis=1))
+    plt.plot(unfixed.reshape(-1, int(60*60*24/30)).mean(axis=1))
+    plt.show()
 
     #if len(a) % 2 != 0:
     #    a = np.append(a, 0)

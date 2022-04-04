@@ -1,0 +1,11 @@
+workload:
+  name: 'picture_and_send'
+  type: 'periodic'
+  atomic: False
+  period_s: 120
+  sleep_current_A: 197.e-6
+  startup_energy_J: 150.e-6
+  startup_period_s: 3.4e-3
+  event_energy_J: 311.e-3
+  event_period_s: 4
+  event_period_min_s: 1

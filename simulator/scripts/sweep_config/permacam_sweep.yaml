@@ -1,36 +1,18 @@
 sweep:
   var1:
-    name: 'jpeg_quality'
     type: 'workload'
+    path: ['jpeg_quality']
     group: True
     values:
-      - 30
-      - 50
-      - 70
-      - 80
       - 90
-      - 93
-      - 'raw'
     variables:
       event_energy_J:
-        - 0.026564
-        - 0.041232
-        - 0.054335
-        - 0.074625
         - 0.093318
-        - 0.103079
-        - 0.247230
       event_period_s:
-        - 3.095167
-        - 4.419000
-        - 5.601500
-        - 7.432667
         - 9.119667
-        - 10.000667
-        - 23.010167
   var2:
-    name: 'period_s'
     type: 'workload'
+    path: ['period_s']
     group: False
     values:
         - 30
