@@ -7,7 +7,7 @@ from glob import glob
 from multiprocessing import Pool
 import arrow
 import matplotlib
-matplotlib.use('TKAgg')
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 HALF_MINUTES_IN_WEEK = 7*24*60*2
@@ -19,7 +19,6 @@ if not os.path.exists('numpy_arrays'):
 
 fnames = glob('enhants_data/*.txt')
 def parse(fname):
-    print(fname)
     basename = fname.split('/')[1].split('_')[0]
     a = np.loadtxt(fname, delimiter='\t', dtype=str)[:-1]
 
@@ -65,9 +64,10 @@ def parse(fname):
             c[start:stop] = c[replace_start:(replace_start + span_len)]
     b[1:] = c
 
+    plt.figure()
     plt.plot(b[1:].reshape(-1, int(60*60*24/30)).mean(axis=1))
     plt.plot(unfixed.reshape(-1, int(60*60*24/30)).mean(axis=1))
-    plt.show()
+    plt.savefig(fname.split('/')[-1].split('.')[0] + "_cleaned.pdf")
 
     #if len(a) % 2 != 0:
     #    a = np.append(a, 0)
