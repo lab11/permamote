@@ -132,7 +132,7 @@ def sweep_var(config, var):
         print('\t' + str(value))
         setup_array.append(([config.copy(), t, path, value], i, len(config['sweep'][var]['values'])))
     #return [run_simulation(x) for x in setup_array]
-    with Pool(6) as p:
+    with Pool(processes=20) as p:
         print(list(range(0,len(setup_array))))
         print([len(setup_array)]*len(setup_array))
         results = p.starmap(run_simulation, setup_array)

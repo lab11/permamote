@@ -3,15 +3,14 @@ design_config:
   using_primary: False
   using_secondary: True
   using_harvester: True
-  opportunistic: False
-  operating_voltage_V: 3.3
-  boost_efficiency: 0.9
+  operating_voltage_V: 3
+  boost_efficiency: 0.85
   frontend_efficiency: 0.9
 
 secondary_config:
   type: "capacitor"
-  esr_ohm: 0.1
-  leakage_power_W: 1.0E-6
+  esr_ohm: 0.2
+  leakage_power_W: 15.0E-6
   capacity_J: 720
   #!!python/object/apply:eval [ .5 * 33E-3 * (3**2) ]
   min_capacity_J: 0.02537
@@ -20,5 +19,5 @@ secondary_config:
 harvest_config:
   type: "solar"
   nominal_voltage: 3.4
-  area_cm2: 8
+  area_cm2: 6.16
   efficiency: 0.20

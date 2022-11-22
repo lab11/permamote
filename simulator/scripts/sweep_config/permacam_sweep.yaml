@@ -1,23 +1,35 @@
 sweep:
   var1:
-    type: 'workload'
-    path: ['jpeg_quality']
-    group: True
-    values:
-      - 90
-    variables:
-      event_energy_J:
-        - 0.093318
-      event_period_s:
-        - 9.119667
-  var2:
-    type: 'workload'
-    path: ['period_s']
+    type: 'design'
+    path: ['secondary_config', 'capacity_J']
     group: False
-    values:
-        - 30
-        - 60
-        - 120
-        - 300
-        - 600
-        - 900
+    values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
+
+    #var2:
+    #  type: 'design'
+    #  path: ['primary_config', 'capacity_mAh']
+    #  group: False
+    #  values: [240, 1000, 1500]
+
+    #var1:
+    #  type: 'workload'
+    #  path: ['jpeg_quality']
+    #  group: True
+    #  values:
+    #    - 90
+    #  variables:
+    #    event_energy_J:
+    #      - 0.093318
+    #    event_period_s:
+    #      - 9.119667
+    #var2:
+    #type: 'workload'
+    #path: ['period_s']
+    #group: False
+    #values:
+    #    - 30
+    #    - 60
+    #    - 120
+    #    - 300
+    #    - 600
+    #    - 900

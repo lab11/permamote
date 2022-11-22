@@ -12,9 +12,9 @@ secondary_config:
   type: "battery"
   capacity_mAh: 20
   nominal_voltage_V: 2.4
-  secondary_start_percent: 50.25
-  secondary_max_percent: 50.93
-  secondary_min_percent: 43.25
+  secondary_start_percent: 100
+  secondary_max_percent: 100
+  secondary_min_percent: 30
   esr_ohm: 0.1
   leakage_constant: 10000
 

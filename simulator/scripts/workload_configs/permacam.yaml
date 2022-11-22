@@ -3,9 +3,9 @@ workload:
   type: 'periodic'
   atomic: False
   period_s: 600
-  sleep_current_A: 3.5e-6
+  sleep_current_A: 4.4e-6
   startup_energy_J: 150.e-6
   startup_period_s: 3.4e-3
-  event_energy_J: 0.07382
-  event_period_s: 6.67
+  event_energy_J: 80.5E-3
+  event_period_s: 7.97
   event_period_min_s: 1

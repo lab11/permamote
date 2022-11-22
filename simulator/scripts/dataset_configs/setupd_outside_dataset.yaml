@@ -1,6 +1,0 @@
-dataset:
-  name: "SetupD"
-  type: "solar"
-  unit: "W/cm^2"
-  filename: "../enhants/numpy_arrays/SetupD_outdoor.npy"
-  resolution_s: 30

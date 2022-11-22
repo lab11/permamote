@@ -142,6 +142,8 @@ class EHSim:
             else:
                 self.secondary_energy = self.secondary_energy_max
 
+            self.secondary_start_energy = self.secondary_energy
+
         # secondary_config is None
         else:
             esr_power = 0
@@ -167,7 +169,8 @@ class EHSim:
 
     def simulate(self):
         currently_performing = False
-        used_energy = 0
+        secondary_used_energy = 0
+        captured_energy = 0
         possible_energy = 0                                                 # amount of possible harvestable energy
         actual_period = 0                                                   # the actual amount of time it took to perform an event
         second = 0#self.trace_start_seconds
@@ -183,15 +186,16 @@ class EHSim:
             ##
             incoming_energy = 0
             if self.design_config['using_harvester']:
-                incoming_energy = self.energy_trace[math.floor(second/self.dataset_config['resolution_s'])]
+                incoming_energy = self.energy_trace[math.floor(second/self.dataset_config['resolution_s']) % len(self.energy_trace)]
                 possible_energy += incoming_energy
 
                 # charge secondary if possible
                 self.secondary_energy += incoming_energy
+                captured_energy += incoming_energy
 
                 # reset secondary to max if full
                 if self.secondary_energy > self.secondary_energy_max:
-                    #wasted_energy += self.secondary_energy - self.secondary_energy_max
+                    captured_energy -= self.secondary_energy - self.secondary_energy_max
                     self.secondary_energy = self.secondary_energy_max
                 # if charged enough, exit charging hysteresis
                 if charge_hysteresis and self.secondary_energy >= self.secondary_energy_up:
@@ -230,7 +234,7 @@ class EHSim:
 
             # if it's time to perform an event
             # if opportunistic, try to send
-            if self.design_config['opportunistic']:
+            if self.workload_type == 'opportunistic':
                 if currently_online and not currently_performing:
                     currently_performing = True
                     event_energy_remaining = self.event_energy
@@ -268,6 +272,7 @@ class EHSim:
                     # successfully completed event
                     #self.missed_events.append([self.trace_start_time+second, 0])
                     self.num_events += 1
+                    self.event_trace.append(second)
                     #events.append(start_time+second)
                     self.event_ttc.append(actual_period)
                     actual_period = 0
@@ -305,7 +310,7 @@ class EHSim:
                 last_step_online = period_on
 
                 self.secondary_energy -= _outgoing_energy()
-                used_energy += _outgoing_energy()
+                secondary_used_energy += _outgoing_energy()
 
                 if self.secondary_energy <= self.secondary_energy_min:
                     charge_hysteresis = True
@@ -313,18 +318,17 @@ class EHSim:
                 time_online += 1
                 last_step_online = 1
                 outgoing_sleep_energy = self.sleep_power * period_sleep
-                #if (second > 905): break
                 if charge_hysteresis:
                     self.primary_energy -= _outgoing_energy()
                 else:
                     self.secondary_energy -= _outgoing_energy()
-                    used_energy += _outgoing_energy()
+                    secondary_used_energy += _outgoing_energy()
                     # enter hysteresis if under
                     if self.secondary_energy <= self.secondary_energy_min:
                         if self.secondary_energy < 0:
-                            used_energy += self.secondary_energy
+                            secondary_used_energy += self.secondary_energy
                             # subtract remainder from primary energy
-                            self.primary_energy += self.secondary_energy - self.secondary_energy_min
+                            self.primary_energy += self.secondary_energy
                             self.secondary_energy = 0
                         #secondary_energy = secondary_energy_min
                         charge_hysteresis = True
@@ -338,6 +342,8 @@ class EHSim:
             self.primary_energy -= self.primary_leakage_power
             #self.primary_discharge += self.primary_leakage_power
             self.secondary_energy -= self.secondary_leakage_power
+            if(self.secondary_energy < 0):
+                self.secondary_energy = 0
 
             #self.secondary_soc.append(self.secondary_energy)
             #self.primary_soc.append(self.primary_energy)
@@ -361,7 +367,7 @@ class EHSim:
         self.fraction_online = time_online / second
         self.fraction_energy_utilized = 0
         if self.design_config['using_harvester']:
-            self.fraction_energy_utilized = used_energy / possible_energy
+            self.fraction_energy_utilized = secondary_used_energy / possible_energy
         #print("avg in power: " + str(1E6 * self.incoming / second))
         #dates = self.missed_events[:,0].astype('datetime64[s]').tolist()
         #plt.plot_date(dates[:24*60*60], np.logical_not(self.missed_events[:,1])[:24*60*60])
@@ -381,11 +387,30 @@ class EHSim:
         #print(self.primary_soc[-1])
         #print(second)
         #print("expected lifetime: " + str(self.lifetime_estimate_years))
-        #print("average power: " + str((used_energy + self.primary_energy_max - self.primary_soc[-1]) / second));
+        #print("average power: " + str((secondary_used_energy + self.primary_energy_max - self.primary_soc[-1]) / second));
         #lifetime_years = minute/60/24/365
 
         #np.save('seq_no-Ligeiro-c098e5d00047_sim', events)
-        return {'simulation_length': seconds, 'lifetime':self.lifetime_estimate_years, 'used_energy': used_energy, 'possible_energy':possible_energy, 'fraction_energy_utilized':self.fraction_energy_utilized, 'total_used_energy': used_energy + self.primary_energy_max - self.primary_energy, 'events_success':self.num_events,'events_missed':self.num_missed_events, 'event_ttc_mean':np.mean(self.event_ttc), 'event_ttc_min':np.min(self.event_ttc), 'event_ttc_max':np.max(self.event_ttc), 'event_ttc_std': np.std(self.event_ttc), 'event_ttc_raw': self.event_ttc, 'time_online':self.fraction_online} #'missed_events':self.missed_events[:,1], 'time_online':self.fraction_online, 'event_ttc':self.event_ttc}
+
+        self.event_trace = np.array(self.event_trace)
+
+        return {'simulation_length': second,
+                'primary_remaining': self.primary_energy,
+                'primary_max': self.primary_energy_max,
+                'lifetime':self.lifetime_estimate_years,
+                'captured_energy': captured_energy,
+                'secondary_used_energy': secondary_used_energy,
+                'secondary_start_energy': self.secondary_start_energy,
+                'secondary_end_energy': self.secondary_energy,
+                'possible_energy':possible_energy,
+                'fraction_energy_utilized':self.fraction_energy_utilized,
+                'total_used_energy': secondary_used_energy + self.primary_energy_max - self.primary_energy,
+                'events_success':self.num_events,
+                'events_trace': self.event_trace,
+                'events_missed':self.num_missed_events,
+                'event_ttc_raw': self.event_ttc,
+                'time_online':self.fraction_online
+                } #'missed_events':self.missed_events[:,1], 'time_online':self.fraction_online, 'event_ttc':self.event_ttc}
 
     def __init__(self, platform_config, workload_config, dataset_config):
         # declare class vars
@@ -425,6 +450,7 @@ class EHSim:
         self.outgoing = 0
         self.incoming = 0
         self.num_events = 0
+        self.event_trace = []
         self.num_missed_events = 0
         self.event_ttc = []
         self.fraction_online = 0
@@ -468,17 +494,21 @@ class EHSim:
         self.trace_start_time = trace[0].astype('datetime64[s]')
         self.trace_start_seconds = int((self.trace_start_time - self.trace_start_time.astype('datetime64[D]')) / np.timedelta64(1, 's'))
         trace = trace[1:]
-        self.seconds_end = trace.size*self.trace_resolution
+        self.seconds_end = 5 * trace.size*self.trace_resolution
 
         # initialize harvester values
         if self.harvest_config is not None:
             if self.harvest_config['type'] != self.dataset_config['type']:
                 print("Mismatched trace/harvester config")
                 exit(1)
-            if self.harvest_config['type'] == 'solar' and self.dataset_config['unit'] == 'uW/cm^2':
+            if self.harvest_config['type'] == 'solar':
+                if self.dataset_config['unit'] == 'uW/cm^2':
+                    solar_multiplier = 1E-6
+                if self.dataset_config['unit'] == 'W/cm^2':
+                    solar_multiplier = 1
                 if 'area_cm2' in self.harvest_config:
                     solar_area = self.harvest_config['area_cm2']
-                    self.energy_trace = trace * 1E-6 * solar_area * \
+                    self.energy_trace = trace * solar_multiplier * solar_area * \
                         self.harvest_config['efficiency'] * \
                         self.design_config['frontend_efficiency']
                     #print(trace)
@@ -523,9 +553,12 @@ if __name__ == "__main__":
     print(result)
     print('percent energy utilized: \t{0:.2f}%'.format(100 * result['fraction_energy_utilized']))
     print('percent online: \t\t{0:.2f}%'.format(100 * simulator.fraction_online))
+    print('number of successful events: \t{}'.format(result['events_success']))
     print('percent successful events: \t{0:.2f}%'.format(100 * result['events_success'] / (result['events_success'] + result['events_missed'])))
-    print('average ttc: \t{0:.2f}s'.format(result['event_ttc_mean']))
+    print('average ttc: \t{0:.2f}s'.format(result['event_ttc_raw'].mean()))
+    if result['lifetime'] > 0:
+        print('Estimated lifetime: \t{:.2f}'.format(result['lifetime']))
     #print(np.sum(simulator.missed_events[:,1]))
     #print(np.sum(simulator.seconds_end))
     #print(simulator.missed_events.shape[0])
-
+    np.save('sim_result.npy', result)
